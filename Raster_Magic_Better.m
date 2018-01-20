@@ -18,6 +18,7 @@
 %   UPDATES
 %   ManualMode&SavingFeatures       15/11/17
 %   Huge One @Algorithmie           02/10/17 (no se olvida)
+%   Using GitHub                    19/01/2017
 %% Global Setup ***********************************************************
 clc
 clear;
