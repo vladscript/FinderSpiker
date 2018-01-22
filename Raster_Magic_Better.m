@@ -34,7 +34,7 @@ if exist(DefaultPath,'dir')==0
     DefaultPath=pwd;
 end
 % Read Sampling Frequency
-fs=NaN; % To read fs
+fs=NaN; % To read fs to get into the following loop:
 while isnan(fs) % Interface error user reading fs
     fs = inputdlg('Sampling Frequency [Hz] : ',...
                  'VIDEOS', [1 50]);
