@@ -109,8 +109,7 @@ for i=1:NC
         tic
         % Detrending ******************************************************
         [Ns,Frames] = size(X);
-        XD=only_detrending(X,fs);
-        
+        XD=only_detrending(X);
         %%% Denoising ******************************************************
         % Main Features to Detect Signal or Noise:
         [Xest,SNRbyWT,SkewSignal,ABratio,SkewNoise]=denoise_wavelet(XD);
