@@ -112,7 +112,8 @@ for i=1:NC
         XD=only_detrending(X);
         %%% Denoising ******************************************************
         % Main Features to Detect Signal or Noise:
-        [Xest,SNRbyWT,SkewSignal,ABratio,SkewNoise]=denoise_wavelet(XD);
+        % [Xest,SNRbyWT,SkewSignal,ABratio,SkewNoise]=denoise_wavelet(XD,X);
+        [Xest,SNRbyWT,SkewSignal,ABratio,SkewNoise,XDupdate]=denoise_wavelet(XD);
         %%% Decision Features
         % SNR >0 *******************************************
         SNRindx=find(SNRbyWT>0);
