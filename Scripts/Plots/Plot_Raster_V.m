@@ -1,10 +1,10 @@
 %% Function to plot raster
-% input
-% R: Raster Matrix Cells x Frames
-% fs= sampling frequency
+% Input
+%   R: Raster Matrix Cells x Frames
+%   fs= sampling frequency
 % Output
-% figure of the raster in MINUTES
-% Always creates a new figure
+%   Figure of the raster in MINUTES
+%   Always creates a new figure
 function Plot_Raster_V(R,varargin)
 if isempty(varargin)
     fs=1; % frames
@@ -23,7 +23,7 @@ end
 
 ts=1/fs;
 for i=1:C
-    plot(ts*find(R(i,:))/60,i*R(i,find(R(i,:))),'square',...
+    plot(ts*find(R(i,:))/60,i*R(i,R(i,:)>0),'square',...
                 'MarkerEdgeColor','k',...
                 'MarkerFaceColor','k',...
                 'MarkerSize',3); hold on;

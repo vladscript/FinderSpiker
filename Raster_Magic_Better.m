@@ -15,7 +15,7 @@
 %   Settings_Automatic_Processing_Log.xls   Features from automatic mode
 %   Features_Processgin_Table.xls           Features from manual mode
 
-%   UPDATES
+%   (primitive) UPDATES
 %   ManualMode&SavingFeatures       15/11/17
 %   Huge One @Algorithmie           02/10/17 (no se olvida)
 %   Using GitHub                    19/01/2017

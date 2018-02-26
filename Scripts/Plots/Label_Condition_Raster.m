@@ -31,7 +31,7 @@ Heightboxtex=0.04;
 for i=1:NC
     [Cells,~]=size(Raster_Condition{i});    
     Frames=FramesCondition(i);
-    SumFrames=SumFrames+Frames;
+    SumFrames=SumFrames+Frames-1;
     Position_Minutes=SumFrames/60/fs;
     % Create textbox
     % Position x,y,w,h

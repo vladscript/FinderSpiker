@@ -53,7 +53,8 @@ for i=1:Ns
         disp('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Fixing Distortion')
         xdupdate=xd-xlin;
         [xdenoised,noisex]=mini_denoise(xd);
-        plot(xdupdate); pause;
+        % check out #######################
+        %         plot(xdupdate); pause;
         XD(i,:)=xdupdate;
     end
     

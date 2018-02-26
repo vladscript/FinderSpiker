@@ -1,4 +1,4 @@
-% Function to Select Raster frames per Condition &
+% Function to Select frames per Condition Manually
 % Extract Descriptive Features.
 % Run After Raster_Magic_Better.m (Processing Blocks) or
 % Load Saved Data in the EPXEIMENT_DATE.mat Files
@@ -12,7 +12,11 @@
 % Ouput
 %   Raster per Condition  Cell
 %   RASTER_Selected_Clean Matrix
-function [RASTER_Selected_Clean,XY_selected,R_Condition]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment)
+%   XY: Selected ACtive Cells
+%   R_Condition:    Cell of Raster for each COndition
+%   Onsets:             Selected Starting Point
+function [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment)
+
 okbutton='No';
 while ~strcmp('Yes',okbutton)
      %% Show Raster per condition
@@ -20,6 +24,7 @@ while ~strcmp('Yes',okbutton)
     Raster_Selecter={};
     for c=1:NC
         R=Raster_Condition{c};
+        [~,FramesSize]=size(R);
         Plot_Raster_V(R,fs);
         figure_raster=gcf;
         figure_raster.Name=['Raster ',Names_Conditions{c}];
@@ -33,7 +38,11 @@ while ~strcmp('Yes',okbutton)
         Minute_End=str2double(answer{2});
         Frame_A=Minute_Start*60*fs+1;
         Frame_B=Minute_End*60*fs;
-        OnsetA{c,1}=Frame_A;
+        Onsets{c,1}=Frame_A;
+        if Frame_B>FramesSize
+            Frame_B=FramesSize;
+        end
+        % Selection:
         R=R(:,Frame_A:Frame_B);
         Raster_Selecter{c}=R;    
         % Show Selected Raster
@@ -74,39 +83,35 @@ while ~strcmp('Yes',okbutton)
         AN(c,1)=sum(sum(R,2)>0);          % Active NEURONS
         CummAc(c,1)=sum(sum(R));          % Cummulative Activity
         DurAc(c,1)=length(R)/fs/60;       % Duration [min]
-        NameTable{c,1}=Experiment(2:end); % Cell Name
-        
+        NameTable{c,1}=Experiment(2:end); % Cell Name 
     end
     disp([AN',CummAc'])
-    % save ina table
+    % Show Features Table
     HeadersFeatures={'Experiment','TotalNeurons','Condition','Neurons','CummActivity','Onset','Minutes'};
-    Trasterfeatures=table(NameTable,TotalN*ones(NC,1),Names_Conditions,AN,CummAc,OnsetA,DurAc,...
+    Trasterfeatures=table(NameTable,TotalN*ones(NC,1),Names_Conditions,AN,CummAc,Onsets,DurAc,...
             'VariableNames',HeadersFeatures);
     disp(Trasterfeatures);
     okbutton = questdlg('Selection Alright?');
-%     if strcmp('Yes',okbutton) % Save Table
-%         NameFile=[pwd,'\Results\Rasters_Descriptive_Features.xls'];
-%         disp('Selection: done')
-%         if exist(NameFile,'file')>0 % If the File Already Exists
-%             disp('Writing Table ...')
-%             Tprevious=readtable(NameFile);
-%             [ColumnsUsed,~]=size(Tprevious);
-%             corner_indx=['A',num2str(ColumnsUsed+2)];
-%             writetable(Trasterfeatures,NameFile,'Sheet',1,'Range',corner_indx,...
-%                 'WriteVariableNames',0);
-%         %% For the First Time The Program Save Information
-%         else                            % New File
-%             disp('Writing NEW Table ...')
-%             writetable(Trasterfeatures,NameFile,'Sheet',1);
-%         end
-%         disp('                       Saved Data ');
-%     else
-%         disp('Select again ...')
-%         
-%     end
+    %% SAVE OUTPUT
+    checkname=1;
+    while checkname==1
+        DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\Results';
+        if exist(DefaultPath,'dir')==0
+            DefaultPath=pwd; % Current Diretory of MATLAB
+        end
+        [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
+            'MultiSelect', 'off',DefaultPath);
+        dotindex=find(FileName=='.');
+        if strcmp(FileName(1:dotindex-1),Experiment(2:end))
+            checkname=0;
+            % SAVE DATA
+            save([PathName,FileName],'RASTER_Selected_Clean','XY_selected',...
+                'R_Condition','New_Index','Onsets','-append');
+            disp([Experiment,'   -> UPDATED (Selected Data)'])
+        else
+            disp('Not the same Experiment!')
+            disp('Try again!')
+        end
+    end    
 end
-%% Save Rasters, Coordiantes & Features
-% RASTER_Selected_Clean:    Matrix
-% XY_selected:              matrix
-% R_Condition:              cell
-% XY_Condition:             cell
+%% END OF THE WORLD
