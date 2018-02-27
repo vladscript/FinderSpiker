@@ -187,8 +187,8 @@ if TotalNG<=12
                 Naux=length(intersect(SetIndx:SetIndx+3-1,IndxLeaveOut)); % used indexes
                 IndxLeaveOut=setdiff(1:12,IndxGotIn);
                 Nmiss=NGroups{c}-Naux;
-                ColorState(EnsmblIndx+Naux:EnsmblIndx+Naux+Nmiss-1,:)=Static_Color_Map(IndxLeaveOut(1:Nmiss),:);
-                IndxGotIn=[IndxGotIn,IndxLeaveOut(1:Nmiss)];
+                ColorState(EnsmblIndx+Naux,:)=Static_Color_Map(IndxLeaveOut(1:Nmiss),:);
+                IndxGotIn=[IndxGotIn,TailColor:-1:TailColor-((EnsmblIndx+NGroups{c}-1)-(EnsmblIndx+3))];
                 disp('>>>>- -- strange  --- case --- <<<<')
             end
         end
