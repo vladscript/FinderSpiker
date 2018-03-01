@@ -465,6 +465,7 @@ function manual_processing_ctrl(checksignals,~,~)
         snrS(indx_neuron)=snrc;
         X_SPARSE(indx_neuron,:)=x_sparse;
         lambdass(indx_neuron)=lambda;
+        % Missing Raster?
  end
  function remove_driver(~,~)
      % rect: [xmin ymin width height]
