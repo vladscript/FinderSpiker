@@ -389,7 +389,7 @@ end
 %% Save Ensembles Intel
     checkname=1;
     while checkname==1
-        DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\Results';
+        DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\FinderSpiker\Processed Data';
         if exist(DefaultPath,'dir')==0
             DefaultPath=pwd; % Current Diretory of MATLAB
         end
@@ -423,31 +423,6 @@ end
 disp(Tensembles);
 disp(Tdetailed);
 
-%% Save Results Finel @ .mat File       ***********************************
-% update_ensemble_results;
-% Ask for Directory to save & MAT file to update
-%     checkname=1;
-%     while checkname==1
-%         DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\Results';
-%             if exist(DefaultPath,'dir')==0
-%                 DefaultPath=pwd; % Current Diretory of MATLAB
-%             end
-% 
-%         [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
-%             'MultiSelect', 'off',DefaultPath);
-%         dotindex=find(FileName=='.');
-%         if strcmp(FileName(1:dotindex-1),Experiment(2:end))
-%             checkname=0;
-%             % SAVE DATA
-%             save([PathName,FileName],'isSIGNALSOK','SIGNALSclean','DRIVEROK','SNRlambda','LAMBDASSpro',...
-%                 'New_Index','Raster_Condition','RASTER_WHOLE_Clean','XY_clean','RASTEROK','-append');
-%             disp([Experiment,'   -> UPDATED'])
-% 
-%         else
-%             disp('Not the same Experiment!')
-%             disp('Try again!')
-%         end
-%      end    
 %% Nested Functions
 % function plot
 % end

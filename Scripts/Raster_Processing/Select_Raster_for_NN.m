@@ -95,7 +95,7 @@ while ~strcmp('Yes',okbutton)
     %% SAVE OUTPUT
     checkname=1;
     while checkname==1
-        DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\Results';
+        DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\FinderSpiker\Processed Data';
         if exist(DefaultPath,'dir')==0
             DefaultPath=pwd; % Current Diretory of MATLAB
         end

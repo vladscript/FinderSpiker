@@ -27,18 +27,22 @@ for i=1:Ns
     [xdenoised,noisex]=mini_denoise(xd);
     %% DETRENDING FIXING #############################################
     [ValleAMP,ValleN]=findpeaks(-xdenoised);    % Get Valleys of Denoised Signal
-    ValleAMPabs=abs(ValleAMP);
-    ValleAMPflip=-ValleAMP;
-    [pV,binV]=ksdensity(ValleAMPabs);              % pdf of Valley Amplitudes
-    [Vp,Vbin,Vwidth]=findpeaks(pV,binV);
-    if numel(Vp)>1
-        % Take only small amplitudes
-        [~,indxsmallAMps]=min(Vbin);
-        LOWwaves=ValleAMPflip(ValleAMPflip<=Vbin(indxsmallAMps)+Vwidth(indxsmallAMps));
-        LOWwavesFrames=ValleN(ValleAMPflip<=Vbin(indxsmallAMps)+Vwidth(indxsmallAMps));
+    if ~isempty(ValleAMP)
+        ValleAMPabs=abs(ValleAMP);
+        ValleAMPflip=-ValleAMP;    % actual values
+        [pV,binV]=ksdensity(ValleAMPabs);    % pdf of Valley Amplitudes
+        [Vp,Vbin,Vwidth]=findpeaks(pV,binV); % modes of odf valleys
+        if numel(Vp)>1
+            % Take only small amplitudes
+            [~,indxsmallAMps]=min(Vbin);
+            LOWwaves=ValleAMPflip(ValleAMPflip<=Vbin(indxsmallAMps)+Vwidth(indxsmallAMps));
+            LOWwavesFrames=ValleN(ValleAMPflip<=Vbin(indxsmallAMps)+Vwidth(indxsmallAMps));
+        else
+            LOWwaves=ValleAMP;
+            LOWwavesFrames=ValleN;
+        end
     else
-        LOWwaves=ValleAMP;
-        LOWwavesFrames=ValleN;
+        LOWwavesFrames=[];
     end
     LOWwavesFrames=[1,LOWwavesFrames,Frames+1];
     LOWwavesFrames=unique(LOWwavesFrames);
@@ -55,7 +59,7 @@ for i=1:Ns
         [xdenoised,noisex]=mini_denoise(xd);
         % check out #######################
         %         plot(xdupdate); pause;
-        XD(i,:)=xdupdate;
+        XDupdate(i,:)=xdupdate;
     end
     
     %% FEATURE EXTRACTION ############################################

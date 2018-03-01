@@ -35,7 +35,7 @@ RASTEROK=cell(size(RASTER));         % clean Raster
 LAMBDASSpro=cell(size(preLAMBDAS));  % Modified lambdas
 SNRlambda=cell(size(preLAMBDAS));    % Sparse Empirical SNRs
 delta_lambda=0.25;                   % \lambda Step lambda_next=(1+_deltalambda)*lambda_present
-addpath SpaRSA;                      % Directory of Deconvolution Software
+% addpath SpaRSA;                      % Directory of Deconvolution Software
 [NVmax,NC]=size(DETSIGNALS);         % NC: N Conditions
 OddsMatrix=cell(NVmax,NC);           % Odds Matrix: {++,-+,+-,--}
 %% Review : Main Figure: Initialize ++++++++++++++++++++++++++++++++++++++
@@ -44,9 +44,9 @@ checksignals=figure('menubar','none','numbertitle','off',...
             'keypressfcn',@manual_processing_ctrl);
 
 % Define colormap
-CM=hot(20);          % Choose Colors
-CM=CM(end:-1:1,:);  % Turn it up-down
-colormap(CM);      % Make Color map
+CM=hot(20);         % Choose Colors
+CM=CM(end:-1:1,:);  % Turn up-down
+colormap(CM);       % Make Color map
 % Initialize AXIS and PLOTS (with randomw stuff) ##########################
 ax1=subplot(3,2,1); % Raw Data - - - - - - - - - - - - - -      
 plotsignal=plot(randn(1,10),'Parent',ax1);

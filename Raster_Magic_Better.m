@@ -47,8 +47,8 @@ dyename = inputdlg('Fluorophore : ',...
 
 %% Read Names, Path and Coordinates***********************************
 [Names_Conditions,NumberofVideos,FN,PathName,XY,r]=Read_Videos(DefaultPath);
-NV=max(str2num(cell2mat(NumberofVideos))); % Max N of Videos
-[~,NC]=size(FN);                           % N Conditions
+NV=max(str2double(cell2mat(NumberofVideos)));   % Max N of Videos
+[~,NC]=size(FN);                                % N Conditions
 %% Initalization Data Output
 SIGNALS=cell(NV,NC);
 DETSIGNALS=cell(NV,NC);
@@ -66,8 +66,7 @@ SNRs=cell(NV,NC);
 DRIVERs=cell(NV,NC);
 
 %% Load Data *********************************************************
-
-
+% For each CONDITION and VIDEO
 for i=1:NC
     for j=1:str2double(NumberofVideos{i})
         FileName=FN{j,i};
@@ -79,23 +78,35 @@ for i=1:NC
 end
 [H,W]=size(mov(1).cdata);   % Height & Width
 clear mov;                  % Clear Video Structure
-%% Save(1) RAW Data * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
-% Experiment: Name of the folder
+%% Save(1) RAW Data * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+% Direcotry to Save: Up from  this one (pwd)
 FileDirSave=pwd;
+slashes=find(FileDirSave=='\');
+FileDirSave=FileDirSave(1:slashes(end));
+% Get the Experiment ID:
 slashes=find(PathName=='\');
-Experiment=PathName(slashes(end-1):slashes(end)-1);
-save([FileDirSave,'\Results',Experiment,'.mat'],'Experiment','SIGNALS',...
+Experiment=PathName(slashes(end-1):slashes(end)-1); % Experiment ID
+if isdir([FileDirSave,'\Processed Data'])
+    save([FileDirSave,'\Processed Data',Experiment,'.mat'],'Experiment','SIGNALS',...
     'Names_Conditions','NumberofVideos','XY','fs','r');
+    disp('SAVED RAW DATA')
+else % Create Directory
+    disp('Directory >Processed Data< created')
+    mkdir([FileDirSave,'\Processed Data']);
+    save([FileDirSave,'\Processed Data',Experiment,'.mat'],'Experiment','SIGNALS',...
+    'Names_Conditions','NumberofVideos','XY','fs','r');
+    disp('SAVED RAW DATA')
+end
 
 %% SETUP PROCESSING PARAMTERS ******************************
 % Setup for Auto Regressive Process Estimation
 L=30;              % seconds  of the Fluorophore Response
 p=3;               % AR(p) initial AR order        
 taus_0= [.75,2,1]; % starting values for taus
-% addpath SpaRSA;         % Directory of Deconvolution Software
 
 %% DETRENDING AND SPARSE DECONVOLVE DETECTION
 [NV,NC]=size(SIGNALS);
+Tresume=table;
 disp('**************** +++[Processing]+++ *************************')
 for i=1:NC
 % for i=2:NC
@@ -113,7 +124,7 @@ for i=1:NC
         %%% Denoising ******************************************************
         % Main Features to Detect Signal or Noise:
         % [Xest,SNRbyWT,SkewSignal,ABratio,SkewNoise]=denoise_wavelet(XD,X);
-        [Xest,SNRbyWT,SkewSignal,ABratio,SkewNoise,XDupdate]=denoise_wavelet(XD);
+        [Xest,SNRbyWT,SkewSignal,~,SkewNoise,XDupdate]=denoise_wavelet(XD);
         %%% Decision Features
         % SNR >0 *******************************************
         SNRindx=find(SNRbyWT>0);
@@ -123,10 +134,10 @@ for i=1:NC
         indxSKEW=find(SkewSignal>Th_Skew);
         indxSkewness=makerowvector(indxSKEW);
         % Peaks Ratio of the positive skew signals *********
-        indxPeakRatio=find(ABratio(indxSKEW)>1); %!!!!!!!!! REMOVED
+        % indxPeakRatio=find(ABratio>1); %!!!!!!!!! [ IGNORED ]
         % Make Row Vectors [1xN]:-------------------------
         SNRindx=makerowvector(SNRindx);
-        indxPeakRatio=makerowvector(indxPeakRatio);
+        % indxPeakRatio=makerowvector(indxPeakRatio);
         % Get Non-repeated indexes:
         Accepted_index=unique([SNRindx,indxSkewness]);
         Rejected_index=setdiff(1:Ns,Accepted_index);
@@ -194,15 +205,20 @@ for i=1:NC
             % FR=repmat(Rcanon,numel(AcceptedINDX),1);
             
             %%% Sparse Deconvolution *******************************************
-            [DRIVER,LAMBDASS]=maxlambda_finder(XD(AcceptedINDX,:),FR);
+            [DRIVER,LAMBDASS]=maxlambda_finder(XDupdate(AcceptedINDX,:),FR);
             % Ignore Drivers with bigger Negative Drivers than positive ones
             Dindex=find( abs(min(DRIVER'))<abs(max(DRIVER')) );
-            % Update Variables:
-            D=DRIVER(Dindex,:);
-            FR=FR(Dindex,:);
-            LAMBDASS=LAMBDASS(Dindex);
-            ActiveNeurons=AcceptedINDX(Dindex);
+            % KEEP SNR>0 and High+Skewed Signals
+            ActiveNeurons=unique([AcceptedINDX(Dindex),makerowvector(Accepted_index)]);
             InactiveNeurons=setdiff(1:Ns,ActiveNeurons);
+            % Rejected by Negative Dirver:
+            ReDri=length(AcceptedINDX)-length(ActiveNeurons);
+            fprintf('rejected by (-) driver: %2i\n',ReDri)
+            % Update Variables:
+            [~,okINDX]=intersect(AcceptedINDX,ActiveNeurons);
+            D=DRIVER(okINDX,:);
+            FR=FR(okINDX,:);
+            LAMBDASS=LAMBDASS(okINDX);
             % Negative Threshold to clean Drivers ****************************
             ThDriver=abs(min(D'));
             % Clean Drivers (only +++Drivers)
@@ -216,7 +232,6 @@ for i=1:NC
             LAMBDASS=LAMBDASS( sum(D,2)~=0 );
             D=D(sum(D,2)~=0, :);
             FR=FR(sum(D,2)~=0,:);
-            
         else
             AcceptedINDX=[];
             RejectedINDX=setdiff(1:Ns,AcceptedINDX);
@@ -258,23 +273,22 @@ for i=1:NC
 %         drawnow;
 
         % Cells to save PREPROCESSING ####################################
-        
-        DETSIGNALS{j,i}=XD;             % Detrended Signals
+        DETSIGNALS{j,i}=XDupdate;       % Detrended Signals
         ESTSIGNALS{j,i}=Xest;           % Wavelet Denoised
-        SNRwavelet{j,i}=SNRbyWT;        % Empirical SNR             * To Datasheet
+        SNRwavelet{j,i}=SNRbyWT;        % Empirical SNR                 * To Datasheet
         Responses{j,i}=FR;              % Fluorophore Responses
-        TAUSall{j,i}=TAUS;            % [taus {rise, fall},gain]    * To Datasheet
+        TAUSall{j,i}=TAUS;              % [taus {rise, fall},gain]      * To Datasheet
         preDRIVE{j,i}=D;                % Preliminar Drives (+ & -)
-        preLAMBDAS{j,i}=LAMBDASS;       % lambda Parameter          * To Datasheet
-        isSIGNALS{j,i}=ActiveNeurons;   % Signal Indicator          * To Datasheet       
+        preLAMBDAS{j,i}=LAMBDASS;       % lambda Parameter              * To Datasheet
+        isSIGNALS{j,i}=ActiveNeurons;   % Signal Indicator              * To Datasheet       
         RASTER{j,i}=Raster;             % Preliminar Raster
         % Table Data For Processing Log Details ##########################
         TimeProcessing=toc;             % Processing Latency [s]
         T=table( dyename,{Experiment},{num2str(fs)},{Names_Conditions{i}},...
             {num2str(length(ActiveNeurons))},{num2str(Frames)},...
             {num2str(Th_SNR)},{num2str(Th_Skew)}, {num2str(TimeProcessing,2)} );
-%         SavetoExcel(T);
-        % ARcoeffcients{j,i}=ARc;       % Autoregressive Coefficients
+        Tresume=[Tresume;T];
+        % ARcoeffcients{j,i}=ARc;                 % Autoregressive Coefficients
         % SIGNALSclean{j,i}=X_SPARSE;             % Cleansignals
         % LAMBDASpro{j,i}=LAMBDASproc;            % Sparse Parameter              * To Datasheet
         % SNRs{j,i}=SNRbySD;                      % Signal to Noise Ratio [dB]    * To Datasheet lambdas<1
@@ -285,11 +299,33 @@ for i=1:NC
     disp(' |||||0||||||||||||||||0||||DATA PROCESSED|||||||||||||||||0||||| ')
     disp(' |||0||||||||||||0||||||||||||||||0|||||||||||||||||||||||||||||| ')
 end
- %% SAVING(2)
+ %% SAVING(2) Processed Data & Feature Extraction |  Resume Table 
 % Save Auto-Processed DATA * * * * * * * * * * * * * * * * * * * * * * * * 
-save([FileDirSave,'\Results',Experiment,'.mat'],'DETSIGNALS','ESTSIGNALS','SNRwavelet',...
+save([FileDirSave,'\Processed Data',Experiment,'.mat'],'DETSIGNALS','ESTSIGNALS','SNRwavelet',...
     'preDRIVE','preLAMBDAS','TAUSall','RASTER','isSIGNALS','Responses','dyename','-append');
+disp('Updated Features Extration DATA')
+% Save Resume Table
+ okindxname=[];
+for n=1:length(Experiment)
+    if isalpha_num(Experiment(n))
+        okindxname=[okindxname,n];
+    end
+end
+ColumnNames={'Fluo_Dye','Experiment','f_s','Condition','Cells','Frames',...
+    'minSNR','minSKEW','TimeProcessing'};
+Tresume.Properties.VariableNames=ColumnNames;
 
+if isdir([FileDirSave,'\Resume Tables'])
+    writetable(Tresume,[FileDirSave,'\Resume Tables',Experiment,'.csv'],...
+        'Delimiter',',','QuoteStrings',true);
+    disp('Saved Table Resume')
+else % Create Directory
+    disp('Directory >Resume Tables< created')
+    mkdir([FileDirSave,'\Resume Tables']);
+    writetable(Tresume,[FileDirSave,'\Resume Tables',Experiment,'.csv'],...
+        'Delimiter',',','QuoteStrings',true);
+    disp('Saved Table Resume')
+end
 %% Sort & Clean Rasters ***************************************************
 % make it nested function--->
 % Sort by Activation in each Condition:
@@ -303,16 +339,14 @@ RASTER_WHOLE_Clean=RASTER_WHOLE_Clean(ActiveNeurons,:);
 XY_clean=XY_clean(ActiveNeurons,:);                             % Clean Coordinates
 %% PLOT RESULTS
 Plot_Raster_V(RASTER_WHOLE_Clean,fs);                           % Clean Whole Raster
-set(gcf,'Name',['ID: ',Experiment(2:end)],'NumberTitle','off')
+set(gcf,'Name',['ID: ',Experiment(2:end),' pre-processing'],'NumberTitle','off')
 
 Label_Condition_Raster(Names_Conditions,Raster_Condition,fs);   % Labels
 %% SAVE ReSULTS
-save([FileDirSave,'\Results',Experiment,'.mat'],'New_Index','Raster_Condition',...
+save([FileDirSave,'\Processed Data',Experiment,'.mat'],'New_Index','Raster_Condition',...
     'RASTER_WHOLE_Clean','XY_clean','-append');
-disp('Saved at Results Folder')
-% useful:
-% addpath SpaRSA; % Directory of Deconvolution Software
-% addpath NeuralNetworks; % NeuralNetworks: Ensamble Analysis
+disp('Saved Sorted Raster Intel')
+
 %% Visual Inpspection & Manual Processing ********************************* GREAT!
 % Ask if so
 button = questdlg('Results Inspection?');
@@ -342,7 +376,7 @@ if strcmp('Yes',button)
     % Ask for Directory to save & MAT file to update
     checkname=1;
     while checkname==1
-        DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\Results';
+        DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\FinderSpiker\Processed Data';
             if exist(DefaultPath,'dir')==0
                 DefaultPath=pwd; % Current Diretory of MATLAB
             end
@@ -367,7 +401,7 @@ if strcmp('Yes',button)
     [Nv,Nc]=size(ESTSIGNALS);
     NNeurons=length(XY);
     % SETUP ACCUMULATIVE ARRAYS
-    EXPNAME=[];
+    %EXPNAME=[];
     FLUOROPHORE=[];
     CONDNAME={};
     COORD=[];
@@ -380,7 +414,7 @@ if strcmp('Yes',button)
     for c=1:Nc
         for v=1:Nv
             if ~isempty(ESTSIGNALS{v,c})
-                EXPNAME=[EXPNAME;repmat(Experiment,NNeurons,1)];
+                %EXPNAME=[EXPNAME;repmat(Experiment,NNeurons,1)];
                 FLUOROPHORE=[FLUOROPHORE;repmat(dyename{1},NNeurons,1)];
                 % CONDNAME=[CONDNAME;repmat(Names_Conditions{c},NNeurons,1)];
                 LWord=length(Names_Conditions{c});
@@ -404,23 +438,24 @@ if strcmp('Yes',button)
             end
         end
     end
-    Tfeat=table(EXPNAME,FLUOROPHORE,CONDNAME,COORD,RAD,SNRW,SNRL,SKEWDEN,LAMB,ODDS);
-    Tfeat.Properties.VariableNames={'Experiment','Dye','Condition','ROIcoordinates',...
+    Tfeat=table(FLUOROPHORE,CONDNAME,COORD,RAD,SNRW,SNRL,SKEWDEN,LAMB,ODDS);
+    Tfeat.Properties.VariableNames={'Dye','Condition','ROIcoordinates',...
         'ROIradius','SNRwavelet','SNRdeconv','SignalSkewness','lambda','Detection'};
     disp('Saving...')
     summary(Tfeat)
-    FileProcessingFeatures='Features_Processgin_Table.xls';
-    if exist(FileProcessingFeatures,'file')>0 % If the File Already Exists
-        disp('Writing on Table ...')
-        Tprevious=readtable(FileProcessingFeatures);
-        [ColumnsUsed,~]=size(Tprevious);
-        corner_indx=['A',num2str(ColumnsUsed+2)];
-        writetable(Tfeat,FileProcessingFeatures,'Sheet',1,'Range',corner_indx,...
-            'WriteVariableNames',0);
-    else                            % New File
-        disp('Creating Table Processing Settings...')
-        writetable(Tfeat,FileProcessingFeatures,'Sheet',1);
+    FileProcessingFeatures=[Experiment,'-Features.csv'];
+    if isdir([FileDirSave,'\Features Tables'])
+        writetable(Tfeat,[FileDirSave,'\Features Tables',FileProcessingFeatures],...
+            'Delimiter',',','QuoteStrings',true);
+        disp('Saved Table Features')
+    else % Create Directory
+        disp('Directory >Resume Tables< created')
+        mkdir([FileDirSave,'\Features Tables']);
+        writetable(Tfeat,[FileDirSave,'\Features Tables',FileProcessingFeatures],...
+            'Delimiter',',','QuoteStrings',true);
+        disp('Saved Table Features')
     end
+    
     disp('saved.')
 end
 
