@@ -40,10 +40,10 @@ delta_lambda=0.25;                   % \lambda Step lambda_next=(1+_deltalambda)
 OddsMatrix=cell(NVmax,NC);           % Odds Matrix: {++,-+,+-,--}
 %% Review : Main Figure: Initialize ++++++++++++++++++++++++++++++++++++++
 checksignals=figure('menubar','none','numbertitle','off',...
-            'position',[46 42 1220 650],...
+            'position',[46 42 600 450],...
             'keypressfcn',@manual_processing_ctrl);
 
-% Define colormap
+% Define colormap for raster image
 CM=hot(20);         % Choose Colors
 CM=CM(end:-1:1,:);  % Turn up-down
 colormap(CM);       % Make Color map
@@ -72,11 +72,11 @@ ax5=subplot(3,2,6); % CoAc Signal  - - - - - - - - - - - - - - -
 plotcoac=plot(randn(1,10),'Parent',ax5);
 plotcoac.Parent.YLabel.String='CoAc';
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-%% Setup for Processing Noisy Records
+%% Setup for Processing Noisy Records (load from .mat file setup & script)
 L=30;              % seconds  of the Fluorophore Response
 p=3;               % AR(p) initial AR order        
 taus_0= [.75,2,1]; % starting values for taus
-addpath SpaRSA;         % Directory of Deconvolution Software
+% addpath SpaRSA;         % Directory of Deconvolution Software
 %% CHECK FALSE POSITIVE ##################################################
 for i=1:NC                      % Condition Loop
     for j=1:NVmax               % Video Loop
@@ -120,24 +120,25 @@ for i=1:NC                      % Condition Loop
                 LAMBDASSpro{j,i}(isSIGNAL)=lambdass;
                 SNRlambda{j,i}(isSIGNAL)=snrS;
                 % Get DATA Initialization +++++++++++++++++++++++++++++++++++
-                indx_neuron=1;      % Intialize First Cell
-                neuron=isSIGNAL(indx_neuron);                   % Neuron
-                x=X(indx_neuron,:);                             % Raw Signal
-                r=FR(indx_neuron,:);                            % Response
-                xd=XD(indx_neuron,:);                           % Detrended
-                d=D(indx_neuron,:);                             % Driver
-                daux=d; daux(d<=0)=0;                           % Positve Driver
-                x_sparse=X_SPARSE(indx_neuron,:);               % Clean Signal
-                snrc=snrS(indx_neuron);                         % SNR Sparse
-                lambda=lambdass(indx_neuron);                   % Sparse Paramter
-                d=daux;                                         % Driver++
-                % Plot Data +++++++++++++++++++++++++++++++++++++++++++++++++
-                Plot_Data_Now();        % Where Magic Happens
+                indx_neuron=1;                        % Intialize First Cell
+                neuron=isSIGNAL(indx_neuron);         % Neuron ID
+                x=X(indx_neuron,:);                   % Raw Signal
+                r=FR(indx_neuron,:);                  % Response
+                xd=XD(indx_neuron,:);                 % Detrended
+                d=D(indx_neuron,:);                   % Driver
+                daux=d; daux(d<=0)=0;                 % Positve Driver
+                x_sparse=X_SPARSE(indx_neuron,:);     % Clean Signal
+                snrc=snrS(indx_neuron);               % SNR Sparse
+                lambda=lambdass(indx_neuron);         % Sparse Paramter
+                d=daux;                               % Driver++
+                % Plot Data +++++++++++++++++++++++++++++++++++++++++++++++
+                Plot_Data_Now();        % Where Magic Happens: plot figure
                 % Pause **************************************************
                 if indx_neuron<=length(isSIGNAL)
-                    % Maybe OK button
+                    % Maybe OK button or Navigator
                     pause;
-                    disp('Another Video in the Wall')
+                    figure(checksignals) % Focus on Window
+                    disp('[Another Video in the Wall]')
                 end
                 % Ouput # # # # # # # # # # # # # # # # # # # # # # # # # # #
                 % ReviewedSignals
@@ -156,14 +157,19 @@ for i=1:NC                      % Condition Loop
                 OddsMatrix{j,i}.FalsePositive=FalsePositive;        % -+
                 OddsMatrix{j,i}.FalseNegative=[];                   % -- initialize emtpty
                 OddsMatrix{j,i}.TrueNegative=[];                    % +- initialize emtpty
+            else
+                fprintf('No Signals Detected @ %s Video %i\n',Names_Conditions{i}',j)
             end
+            
+        else
+           fprintf('No %i Video',j) 
         end
     end
 end
 close(checksignals);
 %% Review : Main Figure: RE-Initialize ++++++++++++++++++++++++++++++++++++++
 checksignals=figure('menubar','none','numbertitle','off',...
-            'position',[86 42 1220 650],...
+            'position',[86 42 600 450],...
             'keypressfcn',@manual_processing_ctrl);
 colormap(CM);      % Make Color map
 % Initialize AXIS and PLOTS (with randomw stuff) ##########################
@@ -216,7 +222,10 @@ for i=1:NC                      % Condition Loop
                     disp('WARNING: Response Function Missestimation')
                 end
             end
-            [D,lambdass]=maxlambda_finder(XD,FR);
+            % Input:        empty-> +&- | 0->only+ | 1->+or-
+            tic;
+            [D,lambdass]=maxlambda_finder(XD,FR); % [[[DECONVOLUTION]]]
+            toc
             snrS=zeros(size(lambdass));      % Initialize Output SNRs
             % Clean Drivers (only +++Drivers) ++++++++++++++++++++++++++++
             ThDriver=abs(min(D'));
@@ -236,8 +245,8 @@ for i=1:NC                      % Condition Loop
             end
             % Get Raster +++++++++++++++++++++++++++++++++++++++++++++++++
             for n=1:length(notSIGNAL)
-                [~,Np]=findpeaks(D(n,:)); % way too clean
-                % [~,Np]=find(D(n,:)>0);  % alright
+                % [~,Np]=findpeaks(D(n,:)); % way too clean
+                [~,Np]=find(D(n,:)>0);  % alright
                 R(notSIGNAL(n),Np)=1;
             end
             % Initialize Outputs               Automatic Initialization
@@ -265,6 +274,7 @@ for i=1:NC                      % Condition Loop
                 if indx_neuron<=length(isSIGNAL)
                     % Maybe OK button
                     pause;
+                    figure(checksignals)
                     disp('Another Video in the Wall')
                 end
                 % Ouput # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -321,14 +331,13 @@ close(checksignals);
 % end
 
 function Get_Data()
-    neuron=isSIGNAL(indx_neuron);                   % Neuron
-    x=X(indx_neuron,:);                             % Raw Signal
-    r=FR(indx_neuron,:);                            % Response
-    xd=XD(indx_neuron,:);                           % Detrended
-    d=D(indx_neuron,:);                             % Driver
-    daux=d; daux(d<=0)=0;                           % Positve Driver
-    x_sparse=X_SPARSE(indx_neuron,:);               % Clean Signal
-    % x_sparse=sparse_convolution(d,r);               % Clean Signal
+    neuron=isSIGNAL(indx_neuron);         % Neuron
+    x=X(indx_neuron,:);                   % Raw Signal
+    r=FR(indx_neuron,:);                  % Response
+    xd=XD(indx_neuron,:);                 % Detrended
+    d=D(indx_neuron,:);                   % Driver
+    daux=d; daux(d<=0)=0;                 % Positve Driver
+    x_sparse=X_SPARSE(indx_neuron,:);     % Clean Signal
     snrc=10*log(var(x_sparse)/var(xd-x_sparse));   % SNR
     lambda=lambdass(indx_neuron);  
 end
@@ -385,7 +394,8 @@ function Plot_Data_Now()
         % imagesc(plotraster.Parent,Raux);
         % axis(plotraster.Parent,[1,Frames,0,Cells])
         plotraster.Parent.XTick=[];
-        plotraster.Parent.YTick=[];
+        % plotraster.Parent.YTick=[];
+        plotraster.Parent.YTick=neuron;
         
         % CoAc Signal  - - - - - - - - - - - - - - -
         plotcoac.YData=sum(R);
@@ -401,14 +411,14 @@ function manual_processing_ctrl(checksignals,~,~)
             disp('Next ------->')
             if indx_neuron<length(isSIGNAL)
                 preneuron=isSIGNAL(indx_neuron);
-                indx_neuron=indx_neuron+1;
+                indx_neuron=indx_neuron+1; % Increases
             else
                 preneuron=isSIGNAL(indx_neuron);
-                indx_neuron=length(isSIGNAL);
+                indx_neuron=length(isSIGNAL); % Stays
             end
 %             [neuron,x,xd,daux,r,x_sparse,snrc,lambda]=Get_Data(indx_neuron,...
 %                 X,FR,XD,D,lambdass,isSIGNAL); 
-            Get_Data;  d=daux;
+            Get_Data;  % d=daux;
             disp(neuron)
             Plot_Data_Now;
             % Set_Name_Axis;
@@ -425,7 +435,7 @@ function manual_processing_ctrl(checksignals,~,~)
             end
 %              [neuron,x,xd,daux,r,x_sparse,snrc,lambda]=Get_Data(indx_neuron,...
 %                 X,FR,XD,D,lambdass,isSIGNAL); d=daux;
-            Get_Data;  d=daux;
+            Get_Data;  %d=daux;
             disp(neuron)
             Plot_Data_Now;
             % Set_Name_Axis
@@ -465,7 +475,9 @@ function manual_processing_ctrl(checksignals,~,~)
         snrS(indx_neuron)=snrc;
         X_SPARSE(indx_neuron,:)=x_sparse;
         lambdass(indx_neuron)=lambda;
-        % Missing Raster?
+        % Update Raster
+        R(neuron,:)=0;
+        R(neuron,daux>0)=1;
  end
  function remove_driver(~,~)
      % rect: [xmin ymin width height]
@@ -479,9 +491,9 @@ function manual_processing_ctrl(checksignals,~,~)
         frames2del(2)=Frames;
     end
     daux(frames2del(1):frames2del(2))=0;
-    R(neuron,frames2del(1):frames2del(2))=0;
-    Plot_Data_Now;      % update plot
     update_data;        % saves daux
+    Plot_Data_Now;      % update plot
+    
     sprintf('Deleted Driver Frames: %d : %d',frames2del)
  end
 
@@ -499,19 +511,9 @@ function manual_processing_ctrl(checksignals,~,~)
     % daux(frames2del(1):frames2del(2))=0;
     R(:,frames2del(1):frames2del(2))=0;
     Plot_Data_Now;      % update plot
-    update_data;        % saves daux
-    sprintf('Deleted Raster Frames: %d : %d',frames2del)
+    % update_data;        % saves daux
+    sprintf('Deleted Raster %d : %d frames \n',frames2del)
  end
 
-end % END OF THE WORLD
-
-%% Nested Funnctions
-% Manual Controller Processing ****************
-% Use keyboard input for processing signals
-% Input
-% Current Figure
-% Up    Arrow
-% Down  Arrow
-% Left  Arrow
-% Right Arrow
-% Output
+end
+%% END OF THE WORLD

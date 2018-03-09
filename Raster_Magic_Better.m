@@ -220,7 +220,7 @@ for i=1:NC
             FR=FR(okINDX,:);
             LAMBDASS=LAMBDASS(okINDX);
             % Negative Threshold to clean Drivers ****************************
-            ThDriver=abs(min(D'));
+            ThDriver=min(abs(D,2));
             % Clean Drivers (only +++Drivers)
             [Nd,~]=size(D);
             for n=1:Nd
@@ -258,15 +258,15 @@ for i=1:NC
             disp('             *********************' )
         end
         %%% GET RASTER *****************************************************
-        Raster=zeros(size(XD));
-        if ~isempty(ActiveNeurons)
-            [AN,~]=size(D);
-            for n=1:AN
-                % [~,Np]=findpeaks(D(n,:)); % way too clean
-                [~,Np]=find(D(n,:)>0);      % alright
-                Raster(ActiveNeurons(n),Np)=1;
-            end
-        end
+        Dfix=analyze_driver_signal(D);
+        % Raster=zeros(size(XD));
+        TotalCells=length(XY);
+        Raster=get_raster(1,Dfix,ActiveNeurons,TotalCells);
+        % Examples:
+        % R1=get_raster(1,Dfix,ActiveNeurons,TotalCells);
+        % R2=get_raster(2,XDupdate(ActiveNeurons,:),ActiveNeurons,TotalCells,TAUS,fs,Xest(ActiveNeurons,:));
+        % R3=get_raster(3,Dfix,ActiveNeurons,TotalCells,FR);
+        
         % Monitor Figure **************************************************
 %         figureMonitor=gcf;
 %         figureMonitor.Name=[Experiment(2:end),' ',Names_Conditions{i},' vid:',num2str(j)];
@@ -381,13 +381,13 @@ if strcmp('Yes',button)
                 DefaultPath=pwd; % Current Diretory of MATLAB
             end
 
-        [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
+        [FileName,PathNamePro] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
             'MultiSelect', 'off',DefaultPath);
         dotindex=find(FileName=='.');
         if strcmp(FileName(1:dotindex-1),Experiment(2:end))
             checkname=0;
             % SAVE DATA
-            save([PathName,FileName],'isSIGNALSOK','SIGNALSclean','DRIVEROK','SNRlambda','LAMBDASSpro',...
+            save([PathNamePro,FileName],'isSIGNALSOK','SIGNALSclean','DRIVEROK','SNRlambda','LAMBDASSpro',...
                 'New_Index','Raster_Condition','RASTER_WHOLE_Clean','XY_clean','RASTEROK','-append');
             disp([Experiment,'   -> UPDATED'])
 
