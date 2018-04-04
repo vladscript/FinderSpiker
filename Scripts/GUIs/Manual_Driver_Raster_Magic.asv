@@ -50,11 +50,12 @@ colormap(CM);       % Make Color map
 % Initialize AXIS and PLOTS (with randomw stuff) ##########################
 ax1=subplot(3,2,1); % Raw Data - - - - - - - - - - - - - -      
 plotsignal=plot(randn(1,10),'Parent',ax1);
-plotsignal.Parent.YLabel.String='Raw \Delta F/F_{0}';
+plotsignal.Parent.YLabel.String='Raw F';
 plotsignal.Parent.XTick=[];
 ax2=subplot(3,2,3); % Detrended Data - - - - - - - - - - -
 % plotdetrended=plot(randn(1,10),'Parent',ax2);
 set(ax2,'NextPlot','replacechildren');
+% \Delta F/F_{0}
 % plotdetrended.Parent.YLabel.String='Detrended';
 % plotdetrended.Parent.XTick=[];
 ax3=subplot(3,2,5); %  Driver - - - - - - - - - - - - - - - 
@@ -116,7 +117,7 @@ for i=1:NC                      % Condition Loop
                 % Initialize Outputs (2/2)              Automatic Initialization
                 SIGNALSclean{j,i}(isSIGNAL,:)=X_SPARSE;
                 DRIVEROK{j,i}(isSIGNAL,:)=D;
-                RASTEROK{j,i}=R;
+                % RASTEROK{j,i}=R;
                 LAMBDASSpro{j,i}(isSIGNAL)=lambdass;
                 SNRlambda{j,i}(isSIGNAL)=snrS;
                 % Get DATA Initialization +++++++++++++++++++++++++++++++++++
@@ -140,16 +141,17 @@ for i=1:NC                      % Condition Loop
                     figure(checksignals) % Focus on Window
                     disp('[Another Video in the Wall]')
                 end
-                % Ouput # # # # # # # # # # # # # # # # # # # # # # # # # # #
-                % ReviewedSignals
-                activeINDX=find(or(sum(R(isSIGNAL,:),2)~=0,snrS>-Inf)); % Indexes of Real Active
-                yesisSIGNAL=isSIGNAL( activeINDX );                               % Active Neurons
-                isSIGNALSOK{j,i}=yesisSIGNAL;                                     % Save AN
-                SIGNALSclean{j,i}(yesisSIGNAL,:)=X_SPARSE(activeINDX,:);          % Update Clean
-                DRIVEROK{j,i}(yesisSIGNAL,:)=D(activeINDX,:);                     % Driver Clean
-                RASTEROK{j,i}=R(activeINDX,:);                                    % Raster
-                LAMBDASSpro{j,i}(yesisSIGNAL)=lambdass(activeINDX);               % Lambdas Fit
-                SNRlambda{j,i}(yesisSIGNAL)=snrS(activeINDX);                                  % Sparse SNR
+                % Ouput+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#
+                % Reviewed Signals base on Matrix size(R)= All_Cells x Frames
+                % activeINDX=find(or(sum(R(isSIGNAL,:),2)~=0,snrS>-Inf)); % Indexes of Real Active
+                activeINDX=find(sum(R(isSIGNAL,:),2)>0);     % Indexes of Detected Ones
+                yesisSIGNAL=isSIGNAL(activeINDX);            %Indexes of Active Neurons
+                isSIGNALSOK{j,i}=yesisSIGNAL;    % Save AN
+                SIGNALSclean{j,i}(yesisSIGNAL,:)=X_SPARSE(activeINDX,:); % Update Clean
+                DRIVEROK{j,i}(yesisSIGNAL,:)=D(activeINDX,:);            % Driver Clean
+                RASTEROK{j,i}(yesisSIGNAL,:)=R(activeINDX,:);            % Raster
+                LAMBDASSpro{j,i}(yesisSIGNAL)=lambdass(activeINDX);      % Lambdas Fit
+                SNRlambda{j,i}(yesisSIGNAL)=snrS(activeINDX);            % Sparse SNR
                 % Detect False (+) ------------------------------------------
                 TruePositive=isSIGNAL(activeINDX);                                % ++
                 FalsePositive=isSIGNAL(setdiff(1:length(isSIGNAL),activeINDX));   % -+
@@ -211,7 +213,7 @@ for i=1:NC                      % Condition Loop
             isSIGNAL=notSIGNAL;              % Posible False (-)
             X=SIGNALS{j,i}(notSIGNAL,:);     % Raw Fluorescence {NOT-detected}
             XD=DETSIGNALS{j,i}(notSIGNAL,:); % Detrended Fluorescence {NOT-detected}
-            R=RASTER{j,i};                   % Raster        {ALL CELLS}
+            R=RASTEROK{j,i};                 % Raster        {ALL CELLS}
             X_SPARSE=zeros(size(X));         % Initialize Sparse Clean Signals
             axisdetren=[0,Frames,min(min(XD)),max(max(XD))]; % Axis for Detrended Signals
             % Process Noise Record +++++++++++++++++++++++++++++++++++++++
@@ -223,9 +225,7 @@ for i=1:NC                      % Condition Loop
                 end
             end
             % Input:        empty-> +&- | 0->only+ | 1->+or-
-            tic;
-            [D,lambdass]=maxlambda_finder(XD,FR); % [[[DECONVOLUTION]]]
-            toc
+            [D,lambdass]=maxlambda_finder(XD,FR,1);  % [[[DECONVOLUTION]]]
             snrS=zeros(size(lambdass));      % Initialize Output SNRs
             % Clean Drivers (only +++Drivers) ++++++++++++++++++++++++++++
             ThDriver=abs(min(D'));
@@ -252,7 +252,7 @@ for i=1:NC                      % Condition Loop
             % Initialize Outputs               Automatic Initialization
             SIGNALSclean{j,i}(isSIGNAL,:)=X_SPARSE;
             DRIVEROK{j,i}(isSIGNAL,:)=D;
-            RASTEROK{j,i}=R;
+            % RASTEROK{j,i}=R;
             LAMBDASSpro{j,i}(isSIGNAL)=lambdass;
             SNRlambda{j,i}(isSIGNAL)=snrS;
              % Get DATA Initialization +++++++++++++++++++++++++++++++++++
@@ -277,10 +277,12 @@ for i=1:NC                      % Condition Loop
                     figure(checksignals)
                     disp('Another Video in the Wall')
                 end
-                % Ouput # # # # # # # # # # # # # # # # # # # # # # # # # # #
-                % Reviewed Signals
-                recoveredINDX=find( or(sum(R(isSIGNAL,:),2)~=0,snrS>-Inf) );
-                recoSIGNAL=isSIGNAL( recoveredINDX );
+                % Ouput-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+                % Reviewed Signals base on Matrix size(R)= All_Cells x Frames
+                %recoveredINDX=find( or(sum(R(isSIGNAL,:),2)~=0,snrS>-Inf) );
+                recoveredINDX=find(sum(R,2)~=0);
+                % recoSIGNAL=isSIGNAL( recoveredINDX ); NO!
+                recoSIGNAL=recoveredINDX ;
                 isSIGNALSOK{j,i}=union(isSIGNALSOK{j,i},recoSIGNAL);
                 SIGNALSclean{j,i}(recoSIGNAL,:)=X_SPARSE(recoveredINDX,:);
                 DRIVEROK{j,i}(recoSIGNAL,:)=D(recoveredINDX,:);

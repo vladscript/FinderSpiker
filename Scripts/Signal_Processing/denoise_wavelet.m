@@ -3,7 +3,6 @@
 % argmin_dbw  { AUC(noise) }
 % Input
 %   XD:     Detrended Signal
-%   X:      Raw Signals
 % Output
 %   Xest:       Estimated Denoised Signals
 %   SNRbyWT:    SNR by wavelet denoising
@@ -43,25 +42,48 @@ for i=1:Ns
         end
     else
         LOWwavesFrames=[];
+        disp('-------------------------No distortion issues')
     end
     LOWwavesFrames=[1,LOWwavesFrames,Frames+1];
     LOWwavesFrames=unique(LOWwavesFrames);
+%     % Plot Results
+%     plot(xd)
+%     hold on
+%     plot(xdenoised);
+%     plot(LOWwavesFrames(2:end-1),xdenoised(LOWwavesFrames(2:end-1)),'*k')
+%     hold off
+%     axis tight; grid on;
     xlin=[];
-    if numel(LOWwavesFrames)>1
+    if numel(LOWwavesFrames)>2
         for n=1:numel(LOWwavesFrames)-1
             xxtr=xdenoised(LOWwavesFrames(n):LOWwavesFrames(n+1)-1);
             mslope=(xxtr(end)-xxtr(1))/length(xxtr);
             xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
+            % xtrace=xxtr-xlinc;
+            if length(xxtr-xlinc)>2
+                AmpPeak=findpeaks((xxtr-xlinc),'SortStr','descend');
+                if ~isempty(AmpPeak)>0
+                    if AmpPeak(1)>=std(noisex)
+                        disp('-OK-')
+                    else
+                        xlinc=xxtr;
+                        disp('low movements <A>')
+                    end
+                else
+                    disp('low movements <B>')
+                end
+            end
             xlin=[xlin,xlinc];
         end
         disp('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Fixing Distortion')
         xdupdate=xd-xlin;
-        [xdenoised,noisex]=mini_denoise(xd);
+        xdupdate=xdupdate - var(noisex); % Remove Offset Introduced by Valley-Linear Trending
+        [xdenoised,noisex]=mini_denoise(xdupdate);
         % check out #######################
         %         plot(xdupdate); pause;
         XDupdate(i,:)=xdupdate;
     end
-    
+
     %% FEATURE EXTRACTION ############################################
     Aden=findpeaks(xdenoised,'NPeaks',1,'SortStr','descend');
     if isempty(Aden)
@@ -78,13 +100,10 @@ for i=1:Ns
 %     Aratio(i)=Aden/Anoise;  % PEAKS SIGNAL/NOISE RATIO
     ABratio(i)=Aden/Bden;   % max/min RATIO
     SkewSignal(i)=skewness(xdenoised,0); % $ $ $  OUTPUT
-%     if isnan(SkewSignal(i))
-%         disp('ass')
-%     end
     SkewNoise(i)=skewness(noisex,0); % $ $ $  OUTPUT
     % SkewRation sensitive to misdetrending distortion
     
-    SNRbyWT(i)=10*log(var(xdenoised)/var(noise)); % $ $ $ $ $       OUTPUT
+    SNRbyWT(i)=10*log(var(xdenoised)/var(noisex)); % $ $ $ $ $       OUTPUT
     Xest(i,:)=xdenoised; % SAVE DENOISED  * * * * ** $ $ $ $        OUTPUT
     
     

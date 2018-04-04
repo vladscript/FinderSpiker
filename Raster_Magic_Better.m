@@ -16,8 +16,6 @@
 %   Features_Processgin_Table.xls           Features from manual mode
 
 %   (primitive) UPDATES
-%   ManualMode&SavingFeatures       15/11/17
-%   Huge One @Algorithmie           02/10/17 (no se olvida)
 %   Using GitHub                    19/01/2017
 %% Global Setup ***********************************************************
 clc
@@ -29,7 +27,7 @@ ActualDir=pwd;
 addpath(genpath([ActualDir,'\Scripts']))
 
 %% Set Default Directory of Experiments
-DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Experimentos\';
+DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Experimentos\'; % Load from DEFAULT
 if exist(DefaultPath,'dir')==0
     DefaultPath=pwd;
 end
@@ -42,12 +40,15 @@ while isnan(fs) % Interface error user reading fs
 end
 % Read Fluorophore DYe
 dyename = inputdlg('Fluorophore : ',...
-             'DYE', [1 50]);
+             'DYE', [1 150]);
 % fs = str2double(fs{:});
 
 %% Read Names, Path and Coordinates***********************************
 [Names_Conditions,NumberofVideos,FN,PathName,XY,r]=Read_Videos(DefaultPath);
-NV=max(str2double(cell2mat(NumberofVideos)));   % Max N of Videos
+for v=1:length(NumberofVideos)
+    NVal(v)=round(str2double(NumberofVideos(v)));
+end
+NV=max(NVal);   % Max N of Videos
 [~,NC]=size(FN);                                % N Conditions
 %% Initalization Data Output
 SIGNALS=cell(NV,NC);
@@ -106,7 +107,8 @@ taus_0= [.75,2,1]; % starting values for taus
 
 %% DETRENDING AND SPARSE DECONVOLVE DETECTION
 [NV,NC]=size(SIGNALS);
-Tresume=table;
+ColumnNames={'Fluo_Dye','f_s','DetectedCells','Frames',...
+        'minSNR','minSkewness','TimeProcessing'};
 disp('**************** +++[Processing]+++ *************************')
 for i=1:NC
 % for i=2:NC
@@ -131,7 +133,8 @@ for i=1:NC
         % Skew PDFs ****************************************
         % [skew'noise PDF is VERY like RANDN(Ns;Frames)]
         Th_Skew=max(SkewNoise);
-        indxSKEW=find(SkewSignal>Th_Skew);
+        % indxSKEW=find(SkewSignal>Th_Skew);
+        indxSKEW=find(skewness(XDupdate')>Th_Skew);
         indxSkewness=makerowvector(indxSKEW);
         % Peaks Ratio of the positive skew signals *********
         % indxPeakRatio=find(ABratio>1); %!!!!!!!!! [ IGNORED ]
@@ -188,7 +191,7 @@ for i=1:NC
 %             title('Skewness pdf')
             
             %%% Response Funtion ***********************************************
-            [FR,~,TAUS]=AR_Estimation(XD(AcceptedINDX,:),p,fs,L,taus_0);
+            [FR,~,TAUS]=AR_Estimation(XDupdate(AcceptedINDX,:),p,fs,L,taus_0);
             for k=1:length(AcceptedINDX)
                 if isempty(findpeaks( FR(k,:) ) )
                     FR(k,:)=-FR(k,:);
@@ -220,7 +223,7 @@ for i=1:NC
             FR=FR(okINDX,:);
             LAMBDASS=LAMBDASS(okINDX);
             % Negative Threshold to clean Drivers ****************************
-            ThDriver=min(abs(D,2));
+            ThDriver=abs(min(D'));
             % Clean Drivers (only +++Drivers)
             [Nd,~]=size(D);
             for n=1:Nd
@@ -259,35 +262,51 @@ for i=1:NC
         end
         %%% GET RASTER *****************************************************
         Dfix=analyze_driver_signal(D);
-        % Raster=zeros(size(XD));
         TotalCells=length(XY);
-        Raster=get_raster(1,Dfix,ActiveNeurons,TotalCells);
-        % Examples:
-        % R1=get_raster(1,Dfix,ActiveNeurons,TotalCells);
+        Raster=get_raster(1,Dfix,ActiveNeurons,TotalCells); % DRIVER
+        % Examples---------------------------------------------------------
+        % DRIVER:
+        % R1=get_raster(1,Dfix,ActiveNeurons,TotalCells); 
+        % OOPSI:
         % R2=get_raster(2,XDupdate(ActiveNeurons,:),ActiveNeurons,TotalCells,TAUS,fs,Xest(ActiveNeurons,:));
+        % DERIVATIVE (cleaned up signal)
         % R3=get_raster(3,Dfix,ActiveNeurons,TotalCells,FR);
-        
-        % Monitor Figure **************************************************
-%         figureMonitor=gcf;
-%         figureMonitor.Name=[Experiment(2:end),' ',Names_Conditions{i},' vid:',num2str(j)];
-%         drawnow;
+        % _________________________________________________________________
+        % Results Monitor Figure ******************************************
+        % figureMonitor=gcf;
+        % figureMonitor.Name=[Experiment(2:end),' ',Names_Conditions{i},' vid:',num2str(j)];
+        % drawnow;
 
         % Cells to save PREPROCESSING ####################################
-        DETSIGNALS{j,i}=XDupdate;       % Detrended Signals
-        ESTSIGNALS{j,i}=Xest;           % Wavelet Denoised
-        SNRwavelet{j,i}=SNRbyWT;        % Empirical SNR                 * To Datasheet
-        Responses{j,i}=FR;              % Fluorophore Responses
-        TAUSall{j,i}=TAUS;              % [taus {rise, fall},gain]      * To Datasheet
-        preDRIVE{j,i}=D;                % Preliminar Drives (+ & -)
-        preLAMBDAS{j,i}=LAMBDASS;       % lambda Parameter              * To Datasheet
-        isSIGNALS{j,i}=ActiveNeurons;   % Signal Indicator              * To Datasheet       
-        RASTER{j,i}=Raster;             % Preliminar Raster
+        DETSIGNALS{j,i}=XDupdate;       % Detrended Signals         *
+        ESTSIGNALS{j,i}=Xest;           % Wavelet Denoised          *
+        SNRwavelet{j,i}=SNRbyWT;        % Empirical SNR             
+        Responses{j,i}=FR;              % Fluorophore Responses     
+        TAUSall{j,i}=TAUS;              % [taus {rise, fall},gain]  
+        preDRIVE{j,i}=D;                % Preliminar Drives (+ & -) 
+        preLAMBDAS{j,i}=LAMBDASS;       % lambda Parameter          
+        isSIGNALS{j,i}=ActiveNeurons;   % Signal Indicator          
+        RASTER{j,i}=Raster;             % Preliminar Raster         
         % Table Data For Processing Log Details ##########################
         TimeProcessing=toc;             % Processing Latency [s]
-        T=table( dyename,{Experiment},{num2str(fs)},{Names_Conditions{i}},...
-            {num2str(length(ActiveNeurons))},{num2str(Frames)},...
-            {num2str(Th_SNR)},{num2str(Th_Skew)}, {num2str(TimeProcessing,2)} );
-        Tresume=[Tresume;T];
+        T=table( dyename,{num2str(fs)},{num2str(length(ActiveNeurons))},...
+            {num2str(Frames)},{num2str(Th_SNR)},{num2str(Th_Skew)},...
+            {num2str(TimeProcessing,2)} );
+
+        T.Properties.VariableNames=ColumnNames;
+        % Save Table in Resume Tables of the Algorithm Latency*********
+        if isdir([FileDirSave,'\Resume Tables'])
+            writetable(T,[FileDirSave,'\Resume Tables',[Experiment,'-',Names_Conditions{i}],'.csv'],...
+                'Delimiter',',','QuoteStrings',true);
+            disp(['Saved Table Resume: ',Experiment,'-',Names_Conditions{i}])
+        else % Create Directory
+            disp('Directory >Resume Tables< created')
+            mkdir([FileDirSave,'\Resume Tables']);
+            writetable(T,[FileDirSave,'\Resume Tables',[Experiment,'-',Names_Conditions{i}],'.csv'],...
+                'Delimiter',',','QuoteStrings',true);
+            disp('Resume Tables Direcotry Created');
+            disp(['Saved Table Resume: ',Experiment,'-',Names_Conditions{i}])
+        end
         % ARcoeffcients{j,i}=ARc;                 % Autoregressive Coefficients
         % SIGNALSclean{j,i}=X_SPARSE;             % Cleansignals
         % LAMBDASpro{j,i}=LAMBDASproc;            % Sparse Parameter              * To Datasheet
@@ -303,29 +322,29 @@ end
 % Save Auto-Processed DATA * * * * * * * * * * * * * * * * * * * * * * * * 
 save([FileDirSave,'\Processed Data',Experiment,'.mat'],'DETSIGNALS','ESTSIGNALS','SNRwavelet',...
     'preDRIVE','preLAMBDAS','TAUSall','RASTER','isSIGNALS','Responses','dyename','-append');
-disp('Updated Features Extration DATA')
-% Save Resume Table
- okindxname=[];
-for n=1:length(Experiment)
-    if isalpha_num(Experiment(n))
-        okindxname=[okindxname,n];
-    end
-end
-ColumnNames={'Fluo_Dye','Experiment','f_s','Condition','Cells','Frames',...
-    'minSNR','minSKEW','TimeProcessing'};
-Tresume.Properties.VariableNames=ColumnNames;
-
-if isdir([FileDirSave,'\Resume Tables'])
-    writetable(Tresume,[FileDirSave,'\Resume Tables',Experiment,'.csv'],...
-        'Delimiter',',','QuoteStrings',true);
-    disp('Saved Table Resume')
-else % Create Directory
-    disp('Directory >Resume Tables< created')
-    mkdir([FileDirSave,'\Resume Tables']);
-    writetable(Tresume,[FileDirSave,'\Resume Tables',Experiment,'.csv'],...
-        'Delimiter',',','QuoteStrings',true);
-    disp('Saved Table Resume')
-end
+disp('Updated Feature - Extraction DATA')
+%% Save Resume Table
+% okindxname=[];
+% for n=1:length(Experiment)
+%     if isalpha_num(Experiment(n))
+%         okindxname=[okindxname,n];
+%     end
+% end
+% ColumnNames={'Fluo_Dye','Experiment','f_s','Condition','Cells','Frames',...
+%     'minSNR','minSKEW','TimeProcessing'};
+% Tresume.Properties.VariableNames=ColumnNames;
+% 
+% if isdir([FileDirSave,'\Resume Tables'])
+%     writetable(Tresume,[FileDirSave,'\Resume Tables',Experiment,'.csv'],...
+%         'Delimiter',',','QuoteStrings',true);
+%     disp('Saved Table Resume')
+% else % Create Directory
+%     disp('Directory >Resume Tables< created')
+%     mkdir([FileDirSave,'\Resume Tables']);
+%     writetable(Tresume,[FileDirSave,'\Resume Tables',Experiment,'.csv'],...
+%         'Delimiter',',','QuoteStrings',true);
+%     disp('Saved Table Resume')
+% end
 %% Sort & Clean Rasters ***************************************************
 % make it nested function--->
 % Sort by Activation in each Condition:
@@ -458,5 +477,4 @@ if strcmp('Yes',button)
     
     disp('saved.')
 end
-
 %% END OF THE WORLD**************************************************
