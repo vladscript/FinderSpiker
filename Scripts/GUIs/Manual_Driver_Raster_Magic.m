@@ -55,7 +55,7 @@ plotsignal.Parent.XTick=[];
 ax2=subplot(3,2,3); % Detrended Data - - - - - - - - - - -
 % plotdetrended=plot(randn(1,10),'Parent',ax2);
 set(ax2,'NextPlot','replacechildren');
-% \Delta F/F_{0}
+% ylabel(ax2,'$\Delta F / F_0$','Interpreter','Latex')
 % plotdetrended.Parent.YLabel.String='Detrended';
 % plotdetrended.Parent.XTick=[];
 ax3=subplot(3,2,5); %  Driver - - - - - - - - - - - - - - - 
@@ -69,9 +69,10 @@ plotraster.Parent.XTick=[];
 plotraster.Parent.Box='off';
 set(plotraster,'ButtonDownFcn',@remove_columns)
 % plotraster.Parent.Box='off';
-ax5=subplot(3,2,6); % CoAc Signal  - - - - - - - - - - - - - - -
-plotcoac=plot(randn(1,10),'Parent',ax5);
-plotcoac.Parent.YLabel.String='CoAc';
+ax5=subplot(3,2,6); % CAG Signal  - - - - - - - - - - - - - - -
+set(ax5,'NextPlot','replacechildren');
+% plotcoac=plot(randn(1,10),'Parent',ax5);
+% plotcoac.Parent.YLabel.String='CoAc';
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %% Setup for Processing Noisy Records (load from .mat file setup & script)
 L=30;              % seconds  of the Fluorophore Response
@@ -197,7 +198,7 @@ set(plotraster,'ButtonDownFcn',@remove_columns)
 % plotraster.Parent.Box='off';
 ax5=subplot(3,2,6); % CoAc Signal  - - - - - - - - - - - - - - -
 plotcoac=plot(randn(1,10),'Parent',ax5);
-plotcoac.Parent.YLabel.String='CoAc';
+plotcoac.Parent.YLabel.String='CAG';
 %% CHECK FALSE NEGATIVE ###################################################
 for i=1:NC                      % Condition Loop
     for j=1:NVmax               % Video Loop
@@ -361,10 +362,11 @@ function Plot_Data_Now()
         cla(ax2);
         hold(ax2,'on')
         plot(ax2,xd,'b','LineWidth',1)
-        plot(ax2,x_sparse,'r','LineWidth',2)
         grid(ax2,'on');
+        plot(ax2,x_sparse,'r','LineWidth',2)
         hold(ax2,'off')
-        axis(ax2,axisdetren);
+        axis(ax2,'tight');
+        ylabel(ax2,'$\Delta F / F_0$','Interpreter','Latex')
         title(ax2,['SNR=',num2str(snrc),'[dB]'],...
               'FontSize',8,'FontWeight','normal');
         
@@ -399,10 +401,19 @@ function Plot_Data_Now()
         plotraster.Parent.YTick=neuron;
         
         % CoAc Signal  - - - - - - - - - - - - - - -
-        plotcoac.YData=sum(R);
+        CoAcGraphy=sum(R);
+        cla(ax5)
+        hold(ax5,'on')
+        plot(ax5,CoAcGraphy,'b','LineWidth',2)
+        plot(ax5,find(daux>0),CoAcGraphy(daux>0),'LineStyle','none','Marker','.','MarkerSize',10,'Color',[0.6,0,0.6])
+        grid(ax5,'on');
+        hold(ax5,'off')
+        axis(ax5,'tight');
+        ylabel(ax5,'CoActiGraphy')
+        % plotcoac.YData=sum(R);
         % plot(plotcoac.Parent,sum(R),'LineWidth',2);
-        axis(plotcoac.Parent,'tight');
-        grid(plotcoac.Parent,'on');
+        %axis(plotcoac.Parent,'tight');
+        %grid(plotcoac.Parent,'on');
         drawnow;
 end
 
@@ -494,7 +505,7 @@ function manual_processing_ctrl(checksignals,~,~)
     daux(frames2del(1):frames2del(2))=0;
     update_data;        % saves daux
     Plot_Data_Now;      % update plot
-    
+    figure(checksignals) % Focus on Window
     sprintf('Deleted Driver Frames: %d : %d',frames2del)
  end
 
@@ -511,8 +522,10 @@ function manual_processing_ctrl(checksignals,~,~)
     end
     % daux(frames2del(1):frames2del(2))=0;
     R(:,frames2del(1):frames2del(2))=0;
+    D(:,frames2del(1):frames2del(2))=0;
     Plot_Data_Now;      % update plot
     % update_data;        % saves daux
+    figure(checksignals) % Focus on Window
     sprintf('Deleted Raster %d : %d frames \n',frames2del)
  end
 

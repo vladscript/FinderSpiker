@@ -11,11 +11,9 @@
 %   ... 
 %   Condition_Z_##.avi
 % Output
-%   ExperimentID.mat @Results Folder        Useful Workspace
-%   Settings_Automatic_Processing_Log.xls   Features from automatic mode
-%   Features_Processgin_Table.xls           Features from manual mode
-
-%   (primitive) UPDATES
+%   ExperimentID.mat @ cd ..\Processed Data: Useful Workspace Variables
+%   ExperimentID.csv @ cd ..\Features Tables:Processing Signal Features
+%   ExperimentID.csv @ cd ..\Resume Tables:  Experiment Resume Features
 %   Using GitHub                    19/01/2017
 %% Global Setup ***********************************************************
 clc
@@ -31,7 +29,7 @@ DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Experimentos\'; % Load from D
 if exist(DefaultPath,'dir')==0
     DefaultPath=pwd;
 end
-% Read Sampling Frequency
+%% Read Sampling Frequency
 fs=NaN; % To read fs to get into the following loop:
 while isnan(fs) % Interface error user reading fs
     fs = inputdlg('Sampling Frequency [Hz] : ',...
@@ -84,6 +82,7 @@ clear mov;                  % Clear Video Structure
 FileDirSave=pwd;
 slashes=find(FileDirSave=='\');
 FileDirSave=FileDirSave(1:slashes(end));
+%% Save data
 % Get the Experiment ID:
 slashes=find(PathName=='\');
 Experiment=PathName(slashes(end-1):slashes(end)-1); % Experiment ID
@@ -126,123 +125,125 @@ for i=1:NC
         %%% Denoising ******************************************************
         % Main Features to Detect Signal or Noise:
         % [Xest,SNRbyWT,SkewSignal,ABratio,SkewNoise]=denoise_wavelet(XD,X);
+        % isempty(setdiff(preAccepted_index,Accepted_index))
         [Xest,SNRbyWT,SkewSignal,~,SkewNoise,XDupdate]=denoise_wavelet(XD);
-        %%% Decision Features
-        % SNR >0 *******************************************
-        SNRindx=find(SNRbyWT>0);
-        % Skew PDFs ****************************************
-        % [skew'noise PDF is VERY like RANDN(Ns;Frames)]
-        Th_Skew=max(SkewNoise);
-        % indxSKEW=find(SkewSignal>Th_Skew);
-        indxSKEW=find(skewness(XDupdate')>Th_Skew);
-        indxSkewness=makerowvector(indxSKEW);
-        % Peaks Ratio of the positive skew signals *********
-        % indxPeakRatio=find(ABratio>1); %!!!!!!!!! [ IGNORED ]
-        % Make Row Vectors [1xN]:-------------------------
-        SNRindx=makerowvector(SNRindx);
-        % indxPeakRatio=makerowvector(indxPeakRatio);
-        % Get Non-repeated indexes:
-        Accepted_index=unique([SNRindx,indxSkewness]);
-        Rejected_index=setdiff(1:Ns,Accepted_index);
-        %%% Reject Som False Positives: **************************************
-        if ~isempty(Accepted_index)
-            % Get Threshold
-            Th_SNR =get_threshold_pdf(SNRbyWT,Accepted_index,Rejected_index);
-            Accepted_index=find(SNRbyWT>=Th_SNR); % UPDATE ACCEPTED
-            Th_Skew=get_threshold_pdf(SkewSignal,Accepted_index,Rejected_index);
-            % Apply Threshold
-            A=Accepted_index(SNRbyWT(Accepted_index)>Th_SNR);
-            B=Accepted_index(SkewSignal(Accepted_index)>Th_Skew);
-            A=makerowvector(A);
-            B=makerowvector(B);
-            AcceptedINDX=unique([A,B]);
-            RejectedINDX=setdiff(1:Ns,AcceptedINDX);
-            %%% Plot Some PDFs to monitor errors (!)
-%             figure; 
-%             subplot(211)
-%             if and(~isempty(AcceptedINDX),~isempty(RejectedINDX))
-%                 [pA,binA]=ksdensity(SNRbyWT(AcceptedINDX),linspace(min(SNRbyWT(AcceptedINDX)),max(SNRbyWT(AcceptedINDX)),100));
-%                 [pR,binR]=ksdensity(SNRbyWT(RejectedINDX),linspace(min(SNRbyWT(RejectedINDX)),max(SNRbyWT(RejectedINDX)),100));
-%                 plot(binR,pR,'.r','LineWidth',2)
-%                 hold on;
-%                 plot(binA,pA,'*b','LineWidth',2)
-%                 hold off;
-%                 legend('Rejected','Accepted','Location','northwest')
-%             else
-%                 [pO,binO]=ksdensity(SNRbyWT,linspace(min(SNRbyWT),max(SNRbyWT),100));
-%                 plot(binO,pO,'.m','LineWidth',1)
-%             end
-%             axis tight; grid on;
-%             title('SNR pdf')
-%             subplot(212)
-%             if and(~isempty(AcceptedINDX),~isempty(RejectedINDX))
-%                 [pA,binA]=ksdensity(SkewSignal(AcceptedINDX),linspace(min(SkewSignal(AcceptedINDX)),max(SkewSignal(AcceptedINDX)),100));
-%                 [pR,binR]=ksdensity(SkewSignal(RejectedINDX),linspace(min(SkewSignal(RejectedINDX)),max(SkewSignal(RejectedINDX)),100));
-%                 plot(binR,pR,'.r','LineWidth',2)
-%                 hold on;
-%                 plot(binA,pA,'*b','LineWidth',2)
-%                 hold off;
-%                 legend('Rejected','Accepted','Location','northwest')
-%             else
-%                 [pO,binO]=ksdensity(SkewSignal,linspace(min(SkewSignal),max(SkewSignal),100));
-%                 plot(binO,pO,'.m','LineWidth',1)
-%             end
-%             axis tight; grid on;
-%             title('Skewness pdf')
-            
-            %%% Response Funtion ***********************************************
-            [FR,~,TAUS]=AR_Estimation(XDupdate(AcceptedINDX,:),p,fs,L,taus_0);
-            for k=1:length(AcceptedINDX)
-                if isempty(findpeaks( FR(k,:) ) )
-                    FR(k,:)=-FR(k,:);
-                    disp('WARNING: Response Function Missestimation')
+        %% DRIVER ANALYSIS
+        IndexesFix=1;       % TO enter to the WhileLoop
+        FixedSignals=[];    % 
+        FixedNOSignals=[];  % 
+        aux=0;
+        while and(~isempty(IndexesFix),aux<2)
+            aux=aux+1;
+            if ~isempty(FixedSignals);
+                SkewSignal(FixedSignals)=Features(:,1);
+                SkewNoise(FixedSignals)=Features(:,2);
+                SNRbyWT(FixedSignals)=Features(:,3);
+            end
+            if ~isempty(FixedNOSignals)
+                SkewSignal(FixedNOSignals)=FeaturesR(:,1);
+                SkewNoise(FixedNOSignals)=FeaturesR(:,2);
+                SNRbyWT(FixedNOSignals)=FeaturesR(:,3);
+            end
+            %%% Decision Features
+            % SNR >0 *******************************************
+            SNRindx=find(SNRbyWT>0);
+            % Skew PDFs ****************************************
+            % [skew'noise PDF is VERY like RANDN(Ns;Frames)]
+            Th_Skew=max(SkewNoise);
+            indxSKEW=find(SkewSignal>Th_Skew);
+            % indxSKEW=find(skewness(XDupdate')>Th_Skew);
+            indxSkewness=makerowvector(indxSKEW);
+            % Peaks Ratio of the positive skew signals *********
+            % indxPeakRatio=find(ABratio>1); %!!!!!!!!! [ IGNORED ]
+            % Make Row Vectors [1xN]:-------------------------
+            SNRindx=makerowvector(SNRindx);
+            % indxPeakRatio=makerowvector(indxPeakRatio);
+            % Get Non-repeated indexes:
+            Accepted_index=unique([SNRindx,indxSkewness]);
+            Rejected_index=setdiff(1:Ns,Accepted_index);
+            if isempty(Rejected_index)
+                fprintf('\n\n\n\n > > > > Artifacts Distortion ALERT\n\n\n\n')
+            end
+            %%% Reject Som False Positives: **************************************
+            if ~isempty(Accepted_index)
+                % Get Threshold
+                Th_SNR =get_threshold_pdf(SNRbyWT,Accepted_index,Rejected_index);
+                Accepted_index=find(SNRbyWT>=Th_SNR); % UPDATE ACCEPTED
+                Th_Skew=get_threshold_pdf(SkewSignal,Accepted_index,Rejected_index);
+                % Apply Threshold
+                AcceptedINDX=unique([makerowvector(Accepted_index(SNRbyWT(Accepted_index)>Th_SNR)),...
+                    makerowvector(Accepted_index(SkewSignal(Accepted_index)>Th_Skew))]);
+                RejectedINDX=setdiff(1:Ns,AcceptedINDX);
+
+
+        %%% Response Funtion ***********************************************
+                [FR,~,TAUS]=AR_Estimation(XDupdate(AcceptedINDX,:),p,fs,L,taus_0);
+                for k=1:length(AcceptedINDX)
+                    if isempty(findpeaks( FR(k,:) ) )
+                        FR(k,:)=-FR(k,:);
+                        disp('WARNING: Response Function Missestimation')
+                    end
                 end
-            end
-            % Search in MODES of TAUS  -----------------------------------
-            % [Rcanon,TAU_PEAK]=canonical_response(TAUS,fs,1);
-            % % Make positive Responses {if needed}
-            %if isempty(findpeaks(Rcanon))
-            %    Rcanon=-Rcanon;
-            %    disp('WARNING: Response Function Missestimation')
-            %end
-            % FR=repmat(Rcanon,numel(AcceptedINDX),1);
-            
-            %%% Sparse Deconvolution *******************************************
-            [DRIVER,LAMBDASS]=maxlambda_finder(XDupdate(AcceptedINDX,:),FR);
-            % Ignore Drivers with bigger Negative Drivers than positive ones
-            Dindex=find( abs(min(DRIVER'))<abs(max(DRIVER')) );
-            % KEEP SNR>0 and High+Skewed Signals
-            ActiveNeurons=unique([AcceptedINDX(Dindex),makerowvector(Accepted_index)]);
-            InactiveNeurons=setdiff(1:Ns,ActiveNeurons);
-            % Rejected by Negative Dirver:
-            ReDri=length(AcceptedINDX)-length(ActiveNeurons);
-            fprintf('rejected by (-) driver: %2i\n',ReDri)
-            % Update Variables:
-            [~,okINDX]=intersect(AcceptedINDX,ActiveNeurons);
-            D=DRIVER(okINDX,:);
-            FR=FR(okINDX,:);
-            LAMBDASS=LAMBDASS(okINDX);
+                %%% Sparse Deconvolution *******************************************
+                [DRIVER,LAMBDASS]=maxlambda_finder(XDupdate(AcceptedINDX,:),FR);
+                % Ignore Drivers with bigger Negative Drivers than positive ones
+                % Dindex=find( abs(min(DRIVER'))<abs(max(DRIVER')) );
+                % KEEP SNR>0 and High+Skewed Signals
+                % ActiveNeurons=unique([AcceptedINDX(Dindex),makerowvector(Accepted_index)]);
+                % InactiveNeurons=setdiff(1:Ns,ActiveNeurons);
+                % Update Variables:
+                % [~,okINDX]=intersect(AcceptedINDX,ActiveNeurons);
+                % D=DRIVER(okINDX,:);
+                % FR=FR(okINDX,:);
+                % LAMBDASS=LAMBDASS(okINDX);
+                % Check Driver
+                [Dfix,XDfix,Xestfix,LambdasFix,IndexesFix,Features]=analyze_driver_signal(DRIVER,FR,XDupdate(AcceptedINDX,:),Xest(AcceptedINDX,:));
+                if ~isempty(IndexesFix)
+                    FixedSignals=AcceptedINDX(IndexesFix);
+                    LAMBDASS(IndexesFix)=LambdasFix;
+                    DRIVER=Dfix;
+                    XDupdate(AcceptedINDX,:)=XDfix;
+                    Xest(AcceptedINDX,:)=Xestfix;
+                    fprintf('\n\n\n > >   Updated Values   < < \n\n\n')
+                    % Process NOT OK#######################################
+                    [FRr,~,~]=AR_Estimation(XDupdate(RejectedINDX,:),p,fs,L,taus_0);
+                    for k=1:length(RejectedINDX)
+                        if isempty(findpeaks( FRr(k,:) ) )
+                            FRr(k,:)=-FRr(k,:);
+                            disp('WARNING: Response Function Missestimation')
+                        end
+                    end
+                    [DRIVERr,LAMBDASSr]=maxlambda_finder(XDupdate(RejectedINDX,:),FRr,1);
+                    [~,XDRfix,XestRfix,~,IndexesFixR,FeaturesR]=analyze_driver_signal(DRIVERr,FRr,XDupdate(RejectedINDX,:),Xest(RejectedINDX,:));
+                    if ~isempty(IndexesFixR)
+                        FixedNOSignals=RejectedINDX(IndexesFixR);
+                        % LAMBDASS(IndexesFix)=LambdasFix;
+                        % DRIVER=Dfix;
+                        XDupdate(RejectedINDX,:)=XDRfix;
+                        Xest(RejectedINDX,:)=XestRfix;
+                    end
+                end
             % Negative Threshold to clean Drivers ****************************
-            ThDriver=abs(min(D'));
-            % Clean Drivers (only +++Drivers)
-            [Nd,~]=size(D);
-            for n=1:Nd
-                D(n,D(n,:)<ThDriver(n))=0;
-            end
-            % Check if zero drivers & Update DATA
-            ActiveNeurons=ActiveNeurons( sum(D,2)~=0 );
-            InactiveNeurons=setdiff(1:Ns,ActiveNeurons);
-            LAMBDASS=LAMBDASS( sum(D,2)~=0 );
-            D=D(sum(D,2)~=0, :);
-            FR=FR(sum(D,2)~=0,:);
-        else
-            AcceptedINDX=[];
-            RejectedINDX=setdiff(1:Ns,AcceptedINDX);
-            D=[];
-            ActiveNeurons=[];
-            FR=[];
-            LAMBDASS=[];
-            %% plot to monitor results
+            % ThDriver=abs(min(D'));
+            % Clean Drivers (only +++Drivers) ALREADY CLEANE
+                % [Nd,~]=size(D);
+                % for n=1:Nd
+                %    D(n,D(n,:)<=0)=0; % JUST + + + driver
+                % end
+                % Check if zero drivers & Update DATA
+                ActiveNeurons=AcceptedINDX( sum(DRIVER,2)~=0 );
+                InactiveNeurons=setdiff(1:Ns,ActiveNeurons);
+                LAMBDASS=LAMBDASS( sum(DRIVER,2)~=0 );
+                DRIVER=DRIVER(sum(DRIVER,2)~=0, :);
+                FR=FR(sum(DRIVER,2)~=0,:);
+            else
+                AcceptedINDX=[];
+                RejectedINDX=setdiff(1:Ns,AcceptedINDX);
+                DRIVER=[];
+                ActiveNeurons=[];
+                FR=[];
+                LAMBDASS=[];
+%% plot to monitor results
 %             figure; 
 %             subplot(211)
 %             [pO,binO]=ksdensity(SNRbyWT,linspace(min(SNRbyWT),max(SNRbyWT),100));
@@ -254,16 +255,18 @@ for i=1:NC
 %             plot(binO,pO,'.k','LineWidth',1)
 %             axis tight; grid on;
 %             title('Skewness pdf')
-            disp('             *********************' )
-            disp('             *********************' )
-            disp('             ******PURE NOISE ****' )
-            disp('             *********************' )
-            disp('             *********************' )
-        end
-        %%% GET RASTER *****************************************************
-        Dfix=analyze_driver_signal(D);
+                disp('             *********************' )
+                disp('             *********************' )
+                disp('             ******PURE NOISE ****' )
+                disp('             *********************' )
+                disp('             *********************' )
+            end
+        end % END WHILE of IndexesFix
+        
+        
+        %% GET RASTER *****************************************************
         TotalCells=length(XY);
-        Raster=get_raster(1,Dfix,ActiveNeurons,TotalCells); % DRIVER
+        Raster=get_raster(1,DRIVER,ActiveNeurons,TotalCells); % DRIVER
         % Examples---------------------------------------------------------
         % DRIVER:
         % R1=get_raster(1,Dfix,ActiveNeurons,TotalCells); 
@@ -276,14 +279,13 @@ for i=1:NC
         % figureMonitor=gcf;
         % figureMonitor.Name=[Experiment(2:end),' ',Names_Conditions{i},' vid:',num2str(j)];
         % drawnow;
-
         % Cells to save PREPROCESSING ####################################
         DETSIGNALS{j,i}=XDupdate;       % Detrended Signals         *
         ESTSIGNALS{j,i}=Xest;           % Wavelet Denoised          *
         SNRwavelet{j,i}=SNRbyWT;        % Empirical SNR             
         Responses{j,i}=FR;              % Fluorophore Responses     
         TAUSall{j,i}=TAUS;              % [taus {rise, fall},gain]  
-        preDRIVE{j,i}=D;                % Preliminar Drives (+ & -) 
+        preDRIVE{j,i}=DRIVER;                % Preliminar Drives (+ & -) 
         preLAMBDAS{j,i}=LAMBDASS;       % lambda Parameter          
         isSIGNALS{j,i}=ActiveNeurons;   % Signal Indicator          
         RASTER{j,i}=Raster;             % Preliminar Raster         
@@ -383,10 +385,11 @@ if strcmp('Yes',button)
     % Clean Raster and Coordinates
     TotalActiveNeurons=find(sum(RASTER_WHOLE_Clean,2)>0);                % INDEX of Active NEURONS
     QoE=round(100*length(TotalActiveNeurons)/length(XY),2);
-    sprintf('Actual Active Neurons: %d %%',round(100*QoE));
+    fprintf('Actual Active Neurons: %d %%\n',round(QoE));
     % Whole Raster
     RASTER_WHOLE_Clean=RASTER_WHOLE_Clean(TotalActiveNeurons,:);
     XY_clean=XY_clean(TotalActiveNeurons,:);                        % Clean Coordinates
+    New_Index_Active=New_Index(TotalActiveNeurons);
     % SEE RESULTS ################################################
     Plot_Raster_V(RASTER_WHOLE_Clean,fs);                           % Clean Whole Raster
     set(gcf,'Name',['ID: ',Experiment(2:end)],'NumberTitle','off')
@@ -407,8 +410,8 @@ if strcmp('Yes',button)
             checkname=0;
             % SAVE DATA
             save([PathNamePro,FileName],'isSIGNALSOK','SIGNALSclean','DRIVEROK','SNRlambda','LAMBDASSpro',...
-                'New_Index','Raster_Condition','RASTER_WHOLE_Clean','XY_clean','RASTEROK','-append');
-            disp([Experiment,'   -> UPDATED'])
+                'New_Index','Raster_Condition','RASTER_WHOLE_Clean','XY_clean','RASTEROK','OddsMatrix','-append');
+            disp([Experiment,'   -> UPDATED: Visual Review'])
 
         else
             disp('Not the same Experiment!')
@@ -477,4 +480,4 @@ if strcmp('Yes',button)
     
     disp('saved.')
 end
-%% END OF THE WORLD**************************************************
+%% END OF THE WORLD**************************************************   

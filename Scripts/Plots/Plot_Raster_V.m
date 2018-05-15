@@ -45,7 +45,7 @@ ax2=subplot(3,1,3);
 plot(ts*(0:length(sum(R))-1)/60,sum(R),'k','LineWidth',1.1)
 axis([0,ts*(length(R)-1)/60,0,max(sum(R))+1])
 % grid on
-ylabel('Coactive Neurons')
+ylabel('CAG')
 if fs>1
     xlabel('Minutes')
 else

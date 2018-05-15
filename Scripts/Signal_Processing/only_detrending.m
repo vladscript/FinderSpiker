@@ -1,7 +1,6 @@
 % Funtion to Detrend Fluorescence Signals
 % Input
 %   X: signals of Ns x Frames
-%   fs: sampling frequency
 % Output
 %   XD: Detrended Signals
 function XD=only_detrending(X)
@@ -15,20 +14,59 @@ for i=1:Ns
      % RLOESS   SMoothing Detrending
     disp(['Detrending ... [Signal: ',num2str(i),'/',num2str(Ns),']']);
     y=smooth(x,Frames,'rloess');                    % Trend Component (Bleaching)
-    xd1=x-y';                                       % 1st Detrending
+    %% Test Detrending before Distortion
+    [~,PeaksY]=findpeaks(y);
+    [~,ValleY]=findpeaks(-y);
+    Curves=[makerowvector(PeaksY),makerowvector(ValleY)];
+    % 1st Detrending
+    xd1=x-y';
     disp('------------------RLOESS smoothing OK')
-    
+    % PDF of Raw Signal:
+    [px,binx]=ksdensity(x, linspace(min(x),max(x),100));
+    [~,ModesX]=findpeaks(px,binx,'SortStr','descend');
     % PDF of Detrended Signal:
     [pxd1,binxd1]=ksdensity(xd1, linspace(min(xd1),max(xd1),100));
     % Modes of PDF of Detrended Signal:
     [~,Bin_Mode]=findpeaks(pxd1,binxd1,'SortStr','descend');
     % De-Offset:
-    xd1=xd1-Bin_Mode(1); % Deoffset
+    xd1=xd1-Bin_Mode(1); % Deoffset Biggest Mode
     % PDF of Detrended Signal RECALCUL
     [pxd1,binxd1]=ksdensity(xd1, linspace(min(xd1),max(xd1),100));
     % Modes of PDF of Detrended Signal:
     [Mode_Peak,Bin_Mode]=findpeaks(pxd1,binxd1,'SortStr','descend');
+    [~,indxBins]=min(Bin_Mode);
+    % Check for missdetrending issues
+    samplestodetrend=[];
+    ylinv1=[];
+%% TROUBLE MAKER:    
+%     % if there are curves at trending and several modes in raw signal and negative modes at detrended signal
+%     if ~isempty(Curves) && numel(ModesX)>1 && ~isempty(Bin_Mode( Bin_Mode<0 ))
+%         disp('*** 1st Missdetrending A ***')
+%         [samplestodetrend,ylinv1]=lineardetbigmode(binx,ModesX,x);
+%     elseif indxBins~=1 % if biggest mode ain't the least
+%         disp('*** 1st Missdetrending B ***')
+%         [samplestodetrend,ylinv1]=lineardetbigmode(binx,ModesX,x);
+%     else
+%         disp('*** OK ***')
+%     end
+    % Corretion -----------------------------------
+    if ~isempty(ylinv1)
+        y=ylinv1';
+        xd1=x-y';
+        disp('------------------Correcting <<<')
+        % PDF of Detrended Signal:
+        [pxd1,binxd1]=ksdensity(xd1, linspace(min(xd1),max(xd1),100));
+        % Modes of PDF of Detrended Signal:
+        [~,Bin_Mode]=findpeaks(pxd1,binxd1,'SortStr','descend');
+        % De-Offset:
+        xd1=xd1-Bin_Mode(1); % Deoffset Biggest Mode
+        % PDF of Detrended Signal RECALCUL
+        [pxd1,binxd1]=ksdensity(xd1, linspace(min(xd1),max(xd1),100));
+        % Modes of PDF of Detrended Signal:
+        [Mode_Peak,Bin_Mode]=findpeaks(pxd1,binxd1,'SortStr','descend');
+    end
     
+    %% MissDetrending Checking 2nd Part *
     if numel(Mode_Peak)>1
         % Considerations:
         % If there are Negative Modes-> Missdetrending Issues
@@ -134,16 +172,49 @@ for i=1:Ns
     else 
         disp('>>Ok Detrended')
     end
-%     %% Preview Results
-%     subplot(211)
+%     % Preview Results
+%     CHECK FIGURE
+%     subplot(2,3,[1,2])
 %     plot(x); hold on;
+%     plot(samplestodetrend,x(samplestodetrend),'r')
+%     plot(ylinv1,'k')
 %     plot(y); hold off;
+%     subplot(2,3,[4,5])
+%     plot(xd1)
 %     axis tight; grid on;
-%     subplot(212)
-%     plot(xd1); hold on;
-%     plot([0,Frames],[0,0],'-.r');  hold off;
-%     axis tight; grid on;
-%     pause    
-%% OUTPUT
-XD(i,:)=xd1;
-end % function
+%     subplot(2,3,3)
+%     plot(px,binx);
+%     grid on;
+%     subplot(2,3,6)
+%     plot(pxd1,binxd1);
+%     axis tight;
+%     grid on;
+%     disp('anfubvtqpsm')
+%     pause(0.01)
+    %% OUTPUT
+    XD(i,:)=xd1;
+end % loop
+end % Main Function
+%% Nested Function
+function [samplestodetrend,ylinv1]=lineardetbigmode(binx,ModesX,x)
+    % Get Samples belonging from least sample to the biggest mode
+    Frames=length(x);
+    ModePos=find(binx==ModesX(1));
+    % dpx=diff(px);
+    samplestodetrend= intersect( find(x>min(x)),find(x<binx(ModePos)) );
+    [cl,~,mucl] = polyfit(samplestodetrend,x(samplestodetrend),1);
+    ylinv1=polyval(cl,1:Frames,[],mucl); % Linear Trending
+end
+%% Useles Code
+%         % Left Wing
+%         slide=1;
+%         while dpx(ModePos-slide)>0 && (ModePos-slide)>1
+%             slide=slide+1;
+%         end
+%         leftAmp=binx( ModePos-slide );
+%         % Right Wing
+%         slide=1;
+%         while dpx(ModePos+slide)<=0 && (ModePos-slide)<100
+%             slide=slide+1;
+%         end
+%         rightAmp=binx( ModePos+slide );

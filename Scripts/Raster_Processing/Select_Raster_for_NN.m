@@ -10,18 +10,19 @@
 %   Names_Conditions:   Names of Conditions
 %   Experiment:         Name of the Experiment
 % Ouput
-%   Raster per Condition  Cell
-%   RASTER_Selected_Clean Matrix
-%   XY: Selected ACtive Cells
-%   R_Condition:    Cell of Raster for each COndition
-%   Onsets:             Selected Starting Point
-function [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment)
+%   RASTER_Selected_Clean   Matrix (ONLY ACTIVE cells)
+%   XY_selected:            Selected ACtive Cells
+%   R_Condition:            Cell of Raster for each COndition
+%   Onsets:                 Selected Starting Point
+%   New_indexes:            Sleected & Sorted Indexes of the Cells
+function [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets,New_Index]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment)
 
 okbutton='No';
 while ~strcmp('Yes',okbutton)
      %% Show Raster per condition
     [~,NC]=size(Raster_Condition);
     Raster_Selecter={};
+    Onsets=cell(NC,1);
     for c=1:NC
         R=Raster_Condition{c};
         [~,FramesSize]=size(R);
@@ -59,7 +60,8 @@ while ~strcmp('Yes',okbutton)
     RASTER_Selected_Clean=RASTER_WHOLE(New_Index,:);
     XY_selected=XY(New_Index,:);
     % Clean Raster and Coordinates
-    ActiveNeurons=find(sum(RASTER_Selected_Clean,2)>0);                 % INDEX of Active NEURONS
+    ActiveNeurons=find(sum(RASTER_Selected_Clean,2)>0);                 % INDEX of SORTED Active NEURONS
+    New_Index(ActiveNeurons)
     RASTER_Selected_Clean=RASTER_Selected_Clean(ActiveNeurons,:);
     XY_selected=XY_selected(ActiveNeurons,:);                           % Clean Coordinates
     Plot_Raster_V(RASTER_Selected_Clean,fs);                            % Clean Whole Raster
@@ -67,7 +69,7 @@ while ~strcmp('Yes',okbutton)
     Label_Condition_Raster(Names_Conditions,Raster_Condition_Sel,fs);       % Labels
     % To Save active and Sorted:
     R_Condition={};
-    XY_Condition={};
+    % XY_Condition={};
     AN=[];
     CummAc=[];
 %     ActiveNeurons=find(sum(RASTER_Selected_Clean,2)>0);     % Active NEURONS
@@ -78,7 +80,7 @@ while ~strcmp('Yes',okbutton)
         % Sort Raster
         R=R(New_Index,:);
         R_Condition{c}=R(ActiveNeurons,:);
-        XY_Condition{c}=XY_selected;
+        % XY_Condition{c}=XY_selected;
         % Descriptive  Features *********************************************
         AN(c,1)=sum(sum(R,2)>0);          % Active NEURONS
         CummAc(c,1)=sum(sum(R));          % Cummulative Activity

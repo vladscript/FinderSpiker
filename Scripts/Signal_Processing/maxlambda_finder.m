@@ -43,7 +43,11 @@ for c=1:C
             Positive_Driver=false;
             Negative_Driver=false;
             while ~and(Negative_Driver,Positive_Driver)
-                lambda=2^lambda_pow2;
+                if lambda_pow2>0
+                    lambda=2^lambda_pow2;
+                else
+                    lambda=lambda*0.75;
+                end
                 [d,~,~]=magic_sparse_deconvolution(x,r,lambda);
                 d=smooth(d)';%  SMOOTH DRIVER
                 if ~isempty( d(d>0) )
@@ -64,7 +68,11 @@ for c=1:C
         case 'onlypos'
             d=[]; % Initial Empty Drive
             while isempty(d(d>0))
-                lambda=2^lambda_pow2;
+                if lambda_pow2>0
+                    lambda=2^lambda_pow2;
+                else
+                    lambda=lambda*0.75;
+                end
                 [d,~,~]=magic_sparse_deconvolution(x,r,lambda);
                 % d=smooth(d)';%  SMOOTH DRIVER
                 lambda_pow2=lambda_pow2-1;
@@ -74,11 +82,15 @@ for c=1:C
         case 'difftozero'  
             d=zeros(1,F);               % Initial Zero Drive
             while sum(d)==0
-                lambda=2^lambda_pow2;
+                if lambda_pow2>0
+                    lambda=2^lambda_pow2;
+                else
+                    lambda=lambda*0.75;
+                end
                 [d,~,~]=magic_sparse_deconvolution(x,r,lambda);
                 % d=smooth(d)';%  SMOOTH DRIVER
                 lambda_pow2=lambda_pow2-1;
-                disp(' [*] Lambda searcher Driver Mode: [+] o r[-] ')
+                disp(' [*] Lambda searcher Driver Mode: [+] OR  [-] ')
             end 
         otherwise
             disp('[No deconvolution done]') % not happening
