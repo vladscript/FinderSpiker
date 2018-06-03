@@ -13,7 +13,14 @@
 %   LambdasFix:     Lambdas Recalculated
 %   IndexesFix:     Indexes of Fixed Cells
 %   Features:       [SkewSignal, SkewNoise, SRbyWT] Matrix of Fetures]
-function [Dfix,XDfix,Xestfix,LambdasFix,IndexesFix,Features]=analyze_driver_signal(D,FR,XDupdate,Xest)
+function [Dfix,XDfix,Xestfix,LambdasFix,IndexesFix,Features]=analyze_driver_signal(D,FR,XDupdate,Xest,varargin)
+% check if Activate Driver Analysis
+if isempty(varargin)
+    check=1;
+else
+    check=0;
+    disp('Only Checkin Driver Amplitudes')
+end
 % Initial Decay due to firing or "fast bleaching"
 [C,~]=size(D); % Length of okINDX
 % Initialize Output
@@ -35,7 +42,7 @@ for c=1:C
     noisex=xd-xe;
     % Initial Maximum Driver->Distortion ##########################
     [~,framax]=max(d);
-    if framax==1 && sum(d)~=0
+    if and(framax==1 && sum(d)~=0 ,check)
         nextframe=framax+1;
         while and(xe(nextframe)>0,x_sparse(nextframe)>0.5e-3)
             % x_sparse(nextframe)=0;
@@ -70,20 +77,19 @@ for c=1:C
     end
     % Delete Small Changes below Noise #############################
     % Check Responses below Noise:
-    Thd=abs(min(d));
-    d(d<=Thd)=0;
+    % Thd=abs(min(d));
     SamplesDelete=1:numel(x_sparse);
     [Apeaks,Npeaks]=findpeaks(x_sparse);
     SaveSamples=[];
     for n=1:length(Npeaks)
         if Apeaks(n)>=std(noisex)
-            % Before from the peak
+            % Before the peak
             auxN=0;
             while and(x_sparse(Npeaks(n)-auxN)>0,Npeaks(n)-auxN>0)
                 SaveSamples=[SaveSamples,(Npeaks(n)-auxN)];
                 auxN=auxN+1;
             end
-            % After from the peak
+            % After the peak
             auxN=1;
             while and(x_sparse(Npeaks(n)+auxN)>0,Npeaks(n)+auxN<numel(x_sparse))
                 SaveSamples=[SaveSamples,(Npeaks(n)+auxN)];
@@ -98,8 +104,8 @@ for c=1:C
     else
         d(SamplesDelete)=0;
     end
-    
-    
+    % Just (+) Drivers
+    d(d<0)=0;
     Dfix(c,:)=d; % update and fix
 %     %% CHECK STUFF
 %     plot(xd,'b'); hold on;

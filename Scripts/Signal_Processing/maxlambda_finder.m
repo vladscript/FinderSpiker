@@ -81,7 +81,7 @@ for c=1:C
     %% Third Case: Just Different to Zero Driver Signal
         case 'difftozero'  
             d=zeros(1,F);               % Initial Zero Drive
-            while sum(d)==0
+            while isempty(d(d~=0))
                 if lambda_pow2>0
                     lambda=2^lambda_pow2;
                 else

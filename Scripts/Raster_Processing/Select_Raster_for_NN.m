@@ -16,7 +16,10 @@
 %   Onsets:                 Selected Starting Point
 %   New_indexes:            Sleected & Sorted Indexes of the Cells
 function [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets,New_Index]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment)
-
+%% Setup
+FileDirSave=pwd;
+slashes=find(FileDirSave=='\');
+FileDirSave=FileDirSave(1:slashes(end));
 okbutton='No';
 while ~strcmp('Yes',okbutton)
      %% Show Raster per condition
@@ -37,8 +40,8 @@ while ~strcmp('Yes',okbutton)
         answer = inputdlg(prompt,dlg_title,num_lines,defaultans);
         Minute_Start=str2double(answer{1});
         Minute_End=str2double(answer{2});
-        Frame_A=Minute_Start*60*fs+1;
-        Frame_B=Minute_End*60*fs;
+        Frame_A=round(Minute_Start*60*fs+1);
+        Frame_B=round(Minute_End*60*fs);
         Onsets{c,1}=Frame_A;
         if Frame_B>FramesSize
             Frame_B=FramesSize;
@@ -72,29 +75,99 @@ while ~strcmp('Yes',okbutton)
     % XY_Condition={};
     AN=[];
     CummAc=[];
-%     ActiveNeurons=find(sum(RASTER_Selected_Clean,2)>0);     % Active NEURONS
     TotalN=length(ActiveNeurons);
+    %% Create FigureS to plot PDFs & Features
+    PDFsFigure=figure;
+    PDFsFigure.Name=['Descriptive Activity PDFs of: ',Experiment];
+    PDFsFigure.Position=[-3 407 956 254];
+    h1=subplot(1,3,1); % ITI pdf
+    h2=subplot(1,3,2); % Length pdf
+    h3=subplot(1,3,3); % CAG pdf
+    title(h1,'InterTransient PDF','FontSize',7)
+    title(h2,'Length Transient PDF','FontSize',7)
+    title(h3,'CAG PDF','FontSize',7)
+    hold(h1,'on'); hold(h2,'on'); hold(h3,'on');
+    %% Feature Table Column Names
+    HeadersFeatures={'Neurons','Duration','MeanActivity','EffectiveActivity',...
+        'ISImean','ISImode','ISIvar','ISIskew','ISIkurt',...
+        'Lengthmean','Lengthmode','Lengthvar','Lengthskew','Lengthkurt'};
+    %% FEATURES EXTRACTION and plot
     for c=1:NC
-        % Read Original Raster
+        % Read Original Raster (UNSORTED!!!)
         R=Raster_Condition_Sel{c};
-        % Sort Raster
+        % Raster (SORTED!!!)
         R=R(New_Index,:);
+        % Raster (JUST ACTIVE!!!)
         R_Condition{c}=R(ActiveNeurons,:);
         % XY_Condition{c}=XY_selected;
-        % Descriptive  Features *********************************************
-        AN(c,1)=sum(sum(R,2)>0);          % Active NEURONS
-        CummAc(c,1)=sum(sum(R));          % Cummulative Activity
-        DurAc(c,1)=length(R)/fs/60;       % Duration [min]
-        NameTable{c,1}=Experiment(2:end); % Cell Name 
-    end
-    disp([AN',CummAc'])
-    % Show Features Table
-    HeadersFeatures={'Experiment','TotalNeurons','Condition','Neurons','CummActivity','Onset','Minutes'};
-    Trasterfeatures=table(NameTable,TotalN*ones(NC,1),Names_Conditions,AN,CummAc,Onsets,DurAc,...
+        % Activity Indexes:*******************************************
+        % General Features:
+        AN=sum(sum(R,2)>0);          % Active NEURONS
+        CummAc=sum(sum(R));          % Cummulative Spikes Activity
+        DurAc=length(R)/fs/60;       % Duration [min]
+        CAG=sum(R);                  % CoactiviGram
+        % NameTable{c,1}=Experiment(2:end); % Experiment ID
+        % Mean Activity per Neuron:
+        if AN==0
+            AI_(c,1)=0;
+        else    
+            AI_1(c,1)=CummAc/DurAc/AN;
+        end
+        % Effective Activity per Raster
+        if TotalN==0
+            AI_2(c,1)=0;
+        else
+            AI_2(c,1)=(CummAc/DurAc)*(AN/TotalN);
+        end
+        % Statistics from pdfs*******************************************
+        % Inter Transients Interval pdf &
+        % Transient Length pdf
+        [ISIbin,ISIp,Lengthp,Lengthbin,StatsFeatures]=get_iti_pdf(R_Condition{c},fs);
+        % CoActivityGram Statistics & pdf:
+        CAGstats=[sum(R),mean(CAG),mode(CAG),var(CAG),skewness(CAG),kurtosis(CAG)];
+        if or(max(CAG)==0,min(CAG)==max(CAG))
+            CAGbin=linspace(min(CAG),max(CAG),100);
+            CAGp=zeros(size(CAGbin));
+        else
+            [CAGp,CAGbin]=ksdensity(CAG,linspace(min(CAG),max(CAG),100));
+        end
+        % Feature Table *******************************************
+        % 'Condition','#Neurons','Duration','MeanActivity','EffectiveActivity',...
+        % 'ISImean','ISImode','ISIvar','ISIskew','ISIkurt',...
+        % 'Lengthmean','Lengthmode','Lengthvar','Lengthskew','Lengthkurt'
+        Trasterfeatures=table(AN,DurAc,AI_1(c,1),AI_2(c,1),...
+            StatsFeatures(1),StatsFeatures(2),StatsFeatures(3),StatsFeatures(4),StatsFeatures(5),...
+            StatsFeatures(6),StatsFeatures(7),StatsFeatures(8),StatsFeatures(9),StatsFeatures(10),...
             'VariableNames',HeadersFeatures);
-    disp(Trasterfeatures);
+        disp(Trasterfeatures);
+        % Saving CSV
+        NameDir='Raster Features\';
+        if isdir([FileDirSave,'\Raster Features'])
+            writetable(Trasterfeatures,[FileDirSave,NameDir,Experiment(2:end),'_',Names_Conditions{c},'Raster_Features.csv'],...
+                'Delimiter',',','QuoteStrings',true);
+            disp(['Saved Raster Features: ',Experiment,'-',Names_Conditions{c}])
+        else % Create Directory
+            disp('Directory >Raster Features< created')
+            mkdir([FileDirSave,NameDir]);
+            writetable(Trasterfeatures,[FileDirSave,NameDir,Experiment(2:end),'_',Names_Conditions{c},'Raster_Features.csv'],...
+                'Delimiter',',','QuoteStrings',true);
+            disp('Resume Tables Direcotry Created');
+            disp(['Saved Raster Features: ',Experiment,'-',Names_Conditions{c}])
+        end
+        % PLOTS *************************************
+        % PDFs
+        semilogy(h1,ISIbin,ISIp,'LineWidth',2)
+        semilogy(h2,Lengthbin,Lengthp,'LineWidth',2)
+        plot(h3,CAGbin,CAGp,'LineWidth',2)
+    end
+    %% Ending PLot
+    xlabel(h1,'t[s]'); xlabel(h2,'t[s]'); xlabel(h3,'Coactive Neurons');
+    axis(h1,'tight'), axis(h2,'tight'); axis(h3,'tight');
+    grid(h1,'on'); grid(h2,'on'); grid(h3,'on');
+    hold(h1,'off'); hold(h2,'off'); hold(h3,'off');
+    legend(h1,Names_Conditions);
     okbutton = questdlg('Selection Alright?');
-    %% SAVE OUTPUT
+    %% SAVE OUTPUT DATASET (.m file)
     checkname=1;
     while checkname==1
         DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\FinderSpiker\Processed Data';
@@ -110,6 +183,9 @@ while ~strcmp('Yes',okbutton)
             save([PathName,FileName],'RASTER_Selected_Clean','XY_selected',...
                 'R_Condition','New_Index','Onsets','-append');
             disp([Experiment,'   -> UPDATED (Selected Data)'])
+        elseif FileName==0
+            checkname=0;
+            disp('*************DISCARDED************')
         else
             disp('Not the same Experiment!')
             disp('Try again!')

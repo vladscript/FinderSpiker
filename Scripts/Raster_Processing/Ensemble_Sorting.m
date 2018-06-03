@@ -31,7 +31,7 @@ NC = inputdlg('Enter Number of Analyzed Conditions:',...
          'Conditions', [1 50]);
 NC= str2double(NC{:}); 
 
-%% Read Result from NeuralNetowrks Clustering Results Structure
+%% Read Result from NeuralNetworks Clustering Results Structure
 for c=1:NC
     % Input Select Box
     WorkspaceVariables=who;

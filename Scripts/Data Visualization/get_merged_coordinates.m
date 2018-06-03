@@ -21,6 +21,7 @@
 % [XY_merged,ColocateIndx]=get_merged_coordinates(Experiment,XY_selected,r);
 function [XY_merged,ColocateIndx]=get_merged_coordinates(Experiment,XY,r)
 %% Setup
+Experiment=Experiment(2:end); % delete Slahs from Name ID
 N=length(XY(:,1));
 XY_merged=[];
 X_col=[];
@@ -234,14 +235,13 @@ end
 disp('Rejected: ')
 disp(N_col-length(AcceptedIndx))
 close(getcoord);
+F=figure;
 if isempty(AcceptedIndx)
     disp('***********NO CO-LOCALIZATION***************')
     hold off;
-    figure;
     imshow(rgbC);
 else
     hold off;
-    figure;
     imshow(rgbC);
     % imcontrast;
     hold on;
@@ -286,7 +286,7 @@ while checkname==1
     [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
         'MultiSelect', 'off',DefaultPath);
     dotindex=find(FileName=='.');
-    if strcmp(FileName(1:dotindex-1),Experiment(2:end))
+    if strcmp(FileName(1:dotindex-1),Experiment(1:end))
         checkname=0;
         % SAVE DATA
         save([PathName,FileName],'XY_merged','ColocateIndx','-append');
@@ -312,7 +312,7 @@ end
         rgbA=getrgb(ImageAverage,RGBindexesA);
         rgbC=imadd(rgbA,rgbB);
         h1.Children.CData=rgbA;
-        h3.Children(2).CData=rgbC;
+        h3.Children(end).CData=rgbC;
     end
 
     function ReplotCa(~,~)
@@ -320,7 +320,7 @@ end
         rgbB=getrgb(meanFrame,RGBindexesB);
         rgbC=imadd(rgbA,rgbB);
         h2.Children.CData=rgbB;
-        h3.Children(2).CData=rgbC;
+        h3.Children(end).CData=rgbC;
     end
     function getselection(~,~)
         if Selector.Value==1

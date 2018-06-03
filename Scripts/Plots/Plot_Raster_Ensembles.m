@@ -63,7 +63,7 @@ hold on;
 
 axis([0,ts*(length(R)-1)/60,0,max(sum(R))+1])
 % grid on
-ylabel('Coactivity')
+ylabel('CAG')
 xlabel('Frames')
 
 

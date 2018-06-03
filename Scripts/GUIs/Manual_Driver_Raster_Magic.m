@@ -50,7 +50,7 @@ colormap(CM);       % Make Color map
 % Initialize AXIS and PLOTS (with randomw stuff) ##########################
 ax1=subplot(3,2,1); % Raw Data - - - - - - - - - - - - - -      
 plotsignal=plot(randn(1,10),'Parent',ax1);
-plotsignal.Parent.YLabel.String='Raw F';
+plotsignal.Parent.YLabel.String='F_{raw}';
 plotsignal.Parent.XTick=[];
 ax2=subplot(3,2,3); % Detrended Data - - - - - - - - - - -
 % plotdetrended=plot(randn(1,10),'Parent',ax2);
@@ -165,7 +165,7 @@ for i=1:NC                      % Condition Loop
             end
             
         else
-           fprintf('No %i Video',j) 
+           fprintf('No %i Video\n',j) 
         end
     end
 end
@@ -178,7 +178,7 @@ colormap(CM);      % Make Color map
 % Initialize AXIS and PLOTS (with randomw stuff) ##########################
 ax1=subplot(3,2,1); % Raw Data - - - - - - - - - - - - - -      
 plotsignal=plot(randn(1,10),'Parent',ax1);
-plotsignal.Parent.YLabel.String='Raw \Delta F/F_{0}';
+plotsignal.Parent.YLabel.String='F_{raw}';
 plotsignal.Parent.XTick=[];
 ax2=subplot(3,2,3); % Detrended Data - - - - - - - - - - -
 % plotdetrended=plot(randn(1,10),'Parent',ax2);
@@ -228,12 +228,6 @@ for i=1:NC                      % Condition Loop
             % Input:        empty-> +&- | 0->only+ | 1->+or-
             [D,lambdass]=maxlambda_finder(XD,FR,1);  % [[[DECONVOLUTION]]]
             snrS=zeros(size(lambdass));      % Initialize Output SNRs
-            % Clean Drivers (only +++Drivers) ++++++++++++++++++++++++++++
-            ThDriver=abs(min(D'));
-            [Nd,~]=size(D);
-            for n=1:Nd
-                D(n,D(n,:)<ThDriver(n))=0;
-            end
             % Get Sparse Signals and SNRs
             for k=1:length(isSIGNAL)        % {only-detected}
                 xd=XD(k,:);
@@ -244,6 +238,9 @@ for i=1:NC                      % Condition Loop
                 snrc=10*log(var(x_sparse)/var(xd'-x_sparse));   
                 snrS(k)=snrc;               % SNR Sparse
             end
+            % Clean Up Driver Signals
+            [D,~,~,~,~,~]=analyze_driver_signal(D,FR,XD,X_SPARSE,1);
+            
             % Get Raster +++++++++++++++++++++++++++++++++++++++++++++++++
             for n=1:length(notSIGNAL)
                 % [~,Np]=findpeaks(D(n,:)); % way too clean
@@ -276,7 +273,7 @@ for i=1:NC                      % Condition Loop
                     % Maybe OK button
                     pause;
                     figure(checksignals)
-                    disp('Another Video in the Wall')
+                    disp('Another Video (in the Wall)')
                 end
                 % Ouput-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
                 % Reviewed Signals base on Matrix size(R)= All_Cells x Frames
@@ -363,7 +360,9 @@ function Plot_Data_Now()
         hold(ax2,'on')
         plot(ax2,xd,'b','LineWidth',1)
         grid(ax2,'on');
-        plot(ax2,x_sparse,'r','LineWidth',2)
+        plot(ax2,x_sparse,'g','LineWidth',2)
+        plot(ax2,[0,numel(xd)],[std(xd-x_sparse),std(xd-x_sparse)],'-.r');
+        plot(ax2,[0,numel(xd)],-[std(xd-x_sparse),std(xd-x_sparse)],'-.r');
         hold(ax2,'off')
         axis(ax2,'tight');
         ylabel(ax2,'$\Delta F / F_0$','Interpreter','Latex')
@@ -409,7 +408,7 @@ function Plot_Data_Now()
         grid(ax5,'on');
         hold(ax5,'off')
         axis(ax5,'tight');
-        ylabel(ax5,'CoActiGraphy')
+        ylabel(ax5,'CAG')
         % plotcoac.YData=sum(R);
         % plot(plotcoac.Parent,sum(R),'LineWidth',2);
         %axis(plotcoac.Parent,'tight');
@@ -458,10 +457,15 @@ function manual_processing_ctrl(checksignals,~,~)
             Get_Data;  d=daux;
             lambda=(1+delta_lambda)*lambda;
             [d,x_sparse,~]=magic_sparse_deconvolution(xd,r,lambda);
-            daux=d; daux(d<=0)=0;
+            [daux,~,~,~,~,~]=analyze_driver_signal(d',r,xd,x_sparse);
+            % daux=d; daux(d<=0)=0;
+            % By Driver
             R(neuron,:)=0;
             R(neuron,daux>0)=1;
-            sparsenoise=xd-x_sparse';
+            % By (+) Derivative:
+            % R(neuron,diff(x_sparse)>0)=1;
+            x_sparse=x_sparse';
+            sparsenoise=xd-x_sparse;
             snrc=10*log(var(x_sparse)/var(sparsenoise)); 
             Plot_Data_Now;
             update_data;
@@ -471,10 +475,12 @@ function manual_processing_ctrl(checksignals,~,~)
             Get_Data;  d=daux;
             lambda=(1-delta_lambda)*lambda;
             [d,x_sparse,~]=magic_sparse_deconvolution(xd,r,lambda);
-            daux=d; daux(d<=0)=0;
+            [daux,~,~,~,~,~]=analyze_driver_signal(d',r,xd,x_sparse);
+            % daux=d; daux(d<=0)=0;
             R(neuron,:)=0;
             R(neuron,daux>0)=1;
-            sparsenoise=xd-x_sparse';
+            x_sparse=x_sparse';
+            sparsenoise=xd-x_sparse;
             snrc=10*log(var(x_sparse)/var(sparsenoise)); 
             Plot_Data_Now;
             update_data;

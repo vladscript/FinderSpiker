@@ -1,9 +1,38 @@
-% Raster getting: driver evaluation
+%% NOTE A:
+% Manual Mode->Necessary to know the statistics power
+% of the automatic method by dividing in -+ and --
+%% RIGHT NOW
+% SAVE Ensembles Features as .mat files per condition-> OK [bugs chk]
+% Plot Hebbian Sequence fx
+% Threshold to get NETWORK !!!!!!!!
+% Add GrayChannel to modify contrast to MERGE Colocalization
+% Check Driver after processing-> some +- accepted
+
+
+
+% NO TO SO URGENT
+% Re consider Accepted and Rejected ones @ automatic mode
 % Get Raster Mode -> update in Manual Mode
-% Manual MOde for a raster ONLY!
+% Driver Analysis-> Consider Derivative or Valleys
+% Manual Mode for a specific raster ONLY!
+% Manual mode without using pause---update workspace automatically
 
-% USE imfuse function at get_merged_coordinates function
+%% STEPS ******************************************
+% ACTUAL MODE
+% [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment);
+% R=RASTER_Selected_Clean';
+% R_CONDTION1=R_Condition{1}';
+% ...
+% R_CONDTIONi=R_Condition{i}';
+% 'Got to Dir' 
+% C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\NeuralNetworks
+% NeuralNetwork-> GUI mode-> Clustering Analysis
+% Ensemble_Sorting
+% [XY_merged,ColocateIndx]=get_merged_coordinates(Experiment,XY_selected,r);
+% Plot_Ensembles_Experiment(R_Condition,EnsembleName,Ensembled_Labels,Ensemble_Threshold,UniRMutiE,ColorState,fs,ColocateIndx);
+% [Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs);
 
+%% FUTURE **********************************
 % Figure: reason whi mean(ROI) withput distortion
 % Load Raw FLuorescenc vs F_0 distortion
 
@@ -12,9 +41,6 @@
 
 % Set Default Settings Script / Set Default Settings (mine)
 
-% NOTE A:
-% Manual Mode->Necessary to know the statistics power
-% of the automatic method by dividing in -+ and --
 
 
 % CLUSTERING STUFF ***********************
@@ -32,3 +58,10 @@
 
 % Setup Intel/Info .mat File-> Default User Direcotry to save info
 % Setup Script
+
+
+
+%%CORRELATION***********************************************
+simindex=corrcoef(RASTER_Selected_Clean');
+cluster_index=clusterModularity(simindex,1000);
+plotClusterRaster(RASTER_Selected_Clean,cluster_index,1);

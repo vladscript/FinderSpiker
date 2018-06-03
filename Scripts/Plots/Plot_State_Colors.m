@@ -42,7 +42,7 @@ for i=1:length(labels_frames)
     end
 
 end
-% Coactivity *******************************************************
+% CAG  *******************************************************
 
 subplot(3,1,3); hold on; % ******************** Coactivity Threshold
 plot((1/fs)*[0,length(CoAc)]/60,[THR,THR],'--','Color','k')
