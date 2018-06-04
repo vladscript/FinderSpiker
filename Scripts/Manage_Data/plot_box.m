@@ -1,3 +1,11 @@
+%% Function to plot boxplots
+% INPUT
+% RASTER_NAMES
+% RASTER_FEATURES
+% Names_Conditions
+% f
+% axis
+
 function plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,f,axis)
     NC=numel(Names_Conditions);
     % f: Feature Index

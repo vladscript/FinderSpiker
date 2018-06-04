@@ -1,4 +1,12 @@
 %% Save DATA: Neural Ensembles Features
+% .mat file:
+%   Features_Ensemble
+%   Features_Condition
+% .CSV file
+%   N-Ensembles,Dunns Index,RateOfTransitions,RateOfCycles,DominantEnsemble
+%   N SimpleCycles, N-ClosedCycles , N-OpenedCycles
+%   Ensemble i Rate,...
+%   Ensemble i Dominance=%NeuronsOccupance * Rate,...
 function save_features_ensembles(Experiment,Names_Conditions,Features_Ensemble,Features_Condition)
 % Setup
 % Saving Directory: one above where Finder Spiker is..

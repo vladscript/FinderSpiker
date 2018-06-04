@@ -2,8 +2,8 @@
 % Manual Mode->Necessary to know the statistics power
 % of the automatic method by dividing in -+ and --
 %% RIGHT NOW
-% SAVE Ensembles Features as .mat files per condition-> OK [bugs chk]
-% Plot Hebbian Sequence fx
+
+
 % Threshold to get NETWORK !!!!!!!!
 % Add GrayChannel to modify contrast to MERGE Colocalization
 % Check Driver after processing-> some +- accepted
@@ -29,8 +29,9 @@
 % NeuralNetwork-> GUI mode-> Clustering Analysis
 % Ensemble_Sorting
 % [XY_merged,ColocateIndx]=get_merged_coordinates(Experiment,XY_selected,r);
-% Plot_Ensembles_Experiment(R_Condition,EnsembleName,Ensembled_Labels,Ensemble_Threshold,UniRMutiE,ColorState,fs,ColocateIndx);
+% Plot_Ensembles_Experiment(R_Condition,EnsembleName,Ensembled_Labels,Ensemble_Threshold,UniRMutiE,ColorState,fs,[]);
 % [Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs);
+
 
 %% FUTURE **********************************
 % Figure: reason whi mean(ROI) withput distortion

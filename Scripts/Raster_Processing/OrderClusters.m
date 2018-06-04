@@ -21,6 +21,10 @@ end
 %% Neurons in each Ensemble
 Neurons_State={};
 EnsemblesList=unique(labels_frames);
+% if numel(EnsemblesList)~=NG
+%     NG=numel(EnsemblesList); % little trick
+% end
+
 for g=1:NG
     Current_State=EnsemblesList(g);
     Frames_State=signif_frames(labels_frames==Current_State);

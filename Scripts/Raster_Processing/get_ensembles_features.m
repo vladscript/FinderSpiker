@@ -70,8 +70,13 @@ for c=1:C
     % CONDITION FEATURES ********************************
     % Dunn's Index
     Dhamm=pdist(NeuroVectors','hamming'); % percentage of different neurons
+    if isempty(Dhamm); Dhamm=0; end;
     Lens=sum(NeuroVectors)/AN;            % percentage of used neurons
-    Dunn(c)=min(Dhamm)/max(Lens); % min distance among ensembles divided by maximum length of ensembles
+    if isempty(Lens)
+        Dunn(c)=0;
+    else
+        Dunn(c)=min(Dhamm)/max(Lens); % min distance among ensembles divided by maximum length of ensembles
+    end
     % Hebbian Sequence
     HS=Ensembles_Labels(diff(signif_frames)>1);
     HebbianSequence{c}=HS;
@@ -84,7 +89,7 @@ for c=1:C
     TypeCycles=zeros(3,1);
     tcounter=[]; t=1;
     Tremaining=1;
-    while ~isempty(Tremaining)
+    while and(~isempty(Tremaining),~isempty(ET))
         ActualEnsemble=ET(t);
         Cy=find(ET(t+1:end)==ActualEnsemble);
         if ~isempty(Cy)
@@ -105,7 +110,7 @@ for c=1:C
                     i=i+1;
                 elseif numel(unique(Cycle))==numel(E)
                     disp(Cycle')
-                    CycleMat=zeros(length(E));
+                    CycleMat=zeros(max(E));
                     for j=1:length(Cycle)-1
                         CycleMat(Cycle(j),Cycle(j+1))=CycleMat(Cycle(j),Cycle(j+1))+1;
                         % ASS(j,:)=[Cycle(j),Cycle(j+1)]

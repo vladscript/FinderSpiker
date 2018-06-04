@@ -1,4 +1,11 @@
 %% Save DATA: Neural Ensembles Features
+% .mat file:
+%   Features_Ensemble
+%   Features_Condition
+% .CSV file
+%   N-Ensembles,Dunns Index,RateOfTransitions,RateOfCycles,DominantEnsemble
+%   N SimpleCycles, N-ClosedCycles , N-OpenedCycles
+%   
 function save_features_ensembles(Experiment,Names_Conditions,Features_Ensemble,Features_Condition)
 % Setup
 % Saving Directory: one above where Finder Spiker is..
@@ -39,28 +46,36 @@ if iscell(Names_Conditions)
 else
     C=1;
 end
-HeadersFeatures={'Ensembles','Dunns','RateTrans','RateCycles','Dominant'};
-Tensemblesfeatures=table;
+
 for c=1:C
-    % Ccndition Table
+    HeadersFeatures={'Ensembles','Dunns','RateTrans','RateCycles','Dominant',...
+    'SimpleCycles','ClosedCycles','OpenedCycles'};
+    Tensemblesfeatures=table;
+    % Condition Table
     Name=Names_Conditions{c};
     [~,NE]=size(Features_Ensemble.Neurons);             % N ensembles
     DunnIndx=Features_Condition.Dunn(c);                % Dunns Index
     RateTran=Features_Condition.RateTrans(c);           % Rate Transitions
     RateCycl=Features_Condition.RateCycles(c);          % Rate Cycles
     [~,EnseDom]=max(Features_Ensemble.Dominance(c,:));  % Dominant Ensemble
-    Nsimple=Features_Condition.CyclesType(1,c)
-    
-    Tensemblesfeatures=table(NE,DunnIndx,RateTran,RateCycl,EnseDom);
+    % Simple Cycles
+    Portion_simple=Features_Condition.CyclesType(1,c)/sum(Features_Condition.CyclesType(:,c));
+    % Closed Cycles
+    Portion_closed=Features_Condition.CyclesType(2,c)/sum(Features_Condition.CyclesType(:,c));
+    % Opened Cycles
+    Portion_opened=Features_Condition.CyclesType(3,c)/sum(Features_Condition.CyclesType(:,c));
+    % INITIALIZE TABLE
+    Tensemblesfeatures=table(NE,DunnIndx,RateTran,RateCycl,EnseDom,...
+        Portion_simple,Portion_closed,Portion_opened);
     for n=1:NE
-        HeadersFeatures{5+n}=['RateEns_',num2str(n)];
-        Tensemblesfeatures(1,end+1)=table(Features_Ensemble.Rate(c,n))
+        HeadersFeatures{end+1}=['RateEns_',num2str(n)];
+        Tensemblesfeatures(1,end+1)=table(Features_Ensemble.Rate(c,n));
     end
     for n=1:NE
-        HeadersFeatures{5+NE+n}=['DomEns_',num2str(n)];
-        Tensemblesfeatures(1,end+1)=table(Features_Ensemble.Dominance(c,n))
+        HeadersFeatures{end+1}=['DomEns_',num2str(n)];
+        Tensemblesfeatures(1,end+1)=table(Features_Ensemble.Dominance(c,n));
     end
-    Tensemblesfeatures.Properties.VariableNames=HeadersFeatures
+    Tensemblesfeatures.Properties.VariableNames=HeadersFeatures;
     % Save CSV
     if isdir([FileDirSave,NameDir])
         writetable(Tensemblesfeatures,[FileDirSave,NameDir,Experiment(2:end),'_',Name,'_EF.csv'],...

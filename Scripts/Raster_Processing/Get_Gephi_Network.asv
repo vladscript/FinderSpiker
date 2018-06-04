@@ -30,8 +30,8 @@ for i=1:NStates
 end
 % Only Neurons Active in Ensembles and their Coordinates
 ActiveNeurons=unique(ActiveNeurons);
-% XY_ensambles=XY_selected(ActiveNeurons,:);
-XY_ensambles=XY_selected;
+XY_ensambles=XY_selected(ActiveNeurons,:);
+% XY_ensambles=XY_selected;
 Raster_ensambles=Raster(:,ActiveNeurons);
 [~,C]=size(Raster_ensambles);
 
@@ -151,7 +151,7 @@ if ~isempty(FileNameExp)
     
     SaveasName=['\NetWorks-CSV\',Experiment(2:end),'_',FileNameExp,'_Nodes.csv'];
         HeadersNodes={'ID','Label','Latitude','Longitude','Color'};
-        Tnodes=table(Cluster_Indexing(1:Ncells)',StatesofNeurons,XY_ensambles(Cluster_Indexing(1:Ncells),2),XY_ensambles(Cluster_Indexing(1:Ncells),1),ColorNeuronCell,...
+        Tnodes=table(Cluster_Indexing(1:Ncells)',StatesofNeurons,XY_ensambles(:,2),XY_ensambles(:,1),ColorNeuronCell,...
             'VariableNames',HeadersNodes);
         DirSave=pwd;
         poslash=find(DirSave=='\');

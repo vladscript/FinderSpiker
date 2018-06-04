@@ -56,7 +56,7 @@ end
 % First Figure:
 % 'Active Neurons','Duration','MeanActivity','EffectiveActivity'
 FeaturesA=figure;
-FeaturesA.Name='Raster Features: Activity Indexes';
+FeaturesA.Name='Raster Features: Indexes';
 h1=subplot(2,2,1); % Active Neurons
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,1,h1)
 title(h1,'Active Neurons')
@@ -65,10 +65,10 @@ plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,2,h2)
 title(h2,'Duration [min]')
 h3=subplot(2,2,3); % Mean Activity
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,3,h3)
-title(h3,'Mean Acitivity')
+title(h3,'Mean Activity')
 h4=subplot(2,2,4); % Effective Activity
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,4,h4)
-title(h4,'Effective Acitivity')
+title(h4,'Effective Activity')
 
 % 'ISImean','ISImode','ISIvar','ISIskew','ISIkurt',...
 % 'Lengthmean','Lengthmode','Lengthvar','Lengthskew','Lengthkurt'
