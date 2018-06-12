@@ -21,8 +21,7 @@ clear;
 close all;
 
 %% ADDING ALLSCRIPTS
-ActualDir=pwd;
-addpath(genpath([ActualDir,'\Scripts']))
+Update_Directory
 
 %% Set Default Directory of Experiments
 DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Experimentos\'; % Load from DEFAULT

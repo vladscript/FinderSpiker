@@ -3,11 +3,13 @@
 % of the automatic method by dividing in -+ and --
 %% FIXED  before update GIT
 % Bug @ Driver_Analysis en EXP: size Matrixes: Cellx Frames
-% Add GrayChannel to modify contrast to MERGE Colocalization
 %% RIGHT NOW
 
+% Add GrayChannel to modify contrast to MERGE Colocalization
+% and other colors. MAGENTA
 
 % waitfor(f);-> USE at MANUAL_MODE
+
 % Check Driver after processing-> some +- accepted
 % Threshold to get NETWORK !!!!!!!!
 
@@ -19,7 +21,7 @@
 % Driver Analysis-> Consider Derivative or Valleys
 % Manual Mode for a specific raster ONLY!
 % Manual mode without using pause---update workspace automatically
-% and other colors in the MERGE script : MAGENTA
+
 %% STEPS ******************************************
 % ACTUAL MODE
 % [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment);

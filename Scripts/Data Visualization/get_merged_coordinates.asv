@@ -30,7 +30,7 @@ Y_col=[];
 ColocateIndx=zeros(N,1);
 
 %% Open Dialogue Box to Read Marker A  & Image: of Colocated Cells :GFP/tdTomato/etc
-dyename = inputdlg('Neurons Marker : ',...
+dyename = inputdlg('Marker : ',...
              'DYE', [1 50]);
 
 DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Experimentos';
@@ -65,7 +65,7 @@ ImageAverageCopy=ImageAverage;
 % GrayLimits=find(counts>0);
 % MIN_IA=binLocations(GrayLimits(1));
 % MAX_IA=binLocations(GrayLimits(end));
-% Gray_Map=gray(255);
+Gray_Map=gray(255);
 % B=ind2gray(A,map);                              % Gray Scale Image
 [H,W]=size(ImageAverage);                                  % Size of the Image
 kindcells = inputdlg('Cells : ',...
@@ -106,7 +106,6 @@ for n=1:Nv
 end
 meanFrame=meanFrame/(nframes-1);
 meanFrame=uint8(round(meanFrame));
-meanFrameCopy=meanFrame;
 % GSmap=colormap(gray);
 % C=ind2gray(meanFrame,GSmap);
 % Get Mean Image        
@@ -125,7 +124,7 @@ meanFrameCopy=meanFrame;
 % Default = Green + Red
 RGBindexesA=2;
 RGBindexesB=1;
-RGBNames={'Red','Green','Blue','Gray (contrast)'};
+RGBNames={'Red','Green','Blue','Gray'};
 
 rgbA=getrgb(ImageAverage,RGBindexesA);
 rgbB=getrgb(meanFrame,RGBindexesB);
@@ -221,9 +220,9 @@ fhelp=msgbox('Push Select XY and use normal button clicks to add points. A shift
 Meshxy_Circle=round(Meshxy_Circle);
 X_col=[];Y_col=[];
 window_min=0; window_max=255;
-% ManageContrast=[];
+
 hb = uicontrol('Style','pushbutton',...
-'String','Close & SAVE',...
+'String','Plot line',...
 'Callback',@CloseAndSave);
 
 %% Nested Funtions Magic
@@ -309,7 +308,7 @@ hb = uicontrol('Style','pushbutton',...
         rgbA=cat(3,A,A,A);
         if indx==4 % GRAY
             rgbA(:,:,[2,3])=0;
-            % rgbA=rgb2gray(rgbA);
+            rgbA=rgb2gray(rgbA);
         else %  R-G-B
             for k=1:3
                 if k~=indx
@@ -323,60 +322,40 @@ hb = uicontrol('Style','pushbutton',...
     function ReplotDye(~,~)
         RGBindexesA=rgbChooseDye.Value;
         rgbA=getrgb(ImageAverageCopy,RGBindexesA);
-        if RGBindexesA<4 
+        if RGBindexesA<4
             h1.Children.CData=rgbA;
-            if and(RGBindexesB<4,RGBindexesA~=RGBindexesB)
-                rgbC=imadd(rgbA,rgbB);
-                h3.Children(end).CData=rgbC;
-            end
+            rgbC=imadd(rgbA,rgbB);
+            h3.Children(end).CData=rgbC;
         else
-            h1.Children.CData=ImageAverage;  colormap(gray);
+            h1.Children.CData=rgbA;  colormap(gray);
             h1.Children.CDataMapping='scaled';
             % uiwait(figsave)
             ManageContrast=imcontrast(h1);
             set(ManageContrast, 'CloseRequestFcn', @getValues);
             waitfor(ManageContrast);
-            disp('Dye ok')            
+            disp('ok')            
         end
-    % Nested in Nested Function to get the valuso of MIN & MAX Gray Histogram
-    function getValues(~,~)
-        window_min = str2double(get(findobj(ManageContrast, 'tag', 'window min edit'), 'String'));
-        window_max = str2double(get(findobj(ManageContrast, 'tag', 'window max edit'), 'String'));
-        ImageAverageCopy(ImageAverage<window_min)=0;
-        ImageAverageCopy(ImageAverage>window_max)=255;
-        ImageAverageCopy=imadjust(ImageAverageCopy,[window_min,window_max]/255,[]);
-        delete(ManageContrast);
-        % resume(figsave)
-    end  
-   end
+
+% Function to get the valuso of MIN & MAX Gray Histogram
+        
+        function getValues(~,~)
+            window_min = str2double(get(findobj(ManageContrast, 'tag', 'window min edit'), 'String'));
+            window_max = str2double(get(findobj(ManageContrast, 'tag', 'window max edit'), 'String'));
+            ImageAverageCopy(ImageAverage<window_min)=0;
+            ImageAverageCopy(ImageAverage>window_max)=255;
+            ImageAverageCopy=imadjust(ImageAverageCopy,[window_min,window_max]/255,[]);
+            delete(ManageContrast);
+            % resume(figsave)
+        end
+        
+    end
 
     function ReplotCa(~,~)
         RGBindexesB=rgbChooseCa.Value;
-        rgbB=getrgb(meanFrameCopy,RGBindexesB);
-        if RGBindexesB<4
-            h2.Children.CData=rgbB;
-            if and(RGBindexesA<4,RGBindexesA~=RGBindexesB)
-                rgbC=imadd(rgbA,rgbB);
-                h3.Children(end).CData=rgbC;
-            end
-        else
-            h2.Children.CData=meanFrame;  colormap(gray);
-            h2.Children.CDataMapping='scaled';
-            ManageContrast=imcontrast(h2);
-            set(ManageContrast, 'CloseRequestFcn', @getValues);
-            waitfor(ManageContrast);
-            disp('Mean Frame ok')
-        end
-     % Nested in Nested Function to get the valuso of MIN & MAX Gray Histogram
-     function getValues(~,~)
-        window_min = str2double(get(findobj(ManageContrast, 'tag', 'window min edit'), 'String'));
-        window_max = str2double(get(findobj(ManageContrast, 'tag', 'window max edit'), 'String'));
-        meanFrameCopy(meanFrame<window_min)=0;
-        meanFrameCopy(meanFrame>window_max)=255;
-        meanFrameCopy=imadjust(meanFrameCopy,[window_min,window_max]/255,[]);
-        delete(ManageContrast);
-        % resume(figsave)
-     end          
+        rgbB=getrgb(meanFrame,RGBindexesB);
+        rgbC=imadd(rgbA,rgbB);
+        h2.Children.CData=rgbB;
+        h3.Children(end).CData=rgbC;
     end
 
     function getselection(~,~)

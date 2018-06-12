@@ -21,6 +21,10 @@ else
     check=0;
     disp('Only Checkin Driver Amplitudes')
 end
+% Make size of Cells x Frames:
+D=makecellsxframes(D);
+XDupdate=makecellsxframes(XDupdate);
+Xest=makecellsxframes(Xest);
 % Initial Decay due to firing or "fast bleaching"
 [C,~]=size(D); % Length of okINDX
 % Initialize Output
@@ -42,7 +46,7 @@ for c=1:C
     noisex=xd-xe;
     % Initial Maximum Driver->Distortion ##########################
     [~,framax]=max(d);
-    if and(framax==1 && sum(d)~=0 ,check)
+    if and(framax==1 && ~isempty(d(d~=0)) ,check)
         nextframe=framax+1;
         while and(xe(nextframe)>0,x_sparse(nextframe)>0.5e-3)
             % x_sparse(nextframe)=0;
@@ -55,11 +59,14 @@ for c=1:C
 %         if isempty(Apeaks)
 %             XDfix(c,1:nextframe)=XDfix(c,1:nextframe)-x_sparsePRE(1:nextframe);
 %         else
-        xexp=fit([1:nextframe]',xd(1:nextframe)','exp1');
-        xdecay=xexp(1:nextframe);
-        xd(1:nextframe)=xd(1:nextframe)-xdecay';
-        XDfix(c,:)=xd;
-        disp('~~>')
+        if nextframe>3
+            xexp=fit([1:nextframe]',xd(1:nextframe)','exp1');
+            xdecay=xexp(1:nextframe);
+            xd(1:nextframe)=xd(1:nextframe)-xdecay';
+            XDfix(c,:)=xd;
+            disp('\___ Initial decay ~~>')
+        end
+        
 %         end
         [xe,noisex]=mini_denoise(xd); % update and fix
         [d,lambdaD]=maxlambda_finder(xd,r);
