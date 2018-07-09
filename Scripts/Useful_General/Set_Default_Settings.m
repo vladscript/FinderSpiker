@@ -20,8 +20,9 @@ if strcmp('Yes',Modify)
     %% Set Biexponential Parameters and AR process order and length
     % Setup for Auto Regressive Process Estimation
     fsbiexp=10;        % Just an arbitrary sampling frequency
-    L=30;              % seconds  of the Fluorophore Response
-    taus_0= [.75,2,1]; % starting values
+    Load_Default_Values_SP;
+    % L=30;              % seconds  of the Fluorophore Response
+    % taus_0= [.75,2,1]; % starting values
     t_r=linspace(0,L,L*fsbiexp);
     r_bi = taus_0(3)*(exp(-t_r/taus_0(2)) - exp(-t_r/taus_0(1)));
     % display biexponential function
@@ -41,7 +42,7 @@ if strcmp('Yes',Modify)
     else
         disp('Default Biexpoenetial Parameters are Already Set')
     end
-    p=3;               % AR(p) initial AR order        
+    % p=3;               % AR(p) initial AR order        
     close(biexp);
     %% Set Denoising Setup
     %% Set Sparse Deconvolution Sttings

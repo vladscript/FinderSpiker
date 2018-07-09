@@ -1,16 +1,23 @@
 %% NOTE A:
 % Manual Mode->Necessary to know the statistics power
-% of the automatic method by dividing in -+ and --
+% of the automatic method by dividing in -+ and -- (false+ & false-)
 %% FIXED  before update GIT
-% Bug @ Driver_Analysis en EXP: size Matrixes: Cellx Frames
-% Add GrayChannel to modify contrast to MERGE Colocalization
+% Calcium_Magic Script for Manual Mode
+% Manual Magic Mode: DEteCteD: 
+%   Check Indexes of Updated Variables   OK
+%   Initialize Matrices of Cells         OK
 %% RIGHT NOW
+% Manual Magic Mode for the UNDEtected
+%   Exit Function Update and Save Data
+% & OddsMatrix function
+% Integrate Calcium_Magic to Raster_MAgic_Better:
+%   Saving Variables & Stuff
+% Delete :
+%   Manual_Driver_Raster_Magic & Manual_Driver_Raster_Magic_Ultimate
 
 
-% waitfor(f);-> USE at MANUAL_MODE
 % Check Driver after processing-> some +- accepted
-% Threshold to get NETWORK !!!!!!!!
-
+% waitfor(f);-> USE at MANUAL_MODE & BUTTONS [too muhc programming]
 
 
 % NO TO SO URGENT
@@ -20,6 +27,9 @@
 % Manual Mode for a specific raster ONLY!
 % Manual mode without using pause---update workspace automatically
 % and other colors in the MERGE script : MAGENTA
+% Threshold to get NETWORK !!!!!!!!
+% Kalman Filtering at SNR and lambdas pdf's: for optimal threshold
+
 %% STEPS ******************************************
 % ACTUAL MODE
 % [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment);
@@ -43,10 +53,6 @@
 % 1st Part Automatic: Raster Method
 % Analyze Rejects Ones Anyway to infer Artifacts
 
-% Set Default Settings Script / Set Default Settings (mine)
-
-
-
 % CLUSTERING STUFF ***********************
 % Threshold: prior numbercoactivyt:
 % [THCOAC]=mctest(R,'modes')
@@ -54,11 +60,6 @@
 % [Ensembles,N_Ensembles,MethodsClustering,ThEffective,
 % label_frames,
 % signifi_frames]=ensemble_clusterin(R,THCOAC);
-
-% Still some Detrending issues: final points distortion !!!!!
-% Initial distoriton creates valleys [SOLVED]
-% (really) slow peaks [STILL]->delete usgin drive and convolution recon
-% detection of modes: starter or later mode  comparisson
 
 % Setup Intel/Info .mat File-> Default User Direcotry to save info
 % Setup Script

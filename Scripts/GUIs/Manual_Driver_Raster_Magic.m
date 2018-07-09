@@ -43,7 +43,7 @@ checksignals=figure('menubar','none','numbertitle','off',...
             'position',[46 42 600 450],...
             'keypressfcn',@manual_processing_ctrl);
 
-% Define colormap for raster image
+% Define colormap for raster image: white/black:activity/orange:empty
 CM=hot(20);         % Choose Colors
 CM=CM(end:-1:1,:);  % Turn up-down
 colormap(CM);       % Make Color map

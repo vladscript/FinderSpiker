@@ -14,12 +14,24 @@
 %   ExperimentID.mat @ cd ..\Processed Data: Useful Workspace Variables
 %   ExperimentID.csv @ cd ..\Features Tables:Processing Signal Features
 %   ExperimentID.csv @ cd ..\Resume Tables:  Experiment Resume Features
-%   Using GitHub                    19/01/2017
+%   Using GitHub                    19/01/2018
+%   Important Update:               09/07/2018
 %% Global Setup ***********************************************************
 clc
-clear;
+clear all;
 close all;
-
+%% Global Variables:
+global SIGNALS;
+global DETSIGNALS;
+global preDRIVE;
+global preLAMBDAS;
+global RASTER
+global Responses
+global Names_Conditions;
+global fs;
+global SIGNALSclean;
+global SNRlambda;
+% global LAMBDASSpro;
 %% ADDING ALLSCRIPTS
 Update_Directory
 
@@ -56,13 +68,14 @@ Responses=cell(NV,NC);
 preDRIVE=cell(NV,NC);
 preLAMBDAS=cell(NV,NC);
 TAUSall=cell(NV,NC);
-SIGNALSclean=cell(NV,NC);
+% SIGNALSclean=cell(NV,NC);
 RASTER=cell(NV,NC);
 isSIGNALS=cell(NV,NC);
-LAMBDASpro=cell(NV,NC);
+LAMBDASSpro=cell(NV,NC);
 SNRs=cell(NV,NC);
 DRIVERs=cell(NV,NC);
-
+SIGNALSclean=cell(size(SIGNALS)); % Detected clean SIGNALS
+SNRlambda=cell(size(preLAMBDAS));    % Sparse Empirical SNRs
 %% Load Data *********************************************************
 % For each CONDITION and VIDEO
 for i=1:NC
@@ -99,11 +112,12 @@ end
 
 %% SETUP PROCESSING PARAMTERS ******************************
 % Setup for Auto Regressive Process Estimation
-L=30;              % seconds  of the Fluorophore Response
-p=3;               % AR(p) initial AR order        
-taus_0= [.75,2,1]; % starting values for taus
+% L=30;              % seconds  of the Fluorophore Response
+% p=3;               % AR(p) initial AR order        
+% taus_0= [.75,2,1]; % starting values for taus
+Load_Default_Values_SP;
 
-%% DETRENDING AND SPARSE DECONVOLVE DETECTION
+%% DETRENDING AND SPARSE DECONVOLVE [AUTOMATIC] DETECTION
 [NV,NC]=size(SIGNALS);
 ColumnNames={'Fluo_Dye','f_s','DetectedCells','Frames',...
         'minSNR','minSkewness','TimeProcessing'};
@@ -112,25 +126,30 @@ for i=1:NC
 % for i=2:NC
     auxj=0;
     for j=1:str2double(NumberofVideos{i})
-%     for j=2:str2double(NumberofVideos{i})
+        % Initialize and Read Data
         X=SIGNALS{j,i};
+        [Ns,Frames] = size(X);
+        FR=zeros(Ns,round(L*fs));
+        TAUS=zeros(Ns,3);
+        DRIVER=zeros(Ns,Frames);
+        LAMBDASS=zeros(Ns,1);
+        Dfix=zeros(Ns,Frames);
+        % XDfix=zeros(Ns,Frames);
+        Xestfix=zeros(Ns,Frames);
+        XDupdate=zeros(Ns,Frames);
         % Display Info **********************
         disp(['               [>> Condition: ',num2str(i),'/',num2str(NC),']']);
         disp(['               [>> Video    : ',num2str(j),'/',NumberofVideos{i},']']);
         tic
         % Detrending ******************************************************
-        [Ns,Frames] = size(X);
         XD=only_detrending(X);
-        %%% Denoising ******************************************************
-        % Main Features to Detect Signal or Noise:
-        % [Xest,SNRbyWT,SkewSignal,ABratio,SkewNoise]=denoise_wavelet(XD,X);
-        % isempty(setdiff(preAccepted_index,Accepted_index))
+        % Denoising & Feature Extration ***********************************
         [Xest,SNRbyWT,SkewSignal,~,SkewNoise,XDupdate]=denoise_wavelet(XD);
         %% DRIVER ANALYSIS
         IndexesFix=1;       % TO enter to the WhileLoop
         FixedSignals=[];    % 
         FixedNOSignals=[];  % 
-        aux=0;
+        aux=0;              % Loop COunter 
         while and(~isempty(IndexesFix),aux<2)
             aux=aux+1;
             if ~isempty(FixedSignals);
@@ -163,7 +182,7 @@ for i=1:NC
             if isempty(Rejected_index)
                 fprintf('\n\n\n\n > > > > Artifacts Distortion ALERT\n\n\n\n')
             end
-            %%% Reject Som False Positives: **************************************
+            %%% Reject Some False Positives: **************************************
             if ~isempty(Accepted_index)
                 % Get Threshold
                 Th_SNR =get_threshold_pdf(SNRbyWT,Accepted_index,Rejected_index);
@@ -173,20 +192,16 @@ for i=1:NC
                 AcceptedINDX=unique([makerowvector(Accepted_index(SNRbyWT(Accepted_index)>Th_SNR)),...
                     makerowvector(Accepted_index(SkewSignal(Accepted_index)>Th_Skew))]);
                 RejectedINDX=setdiff(1:Ns,AcceptedINDX);
-
-
-        %%% Response Funtion ***********************************************
-                [FR,~,TAUS]=AR_Estimation(XDupdate(AcceptedINDX,:),p,fs,L,taus_0);
+                %%% Response Funtion ***********************************************
+                [FR(AcceptedINDX,:),~,TAUS(AcceptedINDX,:)]=AR_Estimation(XDupdate(AcceptedINDX,:),p,fs,L,taus_0);
                 for k=1:length(AcceptedINDX)
-                    if isempty(findpeaks( FR(k,:) ) )
-                        FR(k,:)=-FR(k,:);
+                    if isempty(findpeaks( FR(AcceptedINDX(k),:) ) )
+                        FR(AcceptedINDX(k),:)=-FR(AcceptedINDX(k),:);
                         disp('WARNING: Response Function Missestimation')
                     end
                 end
                 %%% Sparse Deconvolution *******************************************
-                [DRIVER,LAMBDASS]=maxlambda_finder(XDupdate(AcceptedINDX,:),FR);
-                % Ignore Drivers with bigger Negative Drivers than positive ones
-                % Dindex=find( abs(min(DRIVER'))<abs(max(DRIVER')) );
+                [DRIVER(AcceptedINDX,:),LAMBDASS(AcceptedINDX)]=maxlambda_finder(XDupdate(AcceptedINDX,:),FR(AcceptedINDX,:));
                 % KEEP SNR>0 and High+Skewed Signals
                 % ActiveNeurons=unique([AcceptedINDX(Dindex),makerowvector(Accepted_index)]);
                 % InactiveNeurons=setdiff(1:Ns,ActiveNeurons);
@@ -196,13 +211,15 @@ for i=1:NC
                 % FR=FR(okINDX,:);
                 % LAMBDASS=LAMBDASS(okINDX);
                 % Check Driver
-                [Dfix,XDfix,Xestfix,LambdasFix,IndexesFix,Features]=analyze_driver_signal(DRIVER,FR,XDupdate(AcceptedINDX,:),Xest(AcceptedINDX,:));
+                [Dfix(AcceptedINDX,:),XDfix,Xestfix,LambdasFix,IndexesFix,Features]=...
+                    analyze_driver_signal(DRIVER(AcceptedINDX,:),...
+                    FR(AcceptedINDX,:),XDupdate(AcceptedINDX,:),Xest(AcceptedINDX,:));
                 if ~isempty(IndexesFix)
                     FixedSignals=AcceptedINDX(IndexesFix);
-                    LAMBDASS(IndexesFix)=LambdasFix;
+                    LAMBDASS(FixedSignals)=LambdasFix;
                     DRIVER=Dfix;
-                    XDupdate(AcceptedINDX,:)=XDfix;
-                    Xest(AcceptedINDX,:)=Xestfix;
+                    XDupdate(FixedSignals,:)=XDfix(FixedSignals,:);
+                    Xest(FixedSignals,:)=Xestfix(FixedSignals,:);
                     fprintf('\n\n\n > >   Updated Values   < < \n\n\n')
                     % Process NOT OK#######################################
                     [FRr,~,~]=AR_Estimation(XDupdate(RejectedINDX,:),p,fs,L,taus_0);
@@ -222,19 +239,12 @@ for i=1:NC
                         Xest(RejectedINDX,:)=XestRfix;
                     end
                 end
-            % Negative Threshold to clean Drivers ****************************
-            % ThDriver=abs(min(D'));
-            % Clean Drivers (only +++Drivers) ALREADY CLEANE
-                % [Nd,~]=size(D);
-                % for n=1:Nd
-                %    D(n,D(n,:)<=0)=0; % JUST + + + driver
-                % end
-                % Check if zero drivers & Update DATA
-                ActiveNeurons=AcceptedINDX( sum(DRIVER,2)~=0 );
+                % Get Active Neurons
+                ActiveNeurons=find( sum(DRIVER,2)~=0 );
                 InactiveNeurons=setdiff(1:Ns,ActiveNeurons);
-                LAMBDASS=LAMBDASS( sum(DRIVER,2)~=0 );
-                DRIVER=DRIVER(sum(DRIVER,2)~=0, :);
-                FR=FR(sum(DRIVER,2)~=0,:);
+                % LAMBDASS=LAMBDASS( sum(DRIVER,2)~=0 );
+                % DRIVER=DRIVER(sum(DRIVER,2)~=0, :);
+                % FR=FR(sum(DRIVER,2)~=0,:);
             else
                 AcceptedINDX=[];
                 RejectedINDX=setdiff(1:Ns,AcceptedINDX);
@@ -262,32 +272,33 @@ for i=1:NC
             end
         end % END WHILE of IndexesFix
         
-        
         %% GET RASTER *****************************************************
-        TotalCells=length(XY);
-        Raster=get_raster(1,DRIVER,ActiveNeurons,TotalCells); % DRIVER
+        % TotalCells=length(XY);
+        Raster=get_raster(1,DRIVER,ActiveNeurons); % DRIVER
         % Examples---------------------------------------------------------
         % DRIVER:
-        % R1=get_raster(1,Dfix,ActiveNeurons,TotalCells); 
+        % R1=get_raster(1,Dfix,ActiveNeurons); 
         % OOPSI:
-        % R2=get_raster(2,XDupdate(ActiveNeurons,:),ActiveNeurons,TotalCells,TAUS,fs,Xest(ActiveNeurons,:));
+        % R2=get_raster(2,XDupdate(ActiveNeurons,:),ActiveNeurons,TAUS,fs,Xest(ActiveNeurons,:));
         % DERIVATIVE (cleaned up signal)
-        % R3=get_raster(3,Dfix,ActiveNeurons,TotalCells,FR);
+        % R3=get_raster(3,Dfix,ActiveNeurons,FR);
         % _________________________________________________________________
         % Results Monitor Figure ******************************************
         % figureMonitor=gcf;
         % figureMonitor.Name=[Experiment(2:end),' ',Names_Conditions{i},' vid:',num2str(j)];
         % drawnow;
+        
         % Cells to save PREPROCESSING ####################################
         DETSIGNALS{j,i}=XDupdate;       % Detrended Signals         *
         ESTSIGNALS{j,i}=Xest;           % Wavelet Denoised          *
         SNRwavelet{j,i}=SNRbyWT;        % Empirical SNR             
         Responses{j,i}=FR;              % Fluorophore Responses     
         TAUSall{j,i}=TAUS;              % [taus {rise, fall},gain]  
-        preDRIVE{j,i}=DRIVER;                % Preliminar Drives (+ & -) 
+        preDRIVE{j,i}=DRIVER;           % Drivers
         preLAMBDAS{j,i}=LAMBDASS;       % lambda Parameter          
         isSIGNALS{j,i}=ActiveNeurons;   % Signal Indicator          
         RASTER{j,i}=Raster;             % Preliminar Raster         
+        
         % Table Data For Processing Log Details ##########################
         TimeProcessing=toc;             % Processing Latency [s]
         T=table( dyename,{num2str(fs)},{num2str(length(ActiveNeurons))},...
@@ -324,28 +335,6 @@ end
 save([FileDirSave,'\Processed Data',Experiment,'.mat'],'DETSIGNALS','ESTSIGNALS','SNRwavelet',...
     'preDRIVE','preLAMBDAS','TAUSall','RASTER','isSIGNALS','Responses','dyename','-append');
 disp('Updated Feature - Extraction DATA')
-%% Save Resume Table
-% okindxname=[];
-% for n=1:length(Experiment)
-%     if isalpha_num(Experiment(n))
-%         okindxname=[okindxname,n];
-%     end
-% end
-% ColumnNames={'Fluo_Dye','Experiment','f_s','Condition','Cells','Frames',...
-%     'minSNR','minSKEW','TimeProcessing'};
-% Tresume.Properties.VariableNames=ColumnNames;
-% 
-% if isdir([FileDirSave,'\Resume Tables'])
-%     writetable(Tresume,[FileDirSave,'\Resume Tables',Experiment,'.csv'],...
-%         'Delimiter',',','QuoteStrings',true);
-%     disp('Saved Table Resume')
-% else % Create Directory
-%     disp('Directory >Resume Tables< created')
-%     mkdir([FileDirSave,'\Resume Tables']);
-%     writetable(Tresume,[FileDirSave,'\Resume Tables',Experiment,'.csv'],...
-%         'Delimiter',',','QuoteStrings',true);
-%     disp('Saved Table Resume')
-% end
 %% Sort & Clean Rasters ***************************************************
 % make it nested function--->
 % Sort by Activation in each Condition:
@@ -371,6 +360,7 @@ disp('Saved Sorted Raster Intel')
 % Ask if so
 button = questdlg('Results Inspection?');
 if strcmp('Yes',button)
+    
     [NV,NC]=size(isSIGNALS);
     preisSIGNALS=isSIGNALS;
     [isSIGNALSOK,SIGNALSclean,DRIVEROK,RASTEROK,...
