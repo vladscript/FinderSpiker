@@ -6,6 +6,11 @@ New_Index_Active=New_Index(TotalActiveNeurons); % Sorted Indexes of Clean Raster
 A2A=find(ColocateIndx); % 
 Indexes=New_Index(A2A);
 
+%%CORRELATION***********************************************
+simindex=corrcoef(RASTER_Selected_Clean');
+cluster_index=clusterModularity(simindex,1000);
+plotClusterRaster(RASTER_Selected_Clean,cluster_index,1);
+
 %%% Plot Some PDFs to monitor errors (!)
 %             figure; 
 %             subplot(211)

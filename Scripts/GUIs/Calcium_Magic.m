@@ -1,4 +1,4 @@
-% Function to Clean Manuallly Calcium Transients
+%% Function to Clean Manuallly Calcium Transients
 % Input
 % indxSIGNAL: Cell of Indexed Signal as Detected Ca^2+ Transient
 % Global Inputs:
@@ -10,13 +10,22 @@
 %   Responses           Estimated Dye Response
 %   Names_Conditions    Names of Conditions
 % Outputs
-%   indxSINGALSOK:      Acutal Detected Signals
+%
+%   indxSIGNALSOK:      Acutal Detected Signals
+% Global OutputModifiied
 %   SIGNALSclean:       Sparse Cleaned up Signals
 %   SNRs                Signal Noise Ratio
-function indxSINGALSOK = Calcium_Magic(indxSIGNALS)
+%   preDRIVE            Preliminar Drive
+%   preLAMBDAS          Preliminar Lambdas
+%   RASTER              Detected Raster ACtivity
+%   Responses           Estimated Dye Response
+
+function indxSIGNALSOK = Calcium_Magic(indxSIGNALS)
 %% Setup
 disp('Loading...')
 % Call Global Variables
+% global isSIGNALS;
+% global notSIGNALS;
 global SIGNALS;             % Raw Fluorescence Signals
 global DETSIGNALS;          % Detrended Fluorescence Signals
 global preDRIVE;            % Automatic Founded Driver Function
@@ -26,18 +35,20 @@ global Responses;           % Fluorescence Response Signals
 global Names_Conditions;    % Names of The Conditions
 global SIGNALSclean;        % Sparse Clean Signals
 global SNRlambda;           % Signal Noise Ratio by Sparse Deconvolution
-
-% Initialize Outputs
-indxSINGALSOK=indxSIGNALS;  % Detected INDEXES
+global Experiment;          % Experiment ID
+global fs;
+global indxSIGNALSOK;       % Indexes of the Detected Signals
+% indxSIGNALSOK=cell(size(indxSIGNALS));
 % Setup Variables
+% Load_Default_Values_SP;
 delta_lambda=0.25;          % \lambda Step lambda_next=(1+_deltalambda)*lambda_present
 [NVmax,NC]=size(SIGNALS);   % NC: N Conditions
 % Get Useful Pair of Indexes i,j
 IndxPair=[];
-for i=1:NC
-    for j=1:NVmax
-       if ~isempty(SIGNALS{j,i})
-           IndxPair=[IndxPair;j,i];
+for ihat=1:NC
+    for jhat=1:NVmax
+       if ~isempty(SIGNALS{jhat,ihat})
+           IndxPair=[IndxPair;jhat,ihat];
        end
     end
 end
@@ -48,7 +59,8 @@ Npairs=size(IndxPair,1);
 % 'menubar','none' display tools: zoom
 checksignals=figure('numbertitle','off',...
             'position',[46 42 600 450],...
-            'keypressfcn',@manual_processing_ctrl);
+            'keypressfcn',@manual_processing_ctrl,...
+            'CloseRequestFcn',@close_and_update);
 % Video Switcher
 VideoSwitcher=uicontextmenu(checksignals);
 checksignals.UIContextMenu=VideoSwitcher;
@@ -83,18 +95,33 @@ linkaxes([ax4,ax5],'x');
 n=1;
 i=IndxPair(n,2); % CONDITIONS
 j=IndxPair(n,1); % VIDEOS
-
-isSIGNAL=indxSIGNALS{j,i};
-% Here: Detect if signals are detected or Rejected      (!!!!)
-RubricTitle='Detected Ca++ Transients | Condition: ';
 [Cells,Frames]=size(SIGNALS{j,i});      % ALL NCells & Frames
-checksignals.Name=[RubricTitle,Names_Conditions{i},' Vid: ',num2str(j)];
+isSIGNAL=indxSIGNALS{j,i};
+% FR=Responses{j,i}(isSIGNAL,:);
+% Here: Detect if signals are detected or Rejected      (!!!!)
+if ~isempty(find(preLAMBDAS{j,i}(isSIGNAL)==0))
+    RubricTitle='Unprocessed Ca++ Transients | Condition: ';
+    % Initialize Outputs
+    for nvid=1:Npairs
+        i=IndxPair(nvid,2); % Conditions
+        j=IndxPair(nvid,1); % Videos
+        indxSIGNALSOK{j,i}=setdiff(1:Cells,indxSIGNALS{j,i});
+    end
+    % undetectedindx=true;
+else
+    RubricTitle='Detected Ca++ Transients | Condition: ';
+    indxSIGNALSOK=indxSIGNALS;  % Detected INDEXES
+    % undetectedindx=false;
+end
+
+checksignals.Name=[RubricTitle,Names_Conditions{i},' Video: ',num2str(j),...
+    'Exp ID: ',Experiment(2:end)];
 % Initialize Variables:
-X=[]; FR=[]; XD=[]; D=[]; lambdass=[];
+X=[]; XD=[]; D=[]; lambdass=[];
 R=[]; X_SPARSE=[]; snrS=[];
 
-retrieve_global_data();
-indx_neuron=1; 
+retrieve_global_data();                 % Get Data from the Global Variables
+indx_neuron=1;                          % Starting Index
 neuron=isSIGNAL(indx_neuron);                   % Neuron
 x=X(indx_neuron,:);                             % Raw Signal
 r=FR(indx_neuron,:);                            % Response
@@ -106,15 +133,38 @@ lambda=lambdass(indx_neuron);                   % Lambda of Preprocess
 Get_Data();
 Plot_Data_Now();
 disp('... Ready!')
+detectedneurons=[];
+% isSIGNALS=[];
 % ... and magic begins.
 %% Nested Functions #######################################################
     function retrieve_global_data()
         % Read Data ++++++++++++++++++++++++++++++++++++++++++
         X=SIGNALS{j,i}(isSIGNAL,:);         % Raw Fluorescence {only-detected}
-        FR = Responses{j,i}(isSIGNAL,:);    % Response Funtions {only-detected}
         XD=DETSIGNALS{j,i}(isSIGNAL,:);     % Detrended Fluorescence {only-detected}
+        FR = Responses{j,i}(isSIGNAL,:);    % Response Funtions {only-detected}
         D=preDRIVE{j,i}(isSIGNAL,:);        % Driver Signals  {only-detected}
         lambdass=preLAMBDAS{j,i}(isSIGNAL); % List of lambdas {only-detected}
+        okReview=find(preLAMBDAS{j,i}(isSIGNAL)==0); % Cheack wich ones haven't been processed
+        if ~isempty(okReview)
+            disp('Searching in Undetected Ca++ Transients');
+            % Calculate Paramters:
+            p=1; L=1; taus_0=[1,1,1];
+            Load_Default_Values_SP;
+            [FR(okReview,:),~,~]=AR_Estimation(XD(okReview,:),p,fs,L,taus_0);
+            for k=1:length(isSIGNAL(okReview))
+                if isempty(findpeaks( FR(okReview(k),:) ) )
+                    FR(okReview(k),:)=-FR(okReview(k),:);
+                    disp('WARNING: Response Function Missestimation')
+                end
+            end
+            Responses{j,i}(isSIGNAL,:)=FR;
+            % Input:        empty-> +&- | 0->only+ | 1->+or-
+            [D(okReview,:),lambdass(okReview)]=maxlambda_finder(XD(okReview,:),FR(okReview,:),1);  % [[[DECONVOLUTION]]]
+            preLAMBDAS{j,i}(isSIGNAL(okReview))=lambdass(okReview);
+            preDRIVE{j,i}(isSIGNAL(okReview),:)=D(okReview,:);
+            disp('Done.');
+        end
+        
         R=RASTER{j,i};                      % Raster        {ALL CELLS}
         if isempty(SIGNALSclean{j,i})
             fprintf('>> Getting Sparse Signal...')
@@ -264,7 +314,7 @@ disp('... Ready!')
     end
 
     function update_data()
-        XD(indx_neuron,:)=xd;          
+        % XD(indx_neuron,:)=xd;          
         D(indx_neuron,:)=d;
         snrS(indx_neuron)=snrc;
         X_SPARSE(indx_neuron,:)=x_sparse;
@@ -345,7 +395,8 @@ disp('... Ready!')
                     disp('                  <=Previus Video')
                 end
         end
-        checksignals.Name=[RubricTitle,Names_Conditions{i},' Vid: ',num2str(j)];
+        checksignals.Name=[RubricTitle,Names_Conditions{i},' Video: ',num2str(j),...
+                            'Exp ID: ',Experiment(2:end)];
         indx_neuron=1; 
         isSIGNAL=indxSIGNALS{j,i};
         retrieve_global_data;
@@ -357,14 +408,57 @@ disp('... Ready!')
     function update_global_data()
         % Read Data ++++++++++++++++++++++++++++++++++++++++++
         detectedneurons=find(sum(R,2)>0);       % Index of Actual Detected Neurons        
-        indxSINGALSOK{j,i}=detectedneurons;     % Update ACtual Detected Ca++Trans
+        indxSIGNALSOK{j,i}=detectedneurons;     % Update ACtual Detected Ca++Trans
         preDRIVE{j,i}(isSIGNAL,:)=D;            % Driver Signals  {only-detected}
         preLAMBDAS{j,i}(isSIGNAL)=lambdass;     % List of lambdas {only-detected}
         RASTER{j,i}=R;                          % Raster        {ALL CELLS}
         SIGNALSclean{j,i}(isSIGNAL,:)=X_SPARSE; % Clean Sparse Signals {ALL CELLS}
         SNRlambda{j,i}(isSIGNAL)=snrS;          % Signal Noise Ratio {only-detected}
+        %if undetectedindx
+        %    Responses{j,i}(isSIGNAL)=FR;
+        %end
         disp('Data: [Updated]')
     end
-%% Exit to Update
+
+    function close_and_update(~,~,~)
+        update_global_data;
+        % Save as NEW Cell of Checked Indexes 
+        % isSIGNALS=indxSIGNALSOut; % To Save
+        % Update NO DETECTDED SIGNALS
+        % for nvid2=1:Npairs
+        %    i=IndxPair(nvid2,2); % Conditions
+        %    j=IndxPair(nvid2,1); % Videos
+        %    notSIGNALS{j,i}=setdiff(1:Cells,isSIGNALS{j,i});
+        % end
+        checkname=1;
+        while checkname==1
+            % Get Directory
+            DP=pwd;
+            Slashes=find(DP=='\');
+            DefaultPath=[DP(1:Slashes(end)),'Processed Data'];
+            if exist(DefaultPath,'dir')==0
+                DefaultPath=pwd; % Current Diretory of MATLAB
+            end
+            [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
+                'MultiSelect', 'off',DefaultPath);
+            dotindex=find(FileName=='.');
+            if strcmp(FileName(1:dotindex-1),Experiment(2:end))
+                checkname=0;
+                % SAVE DATA
+                save([PathName,FileName],'preDRIVE','preLAMBDAS','RASTER',...
+                    'Responses','SIGNALSclean','SNRlambda','indxSIGNALSOK','-append');
+                disp([Experiment,'   -> RASTERS UPDATED (Visual ~ Inspection)'])
+                delete(gcf)
+            elseif FileName==0
+                checkname=0;
+                disp('....CANCELLED')
+                delete(gcf)
+            else
+                disp('Not the same Experiment!')
+                disp('Try again!')
+            end
+        end    
+        delete(checksignals);
+    end
 end
 %% END OF THE WORLD

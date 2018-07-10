@@ -20,7 +20,7 @@ function [Names_Conditions,NumberofVideos,FN,PathName,XY,r]=Read_Videos(DefaultP
 %% Ask how many conditions and how many videos *********************
 % 1st Input DIalogue
 NC = inputdlg('Number of Conditions: ',...
-             'VIDEOS', [1 25]);
+             'VIDEOS', [1 75]);
 NC = str2num(NC{:}); 
 Conditions_String='Condition_';
 n_conditions=[1:NC]';
@@ -34,7 +34,7 @@ for i=1:NC
 end
 % 2nd Input Dialogue
 name='Names';
-numlines=[1 25];
+numlines=[1 75];
 Names_Conditions=inputdlg(Cond_Names,name,numlines,Names_default);
 % 3th Input Dialogue
 name='Videos';

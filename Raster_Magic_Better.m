@@ -31,7 +31,9 @@ global Names_Conditions;
 global fs;
 global SIGNALSclean;
 global SNRlambda;
-% global LAMBDASSpro;
+global Experiment;
+% global isSIGNALS;
+% global notSIGNALS;
 %% ADDING ALLSCRIPTS
 Update_Directory
 
@@ -49,7 +51,7 @@ while isnan(fs) % Interface error user reading fs
 end
 % Read Fluorophore DYe
 dyename = inputdlg('Fluorophore : ',...
-             'DYE', [1 150]);
+             'DYE', [1 50]);
 % fs = str2double(fs{:});
 
 %% Read Names, Path and Coordinates***********************************
@@ -71,6 +73,7 @@ TAUSall=cell(NV,NC);
 % SIGNALSclean=cell(NV,NC);
 RASTER=cell(NV,NC);
 isSIGNALS=cell(NV,NC);
+notSIGNALS=cell(NV,NC);
 LAMBDASSpro=cell(NV,NC);
 SNRs=cell(NV,NC);
 DRIVERs=cell(NV,NC);
@@ -241,10 +244,6 @@ for i=1:NC
                 end
                 % Get Active Neurons
                 ActiveNeurons=find( sum(DRIVER,2)~=0 );
-                InactiveNeurons=setdiff(1:Ns,ActiveNeurons);
-                % LAMBDASS=LAMBDASS( sum(DRIVER,2)~=0 );
-                % DRIVER=DRIVER(sum(DRIVER,2)~=0, :);
-                % FR=FR(sum(DRIVER,2)~=0,:);
             else
                 AcceptedINDX=[];
                 RejectedINDX=setdiff(1:Ns,AcceptedINDX);
@@ -252,24 +251,13 @@ for i=1:NC
                 ActiveNeurons=[];
                 FR=[];
                 LAMBDASS=[];
-%% plot to monitor results
-%             figure; 
-%             subplot(211)
-%             [pO,binO]=ksdensity(SNRbyWT,linspace(min(SNRbyWT),max(SNRbyWT),100));
-%             plot(binO,pO,'.k','LineWidth',1)
-%             axis tight; grid on;
-%             title('SNR pdf')
-%             subplot(212)
-%             [pO,binO]=ksdensity(SkewSignal,linspace(min(SkewSignal),max(SkewSignal),100));
-%             plot(binO,pO,'.k','LineWidth',1)
-%             axis tight; grid on;
-%             title('Skewness pdf')
                 disp('             *********************' )
                 disp('             *********************' )
                 disp('             ******PURE NOISE ****' )
                 disp('             *********************' )
                 disp('             *********************' )
             end
+            InactiveNeurons=setdiff(1:Ns,ActiveNeurons);
         end % END WHILE of IndexesFix
         
         %% GET RASTER *****************************************************
@@ -296,7 +284,8 @@ for i=1:NC
         TAUSall{j,i}=TAUS;              % [taus {rise, fall},gain]  
         preDRIVE{j,i}=DRIVER;           % Drivers
         preLAMBDAS{j,i}=LAMBDASS;       % lambda Parameter          
-        isSIGNALS{j,i}=ActiveNeurons;   % Signal Indicator          
+        isSIGNALS{j,i}=ActiveNeurons;   % DETECTTED Signals
+        notSIGNALS{j,i}=InactiveNeurons;% UNDETECTED Signals
         RASTER{j,i}=Raster;             % Preliminar Raster         
         
         % Table Data For Processing Log Details ##########################
@@ -333,7 +322,7 @@ end
  %% SAVING(2) Processed Data & Feature Extraction |  Resume Table 
 % Save Auto-Processed DATA * * * * * * * * * * * * * * * * * * * * * * * * 
 save([FileDirSave,'\Processed Data',Experiment,'.mat'],'DETSIGNALS','ESTSIGNALS','SNRwavelet',...
-    'preDRIVE','preLAMBDAS','TAUSall','RASTER','isSIGNALS','Responses','dyename','-append');
+    'preDRIVE','preLAMBDAS','TAUSall','RASTER','isSIGNALS','notSIGNALS','Responses','dyename','-append');
 disp('Updated Feature - Extraction DATA')
 %% Sort & Clean Rasters ***************************************************
 % make it nested function--->
@@ -357,10 +346,28 @@ save([FileDirSave,'\Processed Data',Experiment,'.mat'],'New_Index','Raster_Condi
 disp('Saved Sorted Raster Intel')
 
 %% Visual Inpspection & Manual Processing ********************************* GREAT!
+% Visual/Manual Proesssing Controler: (-+) & (--)
+mf=msgbox({'For Visual Inspection of Detected Ca++ Transients';'Type: ';...
+    '>>Detected_Visual_Inspection';' ';'And for Undetected Ca++ Transients';...
+    '>>Undetected_Visual_Inspection'});
+VisualInspector=[false,false];
+waitfor(mf); delete(mf);
 % Ask if so
+% button = questdlg('Visual Inspection for Detected Ca++ Transients?');
+% if strcmp('Yes',button)
+%     global indxSIGNALSOK;
+%     indxSIGNALSOK=cell(size(isSIGNALS));
+%     indxSIGNALSOK = Calcium_Magic(notSIGNALS); % # Check Flase +
+% end
+% button = questdlg('Visual Inspection for Undetected Ca++ Transients?');
+% if strcmp('Yes',button)    
+%     indxSIGNALSOK = Calcium_Magic(notSIGNALS);% # Check Flase -
+%     % indxSIGNALSOK + indxSIGNALSREC -> OKsignals
+%     % OddsMatrix=func(indxSINGALSOK,indxSINGALSREC,isSIGNALS,notSIGNALS)
+% end
+%% OLD STUFF
 button = questdlg('Results Inspection?');
-if strcmp('Yes',button)
-    
+if strcmp('Yes',button)    
     [NV,NC]=size(isSIGNALS);
     preisSIGNALS=isSIGNALS;
     [isSIGNALSOK,SIGNALSclean,DRIVEROK,RASTEROK,...

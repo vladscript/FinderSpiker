@@ -6,14 +6,18 @@
 % Manual Magic Mode: DEteCteD: 
 %   Check Indexes of Updated Variables   OK
 %   Initialize Matrices of Cells         OK
-%% RIGHT NOW
 % Manual Magic Mode for the UNDEtected
 %   Exit Function Update and Save Data
+%   Make Global Outputs of The Visual Inspection
 % & OddsMatrix function
 % Integrate Calcium_Magic to Raster_MAgic_Better:
 %   Saving Variables & Stuff
+%% RIGHT NOW
+
 % Delete :
-%   Manual_Driver_Raster_Magic & Manual_Driver_Raster_Magic_Ultimate
+%   Manual_Driver_Raster_Magic_Ultimate
+% Old Version Manual Mode:
+%   Manual_Driver_Raster_Magic.m
 
 
 % Check Driver after processing-> some +- accepted
@@ -31,16 +35,27 @@
 % Kalman Filtering at SNR and lambdas pdf's: for optimal threshold
 
 %% STEPS ******************************************
-% ACTUAL MODE
+%PROCESSING
+% RUN >>Raster_Magic_Better
+% RUN >>Detected_Visual_Inspection
+% RUN >>Undetected_Visual_Inspection
+
+
+% RASTER SELECTION
+% ACTUAL MODE: @ Original Coordiantes Order
 % [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment);
 % R=RASTER_Selected_Clean';
 % R_CONDTION1=R_Condition{1}';
 % ...
 % R_CONDTIONi=R_Condition{i}';
+
+% CLUSTERING
 % 'Got to Dir' 
 % C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\NeuralNetworks
 % NeuralNetwork-> GUI mode-> Clustering Analysis
 % Ensemble_Sorting
+
+% COLOCALIZATION OF MARKED CELLS
 % [XY_merged,ColocateIndx]=get_merged_coordinates(Experiment,XY_selected,r);
 % Plot_Ensembles_Experiment(R_Condition,EnsembleName,Ensembled_Labels,Ensemble_Threshold,UniRMutiE,ColorState,fs,[]);
 % [Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs);
@@ -63,10 +78,3 @@
 
 % Setup Intel/Info .mat File-> Default User Direcotry to save info
 % Setup Script
-
-
-
-%%CORRELATION***********************************************
-simindex=corrcoef(RASTER_Selected_Clean');
-cluster_index=clusterModularity(simindex,1000);
-plotClusterRaster(RASTER_Selected_Clean,cluster_index,1);
