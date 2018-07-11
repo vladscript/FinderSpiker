@@ -160,9 +160,12 @@ detectedneurons=[];
             Responses{j,i}(isSIGNAL,:)=FR;
             % Input:        empty-> +&- | 0->only+ | 1->+or-
             [D(okReview,:),lambdass(okReview)]=maxlambda_finder(XD(okReview,:),FR(okReview,:),1);  % [[[DECONVOLUTION]]]
+            % Get Raster: Driver Mode
+            R(okReview,D(okReview,:)>0)=1;
             preLAMBDAS{j,i}(isSIGNAL(okReview))=lambdass(okReview);
             preDRIVE{j,i}(isSIGNAL(okReview),:)=D(okReview,:);
             disp('Done.');
+            % Plot_Data_Now;
         end
         
         R=RASTER{j,i};                      % Raster        {ALL CELLS}
@@ -226,7 +229,15 @@ detectedneurons=[];
         title(ax2,['SNR=',num2str(snrc),'[dB]'],...
               'FontSize',8,'FontWeight','normal');
         %  Driver - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        dplot=d/max(d);    % Normalize
+        if max(d)<=0
+            dplot=d;
+            plotdriver.EdgeColor='r';
+            plotdriver.LineWidth=2;
+        else
+            dplot=d/max(d);    % Normalize
+            plotdriver.EdgeColor='k';
+            plotdriver.LineWidth=0.5;
+        end
         plotdriver.YData=dplot;
         axis(plotdriver.Parent,'tight');
         grid(plotdriver.Parent,'on');
@@ -302,7 +313,10 @@ detectedneurons=[];
     
     function reprocess_data()
         [d,x_sparse,~]=magic_sparse_deconvolution(xd,r,lambda);
-        [d,~,~,~,~,~]=analyze_driver_signal(d',r,xd,x_sparse);
+        % re-re-process if detrending issue: emtpy last input
+        % [d,~,~,~,~,~]=analyze_driver_signal(d',r,xd,x_sparse);
+        % Onky anlyzes Driver: any last input
+        [d,~,~,~,~,~]=analyze_driver_signal(d',r,xd,x_sparse,0);
         % By Driver
         R(neuron,:)=0;
         R(neuron,d>0)=1;

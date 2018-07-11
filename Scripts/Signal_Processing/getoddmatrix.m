@@ -23,11 +23,11 @@ OddsMatrix=cell(NV,NC); % Odds Matrix: {++,-+,+-,--}
 for j=1:NV
     for i=1:NC
         if ~isempty(SIGNALS{j,i})
-            indxSIGNALSNOT=setdiff(1:Cells,indxSIGNALSOK{j,i});
-            OddsMatrix{j,i}.TruePositive=intersect(indxSIGNALSOK{j,i},isSIGNALS{j,i});
-            OddsMatrix{j,i}.FalsePositive=setdiff(indxSIGNALSOK{j,i},isSIGNALS{j,i});
-            OddsMatrix{j,i}.FalseNegative=setdiff(indxSIGNALSNOT,notSIGNALS{j,i});
-            OddsMatrix{j,i}.TrueNegative=intersect(indxSIGNALSNOT,notSIGNALS{j,i});
+            indxSIGNALSNOT=makerowvector( setdiff(1:Cells,indxSIGNALSOK{j,i}) );
+            OddsMatrix{j,i}.TruePositive=intersect( makerowvector(indxSIGNALSOK{j,i}),makerowvector(isSIGNALS{j,i}) );
+            OddsMatrix{j,i}.FalsePositive=setdiff(makerowvector(isSIGNALS{j,i}),makerowvector(indxSIGNALSOK{j,i}));
+            OddsMatrix{j,i}.FalseNegative=setdiff(makerowvector(notSIGNALS{j,i}),makerowvector(indxSIGNALSNOT));
+            OddsMatrix{j,i}.TrueNegative=intersect(makerowvector(indxSIGNALSNOT),makerowvector(notSIGNALS{j,i}));
         end
     end
 end

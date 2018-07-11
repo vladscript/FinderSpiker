@@ -2,17 +2,15 @@
 % Manual Mode->Necessary to know the statistics power
 % of the automatic method by dividing in -+ and -- (false+ & false-)
 %% FIXED  before update GIT
-% Calcium_Magic Script for Manual Mode
-% Manual Magic Mode: DEteCteD: 
-%   Check Indexes of Updated Variables   OK
-%   Initialize Matrices of Cells         OK
-% Manual Magic Mode for the UNDEtected
-%   Exit Function Update and Save Data
-%   Make Global Outputs of The Visual Inspection
-% & OddsMatrix function
-% Integrate Calcium_Magic to Raster_MAgic_Better:
-%   Saving Variables & Stuff
-%% RIGHT NOW
+% Manual Delete: fail update from driver selection->Zero Driver Stuff
+% Run ONLY Undetected_Visual_Inspection, SAVE AFTER!OK
+% Why it makes a Lambda Searcher in lambda tunning?->OK driver analyse function inputs
+% OddsMatrix Issue-> OK
+%% Bugs
+
+% Set a waitfor(msgbox('processing')); delete(gco);
+% Plot after Processing the UNporcessed: get raster
+% Get Raster Function
 
 % Delete :
 %   Manual_Driver_Raster_Magic_Ultimate
@@ -26,6 +24,7 @@
 
 % NO TO SO URGENT
 % Re consider Accepted and Rejected ones @ automatic mode
+% Add Highlight Neuron Using Mouse at Plot_Raster
 % Get Raster Mode -> update in Manual Mode
 % Driver Analysis-> Consider Derivative or Valleys
 % Manual Mode for a specific raster ONLY!
@@ -39,6 +38,7 @@
 % RUN >>Raster_Magic_Better
 % RUN >>Detected_Visual_Inspection
 % RUN >>Undetected_Visual_Inspection
+% RUN >>PLot_and_Save
 
 
 % RASTER SELECTION

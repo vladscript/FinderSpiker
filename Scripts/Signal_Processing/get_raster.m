@@ -7,15 +7,13 @@
 % VARARGIN: according to the method
 % Mode 1: Sparse Deconvolution 
 %       Driver Signal
-%       ActiveNeurons
-
-% Mode 2: Deconvolution
+%       ActiveNeurons-> Raster Row to Modify
+% Mode 2: Deconvolution OOPSI (requires setup)
 %       Detrended Signal: Only Detected Neurons
-%       ActiveNeurons
-
+%       ActiveNeurons-> Raster Row to Modify
 % Mode 3: Derivative of Cleaned Signal
 %       Driver Signal
-%       ActiveNeurons
+%       ActiveNeurons-> Raster Row to Modify
 %       Response Function
 
 % Output
@@ -61,7 +59,7 @@ switch method
         end
         
     case 3  % Derivative Method
-        D=varargin{1};
+        D=varargin{1};  
         ActiveNeurons=varargin{2};
         FR=varargin{3};
         [TotalCells,F]=size(D);
