@@ -1,30 +1,28 @@
 %% NOTE A:
 % Manual Mode->Necessary to know the statistics power
 % of the automatic method by dividing in -+ and -- (false+ & false-)
+% Old Version Manual Mode:
+%   Manual_Driver_Raster_Magic.m
 %% FIXED  before update GIT
 % Manual Delete: fail update from driver selection->Zero Driver Stuff
 % Run ONLY Undetected_Visual_Inspection, SAVE AFTER!OK
 % Why it makes a Lambda Searcher in lambda tunning?->OK driver analyse function inputs
 % OddsMatrix Issue-> OK
-%% Bugs
+%% Bugs & New Functions NOW
 
-% Set a waitfor(msgbox('processing')); delete(gco);
-% Plot after Processing the UNporcessed: get raster
-% Get Raster Function
+% Set a waitfor(msgbox('processing')); delete(gco):OK
+% Plot after Processing the UNporcessed: get raster: OK
+% Get Raster Function->
 
 % Delete :
 %   Manual_Driver_Raster_Magic_Ultimate
-% Old Version Manual Mode:
-%   Manual_Driver_Raster_Magic.m
 
-
-% Check Driver after processing-> some +- accepted
-% waitfor(f);-> USE at MANUAL_MODE & BUTTONS [too muhc programming]
 
 
 % NO TO SO URGENT
 % Re consider Accepted and Rejected ones @ automatic mode
 % Add Highlight Neuron Using Mouse at Plot_Raster
+% Progress Bar for Visual Inspection
 % Get Raster Mode -> update in Manual Mode
 % Driver Analysis-> Consider Derivative or Valleys
 % Manual Mode for a specific raster ONLY!

@@ -322,9 +322,11 @@ for i=1:NC
 end
  %% SAVING(2) Processed Data & Feature Extraction |  Resume Table 
 % Save Auto-Processed DATA * * * * * * * * * * * * * * * * * * * * * * * * 
-save([FileDirSave,'\Processed Data',Experiment,'.mat'],'DETSIGNALS','ESTSIGNALS','SNRwavelet',...
-    'preDRIVE','preLAMBDAS','TAUSall','RASTER','isSIGNALS','notSIGNALS','Responses','dyename','-append');
-disp('Updated Feature - Extraction DATA')
+save([FileDirSave,'\Processed Data',Experiment,'.mat'],'DETSIGNALS','ESTSIGNALS',...
+    'SNRwavelet','SIGNALSclean','SNRlambda',...
+    'preDRIVE','preLAMBDAS','TAUSall','RASTER','isSIGNALS','notSIGNALS',...
+    'Responses','dyename','-append');
+disp('Updated: {Feature-Extraction} DATA')
 %% Sort & Clean Rasters ***************************************************
 % make it nested function--->
 % Sort by Activation in each Condition:

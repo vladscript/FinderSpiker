@@ -47,7 +47,7 @@ delta_lambda=0.25;          % \lambda Step lambda_next=(1+_deltalambda)*lambda_p
 IndxPair=[];
 for ihat=1:NC
     for jhat=1:NVmax
-       if ~isempty(SIGNALS{jhat,ihat})
+       if and(~isempty(SIGNALS{jhat,ihat}),~isempty(indxSIGNALS{jhat,ihat}))
            IndxPair=[IndxPair;jhat,ihat];
        end
     end
@@ -93,6 +93,10 @@ linkaxes([ax1,ax2,ax3],'x');
 linkaxes([ax4,ax5],'x');
 %% Initialize Plot **************************************************
 n=1;
+while isempty(indxSIGNALS{n})
+    n=n+1;
+    disp('... Searching Signal Indexes>>')
+end
 i=IndxPair(n,2); % CONDITIONS
 j=IndxPair(n,1); % VIDEOS
 [Cells,Frames]=size(SIGNALS{j,i});      % ALL NCells & Frames
@@ -103,9 +107,9 @@ if ~isempty(find(preLAMBDAS{j,i}(isSIGNAL)==0))
     RubricTitle='Unprocessed Ca++ Transients | Condition: ';
     % Initialize Outputs
     for nvid=1:Npairs
-        i=IndxPair(nvid,2); % Conditions
-        j=IndxPair(nvid,1); % Videos
-        indxSIGNALSOK{j,i}=setdiff(1:Cells,indxSIGNALS{j,i});
+        iaux=IndxPair(nvid,2); % Conditions
+        jaux=IndxPair(nvid,1); % Videos
+        indxSIGNALSOK{jaux,iaux}=setdiff(1:Cells,indxSIGNALS{jaux,iaux});
     end
     % undetectedindx=true;
 else
@@ -127,8 +131,8 @@ x=X(indx_neuron,:);                             % Raw Signal
 r=FR(indx_neuron,:);                            % Response
 xd=XD(indx_neuron,:);                           % Detrended
 d=D(indx_neuron,:);                             % Driver
-x_sparse=X_SPARSE(indx_neuron,:);               % Clean Signal
-snrc=snrS(indx_neuron);                         % SNR
+x_sparse=X_SPARSE(neuron,:);               % Clean Signal
+snrc=snrS(neuron);                         % SNR
 lambda=lambdass(indx_neuron);                   % Lambda of Preprocess
 Get_Data();
 Plot_Data_Now();
@@ -143,10 +147,14 @@ detectedneurons=[];
         XD=DETSIGNALS{j,i}(isSIGNAL,:);     % Detrended Fluorescence {only-detected}
         FR = Responses{j,i}(isSIGNAL,:);    % Response Funtions {only-detected}
         D=preDRIVE{j,i}(isSIGNAL,:);        % Driver Signals  {only-detected}
+        R=RASTER{j,i};                      % Raster        {ALL CELLS}
         lambdass=preLAMBDAS{j,i}(isSIGNAL); % List of lambdas {only-detected}
         okReview=find(preLAMBDAS{j,i}(isSIGNAL)==0); % Cheack wich ones haven't been processed
         if ~isempty(okReview)
             disp('Searching in Undetected Ca++ Transients');
+            hwait = figure('units','pixels','position',[500 500 200 150],'windowstyle','modal');
+            uicontrol('style','text','string','Processing...','units','pixels','position',[75 10 50 30]);
+            drawnow;
             % Calculate Paramters:
             p=1; L=1; taus_0=[1,1,1];
             Load_Default_Values_SP;
@@ -161,34 +169,36 @@ detectedneurons=[];
             % Input:        empty-> +&- | 0->only+ | 1->+or-
             [D(okReview,:),lambdass(okReview)]=maxlambda_finder(XD(okReview,:),FR(okReview,:),1);  % [[[DECONVOLUTION]]]
             % Get Raster: Driver Mode
-            R(okReview,D(okReview,:)>0)=1;
+            for k=1:numel(okReview)
+                R(isSIGNAL(okReview(k)),D(okReview(k),:)>0)=1;
+            end
             preLAMBDAS{j,i}(isSIGNAL(okReview))=lambdass(okReview);
             preDRIVE{j,i}(isSIGNAL(okReview),:)=D(okReview,:);
+            close(hwait);
             disp('Done.');
             % Plot_Data_Now;
         end
         
-        R=RASTER{j,i};                      % Raster        {ALL CELLS}
         if isempty(SIGNALSclean{j,i})
             fprintf('>> Getting Sparse Signal...')
-            SIGNALSclean{j,i}=zeros(size(SIGNALS{j,i}));
-            SNRlambda{j,i}=zeros(size(SIGNALS{j,i},1),1);
-            X_SPARSE=zeros(size(X));        % Initialize Sparse Clean Signals
-            snrS=zeros(size(lambdass));     % Initialize Output SNRs
+            SIGNALSclean{j,i}=zeros(Cells,Frames);
+            SNRlambda{j,i}=zeros(Cells,1);
+            X_SPARSE=zeros(Cells,Frames);        % Initialize Sparse Clean Signals
+            snrS=zeros(Cells,1);     % Initialize Output SNRs
             for k=1:length(isSIGNAL)        % {only-detected}
                 xd=XD(k,:);
                 d=D(k,:);
                 r=FR(k,:);
                 x_sparse=sparse_convolution(d,r);
-                X_SPARSE(k,:)=x_sparse;     % Sparse Signals
+                X_SPARSE(isSIGNAL(k),:)=x_sparse;     % Sparse Signals
                 snrc=10*log(var(x_sparse)/var(xd'-x_sparse));
-                snrS(k)=snrc;               % SNR Sparse
+                snrS(isSIGNAL(k))=snrc;               % SNR Sparse
             end
             fprintf(' Done\n')
         else
             fprintf('>> Getting Sparse Signal...')
-            X_SPARSE=SIGNALSclean{j,i}(isSIGNAL,:);
-            snrS=SNRlambda{j,i}(isSIGNAL);
+            X_SPARSE=SIGNALSclean{j,i};
+            snrS=SNRlambda{j,i};
             fprintf(' Already Done\n')
         end
     end
@@ -200,7 +210,7 @@ detectedneurons=[];
         xd=XD(indx_neuron,:);                 % Detrended
         d=D(indx_neuron,:);                   % Driver
         d(d<0)=0;
-        x_sparse=X_SPARSE(indx_neuron,:);     % Clean Signal
+        x_sparse=X_SPARSE(neuron,:);     % Clean Signal
         snrc=10*log(var(x_sparse)/var(xd-x_sparse));   % SNR
         lambda=lambdass(indx_neuron);  
     end
@@ -255,7 +265,7 @@ detectedneurons=[];
         plotraster.Parent.YTick=neuron;
         % CoAc Signal  - - - - - - - - - - - - - - - - - - - - - - - - - - 
         CoAcGraphy=sum(R);
-        cla(ax5)
+        cla(ax5); % Replot Stuff
         hold(ax5,'on')
         plot(ax5,CoAcGraphy,'b','LineWidth',2)
         plot(ax5,find(d>0),CoAcGraphy(d>0),'LineStyle','none','Marker','.','MarkerSize',10,'Color',[0.6,0,0.6])
@@ -316,7 +326,9 @@ detectedneurons=[];
         % re-re-process if detrending issue: emtpy last input
         % [d,~,~,~,~,~]=analyze_driver_signal(d',r,xd,x_sparse);
         % Onky anlyzes Driver: any last input
-        [d,~,~,~,~,~]=analyze_driver_signal(d',r,xd,x_sparse,0);
+        if ~isempty(d(d>0))
+            [d,~,~,~,~,~]=analyze_driver_signal(d',r,xd,x_sparse,0);
+        end
         % By Driver
         R(neuron,:)=0;
         R(neuron,d>0)=1;
@@ -330,8 +342,8 @@ detectedneurons=[];
     function update_data()
         % XD(indx_neuron,:)=xd;          
         D(indx_neuron,:)=d;
-        snrS(indx_neuron)=snrc;
-        X_SPARSE(indx_neuron,:)=x_sparse;
+        snrS(neuron)=snrc;
+        X_SPARSE(neuron,:)=x_sparse;
         lambdass(indx_neuron)=lambda;
         % Update Raster: Driver Mode
         R(neuron,:)=0;
@@ -426,8 +438,8 @@ detectedneurons=[];
         preDRIVE{j,i}(isSIGNAL,:)=D;            % Driver Signals  {only-detected}
         preLAMBDAS{j,i}(isSIGNAL)=lambdass;     % List of lambdas {only-detected}
         RASTER{j,i}=R;                          % Raster        {ALL CELLS}
-        SIGNALSclean{j,i}(isSIGNAL,:)=X_SPARSE; % Clean Sparse Signals {ALL CELLS}
-        SNRlambda{j,i}(isSIGNAL)=snrS;          % Signal Noise Ratio {only-detected}
+        SIGNALSclean{j,i}=X_SPARSE;             % Clean Sparse Signals {ALL CELLS}
+        SNRlambda{j,i}=snrS;          % Signal Noise Ratio {only-detected}
         %if undetectedindx
         %    Responses{j,i}(isSIGNAL)=FR;
         %end
