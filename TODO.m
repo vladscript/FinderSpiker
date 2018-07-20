@@ -4,32 +4,37 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m
 %% FIXED  before update GIT
-% Manual Delete: fail update from driver selection->Zero Driver Stuff
-% Run ONLY Undetected_Visual_Inspection, SAVE AFTER!OK
-% Why it makes a Lambda Searcher in lambda tunning?->OK driver analyse function inputs
-% OddsMatrix Issue-> OK
 %% Bugs & New Functions NOW
-
-% Set a waitfor(msgbox('processing')); delete(gco):OK
-% Plot after Processing the UNporcessed: get raster: OK
+% Re REJECT sparse signals blow Nise's STD
 % Get Raster Function->
-
 % Delete :
-%   Manual_Driver_Raster_Magic_Ultimate
-
-
-
-% NO TO SO URGENT
+%   Manual_Driver_Raster_Magic_Ultimate (save as private mine)
 % Re consider Accepted and Rejected ones @ automatic mode
 % Add Highlight Neuron Using Mouse at Plot_Raster
 % Progress Bar for Visual Inspection
-% Get Raster Mode -> update in Manual Mode
-% Driver Analysis-> Consider Derivative or Valleys
-% Manual Mode for a specific raster ONLY!
-% Manual mode without using pause---update workspace automatically
+
+% Check Status Script to Cjeck Progress of Processing:
+%       Read;Pre;Pro;Raster->
 % and other colors in the MERGE script : MAGENTA
 % Threshold to get NETWORK !!!!!!!!
+
+
+%% FUTURE **********************************
+% Figure: reason whi mean(ROI) withput distortion
+% Load Raw FLuorescenc vs F_0 distortion
+% Driver Analysis-> Consider Derivative or Valleys
+% Analyze Rejects Ones Anyway to infer Artifacts
 % Kalman Filtering at SNR and lambdas pdf's: for optimal threshold
+% CLUSTERING STUFF ***********************
+% Threshold: prior numbercoactivyt:
+% [THCOAC]=mctest(R,'modes')
+% Clustering
+% [Ensembles,N_Ensembles,MethodsClustering,ThEffective,
+% label_frames,
+% signifi_frames]=ensemble_clusterin(R,THCOAC);
+
+% Setup Intel/Info .mat File-> Default User Direcotry to save info
+% Setup Script
 
 %% STEPS ******************************************
 %PROCESSING
@@ -59,20 +64,3 @@
 % [Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs);
 
 
-%% FUTURE **********************************
-% Figure: reason whi mean(ROI) withput distortion
-% Load Raw FLuorescenc vs F_0 distortion
-
-% 1st Part Automatic: Raster Method
-% Analyze Rejects Ones Anyway to infer Artifacts
-
-% CLUSTERING STUFF ***********************
-% Threshold: prior numbercoactivyt:
-% [THCOAC]=mctest(R,'modes')
-% Clustering
-% [Ensembles,N_Ensembles,MethodsClustering,ThEffective,
-% label_frames,
-% signifi_frames]=ensemble_clusterin(R,THCOAC);
-
-% Setup Intel/Info .mat File-> Default User Direcotry to save info
-% Setup Script

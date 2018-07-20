@@ -38,4 +38,6 @@ while checkname==1
     end
 end    
 %% Save Features Tables
-save_preocessing_intel;
+if checkname~=0
+    save_preocessing_intel;
+end
