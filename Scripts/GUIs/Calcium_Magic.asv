@@ -173,9 +173,11 @@ detectedneurons=[];
             for k=1:numel(okReview)
                 switch RasterAlgorithm
                 case 'Driver'
-                    R(isSIGNAL(okReview(k)),:)=get_raster(1,D(okReview(k),:),okReview(k));
+                    R(isSIGNAL(okReview(k)),:)=get_raster(1,DRIVER(okReview(k)),:),ActiveNeurons); % DRIVER
                 case 'Derivative'
-                    R(isSIGNAL(okReview(k)),:)=get_raster(3,D(okReview(k),:),okReview(k),FR(okReview(k),:));
+                    Raster=get_raster(3,DRIVER,ActiveNeurons,FR); % Derivative
+                case 'OOPSI'
+                    Raster=get_raster(2,DRIVER,ActiveNeurons,FR,fs,Xest); % Derivative
                 end
                 % R(isSIGNAL(okReview(k)),D(okReview(k),:)>0)=1;
             end
@@ -336,15 +338,9 @@ detectedneurons=[];
         if ~isempty(d(d>0))
             [d,~,~,~,~,~]=analyze_driver_signal(d',r,xd,x_sparse,0);
         end
-        switch RasterAlgorithm
-            case 'Driver'
-                R(neuron,:)=get_raster(1,d,1);
-            case 'Derivative'
-                R(neuron,:)=get_raster(3,d,1,FR(indx_neuron,:));
-        end
         % By Driver
-        % R(neuron,:)=0;
-        %R(neuron,d>0)=1;
+        R(neuron,:)=0;
+        R(neuron,d>0)=1;
         % By (+) Derivative:
         % R(neuron,diff(x_sparse)>0)=1;
         x_sparse=x_sparse';
@@ -358,15 +354,9 @@ detectedneurons=[];
         snrS(neuron)=snrc;
         X_SPARSE(neuron,:)=x_sparse;
         lambdass(indx_neuron)=lambda;
-        switch RasterAlgorithm
-            case 'Driver'
-                R(neuron,:)=get_raster(1,d,1);
-            case 'Derivative'
-                R(neuron,:)=get_raster(3,d,1,FR(indx_neuron,:));
-        end
         % Update Raster: Driver Mode
-        % R(neuron,:)=0;
-        % R(neuron,d>0)=1;
+        R(neuron,:)=0;
+        R(neuron,d>0)=1;
         % Derivative Mode
         % R(neuron,diff(x_sparse)>0)=1;
     end

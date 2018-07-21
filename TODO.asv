@@ -4,11 +4,11 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m
 %% FIXED  before update GIT
-% Re REJECT sparse signals blow Nise's STD->OK
-%       Re consider Accepted and Rejected ones @ automatic mode
-% Get Raster Function->OK
-
 %% Bugs & New Functions NOW
+% Re REJECT sparse signals blow Nise's STD
+% Get Raster Function->
+
+% Re consider Accepted and Rejected ones @ automatic mode
 % Add Highlight Neuron Using Mouse at Plot_Raster
 % Progress Bar for Visual Inspection
 

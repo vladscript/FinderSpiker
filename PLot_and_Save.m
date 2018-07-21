@@ -11,7 +11,7 @@ Plot_Raster_V(RASTER_CONCAT,fs);                           % Clean Whole Raster
 set(gcf,'Name',['ID: ',Experiment(2:end)],'NumberTitle','off')
 Label_Condition_Raster(Names_Conditions,Raster_Condition,fs);   % Labels    
 %% Update Data: VisualInspector,Oddsmatrix, Raster_Condition
-checkname=1;
+checkname=1; oksave=false;
 while checkname==1
     % Get Directory
     DP=pwd;
@@ -24,7 +24,7 @@ while checkname==1
         'MultiSelect', 'off',DefaultPath);
     dotindex=find(FileName=='.');
     if strcmp(FileName(1:dotindex-1),Experiment(2:end))
-        checkname=0;
+        checkname=0; oksave=true;
         % SAVE DATA
         save([PathName,FileName],'OddsMatrix','Raster_Condition','RASTER_CONCAT',...
             '-append');
@@ -38,6 +38,6 @@ while checkname==1
     end
 end    
 %% Save Features Tables
-if checkname~=0
+if oksave
     save_preocessing_intel;
 end
