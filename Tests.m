@@ -1,15 +1,30 @@
+% Derivative detrending
+[C,F]=size(X);
+for c=1:C
+    x=X(c,:);
+    
+    plot(x); 
+%     plot(y);
+%     hold off;
+    axis tight; grid on;
+    
+    pause
+end
+
+% Filtering
+
 % AL New_Index are reffered to Original Data: SIGNALS, DETSIGNALS, RASTEROK XY
-New_Index_Active=New_Index(TotalActiveNeurons); % Sorted Indexes of Clean Rasters
-[RASTER_Selected_Clean,XY_selected,R_Condition,Onsets,New_Index_Sel]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment);
-
-[XY_merged,ColocateIndx]=get_merged_coordinates(Experiment,XY_clean,r);
-A2A=find(ColocateIndx); % 
-Indexes=New_Index(A2A);
-
-%%CORRELATION***********************************************
-simindex=corrcoef(RASTER_Selected_Clean');
-cluster_index=clusterModularity(simindex,1000);
-plotClusterRaster(RASTER_Selected_Clean,cluster_index,1);
+% New_Index_Active=New_Index(TotalActiveNeurons); % Sorted Indexes of Clean Rasters
+% [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets,New_Index_Sel]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment);
+% 
+% [XY_merged,ColocateIndx]=get_merged_coordinates(Experiment,XY_clean,r);
+% A2A=find(ColocateIndx); % 
+% Indexes=New_Index(A2A);
+% 
+% %%CORRELATION***********************************************
+% simindex=corrcoef(RASTER_Selected_Clean');
+% cluster_index=clusterModularity(simindex,1000);
+% plotClusterRaster(RASTER_Selected_Clean,cluster_index,1);
 
 %%% Plot Some PDFs to monitor errors (!)
 %             figure; 

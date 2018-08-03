@@ -46,49 +46,10 @@ for i=1:Ns
     xdenoised=xdenoised-offset_xd;
     xd=xd-offset_xd;
     %% DETRENDING FIXING #############################################
-    [ValleAMP,ValleN]=findpeaks(-xdenoised);    % Get Valleys of Denoised Signal
-    if ~isempty(ValleAMP)
-        ValleAMPabs=abs(ValleAMP);
-        ValleAMPflip=-ValleAMP;              % actual values
-        [pV,binV]=ksdensity(xdenoised(ValleN));    % pdf of Valley Amplitudes
-        [Vp,Vbin,Vwidth]=findpeaks(pV,binV); % modes of pdf valleys
-        if numel(Vp)>0
-            % Take only small amplitudes
-            [~,indxsmallAMps]=max(Vp);
-            ThAmpValley=max(Vbin(indxsmallAMps)+Vwidth(indxsmallAMps),std(noisex));
-            LOWwaves=ValleAMPflip(ValleAMPflip<=ThAmpValley);
-            LOWwavesFrames=ValleN(ValleAMPflip<=ThAmpValley);
-        else
-            %if ~isempty(ValleAMPabs)
-            % ksdensity error-> use histogram
-            [Counts,Edges]=histcounts(xdenoised(ValleN),length(ValleAMP));
-            [~,indxbin]=max(Counts);
-            LOWwaves=ValleAMPflip(ValleAMPflip<=Edges(indxbin+1));
-            LOWwavesFrames=ValleN(ValleAMPflip<=Edges(indxbin+1));
-            disp('by histo[...]gram')
-            %else
-            %    LOWwaves=ValleAMP;
-            %    LOWwavesFrames=ValleN;
-            %end
-        end
-    else
-        LOWwaves=[];
-        LOWwavesFrames=[];
-        disp('-------------------------No distortion issues')
-    end
-    
-    LOWwavesFramesAll=unique(LOWwavesFrames);
-    LOWwavesFrames=LOWwavesFramesAll(LOWwaves<std(noisex));
-    LOWwavesFrames=[1,LOWwavesFrames,Frames+1]; % ok that '+1'
-    ZeroCrosses=find(diff(sign(xdenoised)));    % Zero Crosses
-    LOWwavesFrames=unique([LOWwavesFrames,ZeroCrosses]);
-    % Ignore low spaced waves
-    LOWwavesFrames=LOWwavesFrames(setdiff (1:length(LOWwavesFrames), find(diff(LOWwavesFrames)<2)+1) );
-    ZerosinWavesIndx=find(ismember(LOWwavesFrames,ZeroCrosses));
-    IgnoreWaves=find(diff(ZerosinWavesIndx)==1)+1;
-    AcceptWaves=setdiff(1:numel(LOWwavesFrames),ZerosinWavesIndx(IgnoreWaves));
-    LOWwavesFrames=LOWwavesFrames(AcceptWaves);
-%     %% Plot Results *************************************
+    % Get Peaks below noise and waves above noise 
+    % Frames would be inflection points to detrend
+    [LOWwavesFrames,ZeroCrosses]=getwavesframes(xdenoised,noisex);
+%     %% Plot Results 1/2 *************************************
 %     h1=subplot(211);
 %     plot(xd); hold on
 %     plot(xdenoised);
@@ -100,7 +61,7 @@ for i=1:Ns
 %     axis tight; grid on;
 %     disp(i)
     
-    %% AVChS: Algorithm Valley Checking Section *************************************
+    %% VChS-A: Valley-Checking Segmented Algorithm *************************************
     xlin=[];
     n=1;
     if numel(LOWwavesFrames)>2
@@ -123,81 +84,50 @@ for i=1:Ns
             end
             xxtr=xdenoised(LOWwavesFrames(n):LOWwavesFrames(n+1)-1);
             
-            % Avoid detrend higher points
-            if  and( xxtr(1)>std(noisex) , xxtr(end)>-std(noisex))
-                % 1st and Final Sample Test above noise
-                if n==1
-                    if length(xxtr)>2
-                        mslope=(xxtr(end)-xxtr(1))/length(xxtr);
-                        xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
-                        Apeaks=findpeaks(xxtr-xlinc);
-                    else
-                        Apeaks=[];
-                    end
-                    if isempty(Apeaks)
-                        xexp=fit([1:length(xxtr)]',xxtr','exp1');
-                        xlinc=xexp(1:length(xxtr))';
-                    else
-                        mslope=0;
-                        xlinc=mslope*([1:length(xxtr)]-1);
-                    end
-                    % Pure Decaying at the Start
-                else
-                    mslope=0;
-                    xlinc=mslope*([1:length(xxtr)]-1);
-                    % Possible Calcium Transient
-                end
-            elseif and(xxtr(1)<-std(noisex),xxtr(end)<-std(noisex))
-                % 1st Sample below Noise & Final Sample below noise
-                %if and( numel(xxtr(xxtr>max([xxtr(1),xxtr(end)])))>numel(xxtr(xxtr<max([xxtr(1),xxtr(end)]))),...
-                %    or(xxtr(1)>std(noisex),xxtr(end)>-std(noisex)) )
-                if numel(xxtr(xxtr>max([xxtr(1),xxtr(end)])))>numel(xxtr(xxtr<max([xxtr(1),xxtr(end)])))
-                    mslope=(xxtr(end)-xxtr(1))/length(xxtr);
-                    if  mslope>0
-                        mslope=0;
-                    end
-                    xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
-                    disp('Ca2+ Transient')
-                else
-                    xlinc=xxtr;
-                end
-            elseif and(xxtr(1)<-std(noisex),xxtr(end)>-std(noisex))
-                % 1st Sample below & Final Sample above noise
-                if or( numel(xxtr(xxtr>std(noisex)))>numel(xxtr(xxtr<0)),...
-                    or(xxtr(1)>std(noisex),xxtr(end)>-std(noisex)) )
-                    mslope=(xxtr(end)-xxtr(1))/length(xxtr);
-                    xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
-                    disp('Ca2+ Transient')
-                else
-                    xlinc=xxtr;
-                end
-            else
-                if xxtr(end)>std(noisex)
-                    mslope=0;
-                    xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
-                    disp('Ca2+ Transient')
-                else
-                    % Otherwise Line
-                    mslope=(xxtr(end)-xxtr(1))/length(xxtr);
-                    xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
-                    if sum(xlinc>xxtr)>numel(xxtr)/2
-                        % If line is above data, use smooth:
-                        xlinc=xxtr;
-                    end
-                end
-            end
+            %% DEFINE XLINC (detrendig by parts)
             
-            % Check Peak'sAMplitude between Valleys of Detrended Segment
+            xlinc=getlinearsegment(xxtr,noisex,n);
+            %% Check Peak'sAMplitude between Valleys of Detrended Segment
             if length(xxtr-xlinc)>2
-                AmpPeak=findpeaks((xxtr-xlinc),'SortStr','descend');    % Peaks
-                % AmpValley=findpeaks(-(xxtr-xlinc),'SortStr','descend'); % Valleys
+                [NewLOWwavesFrames,NewZeros] = getwavesframes(xxtr-xlinc,noisex);
+                if numel(NewLOWwavesFrames)>2
+                    xlincnew=[];
+                    xdets=xxtr-xlinc;
+                    nn=1;
+                    while nn<numel(NewLOWwavesFrames)
+                        if nn<=numel(NewLOWwavesFrames)-2 && ...
+                            ismember(NewLOWwavesFrames(nn+1),NewZeros)
+                            % IF after the Zero-Cross is there a peak
+                            if NewLOWwavesFrames(nn+2)-1-NewLOWwavesFrames(nn+1)>2
+                                SecPeak=findpeaks(xdets(NewLOWwavesFrames(nn+1):NewLOWwavesFrames(nn+2)-1));
+                                if ~isempty(SecPeak)
+                                    % n=n+1; % JUMP Zero Cross
+                                    NewLOWwavesFrames=[NewLOWwavesFrames(1:nn),NewLOWwavesFrames(nn+2:end)];
+                                end
+                            else
+                                % n=n+1; % JUMP Zero Cross
+                                NewLOWwavesFrames=[NewLOWwavesFrames(1:nn),NewLOWwavesFrames(nn+2:end)];
+                            end
+                        end
+                        xlincs=getlinearsegment(xdets(NewLOWwavesFrames(nn):NewLOWwavesFrames(nn+1)-1),noisex,nn);
+                        xlincnew=[xlincnew,xlincs];
+                        disp(nn)
+                        nn=nn+1;
+                    end                
+                xxtr=xdets;
+                xlinc=xlincnew+xlinc;
+                AmpPeak=findpeaks(xxtr);   % Peaks
+                else
+                    AmpPeak=findpeaks(xxtr-xlinc);   % Peaks
+                end
+                
                 if and(~isempty(AmpPeak),and(n>1,n<numel(LOWwavesFrames)-1))
-                    if AmpPeak(1)>=std(noisex) % PEAK ABOVE NOISE: linear
+                    if max(AmpPeak)>=std(noisex) % PEAK ABOVE NOISE: linear
                         disp('-OK: Ca Transient-')
-                        mslope=(xxtr(end)-xxtr(1))/length(xxtr);
-                        xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
+                        % mslope=(xxtr(end)-xxtr(1))/length(xxtr);
+                        % xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
                     else
-                        xlinc=xxtr;            % PEAK BELOW NOISE : smooth
+                        % xlinc=xxtr;            % PEAK BELOW NOISE : smooth
                         disp('low movements <A>')
                     end
                 else                           % NO PEAKS: linear
@@ -208,18 +138,49 @@ for i=1:Ns
             n=n+1; % NEXT VALLEY-ZeroCross
         end
         disp('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Fixing Distortion')
+        %% Posterioir Work Arounds
         xdupdate=xd-xlin;
         % xdupdate=xdupdate - var(noisex); % Remove Offset Introduced by Valley-Linear Trending
         [xdenoised,noisex]=mini_denoise(xdupdate);
+        % Special Fixes
+        % Initial Bleaching *******************************
+%         FixS=1;
+%         if xdenoised(1)>std(noisex)
+%             dxden=diff(xdenoised);
+%             while dxden(FixS)<0
+%                 FixS=FixS+1;
+%             end
+%             if xdenoised(FixS)<-std(noisex)
+%                while xdenoised(FixS)<0
+%                     FixS=FixS+1;
+%                end
+%             end
+%             xdupdate(1:FixS)=xdupdate(1:FixS)-xdenoised(1:FixS);
+%             xdenoised(1:FixS)=0;
+%             disp('>>>> Bleaching Fixed')
+%         end
+% Finale (de)-Bleaching *******************************
+        FixS=1;
+        if xdenoised(end)==max(xdenoised)
+            dxden=diff(xdenoised);
+            FixS=LOWwavesFrames(end-1);
+            xdupdate(end-FixS:end)=xdupdate(end-FixS:end)-xdenoised(end-FixS:end);
+            xdenoised(end-FixS:end)=0;
+            disp('>>>> Bleaching Fixed')
+        end
         % check out #######################
         %         plot(xdupdate); pause;
         XDupdate(i,:)=xdupdate;
     end
-%     % CHECK
+% %     % CHECK 2/2
 %     h2=subplot(212);
 %     plot(XDupdate(i,:)); 
 %     hold on;
-%     plot([0,numel(XDupdate(i,:))],[0,0],'-.r'); hold off;
+%     plot([0,numel(XDupdate(i,:))],[0,0],'-.r');
+%     plot(xdenoised); 
+%     plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
+%     plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
+%     hold off;
 %     axis tight; grid on;
 %     linkaxes([h1,h2],'x')
 %     disp('dick')

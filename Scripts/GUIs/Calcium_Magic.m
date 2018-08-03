@@ -150,7 +150,7 @@ detectedneurons=[];
         D=preDRIVE{j,i}(isSIGNAL,:);        % Driver Signals  {only-detected}
         R=RASTER{j,i};                      % Raster        {ALL CELLS}
         lambdass=preLAMBDAS{j,i}(isSIGNAL); % List of lambdas {only-detected}
-        okReview=find(preLAMBDAS{j,i}(isSIGNAL)==0); % Cheack wich ones haven't been processed
+        okReview=find(preLAMBDAS{j,i}(isSIGNAL)==0); % Check wich ones haven't been processed
         if ~isempty(okReview)
             disp('Searching in Undetected Ca++ Transients');
             hwait = figure('units','pixels','position',[500 500 200 150],'windowstyle','modal');
@@ -173,9 +173,9 @@ detectedneurons=[];
             for k=1:numel(okReview)
                 switch RasterAlgorithm
                 case 'Driver'
-                    R(isSIGNAL(okReview(k)),:)=get_raster(1,D(okReview(k),:),okReview(k));
+                    R(isSIGNAL(okReview(k)),:)=get_raster(1,D(okReview(k),:),1);
                 case 'Derivative'
-                    R(isSIGNAL(okReview(k)),:)=get_raster(3,D(okReview(k),:),okReview(k),FR(okReview(k),:));
+                    R(isSIGNAL(okReview(k)),:)=get_raster(3,D(okReview(k),:),1,FR(okReview(k),:));
                 end
                 % R(isSIGNAL(okReview(k)),D(okReview(k),:)>0)=1;
             end
@@ -490,7 +490,7 @@ detectedneurons=[];
             if strcmp(FileName(1:dotindex-1),Experiment(2:end))
                 checkname=0;
                 % SAVE DATA
-                save([PathName,FileName],'preDRIVE','preLAMBDAS','RASTER',...
+                save([PathName,FileName],'preDRIVE','preLAMBDAS','RASTER','RasterAlgorithm',...
                     'Responses','SIGNALSclean','SNRlambda','indxSIGNALSOK','-append');
                 disp([Experiment,'   -> RASTERS UPDATED (Visual ~ Inspection)'])
                 delete(gcf)

@@ -9,13 +9,15 @@
 % Get Raster Function->OK
 
 %% Bugs & New Functions NOW
+
 % Add Highlight Neuron Using Mouse at Plot_Raster
 % Progress Bar for Visual Inspection
-
 % Check Status Script to Cjeck Progress of Processing:
 %       Read;Pre;Pro;Raster->
 % and other colors in the MERGE script : MAGENTA
 % Threshold to get NETWORK !!!!!!!!
+% Automatize Clustering
+% Inspection of Each ROI...
 
 
 %% FUTURE **********************************
@@ -34,7 +36,10 @@
 
 % Setup Intel/Info .mat File-> Default User Direcotry to save info
 % Setup Script
-
+% Detrending Issues
+% High pass & Low Pass Filters :
+%     > before detrending
+%     > after detrending
 %% STEPS ******************************************
 %PROCESSING
 % RUN >>Raster_Magic_Better

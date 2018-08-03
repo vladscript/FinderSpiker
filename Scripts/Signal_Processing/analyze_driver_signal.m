@@ -41,6 +41,7 @@ for c=1:C
     d=D(c,:);   % driver function
     x_sparse=sparse_convolution(d,r); % Clean Signal
     % x_sparsePRE=x_sparse;
+    disp(c);
     xd=XDupdate(c,:);
     xe=Xest(c,:);
     noisex=xd-xe;
@@ -48,7 +49,7 @@ for c=1:C
     [~,framax]=max(d);
     if and(framax==1 && ~isempty(d(d~=0)) ,check)
         nextframe=framax+1;
-        while and(xe(nextframe)>0,x_sparse(nextframe)>0.5e-3)
+        while and(nextframe<numel(xe),and(xe(nextframe)>0,x_sparse(nextframe)>0.5e-3))
             % x_sparse(nextframe)=0;
             % d(nextframe)=0;
             nextframe=nextframe+1;

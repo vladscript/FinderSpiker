@@ -32,6 +32,7 @@ global fs;
 global SIGNALSclean;
 global SNRlambda;
 global Experiment;
+global RasterAlgorithm;
 % global isSIGNALS;
 % global notSIGNALS;
 %% ADDING ALLSCRIPTS
@@ -79,6 +80,7 @@ SNRs=cell(NV,NC);
 DRIVERs=cell(NV,NC);
 SIGNALSclean=cell(size(SIGNALS)); % Detected clean SIGNALS
 SNRlambda=cell(size(preLAMBDAS));    % Sparse Empirical SNRs
+RasterAlgorithm='Driver'; % 'OOPSI', 'Derivative'
 %% Load Data *********************************************************
 % For each CONDITION and VIDEO
 for i=1:NC
@@ -234,24 +236,21 @@ for i=1:NC
                     [DRfix,XDRfix,XestRfix,LambdasRFix,IndexesFixR,FeaturesR]=analyze_driver_signal(DRIVERr,FRr,XDupdate(RejectedINDX,:),Xest(RejectedINDX,:));
                     if ~isempty(IndexesFixR)
                         FixedNOSignals=RejectedINDX(IndexesFixR);
-                        LAMBDASS(RejectedINDX)=LambdasRFix;
+                        LAMBDASS(FixedNOSignals)=LambdasRFix;
                         DRIVER(RejectedINDX,:)=DRfix;
                         XDupdate(RejectedINDX,:)=XDRfix;
                         Xest(RejectedINDX,:)=XestRfix;
                     end
                 end
-                % Reanalize Active Signals
-                for k=1:Ns
-                    xdk=XDupdate(k,:); % Detrended
-                    dk=DRIVER(k,:);
-                    rk=FR(k,:);
-                    xsk=sparse_convolution(dk,rk);
-                    if ~isempty(xsk(xsk>=std(xsk-xdk')))
+                % Reanalize Sparse Signal to get Active Signals
+                for k=1:Ns 
+                    xsk=sparse_convolution(DRIVER(k,:),FR(k,:));
+                    if ~isempty(xsk(xsk>=std(xsk-XDupdate(k,:)')))
                         ActiveNeurons=[ActiveNeurons;k];
                     end
                 end
                 % Get Active Neurons
-                ActiveNeurons=find( sum(DRIVER,2)~=0 );
+                % ActiveNeurons=find( sum(DRIVER,2)~=0 );
             else
                 AcceptedINDX=[];
                 RejectedINDX=setdiff(1:Ns,AcceptedINDX);
@@ -269,7 +268,14 @@ for i=1:NC
         
         %% GET RASTER *****************************************************
         % TotalCells=length(XY);
-        Raster=get_raster(1,DRIVER,ActiveNeurons); % DRIVER
+        switch RasterAlgorithm
+            case 'Driver'
+                Raster=get_raster(1,DRIVER,ActiveNeurons); % DRIVER
+            case 'Derivative'
+                Raster=get_raster(3,DRIVER,ActiveNeurons,FR); % Derivative
+            case 'OOPSI'
+                Raster=get_raster(2,DRIVER,ActiveNeurons,FR,fs,Xest); % OOPSI
+        end
         % Examples---------------------------------------------------------
         % DRIVER:
         % R1=get_raster(1,Dfix,ActiveNeurons); 
@@ -329,7 +335,7 @@ end
  %% SAVING(2) Processed Data & Feature Extraction |  Resume Table 
 % Save Auto-Processed DATA * * * * * * * * * * * * * * * * * * * * * * * * 
 save([FileDirSave,'\Processed Data',Experiment,'.mat'],'DETSIGNALS','ESTSIGNALS',...
-    'SNRwavelet','SIGNALSclean','SNRlambda',...
+    'SNRwavelet','SIGNALSclean','SNRlambda','RasterAlgorithm',...
     'preDRIVE','preLAMBDAS','TAUSall','RASTER','isSIGNALS','notSIGNALS',...
     'Responses','dyename','-append');
 disp('Updated: {Feature-Extraction} DATA')

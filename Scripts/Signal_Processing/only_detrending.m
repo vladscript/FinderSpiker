@@ -173,7 +173,7 @@ for i=1:Ns
         disp('>>Ok Detrended')
     end
     % Preview Results
-    % CHECK FIGURE
+%     % CHECK FIGURE
 %     subplot(2,3,[1,2])
 %     plot(x); hold on;
 %     plot(samplestodetrend,x(samplestodetrend),'r')
@@ -190,7 +190,7 @@ for i=1:Ns
 %     axis tight;
 %     grid on;
 %     disp('anfubvtqpsm')
-    % pause(0.01)
+    
     %% OUTPUT
     XD(i,:)=xd1;
 end % loop

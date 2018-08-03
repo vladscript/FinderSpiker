@@ -26,7 +26,8 @@ while checkname==1
     if strcmp(FileName(1:dotindex-1),Experiment(2:end))
         checkname=0; oksave=true;
         % SAVE DATA
-        save([PathName,FileName],'OddsMatrix','Raster_Condition','RASTER_CONCAT',...
+        save([PathName,FileName],'OddsMatrix','Raster_Condition',...
+            'RasterAlgorithm','RASTER_CONCAT',...
             '-append');
         disp([Experiment,'   -> UPDATED (OddsMAtrix Data)'])
     elseif FileName==0
