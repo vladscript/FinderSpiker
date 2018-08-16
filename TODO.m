@@ -4,11 +4,20 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m
 %% FIXED  before update GIT
-% Re REJECT sparse signals blow Nise's STD->OK
-%       Re consider Accepted and Rejected ones @ automatic mode
-% Get Raster Function->OK
+
 
 %% Bugs & New Functions NOW
+
+% preLAMBDA issues->some accepted with lamda=0: [SOLVED]
+% if acceted too many->Reject by lambda [not so urgent]
+
+% DETRENDING ISSUES
+% Check of trending component->if it has modes...
+% Work arounds at detrending--- negative skewness 
+
+% Anlayze Driver->until is very small or find other peak, in that
+% case->choose minimium in between [DONE]
+
 
 % Add Highlight Neuron Using Mouse at Plot_Raster
 % Progress Bar for Visual Inspection

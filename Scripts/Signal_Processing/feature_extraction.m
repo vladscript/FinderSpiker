@@ -24,7 +24,11 @@ if isempty(Bden)
 end    
 %     Aratio(i)=Aden/Anoise;  % PEAKS SIGNAL/NOISE RATIO
 ABratio=Aden/Bden;   % max/min RATIO
-SkewSignal=skewness(xdenoised,0); % $ $ $  OUTPUT
+if numel(xdenoised(xdenoised==0))==numel(xdenoised)
+    SkewSignal=0;
+else
+    SkewSignal=skewness(xdenoised,0); % $ $ $  OUTPUT
+end
 SkewNoise=skewness(noisex,0); % $ $ $  OUTPUT
 % SkewRation sensitive to misdetrending distortion
 SNRbyWT=10*log(var(xdenoised)/var(noisex)); % 

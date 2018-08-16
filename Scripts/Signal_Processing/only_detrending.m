@@ -13,17 +13,26 @@ for i=1:Ns
     % if each mode belongs to different set of samples    
      % RLOESS   SMoothing Detrending
     disp(['Detrending ... [Signal: ',num2str(i),'/',num2str(Ns),']']);
-    y=smooth(x,Frames,'rloess');                    % Trend Component (Bleaching)
+    y=smooth(x,Frames,'rloess');    % Trend Component (Bleaching*) *BEST*
+    % y=smooth(x,Frames,'loess');    % Trend Component (Bleaching*)
     %% Test Detrending before Distortion
-    [~,PeaksY]=findpeaks(y);
-    [~,ValleY]=findpeaks(-y);
-    Curves=[makerowvector(PeaksY),makerowvector(ValleY)];
-    % 1st Detrending
-    xd1=x-y';
-    disp('------------------RLOESS smoothing OK')
     % PDF of Raw Signal:
     [px,binx]=ksdensity(x, linspace(min(x),max(x),100));
-    [~,ModesX]=findpeaks(px,binx,'SortStr','descend');
+    [PModesX,ModesX]=findpeaks(px,binx,'SortStr','descend');
+    ModesXaux=sort(ModesX);
+    if ModesXaux(1)==ModesX(1) % Check if biggest is least gray
+        yaux=smoothbysegments(x,y,1); % More than 1 Curve
+        xd1=x-yaux;   
+        disp('------------------RLOESS smoothing OK [1]')
+    else % If first mode ain't the biggest one
+        yaux=smoothbysegments(x,y,0); % Any Curve
+        xd1=x-yaux;   
+        disp('------------------RLOESS smoothing OK [0]')
+    end
+    % Second Detrending Test
+    [~,ylinv1]=lineardetbigmode(binx,ModesX,x);
+    xlin=x-ylinv1;
+
     % PDF of Detrended Signal:
     [pxd1,binxd1]=ksdensity(xd1, linspace(min(xd1),max(xd1),100));
     % Modes of PDF of Detrended Signal:
@@ -34,47 +43,23 @@ for i=1:Ns
     [pxd1,binxd1]=ksdensity(xd1, linspace(min(xd1),max(xd1),100));
     % Modes of PDF of Detrended Signal:
     [Mode_Peak,Bin_Mode]=findpeaks(pxd1,binxd1,'SortStr','descend');
-    [~,indxBins]=min(Bin_Mode);
-    % Check for missdetrending issues
-    samplestodetrend=[];
-    ylinv1=[];
-%% TROUBLE MAKER:    
-%     % if there are curves at trending and several modes in raw signal and negative modes at detrended signal
-%     if ~isempty(Curves) && numel(ModesX)>1 && ~isempty(Bin_Mode( Bin_Mode<0 ))
-%         disp('*** 1st Missdetrending A ***')
-%         [samplestodetrend,ylinv1]=lineardetbigmode(binx,ModesX,x);
-%     elseif indxBins~=1 % if biggest mode ain't the least
-%         disp('*** 1st Missdetrending B ***')
-%         [samplestodetrend,ylinv1]=lineardetbigmode(binx,ModesX,x);
-%     else
-%         disp('*** OK ***')
-%     end
-    % Corretion -----------------------------------
-    if ~isempty(ylinv1)
-        y=ylinv1';
-        xd1=x-y';
-        disp('------------------Correcting <<<')
-        % PDF of Detrended Signal:
-        [pxd1,binxd1]=ksdensity(xd1, linspace(min(xd1),max(xd1),100));
-        % Modes of PDF of Detrended Signal:
-        [~,Bin_Mode]=findpeaks(pxd1,binxd1,'SortStr','descend');
-        % De-Offset:
-        xd1=xd1-Bin_Mode(1); % Deoffset Biggest Mode
-        % PDF of Detrended Signal RECALCUL
-        [pxd1,binxd1]=ksdensity(xd1, linspace(min(xd1),max(xd1),100));
-        % Modes of PDF of Detrended Signal:
-        [Mode_Peak,Bin_Mode]=findpeaks(pxd1,binxd1,'SortStr','descend');
+    %% CHECK FOR BASAL ACTIVITY
+    if numel(ModesX)>1 && ModesX(1)==ModesXaux(1)
+        NegatiVeDetrended=find(xlin<0);
+        NegatiVeDetrendedSmooth=find(xd1<0);
+        HiguerSamples=find(x>max(ModesX(1:2)));
+    else
+        disp('>> Ok Detrended by RLOESS smoothing');
     end
-    
     %% MissDetrending Checking 2nd Part *
     if numel(Mode_Peak)>1
         % Considerations:
         % If there are Negative Modes-> Missdetrending Issues
         % Biggest Mode may be Negative but close to Zero, so ingore it:
         if sum(Bin_Mode(2:end)<0)==0
-            disp('>>Possible Calcium Transients Detected')
+            disp('>> Possible Calcium Transients Detected')
         else
-            disp('>>Miss Detrending Flag [ ]')
+            disp('>> MissDetrending Flag [ ]')
             %% FIXING detrending 
              [cl,~,mucl] = polyfit(1:Frames,x,1);
              y_lin=polyval(cl,1:Frames,[],mucl); % Linear Trending
@@ -170,26 +155,32 @@ for i=1:Ns
              y=ydet;
         end
     else 
-        disp('>>Ok Detrended')
+        disp('ok...')
+
     end
     % Preview Results
-%     % CHECK FIGURE
-%     subplot(2,3,[1,2])
-%     plot(x); hold on;
-%     plot(samplestodetrend,x(samplestodetrend),'r')
-%     plot(ylinv1,'k')
-%     plot(y); hold off;
-%     subplot(2,3,[4,5])
-%     plot(xd1)
-%     axis tight; grid on;
-%     subplot(2,3,3)
-%     plot(px,binx);
-%     grid on;
-%     subplot(2,3,6)
-%     plot(pxd1,binxd1);
-%     axis tight;
-%     grid on;
-%     disp('anfubvtqpsm')
+    % CHECK FIGURE
+    [pxd1,binxd1]=ksdensity(xd1, linspace(min(xd1),max(xd1),100));
+    y=x-xd1;
+    Sup=subplot(2,3,[1,2]);
+    plot(x); hold on;
+    plot(y); 
+    axis tight; grid on;
+    hold off;
+    Sdown=subplot(2,3,[4,5]);
+    plot(xd1)
+    axis tight; grid on;
+    Hup=subplot(2,3,3);
+    plot(px,binx);
+    grid on;
+    Hdown=subplot(2,3,6);
+    plot(pxd1,binxd1);
+    axis tight;
+    grid on;
+    linkaxes([Sup,Sdown],'x');
+    linkaxes([Sup,Hup],'y');
+    linkaxes([Sdown,Hdown],'y');
+    disp('anfubvtqpsm')
     
     %% OUTPUT
     XD(i,:)=xd1;
@@ -205,16 +196,31 @@ function [samplestodetrend,ylinv1]=lineardetbigmode(binx,ModesX,x)
     [cl,~,mucl] = polyfit(samplestodetrend,x(samplestodetrend),1);
     ylinv1=polyval(cl,1:Frames,[],mucl); % Linear Trending
 end
-%% Useles Code
-%         % Left Wing
-%         slide=1;
-%         while dpx(ModePos-slide)>0 && (ModePos-slide)>1
-%             slide=slide+1;
-%         end
-%         leftAmp=binx( ModePos-slide );
-%         % Right Wing
-%         slide=1;
-%         while dpx(ModePos+slide)<=0 && (ModePos-slide)<100
-%             slide=slide+1;
-%         end
-%         rightAmp=binx( ModePos+slide );
+
+function yss = smoothbysegments(x,y,NC)
+    [~,PeaksY]=findpeaks(y);
+    [~,ValleY]=findpeaks(-y);
+    Curves=[makerowvector(PeaksY),makerowvector(ValleY)];
+    if numel(Curves)>NC
+        disp('   -^-v- Curvy Trending )))')
+        Curves=sort(Curves);
+        frameA=1;
+        yss=zeros(size(x));
+        for n=1:numel(Curves)+1
+            if n<=numel(Curves)
+                frameB=Curves(n);
+            else
+                frameB=numel(x);
+            end
+            xseg=x(frameA:frameB);
+            yseg=smooth(xseg,numel(xseg),'rloess'); 
+            % (RE)-CURSIVENESS:############ NOT YET
+            % yseg=smoothbysegments(xseg,yseg);
+            yss(frameA:frameB)=yseg;
+            frameA=frameB;
+        end
+        
+    else
+        yss=y';
+    end
+end

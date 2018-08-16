@@ -150,6 +150,8 @@ for i=1:NC
         XD=only_detrending(X);
         % Denoising & Feature Extration ***********************************
         [Xest,SNRbyWT,SkewSignal,~,SkewNoise,XDupdate]=denoise_wavelet(XD);
+        % Find Basal Slow Changing Signals
+        % BasalSwitch=basaldetector(X,XDupdate,Xest);
         %% DRIVER ANALYSIS
         IndexesFix=1;       % TO enter to the WhileLoop
         FixedSignals=[];    % 
@@ -191,12 +193,13 @@ for i=1:NC
             ActiveNeurons=[];
             if ~isempty(Accepted_index)
                 % Get Threshold
-                Th_SNR =get_threshold_pdf(SNRbyWT,Accepted_index,Rejected_index);
-                Accepted_index=find(SNRbyWT>=Th_SNR); % UPDATE ACCEPTED
+                Th_SNR =min(SNRbyWT(Accepted_index));
+                % Accepted_index=find(SNRbyWT>=Th_SNR); % UPDATE ACCEPTED
                 Th_Skew=get_threshold_pdf(SkewSignal,Accepted_index,Rejected_index);
                 % Apply Threshold
-                AcceptedINDX=unique([makerowvector(Accepted_index(SNRbyWT(Accepted_index)>Th_SNR)),...
+                AcceptedINDX=unique([makerowvector(Accepted_index(SNRbyWT(Accepted_index)>=Th_SNR)),...
                     makerowvector(Accepted_index(SkewSignal(Accepted_index)>Th_Skew))]);
+                
                 RejectedINDX=setdiff(1:Ns,AcceptedINDX);
                 %%% Response Funtion ***********************************************
                 [FR(AcceptedINDX,:),~,TAUS(AcceptedINDX,:)]=AR_Estimation(XDupdate(AcceptedINDX,:),p,fs,L,taus_0);
@@ -208,16 +211,16 @@ for i=1:NC
                 end
                 %%% Sparse Deconvolution *******************************************
                 [DRIVER(AcceptedINDX,:),LAMBDASS(AcceptedINDX)]=maxlambda_finder(XDupdate(AcceptedINDX,:),FR(AcceptedINDX,:));
-                preDRI=DRIVER;
+                % preDRI=DRIVER;
                 % KEEP SNR>0 and High+Skewed Signals
-                %% Check Driver
+                %% Check Driver - - - - - - - - - - - - - - - - - - - - 
                 [Dfix(AcceptedINDX,:),XDfix,Xestfix,LambdasFix,IndexesFix,Features]=...
                     analyze_driver_signal(DRIVER(AcceptedINDX,:),...
                     FR(AcceptedINDX,:),XDupdate(AcceptedINDX,:),Xest(AcceptedINDX,:));
+                DRIVER=Dfix;
                 if ~isempty(IndexesFix)
                     FixedSignals=AcceptedINDX(IndexesFix);
-                    LAMBDASS(FixedSignals)=LambdasFix;
-                    DRIVER=Dfix;
+                    LAMBDASS(FixedSignals,1)=LambdasFix';
                     % XDupdate(FixedSignals,:)=XDfix(FixedSignals,:);
                     XDupdate(FixedSignals,:)=XDfix(IndexesFix,:);
                     Xest(FixedSignals,:)=Xestfix(IndexesFix,:);
@@ -233,6 +236,7 @@ for i=1:NC
                         end
                     end
                     [DRIVERr,LAMBDASSr]=maxlambda_finder(XDupdate(RejectedINDX,:),FRr,1);
+                    LAMBDASS(RejectedINDX)=LAMBDASSr;
                     [DRfix,XDRfix,XestRfix,LambdasRFix,IndexesFixR,FeaturesR]=analyze_driver_signal(DRIVERr,FRr,XDupdate(RejectedINDX,:),Xest(RejectedINDX,:));
                     if ~isempty(IndexesFixR)
                         FixedNOSignals=RejectedINDX(IndexesFixR);
@@ -243,10 +247,13 @@ for i=1:NC
                     end
                 end
                 % Reanalize Sparse Signal to get Active Signals
+                disp('Detected Neurons: ')
                 for k=1:Ns 
                     xsk=sparse_convolution(DRIVER(k,:),FR(k,:));
                     if ~isempty(xsk(xsk>=std(xsk-XDupdate(k,:)')))
                         ActiveNeurons=[ActiveNeurons;k];
+                        
+                        fprintf('%i,',ActiveNeurons(end));
                     end
                 end
                 % Get Active Neurons
@@ -265,7 +272,12 @@ for i=1:NC
             end
             InactiveNeurons=setdiff(1:Ns,ActiveNeurons);
         end % END WHILE of IndexesFix
-        
+        %% Checkin Lambdas
+        % if numel(ActiveNeurons)==Ns
+        %    smallacceptedlamb=LAMBDASS(ActiveNeurons)<1;
+        %    histogram(LAMBDASS(ActiveNeurons(smallacceptedlamb)),numel(find(smallacceptedlamb)))
+        %    smallrejectedlamb=LAMBDASS(ActiveNeurons)<1;
+        % end
         %% GET RASTER *****************************************************
         % TotalCells=length(XY);
         switch RasterAlgorithm

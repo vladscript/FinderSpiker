@@ -200,6 +200,7 @@ detectedneurons=[];
                 X_SPARSE(isSIGNAL(k),:)=x_sparse;     % Sparse Signals
                 snrc=10*log(var(x_sparse)/var(xd'-x_sparse));
                 snrS(isSIGNAL(k))=snrc;               % SNR Sparse
+                fprintf('.')
             end
             fprintf(' Done\n')
         else
@@ -444,6 +445,7 @@ detectedneurons=[];
                             'Exp ID: ',Experiment(2:end)];
         indx_neuron=1; 
         isSIGNAL=indxSIGNALS{j,i};
+        [Cells,Frames]=size(SIGNALS{j,i});
         retrieve_global_data;
         Get_Data;
         Plot_Data_Now;

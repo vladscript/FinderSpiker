@@ -1,21 +1,30 @@
-function xlinc=getlinearsegment(xxtr,noisex,n)
+function xlinc=getlinearsegment(xxtr,StdNoise,n)
 % CHEck Initial and Final Samples
-   if  and( xxtr(1)>std(noisex) , xxtr(end)>-std(noisex))
+   if  and( xxtr(1)>StdNoise , xxtr(end)>-StdNoise)
         % 1st and Final Sample Test above noise
         if n==1
-% %                     if length(xxtr)>2 % straight line
-% %                         mslope=(xxtr(end)-xxtr(1))/length(xxtr);
-% %                         xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
-% %                         Apeaks=findpeaks(xxtr-xlinc);
-% %                         Avalle=findpeaks(xlinc-xxtr);
-% %                     else
-% %                         Apeaks=[];
-% %                         Avalle=[];
-% %                     end
             %if isempty(Apeaks) % exp FIT
-            if max(xxtr)==xxtr(1) % exp FIT
-                xexp=fit([1:length(xxtr)]',xxtr','exp1');
-                xlinc=xexp(1:length(xxtr))';
+            if max(xxtr)==xxtr(1) || xxtr(1)>4*StdNoise  % exp FIT
+                % Tes if there si peak in there:
+                % 1st Derivative 
+                ZeroCrosses=find(diff(sign(diff(xxtr))));
+                % [~,A]=findpeaks(diff(xxtr));
+                % [~,B]=findpeaks(diff(-xxtr));
+                % disp('CuRve3S5>>>')
+                if ~isempty(ZeroCrosses)
+                    mslope=(xxtr(end)-xxtr(1))/length(xxtr);
+                    xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
+                    xtest=xxtr-xlinc;
+                    % what comes around->works-around
+                    if numel(xtest(xtest<0))>numel(xtest(xtest>=0))
+                        % xexp=fit([1:length(xxtr)]',xxtr','exp1');
+                        % xlinc=xexp(1:length(xxtr))';
+                        xlinc=xxtr;
+                    end
+                else
+                    xexp=fit([1:length(xxtr)]',xxtr','exp1');
+                    xlinc=xexp(1:length(xxtr))';
+                end
             else                % Zero Linea
                 mslope=0;
                 xlinc=mslope*([1:length(xxtr)]-1);
@@ -26,24 +35,35 @@ function xlinc=getlinearsegment(xxtr,noisex,n)
             xlinc=mslope*([1:length(xxtr)]-1);
             % Possible Calcium Transient
         end
-    elseif and(xxtr(1)<-std(noisex),xxtr(end)<-std(noisex))
+    elseif and(xxtr(1)<-StdNoise,xxtr(end)<-StdNoise)
         % 1st Sample below Noise & Final Sample below noise
         %if and( numel(xxtr(xxtr>max([xxtr(1),xxtr(end)])))>numel(xxtr(xxtr<max([xxtr(1),xxtr(end)]))),...
-        %    or(xxtr(1)>std(noisex),xxtr(end)>-std(noisex)) )
+        %    or(xxtr(1)>StdNoise,xxtr(end)>-StdNoise) )
         if numel(xxtr(xxtr>max([xxtr(1),xxtr(end)])))>numel(xxtr(xxtr<max([xxtr(1),xxtr(end)])))
             mslope=(xxtr(end)-xxtr(1))/length(xxtr);
-            if  mslope>0
-                mslope=0;
-            end
+            % if  mslope>0
+            %    mslope=0;
+            % end
             xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
             disp('Ca2+ Transient')
         else
-            xlinc=xxtr;
+            mslope=(xxtr(end)-xxtr(1))/length(xxtr);
+            xtest=mslope*([1:length(xxtr)]-1)+xxtr(1);
+            if numel(xxtr)>2
+                A=findpeaks(xxtr-xtest);
+                if ~isempty(A(A>StdNoise))
+                    xlinc=xtest;
+                else
+                    xlinc=xxtr;
+                end
+            else
+                xlinc=xxtr; disp('WTF');
+            end
         end
-    elseif and(xxtr(1)<-std(noisex),xxtr(end)>-std(noisex))
+    elseif and(xxtr(1)<-StdNoise,xxtr(end)>-StdNoise)
         % 1st Sample below & Final Sample above noise
-        if or( numel(xxtr(xxtr>std(noisex)))>numel(xxtr(xxtr<0)),...
-            or(xxtr(1)>std(noisex),xxtr(end)>-std(noisex)) )
+        if or( numel(xxtr(xxtr>StdNoise))>numel(xxtr(xxtr<0)),...
+            or(xxtr(1)>StdNoise,xxtr(end)>-StdNoise) )
             mslope=(xxtr(end)-xxtr(1))/length(xxtr);
             xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
             disp('Ca2+ Transient')
@@ -51,11 +71,11 @@ function xlinc=getlinearsegment(xxtr,noisex,n)
             xlinc=xxtr;
         end
     else
-        if xxtr(end)>std(noisex)
-            mslope=0;
-            xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
-            disp('Ca2+ Transient')
-        else
+        % if xxtr(end)>StdNoise
+        %    mslope=0;
+        %    xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
+        %    disp('Ca2+ Transient')
+        % else
             % Otherwise Line
             mslope=(xxtr(end)-xxtr(1))/length(xxtr);
             xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
@@ -63,6 +83,6 @@ function xlinc=getlinearsegment(xxtr,noisex,n)
                 % If line is above data, use smooth:
                 xlinc=xxtr;
             end
-        end
+        % end
     end
 end
