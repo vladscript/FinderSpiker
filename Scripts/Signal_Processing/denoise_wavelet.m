@@ -35,44 +35,44 @@ for i=1:Ns
         if or(SortaPeakIndx(1)==1,SortaPeakIndx(2)==1)
             offset_xd=Vbin(1);
         else
-            offset_xd=Vbin(SortaPeakIndx(1));
+            offset_xd=Vbin(SortaPeakIndx(end));
         end
     else
         SortaPeakIndx=1;
         offset_xd=Vbin;
     end
-    if abs(min(xdenoised)-offset_xd)<std(noisex)
-        offset_xd=Vbin(SortaPeakIndx(1));
-    end
+    % if abs(min(xdenoised)-offset_xd)<std(noisex)
+    %    offset_xd=Vbin(SortaPeakIndx(1));
+    % end
     xdenoised=xdenoised-offset_xd;
     xd=xd-offset_xd;
-    %% Plot Results 1/3 *************************************
-    h1=subplot(211);
-    plot(xd); hold on
-    plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
-    plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
-    plot(xdenoised); hold off;
-    axis tight; grid on;
+%     %% Plot Results 1/3 *************************************
+%     h1=subplot(211);
+%     plot(xd); hold on
+%     plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
+%     plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
+%     plot(xdenoised); hold off;
+%     axis tight; grid on;
     disp(i)
     %% CHECK if denoised signal is contained in Standard Deviation of Noise
     if max(xdenoised)<std(noisex)
-        disp('>>JUST NOISE')
+        % disp('>>JUST NOISE')
         xd=xd-xdenoised;
         xdenoised(:)=0; % make it zeros...
         XDupdate(i,:)=xd;
         % xdenoised(:)=zeros(size())
         % may be ain't happenning ever, man!
     else
-        disp('>> THERE MIGHT BE TRANSIENTS')
+        % disp('>> THERE MIGHT BE TRANSIENTS')
         %% DETRENDING FIXING #############################################
         % Get Peaks below noise and waves above noise 
         % Frames would be inflection points to detrend
         [LOWwavesFrames,ZeroCrosses]=getwavesframes(xdenoised,noisex);
-        %% Plot Results 2/3 *************************************
-        % WAVES POINTS;
-        hold on;
-        plot(LOWwavesFrames(2:end-1),xdenoised((LOWwavesFrames(2:end-1))),'*k');
-        hold off
+%         %% Plot Results 2/3 *************************************
+%         % WAVES POINTS;
+%         hold on;
+%         plot(LOWwavesFrames(2:end-1),xdenoised((LOWwavesFrames(2:end-1))),'*k');
+%         hold off
         %% VChS-A: Valley-Checking Segmented Algorithm *************************************
         xlin=[];
         n=1;
@@ -169,28 +169,34 @@ for i=1:Ns
                 preAmp=xdenoised(NP(k));
                 posAmp=xdenoised(NP(k)+1);
                 if abs(preAmp-posAmp)>std(noisex)
-                    disp('ass')
+                    disp('ups...')
                 end
             end
             fprintf('\n');
-            
+            if max(xdenoised)<std(noisex)
+                disp('>> JUST NOISE')
+                xdupdate=xdupdate-xdenoised;
+                xdenoised(:)=0; % make it zeros...
+            else
+                disp('>> THERE MIGHT BE Ca++ Transients')
+            end
             % check out #######################
             %         plot(xdupdate); pause;
             XDupdate(i,:)=xdupdate;
         end
     end
-    %% CHECK RESULTS 3/3
-    h2=subplot(212);
-    plot(XDupdate(i,:)); 
-    hold on;
-    plot([0,numel(XDupdate(i,:))],[0,0],'-.k');
-    plot(xdenoised); 
-    plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
-    plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
-    hold off;
-    axis tight; grid on;
-    linkaxes([h1,h2],'x')
-    disp('dick')
+%     %% CHECK RESULTS 3/3
+%     h2=subplot(212);
+%     plot(XDupdate(i,:)); 
+%     hold on;
+%     plot([0,numel(XDupdate(i,:))],[0,0],'-.k');
+%     plot(xdenoised); 
+%     plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
+%     plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
+%     hold off;
+%     axis tight; grid on;
+%     linkaxes([h1,h2],'x')
+%     disp('check')
     %% FEATURE EXTRACTION ############################################
     [SkewSignal(i),SkewNoise(i),SNRbyWT(i),ABratio(i)]=feature_extraction(xdenoised,noisex);
     Xest(i,:)=xdenoised; % SAVE DENOISED  * * * * ** $ $ $ $        OUTPUT

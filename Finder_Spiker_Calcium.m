@@ -147,9 +147,9 @@ for i=1:NC
         disp(['               [>> Video    : ',num2str(j),'/',NumberofVideos{i},']']);
         tic
         % Detrending ******************************************************
-        XD=only_detrending(X);
+        % XD=only_detrending(X);
         % Denoising & Feature Extration ***********************************
-        [Xest,SNRbyWT,SkewSignal,~,SkewNoise,XDupdate]=denoise_wavelet(XD);
+        [Xest,SNRbyWT,SkewSignal,~,SkewNoise,XDupdate]=denoise_wavelet(X);
         % Find Basal Slow Changing Signals
         % BasalSwitch=basaldetector(X,XDupdate,Xest);
         %% DRIVER ANALYSIS
