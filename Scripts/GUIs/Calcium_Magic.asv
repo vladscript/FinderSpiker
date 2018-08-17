@@ -78,10 +78,9 @@ plotsignal.Parent.YLabel.String='F_{raw}';
 plotsignal.Parent.XTick=[];
 hold(ax1,'on');
 plotF0=plot(randn(1,10),'Parent',ax1);
-plotF0.Color='m';
+plotF0.Color='g';
 plotF0.LineStyle='-.';
 plotF0.LineWidth=2;
-hold(ax1,'off');
 ax2=subplot(3,2,3); % Detrended Data - - - - - - - - - - -
 set(ax2,'NextPlot','replacechildren');
 ax3=subplot(3,2,5); %  Driver - - - - - - - - - - - - - - - 
@@ -232,7 +231,6 @@ detectedneurons=[];
     function Plot_Data_Now()
         % Raw Data - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
         plotsignal.YData=x;
-        plotF0.YData=x-xd;
         plotsignal.Parent.XLim=[1,Frames];
         plotsignal.Parent.YLim=[min(x),max(x)];
         plotsignal.Parent.XGrid='on';

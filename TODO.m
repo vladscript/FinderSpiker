@@ -1,23 +1,15 @@
-%% NOTE A:
+%% NOTES##################################################################
 % Manual Mode->Necessary to know the statistics power
 % of the automatic method by dividing in -+ and -- (false+ & false-)
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m
 %% FIXED  before update GIT
-
-
 %% Bugs & New Functions NOW
-
+% Plot F_0 in raw data
 % preLAMBDA issues->some accepted with lamda=0: [SOLVED]
 % if acceted too many->Reject by lambda [not so urgent]
-
-% DETRENDING ISSUES
-% Check of trending component->if it has modes...
-% Work arounds at detrending--- negative skewness 
-
-% Anlayze Driver->until is very small or find other peak, in that
+% Anlayze Driver-> [SLOW]
 % case->choose minimium in between [DONE]
-
 
 % Add Highlight Neuron Using Mouse at Plot_Raster
 % Progress Bar for Visual Inspection
