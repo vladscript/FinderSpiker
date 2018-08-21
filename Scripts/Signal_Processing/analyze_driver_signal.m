@@ -87,47 +87,61 @@ for c=1:C
     % Check Responses below Noise:
     % Thd=abs(min(d));
     SamplesDelete=1:numel(x_sparse);
-    [Apeaks,Npeaks]=findpeaks(x_sparse);
+    [ApeaksAll,NpeaksAll]=findpeaks(x_sparse);
+    [~,NvallsAll]=findpeaks(-x_sparse);
     SaveSamples=[];
+    % GET ONLY PEAKS ABOVE NOISE
+    okPeaks=find(ApeaksAll>std(noisex)); 
+    Apeaks=ApeaksAll(okPeaks);
+    Npeaks=NpeaksAll(okPeaks);
     % dx_sparse=diff(x_sparse);
-    for n=1:length(Npeaks)
-        if Apeaks(n)>=std(noisex)
-            % Before the peak $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-            auxN=0;
-            isPeakStop=1;
-            while and(and(x_sparse(Npeaks(n)-auxN)>0,Npeaks(n)-auxN>0),isPeakStop)
-                if n>1
-                    if and(ismember(Npeaks(n)-auxN,Npeaks(1:n-1)),x_sparse(Npeaks(n)-auxN)<std(noisex))
-                        isPeakStop=0;
-                    else
-                        SaveSamples=[SaveSamples,(Npeaks(n)-auxN)];
-                    end
+    n=1;
+    while n<=numel(Npeaks)
+        fprintf('Analysing Peak %i of %i ',n,numel(Npeaks));
+        % Before the peak $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        auxN=0;
+        isPeakStop=1;
+        % WHILE    ---signal is +--------------&---SAmples are +---&dont get another peak
+        while and(and(x_sparse(Npeaks(n)-auxN)>0,Npeaks(n)-auxN>0),isPeakStop)
+            if Npeaks(n)>1
+                if and(ismember(Npeaks(n)-auxN,NvallsAll),x_sparse(Npeaks(n)-auxN)<std(noisex))
+                    isPeakStop=0;
                 else
                     SaveSamples=[SaveSamples,(Npeaks(n)-auxN)];
                 end
-                auxN=auxN+1;
+            else
+                SaveSamples=[SaveSamples,(Npeaks(n)-auxN)];
             end
-            % After the peak $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-            auxN=1;
-            isPeakStop=1;
-            while and(and(x_sparse(Npeaks(n)+auxN)>0,Npeaks(n)+auxN<numel(x_sparse)),isPeakStop)
-                if n<length(Npeaks)
-                    if and(ismember(Npeaks(n)+auxN,Npeaks(n+1:end)),x_sparse(Npeaks(n)+auxN)<std(noisex))
-                        isPeakStop=0;
-                    else
-                        SaveSamples=[SaveSamples,(Npeaks(n)+auxN)];
-                    end
+            fprintf('.');
+            auxN=auxN+1;
+        end
+        fprintf('\n');
+        % After the peak $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        auxN=1;
+        isPeakStop=1;
+        while and(and(x_sparse(Npeaks(n)+auxN)>0,Npeaks(n)+auxN<numel(x_sparse)),isPeakStop)
+            if n<numel(Npeaks)
+                if and(ismember(Npeaks(n)+auxN,NpeaksAll),x_sparse(Npeaks(n)+auxN)<std(noisex))
+                    isPeakStop=0;
                 else
                     SaveSamples=[SaveSamples,(Npeaks(n)+auxN)];
                 end
-                auxN=auxN+1;
-                %lalalalala
-                % SaveSamples=[SaveSamples,(Npeaks(n)+auxN)];
-                % auxN=auxN+1;
+            else
+                SaveSamples=[SaveSamples,(Npeaks(n)+auxN)];
             end
+            auxN=auxN+1;
+            fprintf('.');
+            % SaveSamples=[SaveSamples,(Npeaks(n)+auxN)];
+            % auxN=auxN+1;
         end
+        n=find(Npeaks>max(SaveSamples),1);
+        if isempty(n)
+            n=numel(Npeaks)+1;
+        end
+        fprintf('\n');
     end
-    SaveSamples=unique(SaveSamples);
+    fprintf('\n');
+    SaveSamples=unique(SaveSamples); % just to sort them
     if ~isempty(SaveSamples)
         SamplesDelete=setdiff([1:numel(x_sparse)],SaveSamples);
         d(SamplesDelete)=0;
@@ -137,6 +151,7 @@ for c=1:C
     % Just (+) Drivers
     d(d<0)=0;
     Dfix(c,:)=d; % update and fix
+end
 %     %% CHECK STUFF
 %     plot(xd,'b'); hold on;
 %     plot(xe,'m'); hold on;
@@ -145,4 +160,4 @@ for c=1:C
 %     bar(d); hold off;
 %     %pause
 %     disp(c) 
-end
+end % END OF THE WORLD

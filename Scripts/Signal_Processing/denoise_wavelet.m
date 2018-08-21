@@ -17,7 +17,7 @@ SkewSignal=zeros(Ns,1);
 SkewNoise=zeros(Ns,1);
 ABratio=zeros(Ns,1);
 SNRbyWT=zeros(Ns,1);
-XDupdate=XD;
+% XDupdate=XD;
 %% FOR---------------------------------------------------------------------
 for i=1:Ns
     %% GET DATA
@@ -26,26 +26,34 @@ for i=1:Ns
     % SNR by Wavelet Processing and Autocorrelation Diminishment
     [xdenoised,noisex]=mini_denoise(xd);
     %% de-OFFSET
-    [pxd,binxd]=ksdensity(xdenoised, linspace(min(xdenoised),max(xdenoised),100));
-    [Ap,Vbin]=findpeaks(pxd,binxd); % modes of pdf valleys
-    % Caring of too much offset
-    if numel(Vbin)>1
-        [~,SortaPeakIndx]=sort(Ap,'descend');
-        % If more negative mode is of the 2 biigest modes: de -offset
-        if or(SortaPeakIndx(1)==1,SortaPeakIndx(2)==1)
-            offset_xd=Vbin(1);
-        else
-            offset_xd=Vbin(SortaPeakIndx(end));
-        end
+    [~,Valleys]=findpeaks(-xdenoised,'NPeaks',1,'SortStr','descend');
+    if isempty(Valleys)
+        offset_xd=min(xdenoised)+std(noisex);
     else
-        SortaPeakIndx=1;
-        offset_xd=Vbin;
+        offset_xd=xdenoised(Valleys)+std(noisex);
     end
+        
+% %     [pxd,binxd]=ksdensity(xdenoised, linspace(min(xdenoised),max(xdenoised),100));
+% %     [Ap,Vbin]=findpeaks(pxd,binxd); % modes of pdf valleys
+% %     % Caring of too much offset
+% %     if numel(Vbin)>1
+% %         [~,SortaPeakIndx]=sort(Ap,'descend');
+% %         % If more negative mode is of the 2 biigest modes: de -offset
+% %         if or(SortaPeakIndx(1)==1,SortaPeakIndx(2)==1)
+% %             offset_xd=Vbin(1);
+% %         else
+% %             offset_xd=Vbin(SortaPeakIndx(end));
+% %         end
+% %     else
+% %         SortaPeakIndx=1;
+% %         offset_xd=Vbin;
+% %     end
     % if abs(min(xdenoised)-offset_xd)<std(noisex)
     %    offset_xd=Vbin(SortaPeakIndx(1));
     % end
     xdenoised=xdenoised-offset_xd;
     xd=xd-offset_xd;
+    XDupdate(i,:)=xd;
 %     %% Plot Results 1/3 *************************************
 %     h1=subplot(211);
 %     plot(xd); hold on
@@ -53,7 +61,7 @@ for i=1:Ns
 %     plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
 %     plot(xdenoised); hold off;
 %     axis tight; grid on;
-    disp(i)
+%     disp(i)
     %% CHECK if denoised signal is contained in Standard Deviation of Noise
     if max(xdenoised)<std(noisex)
         % disp('>>JUST NOISE')

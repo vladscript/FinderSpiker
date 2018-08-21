@@ -46,6 +46,9 @@ Tfeat.Properties.VariableNames={'Dye','Condition','ROIcoordinates',...
 disp('Saving...')
 summary(Tfeat)
 FileProcessingFeatures=[Experiment,'-Features.csv'];
+FileDirSave=pwd;
+Slashes=find(FileDirSave=='\');
+FileDirSave=FileDirSave(1:Slashes(end)-1);
 if isdir([FileDirSave,'\Features Tables'])
     writetable(Tfeat,[FileDirSave,'\Features Tables',FileProcessingFeatures],...
         'Delimiter',',','QuoteStrings',true);

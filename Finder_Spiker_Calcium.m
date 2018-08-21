@@ -196,6 +196,10 @@ for i=1:NC
                 Th_SNR =min(SNRbyWT(Accepted_index));
                 % Accepted_index=find(SNRbyWT>=Th_SNR); % UPDATE ACCEPTED
                 Th_Skew=get_threshold_pdf(SkewSignal,Accepted_index,Rejected_index);
+                % Lil' Fix->
+                if Th_Skew<0
+                    Th_Skew=0;
+                end
                 % Apply Threshold
                 AcceptedINDX=unique([makerowvector(Accepted_index(SNRbyWT(Accepted_index)>=Th_SNR)),...
                     makerowvector(Accepted_index(SkewSignal(Accepted_index)>Th_Skew))]);
