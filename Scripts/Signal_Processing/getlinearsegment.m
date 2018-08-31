@@ -8,12 +8,16 @@ function xlinc=getlinearsegment(xxtr,StdNoise,n)
                 % Tes if there si peak in there:
                 % 1st Derivative 
                 ZeroCrosses=find(diff(sign(diff(xxtr))));
-                % [~,A]=findpeaks(diff(xxtr));
-                % [~,B]=findpeaks(diff(-xxtr));
+                [~,B]=findpeaks(-xxtr);
+                if isempty(B)
+                    B=1;
+                else
+                    B=B(1);
+                end
                 % disp('CuRve3S5>>>')
                 if ~isempty(ZeroCrosses)
-                    mslope=(xxtr(end)-xxtr(1))/length(xxtr);
-                    xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
+                    mslope=(xxtr(end)-xxtr(B))/length(xxtr);
+                    xlinc=mslope*([1:length(xxtr)]-1)+xxtr(B);
                     xtest=xxtr-xlinc;
                     % what comes around->works-around
                     if numel(xtest(xtest<0))>numel(xtest(xtest>=0))

@@ -1,8 +1,9 @@
 % Funtion to denoise Fluorescence Signals
 % By Wavelet Analysis under asumption: noise is iid
 % argmin_dbw  { AUC(noise) }
+% & VChS-A: Valley-Checking Segmented Algorithm
 % Input
-%   XD:     Detrended Signal
+%   XD:         Raw Signal
 % Output
 %   Xest:       Estimated Denoised Signals
 %   SNRbyWT:    SNR by wavelet denoising
@@ -91,7 +92,7 @@ for i=1:Ns
                 if n<=numel(LOWwavesFrames)-2 && ...
                         ismember(LOWwavesFrames(n+1),ZeroCrosses)
                     % IF after the Zero-Cross is there a peak
-                    if LOWwavesFrames(n+2)-1-LOWwavesFrames(n+1)>2
+                    if LOWwavesFrames(n+2)-1-LOWwavesFrames(n+1)>3
                         SecPeak=findpeaks(xdenoised(LOWwavesFrames(n+1):LOWwavesFrames(n+2)-1));
                         if ~isempty(SecPeak)
                             % n=n+1; % JUMP Zero Cross
@@ -105,17 +106,39 @@ for i=1:Ns
                 xxtr=xdenoised(LOWwavesFrames(n):LOWwavesFrames(n+1)-1);
 
                 %% DEFINE XLINC (detrendig by parts)
-                mslope=(xxtr(end)-xxtr(1))/length(xxtr);
-                xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
-                xdets=xxtr-xlinc;
-                if numel(xdets(xdets>=0))<numel(xdets(xdets<0))
+                if numel(xxtr)<numel(xd)/3
+                    disp('>>Detrending Linearly ...')
+                    mslope=(xxtr(end)-xxtr(1))/length(xxtr);
+                    xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
+                    xdets=xxtr-xlinc;
+                    if numel(xdets)>3
+                        [~,setPoint]=findpeaks(-xdets,'Npeaks',1,'SortStr','descend');
+                        if ~isempty(setPoint)
+                            if setPoint>numel(xdets)/2
+                                mslope=(xdets(setPoint)-xdets(1))/numel(xdets);
+                            else
+                                mslope=(xdets(end)-xdets(setPoint))/numel(xdets);
+                            end
+                            xlincsec=mslope*([1:length(xxtr)]-1)+xdets(1);
+                            xlinc=xlinc+xlincsec;
+                            xdets=xxtr-xlinc;
+                        end
+                        if numel(xdets(xdets>=0))<numel(xdets(xdets<0))
+                            disp('>>Detrending by RLOESS...')
+                            xlinc=smooth(xxtr,numel(xxtr),'rloess')';
+                            %xdets=xxtr-xlinc;
+                        end
+                    end
+                else
+                    disp('>>Detrending by RLOESS...')
                     xlinc=smooth(xxtr,numel(xxtr),'rloess')';
                 end
-                % 
-                
+                disp('>>...OK')
+
                 %% Check Peak'sAMplitude between Valleys of Detrended Segment
                 if length(xxtr-xlinc)>2
                     [NewLOWwavesFrames,NewZeros] = getwavesframes(xxtr-xlinc,noisex);
+                    % NewLOWwavesFrames=NewLOWwavesFrames([1,find(diff(NewLOWwavesFrames(1:end-1))>2)+1,numel(NewLOWwavesFrames)]);
                     if numel(NewLOWwavesFrames)>2
                         xlincnew=[];
                         xdets=xxtr-xlinc;
@@ -124,10 +147,14 @@ for i=1:Ns
                             if nn<=numel(NewLOWwavesFrames)-2 && ...
                                 ismember(NewLOWwavesFrames(nn+1),NewZeros)
                                 % IF after the Zero-Cross is there a peak
-                                if NewLOWwavesFrames(nn+2)-1-NewLOWwavesFrames(nn+1)>2
+                                if NewLOWwavesFrames(nn+2)-1-NewLOWwavesFrames(nn+1)>3
                                     SecPeak=findpeaks(xdets(NewLOWwavesFrames(nn+1):NewLOWwavesFrames(nn+2)-1));
+                                    % Jump Only if there is a peak
                                     if ~isempty(SecPeak)
                                         % n=n+1; % JUMP Zero Cross
+                                        NewLOWwavesFrames=[NewLOWwavesFrames(1:nn),NewLOWwavesFrames(nn+2:end)];
+                                    % TOO SMALL
+                                    elseif NewLOWwavesFrames(nn+1)-NewLOWwavesFrames(nn)<4
                                         NewLOWwavesFrames=[NewLOWwavesFrames(1:nn),NewLOWwavesFrames(nn+2:end)];
                                     end
                                 else
@@ -188,11 +215,26 @@ for i=1:Ns
             else
                 disp('>> THERE MIGHT BE Ca++ Transients')
             end
+%             % Basal Activity Detectos
+%             [~,maxPeakFrame]=findpeaks(xdupdate,'Npeaks',1,'SortStr','descend');
+%             if ~isempty(maxPeakFrame)
+%                 % Pre Peak
+%                 if min(xd(1:maxPeakFrame))>std(noisex)
+%                     disp('Possible Initial Basal Activity')
+%                 % Post Peak
+%                 elseif min(xd(maxPeakFrame:end))>std(noisex)
+%                     disp('Possible Final Basal Activity')
+%                 end
+%                     
+%             end
             % check out #######################
             %         plot(xdupdate); pause;
             XDupdate(i,:)=xdupdate;
         end
     end
+    %% FEATURE EXTRACTION ############################################
+    [SkewSignal(i),SkewNoise(i),SNRbyWT(i),ABratio(i)]=feature_extraction(xdenoised,noisex);
+    Xest(i,:)=xdenoised; % SAVE DENOISED  * * * * ** $ $ $ $        OUTPUT
 %     %% CHECK RESULTS 3/3
 %     h2=subplot(212);
 %     plot(XDupdate(i,:)); 
@@ -205,13 +247,23 @@ for i=1:Ns
 %     axis tight; grid on;
 %     linkaxes([h1,h2],'x')
 %     disp('check')
-    %% FEATURE EXTRACTION ############################################
-    [SkewSignal(i),SkewNoise(i),SNRbyWT(i),ABratio(i)]=feature_extraction(xdenoised,noisex);
-    Xest(i,:)=xdenoised; % SAVE DENOISED  * * * * ** $ $ $ $        OUTPUT
+end % MAIN LOOP    
 
-end % MAIN LOOP
+
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 end % END OF THE WORLD####################################################
+
+
+function [samplestodetrend,ylinv1]=lineardetbigmode(binx,ModesX,x)
+    % Get Samples belonging from least sample to the biggest mode
+    Frames=length(x);
+    ModePos=find(binx==ModesX(1));
+    % dpx=diff(px);
+    samplestodetrend= intersect( find(x>min(x)),find(x<binx(ModePos)) );
+    [cl,~,mucl] = polyfit(samplestodetrend,x(samplestodetrend),1);
+    ylinv1=polyval(cl,1:Frames,[],mucl); % Linear Trending
+end
+
 
 function yss = smoothbysegments(x,y,NC)
     [~,PeaksY]=findpeaks(y);
