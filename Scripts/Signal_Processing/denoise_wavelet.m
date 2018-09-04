@@ -77,6 +77,36 @@ for i=1:Ns
         % Get Peaks below noise and waves above noise 
         % Frames would be inflection points to detrend
         [LOWwavesFrames,ZeroCrosses]=getwavesframes(xdenoised,noisex);
+        % preLOWwavesFrames=LOWwavesFrames;
+        % IGNORE VALLEYS WITH HIGH PROMINENCE!!!
+        [~,Framy,~,Promy]=findpeaks(-xdenoised);
+        % BigPromyIndx=find(Promy>std(noisex));
+        BigValleys=intersect(Framy(Promy>std(noisex)),LOWwavesFrames);
+        for nv=1:numel(BigValleys)
+            if ismember(BigValleys(nv),LOWwavesFrames)
+                Ndel=find(LOWwavesFrames==BigValleys(nv));
+                if Ndel>2 && Ndel+1<=numel(LOWwavesFrames)
+                    NvecDel=[Ndel-1,Ndel,Ndel+1];
+                elseif Ndel-1<2
+                    NvecDel=[2,Ndel,Ndel+1];
+                elseif Ndel+1>numel(LOWwavesFrames)
+                    NvecDel=[1,Ndel,numel(LOWwavesFrames)];
+                end
+                if NvecDel(end)==numel(LOWwavesFrames)
+                    NvecDel=NvecDel(1:2);
+                end
+                LOWwavesFrames=LOWwavesFrames(setdiff(1:numel(LOWwavesFrames),NvecDel));
+            end
+        end
+        if numel(LOWwavesFrames)==2
+            disp('>>Fix of Waves missDetection>>')
+            LOWwavesFrames=[LOWwavesFrames(1),numel(xd),LOWwavesFrames(end)];
+        elseif numel(LOWwavesFrames)==1
+            LOWwavesFrames=[LOWwavesFrames(1),numel(xd),LOWwavesFrames(end)];
+        end
+            
+        % LOWwavesFrames=setdiff(LOWwavesFrames,Framy(Promy>std(noisex)));
+        
 %         %% Plot Results 2/3 *************************************
 %         % WAVES POINTS;
 %         hold on;
@@ -133,15 +163,24 @@ for i=1:Ns
                     disp('>>Detrending by RLOESS...')
                     xlinc=smooth(xxtr,numel(xxtr),'rloess')';
                 end
+                xdets=xxtr-xlinc;
                 disp('>>...OK')
-
+                
                 %% Check Peak'sAMplitude between Valleys of Detrended Segment
                 if length(xxtr-xlinc)>2
-                    [NewLOWwavesFrames,NewZeros] = getwavesframes(xxtr-xlinc,noisex);
+                    [NewLOWwavesFrames,NewZeros] = getwavesframes(xdets,noisex);
+                    % Take Care of Big Vallyes:
+                    BigVallInd=find(-xdets(NewLOWwavesFrames(2:end-1))>1.5*std(noisex))+1;
+                    if ~isempty(BigVallInd)
+                        disp('>> Erasing Big Valleys:')
+                        NewLOWwavesFrames=NewLOWwavesFrames(setdiff(1:numel(NewLOWwavesFrames),BigVallInd));
+                        disp('>>Done.')
+                    else
+                        disp('- No Negative Distortions -')
+                    end
                     % NewLOWwavesFrames=NewLOWwavesFrames([1,find(diff(NewLOWwavesFrames(1:end-1))>2)+1,numel(NewLOWwavesFrames)]);
                     if numel(NewLOWwavesFrames)>2
                         xlincnew=[];
-                        xdets=xxtr-xlinc;
                         nn=1;
                         while nn<numel(NewLOWwavesFrames)
                             if nn<=numel(NewLOWwavesFrames)-2 && ...
@@ -164,7 +203,8 @@ for i=1:Ns
                             end
                             xlincs=getlinearsegment(xdets(NewLOWwavesFrames(nn):NewLOWwavesFrames(nn+1)-1),std(noisex),nn);
                             xlincnew=[xlincnew,xlincs];
-                            
+                            % Should I update the 1st samples of the next 
+                            % interval as a detrended signal ?????????
                             disp(nn)
                             nn=nn+1;
                         end
@@ -202,18 +242,61 @@ for i=1:Ns
             for k=1:numel(NP)
                 fprintf('.');
                 preAmp=xdenoised(NP(k));
-                posAmp=xdenoised(NP(k)+1);
+                if NP(k)>=numel(xdenoised)
+                    posAmp=xdenoised(NP(k));
+                else
+                    posAmp=xdenoised(NP(k)+1);
+                end
                 if abs(preAmp-posAmp)>std(noisex)
                     disp('ups...')
                 end
             end
             fprintf('\n');
             if max(xdenoised)<std(noisex)
-                disp('>> JUST NOISE')
+                disp('>> JUST NOISE ')
                 xdupdate=xdupdate-xdenoised;
                 xdenoised(:)=0; % make it zeros...
             else
-                disp('>> THERE MIGHT BE Ca++ Transients')
+                [AmpPEaks,FramPeaks]=findpeaks(xdenoised);
+                if isempty(AmpPEaks(AmpPEaks>std(noisex)))
+                    disp('>> Fluorescence without Ca++ Transients')
+                    xdupdate=xdupdate-xdenoised;
+                    xdenoised(:)=0; % make it zeros...
+                else
+                    if numel(AmpPEaks(AmpPEaks>std(noisex)))==1
+                        % Check if Peak Rises FASTER than it Falls
+                        FramPeaks=FramPeaks(AmpPEaks>std(noisex));
+                        [AmpValls,FramValls]=findpeaks(-xdenoised);
+                        if isempty(AmpValls)
+                            % No valleys: strange
+                            disp('>> Fluorescence without Valleys')
+                            xdupdate=xdupdate-xdenoised;
+                            xdenoised(:)=0; % make it zeros...
+                        else
+                            naux=1;
+                            while and(and(xdenoised(FramPeaks(1)-naux)>0,~ismember(FramPeaks(1)-naux,FramValls)),FramPeaks(1)-naux>1)
+                                naux=naux+1;
+                            end
+                            RiseN=naux;
+                            naux=1;
+                            while and(and(xdenoised(FramPeaks(1)+naux)>0,~ismember(FramPeaks(1)+naux,FramValls)),FramPeaks(1)+naux<numel(xdenoised))
+                                naux=naux+1
+                            end
+                            FallN=naux;
+                            if RiseN>FallN
+                                disp('>> Peak without Ca++ Transients')
+                                xdupdate=xdupdate-xdenoised;
+                                xdenoised(:)=0; % make it zeros...
+                            else
+                                disp('>> THERE MIGHT BE Ca++ Transients')
+                            end
+                        end
+                    else
+                        disp('>> THERE MIGHT BE Ca++ Transients')
+                    end
+                    
+                end
+                
             end
 %             % Basal Activity Detectos
 %             [~,maxPeakFrame]=findpeaks(xdupdate,'Npeaks',1,'SortStr','descend');

@@ -39,17 +39,25 @@ function xlinc=getlinearsegment(xxtr,StdNoise,n)
             xlinc=mslope*([1:length(xxtr)]-1);
             % Possible Calcium Transient
         end
-    elseif and(xxtr(1)<-StdNoise,xxtr(end)<-StdNoise)
-        % 1st Sample below Noise & Final Sample below noise
-        %if and( numel(xxtr(xxtr>max([xxtr(1),xxtr(end)])))>numel(xxtr(xxtr<max([xxtr(1),xxtr(end)]))),...
-        %    or(xxtr(1)>StdNoise,xxtr(end)>-StdNoise) )
+    elseif and(xxtr(1)<0,xxtr(end)<-StdNoise)
+    % 1st Sample below Noise & Final Sample below noise
         if numel(xxtr(xxtr>max([xxtr(1),xxtr(end)])))>numel(xxtr(xxtr<max([xxtr(1),xxtr(end)])))
             mslope=(xxtr(end)-xxtr(1))/length(xxtr);
-            % if  mslope>0
-            %    mslope=0;
-            % end
-            xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
-            disp('Ca2+ Transient')
+            % xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
+            xtest=mslope*([1:length(xxtr)]-1)+xxtr(1);
+            if numel(xxtr)>2
+                A=findpeaks(xxtr-xtest);
+                if ~isempty(A(A>StdNoise))
+                    xlinc=xtest;
+                    disp('>> Ca2+ Possible Transient Rescued')
+                else
+                    xlinc=xxtr;
+                    disp('>>> Detrending >>>')
+                end
+            else
+                xlinc=xxtr; disp('WTF');
+            end
+            
         else
             mslope=(xxtr(end)-xxtr(1))/length(xxtr);
             xtest=mslope*([1:length(xxtr)]-1)+xxtr(1);
@@ -65,12 +73,12 @@ function xlinc=getlinearsegment(xxtr,StdNoise,n)
             end
         end
     elseif and(xxtr(1)<-StdNoise,xxtr(end)>-StdNoise)
-        % 1st Sample below & Final Sample above noise
+    % 1st Sample below & Final Sample above noise
         if or( numel(xxtr(xxtr>StdNoise))>numel(xxtr(xxtr<0)),...
             or(xxtr(1)>StdNoise,xxtr(end)>-StdNoise) )
             mslope=(xxtr(end)-xxtr(1))/length(xxtr);
             xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
-            disp('Ca2+ Transient')
+            disp('Ca2+ Possible Transient Rescued')
         else
             xlinc=xxtr;
         end
