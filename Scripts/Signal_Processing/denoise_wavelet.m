@@ -229,7 +229,7 @@ for i=1:Ns
             % Special Fixes
             % Finale (de)-Bleaching *******************************
             FixS=1;
-            if xdenoised(end)==max(xdenoised)
+            if xdenoised(end)==max(xdenoised) && numel(LOWwavesFrames)>3
                 dxden=diff(xdenoised);
                 FixS=LOWwavesFrames(end-1);
                 xdupdate(end-FixS:end)=xdupdate(end-FixS:end)-xdenoised(end-FixS:end);
