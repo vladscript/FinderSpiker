@@ -344,14 +344,14 @@ hb = uicontrol('Style','pushbutton',...
         RGBindexesA=rgbChooseDye.Value;
         rgbA=getrgb(ImageAverageCopy,RGBindexesA);
         if RGBindexesA<4 
-            h1.Children(end).CData=rgbA;
+            h1.Children.CData=rgbA;
             if and(RGBindexesB<4,RGBindexesA~=RGBindexesB)
                 rgbC=imadd(rgbA,rgbB);
                 h3.Children(end).CData=rgbC;
             end
         else
-            h1.Children(end).CData=ImageAverage;  colormap(gray);
-            h1.Children(end).CDataMapping='scaled';
+            h1.Children.CData=ImageAverage;  colormap(gray);
+            h1.Children.CDataMapping='scaled';
             % uiwait(figsave)
             ManageContrast=imcontrast(h1);
             set(ManageContrast, 'CloseRequestFcn', @getValues);

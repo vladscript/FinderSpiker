@@ -3,30 +3,26 @@
 % of the automatic method by dividing in -+ and -- (false+ & false-)
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m
-%% FIXED  before update GIT
+%% FIXED  RECENTLY @ GIT
+% BUG in Merge Selector: color doesn't update from contrast editor [SOLVED]
+% Set color in DYE image AS WELL [DONE]
+% NAVIGATE Making Zoom per EACH Coordinate [DONE]
 %% Bugs & New Functions NOW
-% Plot F_0 in raw data
-% preLAMBDA issues->some accepted with lamda=0: [SOLVED]
-% if acceted too many->Reject by lambda [not so urgent]
-% Anlayze Driver-> [SLOW]
-% case->choose minimium in between [DONE]
-
 % Add Highlight Neuron Using Mouse at Plot_Raster
-% Progress Bar for Visual Inspection
-% Check Status Script to Cjeck Progress of Processing:
-%       Read;Pre;Pro;Raster->
 % and other colors in the MERGE script : MAGENTA
 % Threshold to get NETWORK !!!!!!!!
 % Automatize Clustering
 % Inspection of Each ROI...
+% Detect when its empty detected or undetected at :
+%   Undetected_Visual_Inspection
 
 
 %% FUTURE **********************************
 % Figure: reason whi mean(ROI) withput distortion
 % Load Raw FLuorescenc vs F_0 distortion
-% Driver Analysis-> Consider Derivative or Valleys
 % Analyze Rejects Ones Anyway to infer Artifacts
 % Kalman Filtering at SNR and lambdas pdf's: for optimal threshold
+% Automatize MERGE SELECTOR
 % CLUSTERING STUFF ***********************
 % Threshold: prior numbercoactivyt:
 % [THCOAC]=mctest(R,'modes')
@@ -61,7 +57,7 @@
 % 'Got to Dir' 
 % C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\NeuralNetworks
 % NeuralNetwork-> GUI mode-> Clustering Analysis
-% Ensemble_Sorting
+% Back to FinderSPiker Dir -> Ensemble_Sorting
 
 % COLOCALIZATION OF MARKED CELLS
 % [XY_merged,ColocateIndx]=get_merged_coordinates(Experiment,XY_selected,r);
