@@ -1,6 +1,6 @@
 % Function to Select frames per Condition Manually
 % Extract Descriptive Features.
-% Run After Raster_Magic_Better.m (Processing Blocks) or
+% Run After Finder_Spiker_Calcium.m (Processing Blocks) or
 % Load Saved Data in the EPXEIMENT_DATE.mat Files
 % It runs until selection is OK (according to the user)
 % Input
@@ -9,14 +9,20 @@
 %   XY:                 Original Coordinates        NOT condition SORTED
 %   Names_Conditions:   Names of Conditions
 %   Experiment:         Name of the Experiment
+%   checkname           if it's specified->OMITS SAVING
 % Ouput
 %   RASTER_Selected_Clean   Matrix (ONLY ACTIVE cells)
 %   XY_selected:            Selected ACtive Cells
 %   R_Condition:            Cell of Raster for each COndition
 %   Onsets:                 Selected Starting Point
 %   New_indexes:            Sleected & Sorted Indexes of the Cells
-function [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets,New_Index]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment)
+function [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets,New_Index]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment,varargin)
 %% Setup
+if numel(varargin)==1
+    checkname=1;
+else
+    checkname=0;
+end
 FileDirSave=pwd;
 slashes=find(FileDirSave=='\');
 FileDirSave=FileDirSave(1:slashes(end));
@@ -140,24 +146,26 @@ while ~strcmp('Yes',okbutton)
             StatsFeatures(6),StatsFeatures(7),StatsFeatures(8),StatsFeatures(9),StatsFeatures(10),...
             'VariableNames',HeadersFeatures);
         disp(Trasterfeatures);
-        % Saving CSV
-        NameDir='Raster Features\';
-        if isdir([FileDirSave,'\Raster Features'])
-            writetable(Trasterfeatures,[FileDirSave,NameDir,Experiment(2:end),'_',Names_Conditions{c},'Raster_Features.csv'],...
-                'Delimiter',',','QuoteStrings',true);
-            disp(['Saved Raster Features: ',Experiment,'-',Names_Conditions{c}])
-        else % Create Directory
-            disp('Directory >Raster Features< created')
-            mkdir([FileDirSave,NameDir]);
-            writetable(Trasterfeatures,[FileDirSave,NameDir,Experiment(2:end),'_',Names_Conditions{c},'Raster_Features.csv'],...
-                'Delimiter',',','QuoteStrings',true);
-            disp('Resume Tables Direcotry Created');
-            disp(['Saved Raster Features: ',Experiment,'-',Names_Conditions{c}])
+        % Saving CSV - - - - - - - - - - - - - - - - - - - - - - - - -
+        if checkname
+            NameDir='Raster Features\';
+            if isdir([FileDirSave,'\Raster Features'])
+                writetable(Trasterfeatures,[FileDirSave,NameDir,Experiment(2:end),'_',Names_Conditions{c},'Raster_Features.csv'],...
+                    'Delimiter',',','QuoteStrings',true);
+                disp(['Saved Raster Features: ',Experiment,'-',Names_Conditions{c}])
+            else % Create Directory
+                disp('Directory >Raster Features< created')
+                mkdir([FileDirSave,NameDir]);
+                writetable(Trasterfeatures,[FileDirSave,NameDir,Experiment(2:end),'_',Names_Conditions{c},'Raster_Features.csv'],...
+                    'Delimiter',',','QuoteStrings',true);
+                disp('Resume Tables Directory Created');
+                disp(['Saved Raster Features: ',Experiment,'-',Names_Conditions{c}])
+            end
         end
         % PLOTS *************************************
         % PDFs
-        semilogy(h1,ISIbin,ISIp,'LineWidth',2)
-        semilogy(h2,Lengthbin,Lengthp,'LineWidth',2)
+        plot(h1,ISIbin,ISIp,'LineWidth',2)
+        plot(h2,Lengthbin,Lengthp,'LineWidth',2)
         plot(h3,CAGbin,CAGp,'LineWidth',2)
     end
     %% Ending PLot
@@ -166,9 +174,10 @@ while ~strcmp('Yes',okbutton)
     grid(h1,'on'); grid(h2,'on'); grid(h3,'on');
     hold(h1,'off'); hold(h2,'off'); hold(h3,'off');
     legend(h1,Names_Conditions);
+    set(h1, 'YScale', 'log'); set(h2, 'YScale', 'log');
     okbutton = questdlg('Selection Alright?');
     %% SAVE OUTPUT DATASET (.m file)
-    checkname=1;
+    %checkname=1; % USE AS INPUT
     while checkname==1
         DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\FinderSpiker\Processed Data';
         if exist(DefaultPath,'dir')==0

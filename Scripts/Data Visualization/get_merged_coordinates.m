@@ -8,26 +8,31 @@
 % Green Coordinates: Colocated Neurons
 % Input
 %  Experiment:  Experiment ID:          String ID
-%   XY:         Population Coordinates: [x_i,y_i;...]
-%   r:          Radious Length:         [r_i,...]
-%  Dye Image    Get File using Dialog
-%  Calcium ImageGet File using Dialog
+%   XY:          Population Coordinates: [x_i,y_i;...]
+%   r:           Radious Length:         [r_i,...]
+%  Dye Image     Get File using Dialog
+%  Calcium Image Get File using Dialog
 % 
 % Ouput
 %               Display Image and Coordinates
 % XY_merged     Colocated Coordinates
+% MetaDataColocaliation: Dye Marker & Cell Type
 % Example:
 % Experiment='test'; XY=[100,100]; r=5
 % [XY_merged,ColocateIndx]=get_merged_coordinates(Experiment,XY_selected,r);
-function [XY_merged,ColocateIndx]=get_merged_coordinates(Experiment,XY,r)
+function [XY_merged,MetaDataColocaliation]=get_merged_coordinates(Experiment,XY,r)
 %% Setup
+% Global Variables:
+global XY_merged;
+% global ColocateIndx;
+global MetaDataColocaliation;
 Experiment=Experiment(2:end); % delete Slahs from Name ID
 N=length(XY(:,1));
-XY_merged=[];
+
 X_col=[];
 Y_col=[];
 % ColocateColor=['r','g'];
-ColocateIndx=zeros(N,1);
+
 
 %% Open Dialogue Box to Read Marker A  & Image: of Colocated Cells :GFP/tdTomato/etc
 dyename = inputdlg('Neurons Marker : ',...
@@ -199,6 +204,7 @@ for n=1:N
         end
     end
 end
+hold(h3,'on'); % PLOT AT MERGE: stays ON to put MERGED ONES!!!!!
 %% SET GUI Handles
 % Color for Dye
 rgbChooseDye=uicontrol('Style','popup',...
@@ -226,6 +232,7 @@ Selector=uicontrol('Style','togglebutton',...
 % Cell Navigator
 CellNavigator=uicontrol('Style','slider',...
 'Min',0,'Max',N,...
+'Value',0,...
 'SliderStep',[1/(N),5/(N)],...
 'Callback',@cellnavigation,...
 'Units','normalized',...
@@ -249,7 +256,10 @@ hb = uicontrol('Style','pushbutton',...
 %% Nested Funtions Magic
 % Funtion to Close Figure and Save Stuff 
     function CloseAndSave(~,~)
-        disp('Ready')
+        % Call global variables
+        % global XY_merged;
+        % global ColocateIndx;
+        disp('Selection Ready...')
         % [X_col,Y_col]=getpts(getcoord);
         X_col=round(X_col);
         Y_col=round(Y_col);
@@ -257,19 +267,25 @@ hb = uicontrol('Style','pushbutton',...
         N_col=length(X_col);
         AcceptedIndx=[];
         for k=1:N_col
+            disp('Checking Point:')
             [~,location]=ismember([X_col(k),Y_col(k)],Meshxy_Circle,'rows');
             % if ismember([X_col(i),Y_col(i)],Meshxy_Circle,'rows')
             % if ~isempty(location)
             if ~location==0
                 AuxInd=find(ROIcounter>location);
-                ColocateIndx(AuxInd(1))=1;
+                % ColocateIndx(AuxInd(1))=1;
                 XY_merged=[XY_merged;XY(AuxInd(1),:)];
                 AcceptedIndx=[AcceptedIndx,k];
+                disp('... Accepted')
+            else
+                disp('... Rejected')
             end
         end
-
-        disp('Rejected: ')
-        disp(N_col-length(AcceptedIndx))
+        % Ignore Repeated Pints in the same ROI
+        [XY_merged,~,~]=unique(XY_merged,'rows','stable');
+        % ColocateIndx=ColocateIndx(IndOK);
+        disp('Rejected Selections: ')
+        disp(N_col-numel(ColocateIndx))
         close(getcoord);
         % Final Output:
         F=figure;
@@ -312,7 +328,9 @@ hb = uicontrol('Style','pushbutton',...
             if strcmp(FileName(1:dotindex-1),Experiment(1:end))
                 checkname=0;
                 % SAVE DATA
-                save([PathName,FileName],'XY_merged','ColocateIndx','-append');
+                MetaDataColocaliation.Dye=dyename;
+                MetaDataColocaliation.Cells=kindcells;
+                save([PathName,FileName],'XY_merged','ColocateIndx','MetaDataColocaliation','-append');
                 disp([Experiment,'   -> UPDATED (Merged Coordinates)'])
             elseif FileName==0
                 checkname=0;
@@ -339,7 +357,7 @@ hb = uicontrol('Style','pushbutton',...
             end
         end
     end
-% Function to Repot FIRST SUBPLOT
+% Function to Replot FIRST SUBPLOT
     function ReplotDye(~,~)
         RGBindexesA=rgbChooseDye.Value;
         rgbA=getrgb(ImageAverageCopy,RGBindexesA);
@@ -388,7 +406,7 @@ hb = uicontrol('Style','pushbutton',...
             waitfor(ManageContrast);
             disp('Mean Frame ok')
         end
-     % Nested in Nested Function to get the valuso of MIN & MAX Gray Histogram
+     % Nested in Nested Function to get the values of MIN & MAX Gray Histogram
      function getValues(~,~)
         window_min = str2double(get(findobj(ManageContrast, 'tag', 'window min edit'), 'String'));
         window_max = str2double(get(findobj(ManageContrast, 'tag', 'window max edit'), 'String'));
@@ -416,14 +434,58 @@ hb = uicontrol('Style','pushbutton',...
     end
 
     function cellnavigation(CellNavigator,~)
-        if CellNavigator.Value>0 && CellNavigator.Value<=N
-            x_min=XY(CellNavigator.Value,1)-3*r(CellNavigator.Value)+1;
-            x_max=XY(CellNavigator.Value,1)+3*r(CellNavigator.Value);
-            y_min=XY(CellNavigator.Value,2)-3*r(CellNavigator.Value)+1;
-            y_max=XY(CellNavigator.Value,2)+3*r(CellNavigator.Value);
+        CellIndx=round(CellNavigator.Value);
+        if CellIndx>0 && CellIndx<=N
+            x_min=XY(CellIndx,1)-3*r(CellIndx)+1;
+            x_max=XY(CellIndx,1)+3*r(CellIndx);
+            y_min=XY(CellIndx,2)-3*r(CellIndx)+1;
+            y_max=XY(CellIndx,2)+3*r(CellIndx);
             axis([x_min,x_max,y_min,y_max])
+            % For DYE h1 ##################################################
+            % ONLY ROI - - - - - - - - - - - - - - - - - - - - - - - - - - 
+            x_min=x_min+r(CellIndx);
+            y_min=y_min+r(CellIndx);
+            x_max=x_max-r(CellIndx);
+            y_max=y_max-r(CellIndx);
+            % Take care of negative or BIGGER pixels:!!!!!!!
+            if x_min<1 x_min=1; end
+            if y_min<1 y_min=1; end
+            if x_max>H x_max=H; end
+            if y_max>W y_max=W; end
+            window_min = round(0.75*min(min(ImageAverage(x_min:x_max,y_min:y_max))));
+            window_max = round(1.25*max(max(ImageAverage(x_min:x_max,y_min:y_max))));
+            % DYE IMAGE (neuron marker)
+            ImageAverageCopy=ImageAverage;
+            ImageAverageCopy=imadjust(ImageAverageCopy,[double(window_min),double(window_max)]/255,[]);
+            % REPLOT
+            RGBindexesA=rgbChooseDye.Value;
+            rgbA=getrgb(ImageAverageCopy,RGBindexesA);
+            if RGBindexesA<4 
+                h1.Children(end).CData=rgbA;
+                if and(RGBindexesB<4,RGBindexesA~=RGBindexesB)
+                    rgbC=imadd(rgbA,rgbB);
+                    h3.Children(end).CData=rgbC;
+                end
+            end        
+            
+            % Calcium Fluorescence (calcium indicator)
+            window_min = round(0.75*min(min(meanFrame(x_min:x_max,y_min:y_max))));
+            window_max = round(1.25*max(max(meanFrame(x_min:x_max,y_min:y_max))));
+            meanFrameCopy=meanFrame;
+            meanFrameCopy=imadjust(meanFrameCopy,[double(window_min),double(window_max)]/255,[]);
+            % REPLOT
+            RGBindexesB=rgbChooseCa.Value;
+            rgbB=getrgb(meanFrameCopy,RGBindexesB);
+            if RGBindexesA<4 
+                h2.Children.CData=rgbB;
+                if and(RGBindexesA<4,RGBindexesA~=RGBindexesB)
+                    rgbC=imadd(rgbA,rgbB);
+                    h3.Children(end).CData=rgbC;
+                end
+            end        
+            fprintf('Cell: %i of %i\n',CellIndx,N);
         end
-        fprintf('Cell: %i of %i\n',CellNavigator.Value,N);
+
     end
 %     function exit_function(getcoord,~,~)
 %        key=get(getcoord,'CurrentKey');

@@ -8,6 +8,16 @@
 % Set color in DYE image AS WELL [DONE]
 % NAVIGATE Making Zoom per EACH Coordinate [DONE]
 %% Bugs & New Functions NOW
+% In the GUI of Ca++ Transients: update sparse signal->CLEANER when modify
+%           lambda
+% Autoadjust CONTRAST when slide through neurons @ Merge Function
+% ColoCateIndx: EMPTY!!!}
+
+
+% Add button to save Zoom image (MERGED MAGIC)
+% Save Points SELECTED-> add to file .mat
+
+
 % Add Highlight Neuron Using Mouse at Plot_Raster
 % and other colors in the MERGE script : MAGENTA
 % Threshold to get NETWORK !!!!!!!!
@@ -47,17 +57,21 @@
 
 % RASTER SELECTION
 % ACTUAL MODE: @ Original Coordiantes Order
-% [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment);
-% R=RASTER_Selected_Clean';
-% R_CONDTION1=R_Condition{1}';
+% >>[RASTER_Selected_Clean,XY_selected,R_Condition,Onsets]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment);
+
+% >>Merge_Finder_Magic
+
+% >>R=RASTER_Selected_Clean';
+% >>R_CONDTION1=R_Condition{1}';
 % ...
-% R_CONDTIONi=R_Condition{i}';
+% >>R_CONDTIONi=R_Condition{i}';
 
 % CLUSTERING
-% 'Got to Dir' 
+% 'Got to Dir' :
 % C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\NeuralNetworks
 % NeuralNetwork-> GUI mode-> Clustering Analysis
-% Back to FinderSPiker Dir -> Ensemble_Sorting
+% Back to 'FinderSPiker Dir '-
+% >> Ensemble_Sorting
 
 % COLOCALIZATION OF MARKED CELLS
 % [XY_merged,ColocateIndx]=get_merged_coordinates(Experiment,XY_selected,r);

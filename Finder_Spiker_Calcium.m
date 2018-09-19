@@ -18,7 +18,7 @@
 %   Important Update:               09/07/2018
 %% Global Setup ***********************************************************
 clc
-clear all;
+clear;
 close all;
 %% Global Variables:
 global SIGNALS;
