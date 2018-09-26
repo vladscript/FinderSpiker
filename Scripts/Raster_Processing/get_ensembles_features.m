@@ -1,6 +1,6 @@
 % Features of Neurons @ Ensembles
 % It gets the Neurons that participate in each ensemble
-% R(F)un after Clusterins only
+% R(F)un after Clustering only
 % INPUT:
 %   R_Condition:        from Selected Raster
 %   Ensemble_Threshold
@@ -43,7 +43,7 @@ for c=1:C
     R=R_Condition{c};               % RASTER
     [AN,Frames]=size(R);            % Total Active Neurons [selected]
     RasterDuration=Frames/fs/60;    % MINUTES
-    CAG=sum(R);                     % Coactivitygram
+    CAG=sum(R);                     % Coactivigram
     Th=Ensemble_Threshold{c};       % Significant Threshold
     signif_frames=find(CAG>=Th);    % Significatn Frames
     Ensembles_Labels=Ensembled_Labels{c}; % Labels each frame

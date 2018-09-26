@@ -259,6 +259,8 @@ hb = uicontrol('Style','pushbutton',...
         % Call global variables
         % global XY_merged;
         % global ColocateIndx;
+        axis tight; msgremind=msgbox('Adjust Contrast to Save Image');
+        waitfor(msgremind);
         disp('Selection Ready...')
         % [X_col,Y_col]=getpts(getcoord);
         X_col=round(X_col);
@@ -284,8 +286,8 @@ hb = uicontrol('Style','pushbutton',...
         % Ignore Repeated Pints in the same ROI
         [XY_merged,~,~]=unique(XY_merged,'rows','stable');
         % ColocateIndx=ColocateIndx(IndOK);
-        disp('Rejected Selections: ')
-        disp(N_col-numel(ColocateIndx))
+        % disp('Rejected Selections: ')
+        % disp(N_col-numel(ColocateIndx))
         close(getcoord);
         % Final Output:
         F=figure;
@@ -308,13 +310,16 @@ hb = uicontrol('Style','pushbutton',...
         F.Name=[kindcells{1},'_in_',Experiment];
         hout=gca;
         hout.Position=[0,0,1,1];
+        disp('Saving Merge Image at:')
         SaveImage=frame2im(getframe(hout));
         ImageName=[PathNameVideo,F.Name,'.png'];
+        disp(ImageName)
         imwrite(SaveImage,ImageName);
+        disp('Done.')
 
 
-        %% Save Colocated Coordinates
-        checkname=1;
+        %% Save Colocated Coordinates (INACTIVE)
+        checkname=0;
         while checkname==1
             DP=pwd;
             Slashes=find(DP=='\');
@@ -330,7 +335,7 @@ hb = uicontrol('Style','pushbutton',...
                 % SAVE DATA
                 MetaDataColocaliation.Dye=dyename;
                 MetaDataColocaliation.Cells=kindcells;
-                save([PathName,FileName],'XY_merged','ColocateIndx','MetaDataColocaliation','-append');
+                save([PathName,FileName],'XY_merged','MetaDataColocaliation','-append');
                 disp([Experiment,'   -> UPDATED (Merged Coordinates)'])
             elseif FileName==0
                 checkname=0;

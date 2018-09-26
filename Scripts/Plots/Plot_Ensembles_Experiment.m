@@ -51,7 +51,7 @@ if isempty(ColocateIndx) % WITHOUT COLOCALIZED NEURONS
     Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,THR,fs,CoAc,Indexes); % Ensembles Colors
     Label_Condition_Raster(EnsembleName,R_Condition,fs);   % Labels
     %   Sorted ***************************************************************
-    Plot_Raster_Ensembles(OriginalExperiment,Indexes(New_Order_Clustering),StepNeruonIndxLabel,fs);
+    Plot_Raster_Ensembles(OriginalExperiment,Indexes(New_Order_Clustering),1,fs);
     Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,THR,fs,CoAc,Indexes(New_Order_Clustering));
     Label_Condition_Raster(EnsembleName,R_Condition,fs);   % Labels
 else        % WITH COLOCALIZED NEURONS
@@ -61,7 +61,7 @@ else        % WITH COLOCALIZED NEURONS
     Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,THR,fs,CoAc,Indexes); % Ensembles Colors
     Label_Condition_Raster(EnsembleName,R_Condition,fs);   % Labels
     %   Sorted ***************************************************************
-    Plot_Raster_Ensembles(OriginalExperiment,Indexes(New_Order_Clustering),StepNeruonIndxLabel,fs,ColocateIndx);
+    Plot_Raster_Ensembles(OriginalExperiment,Indexes(New_Order_Clustering),1,fs,ColocateIndx);
     Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,THR,fs,CoAc,Indexes(New_Order_Clustering));
     Label_Condition_Raster(EnsembleName,R_Condition,fs);   % Labels
     %   Sorted by Colocated **************************************************

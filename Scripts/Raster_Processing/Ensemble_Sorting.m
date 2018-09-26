@@ -296,7 +296,7 @@ for c=1:NCplot
         % SORTING CONDITION
         Index_Ensemble=Indexes(OrderOneCondition);          % Neurons Label Raster
         % Plotting |
-        Plot_Raster_Ensembles(R,Index_Ensemble,5,fs);       % Sorted Raster
+        Plot_Raster_Ensembles(R,Index_Ensemble,1,fs);       % Sorted Raster
         if CummFrames==TotalFrames && NC==1
             EnsembleFig=gcf; EnsembleFig.Name=Names_Conditions{c};
         else

@@ -19,9 +19,9 @@
 function [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets,New_Index]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment,varargin)
 %% Setup
 if numel(varargin)==1
-    checkname=1;
-else
     checkname=0;
+else
+    checkname=1;
 end
 FileDirSave=pwd;
 slashes=find(FileDirSave=='\');
@@ -42,7 +42,7 @@ while ~strcmp('Yes',okbutton)
         prompt = {'Start @ min:','Finish @ min:'};
         dlg_title = 'Select Raster ';
         num_lines = 1;
-        defaultans = {'0','3'};
+        defaultans = {'0',num2str(ceil(FramesSize/fs/60))};
         answer = inputdlg(prompt,dlg_title,num_lines,defaultans);
         Minute_Start=str2double(answer{1});
         Minute_End=str2double(answer{2});
@@ -94,9 +94,11 @@ while ~strcmp('Yes',okbutton)
     title(h3,'CAG PDF','FontSize',7)
     hold(h1,'on'); hold(h2,'on'); hold(h3,'on');
     %% Feature Table Column Names
-    HeadersFeatures={'Neurons','Duration','MeanActivity','EffectiveActivity',...
+    HeadersFeatures={'RateNeurons','ActivityTimeFraction','MeanActivity','EffectiveActivity',...
         'ISImean','ISImode','ISIvar','ISIskew','ISIkurt',...
-        'Lengthmean','Lengthmode','Lengthvar','Lengthskew','Lengthkurt'};
+        'Lengthmean','Lengthmode','Lengthvar','Lengthskew','Lengthkurt',...
+        'CAGmean','CAGmode','CAGvar','CAGskew','CAGkurt',...
+        'RoAmean','RoAmode','RoAvar','RoAskew','RoAkurt'};
     %% FEATURES EXTRACTION and plot
     for c=1:NC
         % Read Original Raster (UNSORTED!!!)
@@ -107,30 +109,20 @@ while ~strcmp('Yes',okbutton)
         R_Condition{c}=R(ActiveNeurons,:);
         % XY_Condition{c}=XY_selected;
         % Activity Indexes:*******************************************
-        % General Features:
-        AN=sum(sum(R,2)>0);          % Active NEURONS
-        CummAc=sum(sum(R));          % Cummulative Spikes Activity
-        DurAc=length(R)/fs/60;       % Duration [min]
-        CAG=sum(R);                  % CoactiviGram
-        % NameTable{c,1}=Experiment(2:end); % Experiment ID
-        % Mean Activity per Neuron:
-        if AN==0
-            AI_(c,1)=0;
-        else    
-            AI_1(c,1)=CummAc/DurAc/AN;
-        end
-        % Effective Activity per Raster
-        if TotalN==0
-            AI_2(c,1)=0;
-        else
-            AI_2(c,1)=(CummAc/DurAc)*(AN/TotalN);
-        end
+        [Descriptive,AI_1(c,1),AI_2(c,1)]=get_general_features(R);
+        AN=Descriptive.AN;
+        DurAc=Descriptive.DurAc; % Number of Active Frames
+        CAG=Descriptive.CAG;
+        RoA=Descriptive.RoA;
+        RAN=Descriptive.RAN;
+        % Stats...
+        RoAstats=[mean(RoA),mode(RoA),var(RoA),skewness(RoA),kurtosis(RoA)];
+        CAGstats=[mean(CAG),mode(CAG),var(CAG),skewness(CAG),kurtosis(CAG)];
         % Statistics from pdfs*******************************************
         % Inter Transients Interval pdf &
         % Transient Length pdf
         [ISIbin,ISIp,Lengthp,Lengthbin,StatsFeatures]=get_iti_pdf(R_Condition{c},fs);
-        % CoActivityGram Statistics & pdf:
-        CAGstats=[sum(R),mean(CAG),mode(CAG),var(CAG),skewness(CAG),kurtosis(CAG)];
+        % CoActivityGram Statistics & pdf: IMPORTANT!!!!
         if or(max(CAG)==0,min(CAG)==max(CAG))
             CAGbin=linspace(min(CAG),max(CAG),100);
             CAGp=zeros(size(CAGbin));
@@ -138,12 +130,16 @@ while ~strcmp('Yes',okbutton)
             [CAGp,CAGbin]=ksdensity(CAG,linspace(min(CAG),max(CAG),100));
         end
         % Feature Table *******************************************
-        % 'Condition','#Neurons','Duration','MeanActivity','EffectiveActivity',...
+        % 'RateofNeurons','ActivityDuration','MeanActivity','EffectiveActivity',...
         % 'ISImean','ISImode','ISIvar','ISIskew','ISIkurt',...
-        % 'Lengthmean','Lengthmode','Lengthvar','Lengthskew','Lengthkurt'
-        Trasterfeatures=table(AN,DurAc,AI_1(c,1),AI_2(c,1),...
+        % 'Lengthmean','Lengthmode','Lengthvar','Lengthskew','Lengthkurt',...
+        % 'CAGmean','CAGmode','CAGvar','CAGskew','CAGkurt']
+        % 'RoAmean','RoAmode','RoAvar','RoAskew','RoAkurt']
+        Trasterfeatures=table(RAN,DurAc,AI_1(c,1),AI_2(c,1),...
             StatsFeatures(1),StatsFeatures(2),StatsFeatures(3),StatsFeatures(4),StatsFeatures(5),...
             StatsFeatures(6),StatsFeatures(7),StatsFeatures(8),StatsFeatures(9),StatsFeatures(10),...
+            CAGstats(1),CAGstats(2),CAGstats(3),CAGstats(4),CAGstats(5),...
+            RoAstats(1),RoAstats(2),RoAstats(3),RoAstats(4),RoAstats(5),...
             'VariableNames',HeadersFeatures);
         disp(Trasterfeatures);
         % Saving CSV - - - - - - - - - - - - - - - - - - - - - - - - -

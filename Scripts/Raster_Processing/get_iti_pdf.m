@@ -1,4 +1,4 @@
-% Function that gets the pdf aprox from the hostogram of 
+% Function that gets the pdf aprox from the histogram of 
 % Inter (Ca++) Transient Interval histogram obtained from the raster
 % Input
 %   R: raster data: Cells x Frames

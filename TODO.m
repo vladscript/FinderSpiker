@@ -7,12 +7,17 @@
 % BUG in Merge Selector: color doesn't update from contrast editor [SOLVED]
 % Set color in DYE image AS WELL [DONE]
 % NAVIGATE Making Zoom per EACH Coordinate [DONE]
+% SAVE RoA Features at Select_Raster_for_NN
+
 %% Bugs & New Functions NOW
+
+% Show boxplots of Raster Features
+
 % In the GUI of Ca++ Transients: update sparse signal->CLEANER when modify
 %           lambda
-% Autoadjust CONTRAST when slide through neurons @ Merge Function
-% ColoCateIndx: EMPTY!!!}
 
+% FEATURES of the MERGED NERUONS !!!
+% Rate of ACtivity (frequentist probability)
 
 % Add button to save Zoom image (MERGED MAGIC)
 % Save Points SELECTED-> add to file .mat
@@ -66,17 +71,26 @@
 % ...
 % >>R_CONDTIONi=R_Condition{i}';
 
+% LOAD RASTER FEATURES
+% >> Raster_Features_Display
+
 % CLUSTERING
 % 'Got to Dir' :
 % C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\NeuralNetworks
-% NeuralNetwork-> GUI mode-> Clustering Analysis
+% >>NeuralNetwork %-> GUI mode-> Clustering Analysis
 % Back to 'FinderSPiker Dir '-
 % >> Ensemble_Sorting
 
+% >>Plot_Ensembles_Experiment(R_Condition,EnsembleName,Ensembled_Labels,Ensemble_Threshold,UniRMutiE,ColorState,fs,[]);
+% >>Plot_Hebbian_Paths(R_Condition,Ensemble_Threshold,Ensembled_Labels,Names_Conditions,ColorState,fs);
+% >>[Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs);
+% >>save_features_ensembles(Experiment,Names_Conditions,Features_Ensemble,Features_Condition)
+
+
 % COLOCALIZATION OF MARKED CELLS
-% [XY_merged,ColocateIndx]=get_merged_coordinates(Experiment,XY_selected,r);
-% Plot_Ensembles_Experiment(R_Condition,EnsembleName,Ensembled_Labels,Ensemble_Threshold,UniRMutiE,ColorState,fs,[]);
-% [Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs);
+% >>Merge_Finder_Magic
+
+
 
 
 %% Legacy Code:

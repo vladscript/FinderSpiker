@@ -11,10 +11,10 @@ axisfig=gcf;
 NeuronIDstr=num2str(NeuronID);
 LengthStr=length(NeuronIDstr);
 % Do:
-TicksY=axisfig.Children(2).YTick;           % vector
-LabelsY=axisfig.Children(2).YTickLabel;     % cell
+TicksY=axisfig.Children(2).YTick;           % LOCATIONS
+LabelsY=axisfig.Children(2).YTickLabel;     % cell IF ACTUAL SORTING
 NewTick=NeuronID; % Tick-index of Neuron
-LabelsNum=TicksY;
+LabelsNum=str2num(LabelsY);
 
 if ~ismember(NeuronID,LabelsNum) % check it's NOT already in Yticks        
     TicksY=sort([TicksY,NewTick]);
@@ -23,13 +23,15 @@ if ~ismember(NeuronID,LabelsNum) % check it's NOT already in Yticks
         movingLabels=LabelsNum(index4label:end)';
         %         LabelsY(index4label)=AddIndx;
         LabelsNum(index4label)=NeuronID;
-        LabelsNum=[LabelsNum(1:index4label)';movingLabels];
+        LabelsNum=[LabelsNum(1:index4label);movingLabels'];
     else
         LabelsNum=[LabelsNum';NeuronID];
     end
 else
-    LabelsNum=LabelsNum';
+    %LabelsNum=LabelsNum';
+    disp('Already in PLOT')
 end
+TickLocation=find(LabelsNum==NewTick);
 axisfig.Children(2).YTickLabel=num2str( LabelsNum );
 % Update Ticks and Label Ticks
 axisfig.Children(2).YTick       =   TicksY;
@@ -38,7 +40,8 @@ axisfig.Children(2).YTick       =   TicksY;
 Xlim=axisfig.Children(2).XLim;
 % Highlight Rectangle
 subplot(3,1,[1,2]); hold on; 
-rectangle('Position',[Xlim(1),NewTick-0.25,Xlim(2),0.5],...
-    'EdgeColor',[1,0,0],...
+rectangle('Position',[Xlim(1),LabelsNum(TickLocation)-0.25,Xlim(2),0.5],...
+    'EdgeColor',[0.5,0.5,0.5],...
+    'LineStyle','--',...
     'LineWidth',1.15);
 hold off;
