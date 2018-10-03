@@ -8,13 +8,17 @@
 % Set color in DYE image AS WELL [DONE]
 % NAVIGATE Making Zoom per EACH Coordinate [DONE]
 % SAVE RoA Features at Select_Raster_for_NN
-
-%% Bugs & New Functions NOW
-
 % Show boxplots of Raster Features
-
 % In the GUI of Ca++ Transients: update sparse signal->CLEANER when modify
 %           lambda
+%% Bugs & New Functions NOW
+
+% Detrending Issues
+
+% imcontrast of red/green etc images--- without passing to gray:
+% Set imcontrast button and colocate outside of the mainfigure 
+%   get colormap imagesc(A); colormap(GREEN); imcontrast;
+
 
 % FEATURES of the MERGED NERUONS !!!
 % Rate of ACtivity (frequentist probability)
@@ -90,6 +94,14 @@
 % COLOCALIZATION OF MARKED CELLS
 % >>Merge_Finder_Magic
 
+% INPSECTION to RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION
+% 1) Plot Raster (without sorting) from:
+% >>[Rsel,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,RASTER,XY_merged,XY);
+% Each Rsel{n} is the selected raster
+% >>Rjunto=[Rsel{1},Rsel{2},Rsel{3}]; Plot_Raster_V(Rjunto);
+% Find Cell of Interest: Ci
+% >>[XS,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,SIGNALSclean,XY_merged,XY);
+% >>figure; plot(XS{c}(Ci,:))
 
 
 

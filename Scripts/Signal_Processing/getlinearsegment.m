@@ -1,5 +1,7 @@
 function xlinc=getlinearsegment(xxtr,StdNoise,n)
 % CHEck Initial and Final Samples
+mslope=(xxtr(end)-xxtr(1))/length(xxtr);
+xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
    if  and( xxtr(1)>StdNoise , xxtr(end)>-StdNoise)
         % 1st and Final Sample Test above noise
         if n==1
@@ -51,11 +53,30 @@ function xlinc=getlinearsegment(xxtr,StdNoise,n)
                     xlinc=xtest;
                     disp('>> Ca2+ Possible Transient Rescued')
                 else
-                    xlinc=xxtr;
+                    if numel(xlinc)>3
+                        PeakAmp=findpeaks(xxtr-xlinc);
+                        PeakAmp=PeakAmp(PeakAmp>StdNoise);
+                    else
+                        PeakAmp=[];
+                    end
+                    if isempty(PeakAmp) && sum(xlinc>xxtr)>numel(xxtr)/2
+                        % If line is above data, use smooth:
+                        xlinc=xxtr;
+                    end
                     disp('>>> Detrending >>>')
                 end
             else
-                xlinc=xxtr; disp('WTF');
+                if numel(xlinc)>3
+                    PeakAmp=findpeaks(xxtr-xlinc);
+                    PeakAmp=PeakAmp(PeakAmp>StdNoise);
+                else
+                    PeakAmp=[];
+                end
+                if isempty(PeakAmp) && sum(xlinc>xxtr)>numel(xxtr)/2
+                    % If line is above data, use smooth:
+                    xlinc=xxtr;
+                end
+                disp('WTF');
             end
             
         else
@@ -66,10 +87,29 @@ function xlinc=getlinearsegment(xxtr,StdNoise,n)
                 if ~isempty(A(A>StdNoise))
                     xlinc=xtest;
                 else
-                    xlinc=xxtr;
+                    if numel(xtest)>3
+                        PeakAmp=findpeaks(xxtr-xtest);
+                        PeakAmp=PeakAmp(PeakAmp>StdNoise);
+                    else
+                        PeakAmp=[];
+                    end
+                    if isempty(PeakAmp) && sum(xtest>xxtr)>numel(xxtr)/2
+                        % If line is above data, use smooth:
+                        xlinc=xxtr;
+                    end
                 end
             else
-                xlinc=xxtr; disp('WTF');
+                if numel(xlinc)>3
+                    PeakAmp=findpeaks(xxtr-xlinc);
+                    PeakAmp=PeakAmp(PeakAmp>StdNoise);
+                else
+                    PeakAmp=[];
+                end
+                if isempty(PeakAmp) && sum(xlinc>xxtr)>numel(xxtr)/2
+                    % If line is above data, use smooth:
+                    xlinc=xxtr;
+                end
+                disp('WTF');
             end
         end
     elseif and(xxtr(1)<-StdNoise,xxtr(end)>-StdNoise)
@@ -80,7 +120,16 @@ function xlinc=getlinearsegment(xxtr,StdNoise,n)
             xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
             disp('Ca2+ Possible Transient Rescued')
         else
-            xlinc=xxtr;
+            if numel(xlinc)>3
+                PeakAmp=findpeaks(xxtr-xlinc);
+                PeakAmp=PeakAmp(PeakAmp>StdNoise);
+            else
+                PeakAmp=[];
+            end
+            if isempty(PeakAmp) && sum(xlinc>xxtr)>numel(xxtr)/2
+                % If line is above data, use smooth:
+                xlinc=xxtr;
+            end
         end
     else
         % if xxtr(end)>StdNoise
@@ -91,7 +140,13 @@ function xlinc=getlinearsegment(xxtr,StdNoise,n)
             % Otherwise Line
             mslope=(xxtr(end)-xxtr(1))/length(xxtr);
             xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
-            if sum(xlinc>xxtr)>numel(xxtr)/2
+            if numel(xlinc)>3
+                PeakAmp=findpeaks(xxtr-xlinc);
+                PeakAmp=PeakAmp(PeakAmp>StdNoise);
+            else
+                PeakAmp=[];
+            end
+            if isempty(PeakAmp) && sum(xlinc>xxtr)>numel(xxtr)/2
                 % If line is above data, use smooth:
                 xlinc=xxtr;
             end

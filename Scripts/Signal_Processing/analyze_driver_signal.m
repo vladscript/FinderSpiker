@@ -145,12 +145,17 @@ for c=1:C
     if ~isempty(SaveSamples)
         SamplesDelete=setdiff([1:numel(x_sparse)],SaveSamples);
         d(SamplesDelete)=0;
+        x_sparse(SamplesDelete)=0;
     else
         d(SamplesDelete)=0;
+        x_sparse(SamplesDelete)=0;
     end
     % Just (+) Drivers
     d(d<0)=0;
     Dfix(c,:)=d; % update and fix
+    if check==0
+        Xestfix(c,:)=x_sparse;
+    end
 end
 %     %% CHECK STUFF
 %     plot(xd,'b'); hold on;

@@ -87,6 +87,7 @@ set(ax2,'NextPlot','replacechildren');
 ax3=subplot(3,2,5); %  Driver - - - - - - - - - - - - - - - 
 plotdriver=bar(randn(1,10),'Parent',ax3);
 plotdriver.Parent.YLabel.String='Activity Driver';
+plotdriver.Parent.TickLength=[0,0];
 set(plotdriver,'ButtonDownFcn',@remove_driver)
 ax4=subplot(3,2,[2,4]); % RASTER  - - - - - - - - - - - - - - - 
 plotraster=imagesc(randn(10,10),'Parent',ax4);
@@ -342,7 +343,7 @@ detectedneurons=[];
         % [d,~,~,~,~,~]=analyze_driver_signal(d',r,xd,x_sparse);
         % Onky anlyzes Driver: any last input
         if ~isempty(d(d>0))
-            [d,~,~,~,~,~]=analyze_driver_signal(d',r,xd,x_sparse,0);
+            [d,~,x_sparse,~,~,~]=analyze_driver_signal(d',r,xd,x_sparse,0);
         end
         switch RasterAlgorithm
             case 'Driver'
@@ -355,7 +356,9 @@ detectedneurons=[];
         %R(neuron,d>0)=1;
         % By (+) Derivative:
         % R(neuron,diff(x_sparse)>0)=1;
-        x_sparse=x_sparse';
+        if size(xd,1)~=size(x_sparse,1)
+            x_sparse=x_sparse';
+        end
         sparsenoise=xd-x_sparse;
         snrc=10*log(var(x_sparse)/var(sparsenoise)); 
     end
@@ -391,6 +394,7 @@ detectedneurons=[];
             frames2del(2)=Frames;
         end
         d(frames2del(1):frames2del(2))=0;
+        % x_sparse(frames2del(1):frames2del(2))=0;
         update_data;        % saves daux
         Plot_Data_Now;      % update plot
         figure(checksignals) % Focus on Window

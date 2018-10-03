@@ -1,6 +1,6 @@
 % Function to plot Calcium Transiens clean and raw
 % in a sliding window for a simultaneous video (other script)
-function showmeyoursiglas(X_SPARSE,Raster)
+function showmeyoursignals(X_SPARSE,Raster)
 [Ns,Frames]=size(X_SPARSE);
 v = VideoWriter([pwd,'CaTransients.avi']);
     % v.FrameRate=fs; % Not really necessary

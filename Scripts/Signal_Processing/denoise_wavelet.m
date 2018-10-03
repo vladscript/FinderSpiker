@@ -12,6 +12,7 @@
 %   SkewNoise:  Skewness of Noise
 function [Xest,SNRbyWT,SkewSignal,ABratio,SkewNoise,XDupdate]=denoise_wavelet(XD)
 %% Setup ****************************
+SpuriousTh=1.25;    % Threshold for Peaks
 [Ns,Frames]=size(XD);
 Xest=zeros(Ns,Frames);
 SkewSignal=zeros(Ns,1);
@@ -273,22 +274,31 @@ for i=1:Ns
                             xdupdate=xdupdate-xdenoised;
                             xdenoised(:)=0; % make it zeros...
                         else
-                            naux=1;
-                            while and(and(xdenoised(FramPeaks(1)-naux)>0,~ismember(FramPeaks(1)-naux,FramValls)),FramPeaks(1)-naux>1)
-                                naux=naux+1;
-                            end
-                            RiseN=naux;
-                            naux=1;
-                            while and(and(xdenoised(FramPeaks(1)+naux)>0,~ismember(FramPeaks(1)+naux,FramValls)),FramPeaks(1)+naux<numel(xdenoised))
-                                naux=naux+1
-                            end
-                            FallN=naux;
-                            if RiseN>FallN
-                                disp('>> Peak without Ca++ Transients')
-                                xdupdate=xdupdate-xdenoised;
-                                xdenoised(:)=0; % make it zeros...
-                            else
-                                disp('>> THERE MIGHT BE Ca++ Transients')
+                            for fn=1:numel(FramPeaks)
+                                nAmps=find(AmpPEaks>std(noisex));
+                                naux=1;
+                                while and(and(xdenoised(FramPeaks(fn)-naux)>0,~ismember(FramPeaks(fn)-naux,FramValls)),FramPeaks(fn)-naux>1)
+                                    naux=naux+1;
+                                end
+                                RiseN=naux;
+                                naux=1;
+                                while and(and(xdenoised(FramPeaks(fn)+naux)>0,~ismember(FramPeaks(fn)+naux,FramValls)),FramPeaks(fn)+naux<numel(xdenoised))
+                                    naux=naux+1;
+                                end
+                                FallN=naux;
+                                if RiseN>FallN
+                                    if AmpPEaks(nAmps(fn))<SpuriousTh*std(noisex)
+                                        xdupdate(FramPeaks-RiseN:FramPeaks-FallN)=xdupdate(FramPeaks-RiseN:FramPeaks-FallN)-xdenoised(FramPeaks-RiseN:FramPeaks-FallN);
+                                        xdenoised(FramPeaks-RiseN:FramPeaks-FallN)=0;
+                                        disp('>> Small Peak without Ca++ Transients')
+                                    else
+                                        disp('>> THERE MIGHT BE Ca++ Transients')
+                                    end
+                                    % xdupdate=xdupdate-xdenoised;
+                                    % xdenoised(:)=0; % make it zeros...
+                                else
+                                    disp('>> THERE MIGHT BE Ca++ Transients')
+                                end
                             end
                         end
                     else
