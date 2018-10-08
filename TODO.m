@@ -11,17 +11,16 @@
 % Show boxplots of Raster Features
 % In the GUI of Ca++ Transients: update sparse signal->CLEANER when modify
 %           lambda
-%% Bugs & New Functions NOW
-
 % Detrending Issues
+% RE PLOT CDATA prperties of THE AXIS:
 
-% imcontrast of red/green etc images--- without passing to gray:
-% Set imcontrast button and colocate outside of the mainfigure 
-%   get colormap imagesc(A); colormap(GREEN); imcontrast;
+    % imcontrast of red/green etc images--- without passing to gray:
 
-
+    % Set imcontrast button and colocate outside of the mainfigure 
+    %   get colormap imagesc(A); colormap(GREEN); imcontrast;
 % FEATURES of the MERGED NERUONS !!!
 % Rate of ACtivity (frequentist probability)
+%% Bugs & New Functions NOW
 
 % Add button to save Zoom image (MERGED MAGIC)
 % Save Points SELECTED-> add to file .mat

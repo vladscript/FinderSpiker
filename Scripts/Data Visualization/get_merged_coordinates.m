@@ -362,7 +362,7 @@ hb = uicontrol('Style','pushbutton',...
             end
         end
     end
-% Function to Replot FIRST SUBPLOT
+    %% Function to Replot FIRST SUBPLOT
     function ReplotDye(~,~)
         RGBindexesA=rgbChooseDye.Value;
         rgbA=getrgb(ImageAverageCopy,RGBindexesA);
@@ -381,7 +381,7 @@ hb = uicontrol('Style','pushbutton',...
             waitfor(ManageContrast);
             disp('Dye ok')            
         end
-    % Nested in Nested Function to get the valuso of MIN & MAX Gray Histogram
+    %% Nested in Nested Function to get the valuso of MIN & MAX Gray Histogram
     function getValues(~,~)
         window_min = str2double(get(findobj(ManageContrast, 'tag', 'window min edit'), 'String'));
         window_max = str2double(get(findobj(ManageContrast, 'tag', 'window max edit'), 'String'));

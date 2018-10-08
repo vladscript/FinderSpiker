@@ -4,7 +4,7 @@
 global XY_merged;
 % global ColocateIndx;
 global MetaDataColocaliation;
-[XY_merged,MetaDataColocaliation]=get_merged_coordinates(Experiment,XY_selected,r);
+[XY_merged,MetaDataColocaliation]=get_merged_coordinates_delux(Experiment,XY_selected,r);
 waitfor(gcf);
 %% Plot Stuff -------------------------------------------------------------
 [Ntotal,~]=size(XY_selected);
