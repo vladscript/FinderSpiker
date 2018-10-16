@@ -49,6 +49,7 @@ IndxPair=[];
 for ihat=1:NC
     for jhat=1:NVmax
        if and(~isempty(SIGNALS{jhat,ihat}),~isempty(indxSIGNALS{jhat,ihat}))
+       % if ~isempty(indxSIGNALS{jhat,ihat})
            IndxPair=[IndxPair;jhat,ihat];
        end
     end
@@ -112,7 +113,7 @@ isSIGNAL=indxSIGNALS{j,i};
 % FR=Responses{j,i}(isSIGNAL,:);
 % Here: Detect if signals are detected or Rejected      (!!!!)
 if ~isempty(find(preLAMBDAS{j,i}(isSIGNAL)==0))
-    RubricTitle='Unprocessed Ca++ Transients | Condition: ';
+    RubricTitle='Unprocessed Ca++ Signals | Condition: ';
     % Initialize Outputs
     for nvid=1:Npairs
         iaux=IndxPair(nvid,2); % Conditions
@@ -127,7 +128,7 @@ else
 end
 
 checksignals.Name=[RubricTitle,Names_Conditions{i},' Video: ',num2str(j),...
-    'Exp ID: ',Experiment(2:end)];
+    ' Exp ID: ',Experiment(2:end)];
 % Initialize Variables:
 X=[]; XD=[]; D=[]; lambdass=[];
 R=[]; X_SPARSE=[]; snrS=[];

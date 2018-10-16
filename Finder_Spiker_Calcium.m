@@ -265,9 +265,9 @@ for i=1:NC
             else
                 AcceptedINDX=[];
                 RejectedINDX=setdiff(1:Ns,AcceptedINDX);
-                DRIVER=[];
-                FR=[];
-                LAMBDASS=[];
+                % DRIVER=[]; % Already Initialized in Zeros
+                % FR=[];
+                % LAMBDASS=[];
                 disp('             *********************' )
                 disp('             *********************' )
                 disp('             ******PURE NOISE ****' )
