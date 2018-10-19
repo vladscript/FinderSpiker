@@ -117,6 +117,10 @@ end
 meanFrame=meanFrame/(nframes-1);
 meanFrame=uint8(round(meanFrame));
 meanFrameCopy=meanFrame;
+% Output
+MetaDataColocaliation.Dye=dyename;
+MetaDataColocaliation.Cells=kindcells;
+
 % GSmap=colormap(gray);
 % C=ind2gray(meanFrame,GSmap);
 % Get Mean Image        
@@ -377,11 +381,11 @@ function ReplotImage(~,~,axisIndx)
     % Setup
     if strcmp(axisIndx,'Dye')
         disp('>>Dye')
-        RGBindexes=rgbChooseDye.Value;
-        RGBindexesAlter=rgbChooseCa.Value;
         axish=h1;
         ImageOriginal=ImageAverage;
-        % Output
+        % Output    
+        RGBindexes=rgbChooseDye.Value;
+        RGBindexesAlter=rgbChooseCa.Value;
         RGBindexesA=RGBindexes;
         RGBindexesB=RGBindexesAlter;
     else
@@ -396,8 +400,8 @@ function ReplotImage(~,~,axisIndx)
     end
     colormap(axish,CM{RGBindexes})
     if RGBindexes~=RGBindexesAlter
-        rgbA=ind2rgb(ImageAverageCopy,CM{RGBindexes});
-        rgbB=ind2rgb(meanFrameCopy,CM{RGBindexesAlter});
+        rgbA=ind2rgb(ImageAverageCopy,CM{RGBindexesA});
+        rgbB=ind2rgb(meanFrameCopy,CM{RGBindexesB});
         rgbC=imadd(rgbA,rgbB);
         h3.Children(end).CData=rgbC;
         h3.Children(end).CDataMapping='scaled';
@@ -661,8 +665,7 @@ function CloseAndSave(~,~)
         if strcmp(FileName(1:dotindex-1),Experiment(1:end))
             checkname=0;
             % SAVE DATA
-            MetaDataColocaliation.Dye=dyename;
-            MetaDataColocaliation.Cells=kindcells;
+            
             save([PathName,FileName],'XY_merged','MetaDataColocaliation','-append');
             disp([Experiment,'   -> UPDATED (Merged Coordinates)'])
         elseif FileName==0

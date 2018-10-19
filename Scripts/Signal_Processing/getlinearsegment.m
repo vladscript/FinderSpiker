@@ -10,7 +10,11 @@ xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
                 % Tes if there si peak in there:
                 % 1st Derivative 
                 ZeroCrosses=find(diff(sign(diff(xxtr))));
-                [~,B]=findpeaks(-xxtr);
+                if numel(xxtr)>3
+                    [~,B]=findpeaks(-xxtr);
+                else
+                    B=1;
+                end
                 if isempty(B)
                     B=1;
                 else
