@@ -86,7 +86,7 @@ for i=1:NC
     % Raster
     ExperimentRaster=[ExperimentRaster;Rasters{i}]; % Frames x Cells
     % Significative Frames
-    signif_frames=[signif_frames, SIG_FRAMES{i}+CummFrames];
+    signif_frames=[signif_frames; SIG_FRAMES{i}+CummFrames];
     CummFrames=CummFrames+LENGHTRASTER{i};
     % Frame Labels
     labels_frames=[labels_frames;LABELS{i}+CummGroups];
@@ -269,7 +269,6 @@ NCplot=NC;
 if CummFrames==TotalFrames && NC==1
         NCplot=length(Names_Conditions);
         disp('>>>> One Raster->All Conditions >>>>>')
-        THR=repmat(THR,NC,1);
 end
 % EnsemblesCounter=0;
 for c=1:NCplot
@@ -412,9 +411,6 @@ end
                 'ColorState','-append');
             disp([Experiment,'   -> UPDATED (Ensembles Data)'])
         elseif FileName==0
-            checkname=0;
-            disp('DISCARDED')
-            disp('NOT SAVED')
         else
             disp('Not the same Experiment!')
             disp('Try again!')

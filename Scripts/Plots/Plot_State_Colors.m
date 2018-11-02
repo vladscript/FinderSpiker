@@ -9,7 +9,7 @@
 %   THR: Coactivity Threshold
 % Ouput
 % Plot on the Raster plot
-function Plot_State_Colors(labels_frames,signif_frames,ColorState,Experiment,THR,fs,CoAc,indexes)
+function Plot_State_Colors(labels_frames,signif_frames,ColorState,Experiment,fs,CoAc,indexes)
 % Search of figure (maybe)
 % +++++ colors in Raster ++++
 for i=1:length(labels_frames)
@@ -44,12 +44,12 @@ for i=1:length(labels_frames)
 end
 % CAG  *******************************************************
 
-subplot(3,1,3); hold on; % ******************** Coactivity Threshold
-plot((1/fs)*[0,length(CoAc)]/60,[THR,THR],'--','Color','k')
-ax=gca;
-MaxYY=max(sum(Experiment,2));
-if MaxYY<=THR
-    MaxYY=THR+1;
-end
-ax.YTick=[THR,MaxYY];
-axis([0,(1/fs)*(length(CoAc))/60,0,max(sum(Experiment,2))+1])
+% subplot(3,1,3); hold on; % ******************** Coactivity Threshold
+% plot((1/fs)*[0,length(CoAc)]/60,[THR,THR],'--','Color','k')
+% ax=gca;
+% MaxYY=max(sum(Experiment,2));
+% if MaxYY<=THR
+%     MaxYY=THR+1;
+% end
+% ax.YTick=[THR,MaxYY];
+% axis([0,(1/fs)*(length(CoAc))/60,0,max(sum(Experiment,2))+1])

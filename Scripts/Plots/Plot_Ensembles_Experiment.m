@@ -35,7 +35,8 @@ for i=1:NC
     end
     % NE=NE+NG;
     % Threshold
-    THR=Ensemble_Threshold{i};
+    THR{i}=Ensemble_Threshold{i};
+    LENGHTRASTER{i}=length(R_Condition{i});          % Raster Length
 end
 NE=length(unique(labels_frames));
 [Cells,~]=size(ExperimentRaster);
@@ -48,21 +49,25 @@ if isempty(ColocateIndx) % WITHOUT COLOCALIZED NEURONS
     %   Original *************************************************************
     OriginalExperiment=ExperimentRaster';
     Plot_Raster_Ensembles(OriginalExperiment,Indexes,StepNeruonIndxLabel,fs);    % RASTER
-    Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,THR,fs,CoAc,Indexes); % Ensembles Colors
+    Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CoAc,Indexes); % Ensembles Colors
+    plot_CAG_threshold(THR,LENGHTRASTER,fs);
     Label_Condition_Raster(EnsembleName,R_Condition,fs);   % Labels
     %   Sorted ***************************************************************
     Plot_Raster_Ensembles(OriginalExperiment,Indexes(New_Order_Clustering),1,fs);
-    Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,THR,fs,CoAc,Indexes(New_Order_Clustering));
+    Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CoAc,Indexes(New_Order_Clustering));
+    plot_CAG_threshold(THR,LENGHTRASTER,fs);
     Label_Condition_Raster(EnsembleName,R_Condition,fs);   % Labels
 else        % WITH COLOCALIZED NEURONS
     %   Original *************************************************************
     OriginalExperiment=ExperimentRaster';
     Plot_Raster_Ensembles(OriginalExperiment,Indexes,StepNeruonIndxLabel,fs,ColocateIndx);    % RASTER
-    Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,THR,fs,CoAc,Indexes); % Ensembles Colors
+    Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CoAc,Indexes); % Ensembles Colors
+    plot_CAG_threshold(THR,LENGHTRASTER,fs);
     Label_Condition_Raster(EnsembleName,R_Condition,fs);   % Labels
     %   Sorted ***************************************************************
     Plot_Raster_Ensembles(OriginalExperiment,Indexes(New_Order_Clustering),1,fs,ColocateIndx);
-    Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,THR,fs,CoAc,Indexes(New_Order_Clustering));
+    Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CoAc,Indexes(New_Order_Clustering));
+    plot_CAG_threshold(THR,LENGHTRASTER,fs);
     Label_Condition_Raster(EnsembleName,R_Condition,fs);   % Labels
     %   Sorted by Colocated **************************************************
     SetA=Indexes(New_Order_Clustering);
@@ -70,7 +75,8 @@ else        % WITH COLOCALIZED NEURONS
     SetC=setdiff(SetA,SetB);
     IndexPlusColocalized=[makerowvector(SetB),makerowvector(SetC)];
     Plot_Raster_Ensembles(OriginalExperiment,IndexPlusColocalized,StepNeruonIndxLabel,fs,ColocateIndx);
-    Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,THR,fs,CoAc,IndexPlusColocalized);
+    Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CoAc,IndexPlusColocalized);
+    plot_CAG_threshold(THR,LENGHTRASTER,fs);
     Label_Condition_Raster(EnsembleName,R_Condition,fs);   % Labels
 end
 % Ensemble Transitions

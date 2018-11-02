@@ -17,7 +17,11 @@ function plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,f,axis)
     end
     boxplot(axis,F,COND,'labels',Names_Conditions)
     % 1st COndition as Reference (always)
-    if NC>1
+    for c=1:numel(RASTER_NAMES)
+        Nexps(c)=numel(RASTER_NAMES{c});
+    end
+    
+    if and(NC>1 , ~isempty(find(diff(Nexps)==0)) )
         hold(axis,'on');
         Names=RASTER_NAMES{1};
         N=numel(Names);

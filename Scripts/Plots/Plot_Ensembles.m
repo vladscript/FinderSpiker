@@ -20,9 +20,10 @@ for c=1:NCplot
     R=Ensembled_Raster{c};      % Frames x Cels
     labels=Ensembled_Labels{c}; % Clustering Labels
     CoAc=sum(R,2);             % Coactivity Signal
-    THR=Ensemble_Threshold{c};
-    sigframes=find(CoAc>=THR); % Significative Frames
+    THR{c}=Ensemble_Threshold{c};
+    sigframes=find(CoAc>=THR{c}); % Significative Frames
     NG=numel(unique(labels));           % N ensembles @ condition 
+    LENGHTRASTER{c}=length(Ensembled_Raster{c});          % Raster Length
 %     ActNeu=find(sum(R,1)>0);   % Active Neurons in each Raster: ENS & NON ENS
     if NG>0     % IF THERE'RE ENSEMBLES
         % Re-Sorting in each Condition:
@@ -39,7 +40,8 @@ for c=1:NCplot
             CS = ColorState(AuxC+1:AuxC+NG,:);          
             CS=[CS;ColorState(end,:)];  % Plus (deep) Purple
         end
-        Plot_State_Colors(labels,sigframes,CS,R,THR,fs,CoAc,Index_Ensemble);        
+        Plot_State_Colors(labels,sigframes,CS,R,fs,CoAc,Index_Ensemble);        
+        plot_CAG_threshold(THR,LENGHTRASTER,fs);
         % Cycles Reverberation Analysis: in waiting
         drawnow;
         

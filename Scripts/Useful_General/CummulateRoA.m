@@ -17,6 +17,7 @@ for c=1: NC
 %     PosActive=MetaDataColocaliation.PositiveCells;
 %     NegActive=MetaDataColocaliation.NegativeCells;
     % Cummulate Stuff:
+    AllActive=find(sum(R_ALL,2));
     RoA_ALL{c}=[RoA_ALL{c}();sum(R_ALL(AllActive,:),2)./F_ALL];
 %     RoA_POS{c}=[RoA_POS{c};sum(R_merged{c},2)./F_POS];
 %     RoA_NEG{c}=[RoA_NEG{c};sum(R_nomerged{c},2)./F_NEG];

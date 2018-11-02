@@ -369,7 +369,6 @@ XY_clean=XY_clean(ActiveNeurons,:);                             % Clean Coordina
 %% PLOT RESULTS
 Plot_Raster_V(RASTER_WHOLE_Clean,fs);                           % Clean Whole Raster
 set(gcf,'Name',['ID: ',Experiment(2:end),' pre-processing'],'NumberTitle','off')
-
 Label_Condition_Raster(Names_Conditions,Raster_Condition,fs);   % Labels
 %% SAVE ReSULTS
 save([FileDirSave,'\Processed Data',Experiment,'.mat'],'New_Index','Raster_Condition',...
