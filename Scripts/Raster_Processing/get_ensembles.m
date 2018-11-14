@@ -51,6 +51,7 @@ if Analyze
     % Nensembles=2;
     NensemblesTotal=10;
     Dunn=zeros(MaxCAG,NensemblesTotal);
+    PercAN=zeros(1,MaxCAG);
     for Nensembles=2:NensemblesTotal
         for CAGindex=1:MaxCAG
             % Clustering magic
@@ -59,6 +60,12 @@ if Analyze
             fprintf('>>> Clustering for %i Ensembles ',Nensembles);
             fprintf('& %i Coactive Neurons\n',CAGindex);
             Rclust=Ractive(:,CAG>=CAGindex);
+            if Nensembles<3
+                % Compute just ONCE
+                ActiveCellsClust=find(sum(Rclust,2));
+                PercAN(CAGindex)=numel(ActiveCellsClust)/numel(ActiveCells);
+                fprintf('Active Neurons: %3.3f \n',PercAN(CAGindex));
+            end 
             [~,ActiveFrames]=size(Rclust);
             if ActiveFrames>Nensembles
                 Distance=squareform(pdist(Rclust',SimMethod));
@@ -88,6 +95,11 @@ if Analyze
         fprintf('\n\n');
     end
     disp('>> Scanning Clusters: Completed.')
+    %% CAG Threshold *******************************
+    ActiveNeuronsRation=1;
+    CAGwithAN=find(PercAN>=ActiveNeuronsRation);
+    CAGthreshold=CAGwithAN(end);
+    PercAN(CAGthreshold:MaxCAG)
     %% PLotting Result
     disp('>> Plotting Results:')
     ScanClusterFig=figure('name',['Scanning Ensembles for ',inputname(1)],'numbertitle','off');

@@ -500,8 +500,8 @@ detectedneurons=[];
             end
             [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
                 'MultiSelect', 'off',DefaultPath);
-            dotindex=find(FileName=='.');
-            if strcmp(FileName(1:dotindex-1),Experiment(2:end))
+            % dotindex=find(FileName=='.');
+            if strcmp(FileName(1:end-4),Experiment)
                 checkname=0;
                 % SAVE DATA
                 save([PathName,FileName],'preDRIVE','preLAMBDAS','RASTER','RasterAlgorithm',...

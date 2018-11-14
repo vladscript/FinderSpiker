@@ -4,13 +4,10 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m
 %% FIXED  RECENTLY @ GIT
+% Automatize Clustering : OK
+% Bug at Experiment Name
 
 %% Bugs & New Functions NOW
-% Automatize Clustering
-% >> CLUSTERING almost ready
-
-
-
 
 % Add button to save Zoom image (MERGED MAGIC)
 % Save Points SELECTED-> add to file .mat
@@ -34,16 +31,15 @@
 % Kalman Filtering at SNR and lambdas pdf's: for optimal threshold
 % Automatize MERGE SELECTOR
 
-
 % Setup Intel/Info .mat File-> Default User Direcotry to save info
 % Setup Script
 
 %% STEPS ******************************************
 %PROCESSING
-% RUN >>Raster_Magic_Better
-% RUN >>Detected_Visual_Inspection
-% RUN >>Undetected_Visual_Inspection
-% RUN >>PLot_and_Save
+% >>FInder_Spiker_Calcium
+% >>Detected_Visual_Inspection
+% >>Undetected_Visual_Inspection
+% >>Save_and_Plot
 
 % RASTER SELECTION
 % ACTUAL MODE: @ Original Coordiantes Order

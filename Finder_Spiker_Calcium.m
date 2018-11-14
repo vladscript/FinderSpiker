@@ -102,15 +102,15 @@ FileDirSave=FileDirSave(1:slashes(end));
 %% Save data
 % Get the Experiment ID:
 slashes=find(PathName=='\');
-Experiment=PathName(slashes(end-1):slashes(end)-1); % Experiment ID
+Experiment=PathName(slashes(end-1)+1:slashes(end)-1); % Experiment ID
 if isdir([FileDirSave,'\Processed Data'])
-    save([FileDirSave,'\Processed Data',Experiment,'.mat'],'Experiment','SIGNALS',...
+    save([FileDirSave,'\Processed Data\',Experiment,'.mat'],'Experiment','SIGNALS',...
     'Names_Conditions','NumberofVideos','XY','fs','r');
     disp('SAVED RAW DATA')
 else % Create Directory
     disp('Directory >Processed Data< created')
     mkdir([FileDirSave,'\Processed Data']);
-    save([FileDirSave,'\Processed Data',Experiment,'.mat'],'Experiment','SIGNALS',...
+    save([FileDirSave,'\Processed Data\',Experiment,'.mat'],'Experiment','SIGNALS',...
     'Names_Conditions','NumberofVideos','XY','fs','r');
     disp('SAVED RAW DATA')
 end
@@ -326,13 +326,13 @@ for i=1:NC
         T.Properties.VariableNames=ColumnNames;
         % Save Table in Resume Tables of the Algorithm Latency*********
         if isdir([FileDirSave,'\Resume Tables'])
-            writetable(T,[FileDirSave,'\Resume Tables',[Experiment,'-',Names_Conditions{i}],'.csv'],...
+            writetable(T,[FileDirSave,'\Resume Tables\',[Experiment,'-',Names_Conditions{i}],'.csv'],...
                 'Delimiter',',','QuoteStrings',true);
             disp(['Saved Table Resume: ',Experiment,'-',Names_Conditions{i}])
         else % Create Directory
             disp('Directory >Resume Tables< created')
             mkdir([FileDirSave,'\Resume Tables']);
-            writetable(T,[FileDirSave,'\Resume Tables',[Experiment,'-',Names_Conditions{i}],'.csv'],...
+            writetable(T,[FileDirSave,'\Resume Tables\',[Experiment,'-',Names_Conditions{i}],'.csv'],...
                 'Delimiter',',','QuoteStrings',true);
             disp('Resume Tables Direcotry Created');
             disp(['Saved Table Resume: ',Experiment,'-',Names_Conditions{i}])
@@ -350,7 +350,7 @@ for i=1:NC
 end
 %% SAVING(2) Processed Data & Feature Extraction |  Resume Table 
 % Save Auto-Processed DATA * * * * * * * * * * * * * * * * * * * * * * * * 
-save([FileDirSave,'\Processed Data',Experiment,'.mat'],'DETSIGNALS','ESTSIGNALS',...
+save([FileDirSave,'\Processed Data\',Experiment,'.mat'],'DETSIGNALS','ESTSIGNALS',...
     'SNRwavelet','SIGNALSclean','SNRlambda','RasterAlgorithm',...
     'preDRIVE','preLAMBDAS','TAUSall','RASTER','isSIGNALS','notSIGNALS',...
     'Responses','dyename','-append');
@@ -368,10 +368,10 @@ RASTER_WHOLE_Clean=RASTER_WHOLE_Clean(ActiveNeurons,:);
 XY_clean=XY_clean(ActiveNeurons,:);                             % Clean Coordinates
 %% PLOT RESULTS
 Plot_Raster_V(RASTER_WHOLE_Clean,fs);                           % Clean Whole Raster
-set(gcf,'Name',['ID: ',Experiment(2:end),' pre-processing'],'NumberTitle','off')
+set(gcf,'Name',['ID: ',Experiment,' pre-processing'],'NumberTitle','off')
 Label_Condition_Raster(Names_Conditions,Raster_Condition,fs);   % Labels
 %% SAVE ReSULTS
-save([FileDirSave,'\Processed Data',Experiment,'.mat'],'New_Index','Raster_Condition',...
+save([FileDirSave,'\Processed Data\',Experiment,'.mat'],'New_Index','Raster_Condition',...
     'RASTER_WHOLE_Clean','XY_clean','-append');
 disp('Saved Sorted Raster Intel')
 
