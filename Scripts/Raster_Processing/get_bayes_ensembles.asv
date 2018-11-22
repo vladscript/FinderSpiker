@@ -6,17 +6,7 @@
 % Input
 %   R:          Raster of Neural Activity (Matrix Cells x Frames)
 % Output
-%   R_Analysis: Raster Structur with Fields:
-%       Data.Data=R;  % Frames x Cells (compatibility wit JP's NN)
-%       Peaks.Threshold=CAG_TH;
-%       Clustering.TotalStates=Nensembles;
-%       Clustering.Tree=Tree;
-%       Clustering.Linkage=LinkageMethod;
-%       Peaks.Index=zeros(1,numel(CAG));
-%       Peaks.Index(CAG>=CAG_TH)=1;
-%       Clustering.VectorStateIndex=frame_ensembles;  % Sequence of Ensembles: frame_ensembles
-%       Classifier.Model=Model;             % Naive Bayes Classifier
-%       Classifier.ValidationError=ECV;      % Validation Error
+%   R_Analysis:  Strcuture of Neural Ensemble Analysis
 function R_Analysis = get_bayes_ensembles(R)
 %% Setup
 % About the Raster
@@ -234,7 +224,7 @@ if Analyze
     %    [~,Nensembles]=findpeaks(-abs(ErrorClass(CAG_TH,:)-mean(ErrorClass(CAG_TH,2:end))),'Npeaks',1);
     % end
     
-    %% Plotting Result
+    %% PLotting Result
     disp('>> Plotting Results:')
     ScanClusterFig=figure('name',['Clustering Analysis for ',inputname(1)],'numbertitle','off');
     ScanClusterFig.Position=[778 264 576 399];
@@ -270,30 +260,30 @@ if Analyze
     %% Final Clustering
     fprintf('>> Clustering with %i Ensembles & for %i Coactive Neurons\n',Nensembles,CAG_TH)
     R_Analysis=raster_cluster(R,CAG_TH,Nensembles,SimMethod);
-%     Rclust=Ractive(:,CAG>=CAG_TH);
-%     Distance=squareform(pdist(Rclust',SimMethod));
-%     Sim=1-Distance;
-%     LinkageMethod=HBestTree_JPplus(Sim);    % Output
-%     Tree=linkage(squareform(Distance,'tovector'),LinkageMethod);
-%     frame_ensembles=cluster(Tree,'maxclust',Nensembles); % Output
-%     % RE-LABEL Ensembles
-%     AppearSequence=unique(frame_ensembles,'stable');
-%     relabel_frame_ensembles=zeros(size(frame_ensembles));
-%     for n=1:Nensembles
-%         relabel_frame_ensembles(frame_ensembles==AppearSequence(n))=n;
-%     end
-%     % Evaluate w/Naive Bayes Classiffier:
-%     [Model,ECV]=Nbayes_Ensembles(Rclust,relabel_frame_ensembles);
-%     % OUTPUT
-%     R_Analysis.Data.Data=R';  % Frames x Cells (compatibility wit JP's NN)
-%     R_Analysis.Peaks.Threshold=CAG_TH;
-%     R_Analysis.Clustering.TotalStates=Nensembles;
-%     R_Analysis.Clustering.Tree=Tree;
-%     R_Analysis.Clustering.Linkage=LinkageMethod;
-%     R_Analysis.Peaks.Index(CAG>=CAG_TH)=1;
-%     R_Analysis.Clustering.VectorStateIndex=relabel_frame_ensembles;  % Sequence of Ensembles: frame_ensembles
-%     R_Analysis.Classifier.Model=Model;             % Naive Bayes Classifier
-%     R_Analysis.Classifier.ValidationError=ECV;      % Validation Error
+    Rclust=Ractive(:,CAG>=CAG_TH);
+    Distance=squareform(pdist(Rclust',SimMethod));
+    Sim=1-Distance;
+    LinkageMethod=HBestTree_JPplus(Sim);    % Output
+    Tree=linkage(squareform(Distance,'tovector'),LinkageMethod);
+    frame_ensembles=cluster(Tree,'maxclust',Nensembles); % Output
+    % RE-LABEL Ensembles
+    AppearSequence=unique(frame_ensembles,'stable');
+    relabel_frame_ensembles=zeros(size(frame_ensembles));
+    for n=1:Nensembles
+        relabel_frame_ensembles(frame_ensembles==AppearSequence(n))=n;
+    end
+    % Evaluate w/Naive Bayes Classiffier:
+    [Model,ECV]=Nbayes_Ensembles(Rclust,relabel_frame_ensembles);
+    % OUTPUT
+    R_Analysis.Data.Data=R';  % Frames x Cells (compatibility wit JP's NN)
+    R_Analysis.Peaks.Threshold=CAG_TH;
+    R_Analysis.Clustering.TotalStates=Nensembles;
+    R_Analysis.Clustering.Tree=Tree;
+    R_Analysis.Clustering.Linkage=LinkageMethod;
+    R_Analysis.Peaks.Index(CAG>=CAG_TH)=1;
+    R_Analysis.Clustering.VectorStateIndex=relabel_frame_ensembles;  % Sequence of Ensembles: frame_ensembles
+    R_Analysis.Classifier.Model=Model;             % Naive Bayes Classifier
+    R_Analysis.Classifier.ValidationError=ECV;      % Validation Error
 end
 fprintf('>> Clustering with %i Ensembles \n& for %i Coactive Neurons\n',Nensembles,CAG_TH)
 fprintf('\n>>Script to search Neural Ensembles has ended.\n')

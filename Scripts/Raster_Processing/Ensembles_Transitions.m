@@ -14,7 +14,9 @@ ensemble_index=[];
 labels_frames=[labels_frames;1000];
 
 for i=1:length(signif_frames)-1;
-    if signif_frames(i+1)==signif_frames(i)+1
+    % Find Consecutive Frames
+    if signif_frames(i+1)==signif_frames(i)+1 &&...
+        labels_frames(i)==labels_frames(i+1)
         frames_ensembles=[frames_ensembles,signif_frames(i)];
     else
         if isempty(frames_ensembles)

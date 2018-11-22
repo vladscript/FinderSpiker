@@ -64,7 +64,7 @@ hold on;
 axis([0,ts*(length(R)-1)/60,0,max(sum(R))+1])
 % grid on
 ylabel('CAG')
-xlabel('Frames')
+xlabel('Minutes')
 
 
 set(gca,'Box','off')

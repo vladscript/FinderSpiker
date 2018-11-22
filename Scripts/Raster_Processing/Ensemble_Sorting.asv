@@ -20,8 +20,6 @@
 %% Setup & Initialization
 % addpath ..; % Functions from Signal Processing
 [TotalCells,TotalFrames]=size(RASTER_Selected_Clean);
-% NAMES PATCH
-Experiment=Experiment(Experiment~='\');
 NGroups={};
 SIG_FRAMES={};
 LABELS={};
@@ -59,12 +57,10 @@ for c=1:NC
     end
     NamesFields=fieldnames(NN_data);
     if ismember('Clustering',NamesFields)   % Significant Coactivity
-        THR{c,1}=NN_data.Peaks.Threshold;                        % Coactivity Threshold
+        THR{c}=NN_data.Peaks.Threshold;                        % Coactivity Threshold
         NGroups{c}=NN_data.Clustering.TotalStates;          % Number of Groups
         SIG_FRAMES{c}=find(NN_data.Peaks.Index);            % Significant COactivity Frames
         LABELS{c}=NN_data.Clustering.VectorStateIndex;      % Ensemble Labels
-        Ensemble_NBC_model{c}=NN_data.Classifier.Model;              % Naive Bayes Classifier
-        Ensemble_ValEerr{c}=NN_data.Classifier.ValidationError;       % Validation Error
     else                                    %  NO significant Coactivity
         NGroups{c}=0;      % Number of Groups
         SIG_FRAMES{c}=[];  % Significant COactivity Frames
@@ -213,26 +209,20 @@ image(1:TotalNG+1); colormap(ColorState)
 %   Original ****************************************
 OriginalExperiment=ExperimentRasterClean;
 Plot_Raster_Ensembles(OriginalExperiment,Indexes,5,fs);                     % Disorted Raster
-disp('Coloring Ensembles...')
 Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CoAc,Indexes);
-disp('Coloring Ensembles Done.')
 % plot_CAG_threshold(THR,R_Condition,fs)
 plot_CAG_threshold(THR,LENGHTRASTER,fs)
 if CummFrames==TotalFrames
     Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
 end
-Figg=gcf; Figg.Name=['Neural Ensembles of ',Experiment];
 %   Sorted *******************************************
-Plot_Raster_Ensembles(OriginalExperiment,Indexes(New_Order_Clustering),1,fs);   % Sorted Raster
+Plot_Raster_Ensembles(OriginalExperiment,Indexes(New_Order_Clustering),5,fs);   % Sorted Raster
 % Plot_State_Colors;
-disp('Coloring Ensembles...')
 Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CoAc,Indexes(New_Order_Clustering));
-disp('Coloring Ensembles Done.')
 plot_CAG_threshold(THR,LENGHTRASTER,fs)
 if CummFrames==TotalFrames
     Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
 end
-Figg=gcf; Figg.Name=['Neural Ensembles (resorted) of ',Experiment];
 % Ensemble Transitions HEBBIAN SEQUENCE **************
 [ensemble_index_total]=Ensembles_Transitions(fs,labels_frames,signif_frames,ColorState,1);
 XY_cluster=XY_selectedClean(New_Order_Clustering,:);    
@@ -411,9 +401,7 @@ end
 %% Save Ensembles Intel
     checkname=1;
     while checkname==1
-        ActualDir=pwd;
-        SlashesIndx=find(ActualDir=='\');
-        DefaultPath=[ActualDir(1:SlashesIndx(end)),'Processed Data'];
+        DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\FinderSpiker\Processed Data';
         if exist(DefaultPath,'dir')==0
             DefaultPath=pwd; % Current Diretory of Finder Spiker
         end
@@ -425,7 +413,6 @@ end
             % SAVE DATA
             save([PathName,FileName],'EnsembleName','Ensembled_Raster',...
                 'Ensembled_Labels','Ensemble_Threshold','UniRMutiE',...
-                'Ensemble_NBC_model','Ensemble_ValEerr',...
                 'ColorState','-append');
             disp([Experiment,'   -> UPDATED (Ensembles Data)'])
         elseif FileName==0
