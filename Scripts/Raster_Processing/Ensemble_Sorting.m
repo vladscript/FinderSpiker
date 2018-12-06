@@ -55,6 +55,7 @@ for c=1:NC
                     'ListString',WorkspaceVariables);
     % Get Structure Data Clustering Results
     if  index_CHECK>0
+        VarNames{c}=WorkspaceVariables{index_var};
         NN_data=evalin('base',WorkspaceVariables{index_var}); % Data from NeuralNetworks
     end
     NamesFields=fieldnames(NN_data);
@@ -63,8 +64,8 @@ for c=1:NC
         NGroups{c}=NN_data.Clustering.TotalStates;          % Number of Groups
         SIG_FRAMES{c}=find(NN_data.Peaks.Index);            % Significant COactivity Frames
         LABELS{c}=NN_data.Clustering.VectorStateIndex;      % Ensemble Labels
-        Ensemble_NBC_model{c}=NN_data.Classifier.Model;              % Naive Bayes Classifier
-        Ensemble_ValEerr{c}=NN_data.Classifier.ValidationError;       % Validation Error
+        % Ensemble_NBC_model{c}=NN_data.Classifier.Model;              % Naive Bayes Classifier
+        % Ensemble_ValEerr{c}=NN_data.Classifier.ValidationError;       % Validation Error
     else                                    %  NO significant Coactivity
         NGroups{c}=0;      % Number of Groups
         SIG_FRAMES{c}=[];  % Significant COactivity Frames
@@ -90,7 +91,7 @@ for i=1:NC
     % Raster
     ExperimentRaster=[ExperimentRaster;Rasters{i}]; % Frames x Cells
     % Significative Frames
-    signif_frames=[signif_frames, SIG_FRAMES{i}+CummFrames];
+    signif_frames=[makerowvector(signif_frames), makerowvector(SIG_FRAMES{i})+CummFrames];
     CummFrames=CummFrames+LENGHTRASTER{i};
     % Frame Labels
     labels_frames=[labels_frames;LABELS{i}+CummGroups];
@@ -423,10 +424,18 @@ end
         if strcmp(FileName(1:end-4),Experiment)
             checkname=0;
             % SAVE DATA
+            disp('>>Updating .mat File...')
             save([PathName,FileName],'EnsembleName','Ensembled_Raster',...
                 'Ensembled_Labels','Ensemble_Threshold','UniRMutiE',...
-                'Ensemble_NBC_model','Ensemble_ValEerr',...
                 'ColorState','-append');
+            % Ensemble_NBC_model,'Ensemble_ValEerr',...: not required
+            disp('>>Save Ensemble Features...')
+            disp('>>Saving Analysis...')
+            % Save Analysis Variables
+            for c=1:NC
+                save([PathName,FileName],VarNames{c},...
+                '-append');
+            end
             disp([Experiment,'   -> UPDATED (Ensembles Data)'])
         elseif FileName==0
             checkname=0;

@@ -37,7 +37,7 @@ MaxCAG=max(CAG);
 % Initialize Output
 if MaxCAG==0
     fprintf('\n>> Raster with Zero Activity\n\n');
-    R_Analysis.Data.Data=R'; % Frames x Cells (compatibility wit JP's NN)
+    R_Analysis.Data.Data=R; % Frames x Cells (compatibility wit JP's NN)
     fprintf('>> Finishing script...');
     Analyze=false;
 else
@@ -199,13 +199,35 @@ if Analyze
 %     end
 %     CAG_TH=CAGwithAN(CAG_THindx);
     %% OPTION B
-    ErroClassAll=sort(ErrorClass(1,:)); % Taking into account all the Raster
+%     ErroClassAll=sort(ErrorClass(1,:)); % Taking into account all the Raster
+%     CheckCluster=true; n=1;
+%     while CheckCluster
+%         % Ensmables that CLassify best ALL the activity
+%         Enss=find(ErrorClass(1,:)==ErroClassAll(n),1);
+%         % Get best Clusterin CAG threshold
+%         [~,CAGs]=max(MinIntraClusterSim(:,Enss));
+%         
+%         if ClusterOK(CAGs,Enss)==0
+%             disp('>>Keep Searching...>>')
+%             n=n+1;
+%             % Getting Next "Best Clusters"
+%         else
+%             disp('>>Ready')
+%             CAG_THindx=CAGs;
+%             Nensembles=Enss;
+%             CheckCluster=false;
+%         end
+%     end
+%     CAG_TH=CAGwithAN(CAG_THindx);
+    
+    %% OPTION C
+    ErroClassAll=sort(ErrorClass(:)); % Taking into account all the Raster
     CheckCluster=true; n=1;
     while CheckCluster
         % Ensmables that CLassify best ALL the activity
-        Enss=find(ErrorClass(1,:)==ErroClassAll(n),1);
+        [CAGs,Enss]=find(ErrorClass==ErroClassAll(n),1);
         % Get best Clusterin CAG threshold
-        [~,CAGs]=max(MinIntraClusterSim(:,Enss));
+        % [~,CAGs]=max(MinIntraClusterSim(:,Enss));
         
         if ClusterOK(CAGs,Enss)==0
             disp('>>Keep Searching...>>')
@@ -215,6 +237,9 @@ if Analyze
             disp('>>Ready')
             CAG_THindx=CAGs;
             Nensembles=Enss;
+            CheckCluster=false;
+        end
+        if n>numel(ErroClassAll)
             CheckCluster=false;
         end
     end
@@ -269,7 +294,8 @@ if Analyze
 %     end
     %% Final Clustering
     fprintf('>> Clustering with %i Ensembles & for %i Coactive Neurons\n',Nensembles,CAG_TH)
-    R_Analysis=raster_cluster(R,CAG_TH,Nensembles,SimMethod);
+    % CLuster and plot SimmMat&dendro:
+    R_Analysis=raster_cluster(R,CAG_TH,Nensembles,SimMethod,1);
 %     Rclust=Ractive(:,CAG>=CAG_TH);
 %     Distance=squareform(pdist(Rclust',SimMethod));
 %     Sim=1-Distance;

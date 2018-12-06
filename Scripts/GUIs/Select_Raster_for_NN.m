@@ -24,6 +24,7 @@ else
     checkname=1;
 end
 FileDirSave=pwd;
+Experiment=Experiment(Experiment~='\'); % PATCH
 slashes=find(FileDirSave=='\');
 FileDirSave=FileDirSave(1:slashes(end));
 okbutton='No';
@@ -145,14 +146,15 @@ while ~strcmp('Yes',okbutton)
         % Saving CSV - - - - - - - - - - - - - - - - - - - - - - - - -
         if checkname
             NameDir='Raster Features\';
+            Experiment=Experiment(Experiment~='\');
             if isdir([FileDirSave,'\Raster Features'])
-                writetable(Trasterfeatures,[FileDirSave,NameDir,Experiment(2:end),'_',Names_Conditions{c},'Raster_Features.csv'],...
+                writetable(Trasterfeatures,[FileDirSave,NameDir,Experiment,'_',Names_Conditions{c},'Raster_Features.csv'],...
                     'Delimiter',',','QuoteStrings',true);
                 disp(['Saved Raster Features: ',Experiment,'-',Names_Conditions{c}])
             else % Create Directory
                 disp('Directory >Raster Features< created')
                 mkdir([FileDirSave,NameDir]);
-                writetable(Trasterfeatures,[FileDirSave,NameDir,Experiment(2:end),'_',Names_Conditions{c},'Raster_Features.csv'],...
+                writetable(Trasterfeatures,[FileDirSave,NameDir,Experiment,'_',Names_Conditions{c},'Raster_Features.csv'],...
                     'Delimiter',',','QuoteStrings',true);
                 disp('Resume Tables Directory Created');
                 disp(['Saved Raster Features: ',Experiment,'-',Names_Conditions{c}])

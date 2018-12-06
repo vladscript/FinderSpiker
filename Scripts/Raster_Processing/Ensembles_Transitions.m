@@ -11,7 +11,8 @@ frames_ensembles=[];
 aux=1;
 time_ensemble=[];
 ensemble_index=[];
-labels_frames=[labels_frames;1000];
+labels_frames=[labels_frames;-1000];
+signif_frames=[makerowvector(signif_frames),1000];
 
 for i=1:length(signif_frames)-1;
     % Find Consecutive Frames

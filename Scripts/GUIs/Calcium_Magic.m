@@ -37,6 +37,7 @@ global Names_Conditions;    % Names of The Conditions
 global SIGNALSclean;        % Sparse Clean Signals
 global SNRlambda;           % Signal Noise Ratio by Sparse Deconvolution
 global Experiment;          % Experiment ID
+Experiment=Experiment(Experiment~='\');
 global fs;
 global indxSIGNALSOK;       % Indexes of the Detected Signals
 % indxSIGNALSOK=cell(size(indxSIGNALS));
@@ -127,8 +128,7 @@ else
     % undetectedindx=false;
 end
 
-checksignals.Name=[RubricTitle,Names_Conditions{i},' Video: ',num2str(j),...
-    ' Exp ID: ',Experiment(2:end)];
+checksignals.Name=[RubricTitle,' Exp ID: ',Experiment,' ',Names_Conditions{i},' Video: ',num2str(j)];
 % Initialize Variables:
 X=[]; XD=[]; D=[]; lambdass=[];
 R=[]; X_SPARSE=[]; snrS=[];

@@ -4,18 +4,26 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m
 %% FIXED  READY TO GO @ GIT
-% PLot_Raster_V: updated xlabel frames or minutes
-% Bug @ Hebbian Sequence Plot
-% What when it's empty Clustering Intel
-% Bug at Saveing Threshold at Several conditions
-% Re-Label Ensembles: first ensemble: first appearance
-% Save Classiffier Intel and Features: %Missclasfication
-% raster_cluster plus classifier
+% > Simmilarity Matrix & Dendrogram @ Classifier
+% Bug at Hebbian Sequence
+% Save CSVs NAme File: Experiment(2:end)?
+
 %% Bugs & New Functions NOW
 
+% Bugs at Rasters with Very LOW ACTIVITY
 % > Get Criteria for CAG_th & Nensembles->Partially Options A,B
-% > Simmilarity Matrix & Dendrogram @ Classifier
 
+% IDENTIFY Features per CONDITOIN when Analyze Concatenated Raster
+% (condition times)
+
+% Save .mat File even when it wa analyzed at NeuralNetogor GUI
+
+% Spurious Drivers
+
+% Matrix of Dist: Hamming distance of neurons sets at each Condition
+% Save Ensemble Features
+% Miss Detrending Issues w/GCaMP->fix: detrending signal derivative
+% Lone Drivers: chek clean signal's samples around if they're above noise
 
 % Add button to save Zoom image (MERGED MAGIC)
 % Save Selected Points SELECTED-> add to file .mat
@@ -73,8 +81,12 @@
 % PLOTSSS
 % >>Plot_Ensembles_Experiment(R_Condition,EnsembleName,Ensembled_Labels,Ensemble_Threshold,UniRMutiE,ColorState,fs,[]);
 % >>Plot_Hebbian_Paths(R_Condition,Ensemble_Threshold,Ensembled_Labels,Names_Conditions,ColorState,fs);
+% SAVE ENSEMBLES DATA
 % >>[Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs);
 % >>save_features_ensembles(Experiment,Names_Conditions,Features_Ensemble,Features_Condition)
+
+% ENSEMBLES FEATURES BOXPLOTS
+% >>Ensembles_Features_Display
 
 % COLOCALIZATION OF MARKED CELLS
 % >>Merge_Finder_Magic
