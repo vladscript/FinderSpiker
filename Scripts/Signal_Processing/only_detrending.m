@@ -13,7 +13,7 @@ for i=1:Ns
     % if each mode belongs to different set of samples    
      % RLOESS   SMoothing Detrending
     disp(['Detrending ... [Signal: ',num2str(i),'/',num2str(Ns),']']);
-    y=smooth(x,Frames,'rloess');    % Trend Component (Bleaching*) *BEST*
+    y=smooth(x,Frames,'rloess');     % Trend Component (Bleaching*) *BEST*
     % y=smooth(x,Frames,'loess');    % Trend Component (Bleaching*)
     %% Test Detrending before Distortion
     % PDF of Raw Signal:

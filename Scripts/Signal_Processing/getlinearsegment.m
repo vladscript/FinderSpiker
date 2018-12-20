@@ -7,10 +7,11 @@ xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
         if n==1
             %if isempty(Apeaks) % exp FIT
             if max(xxtr)==xxtr(1) || xxtr(1)>4*StdNoise  % exp FIT
-                % Tes if there si peak in there:
+                % Test if there is a peak in there:
                 % 1st Derivative 
-                ZeroCrosses=find(diff(sign(diff(xxtr))));
+                ZeroCrosses=find(diff(sign(diff(xxtr))))+1;
                 if numel(xxtr)>3
+                    % Seek Valleys
                     [~,B]=findpeaks(-xxtr);
                 else
                     B=1;

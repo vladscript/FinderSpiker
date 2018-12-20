@@ -1,5 +1,5 @@
 % Function to get frames in waves that are above or below
-% Standard Divation of Noise
+% Standard Deviation of Noise
 % Input
 %   xdenoised: denoised signal (smoothed)
 %   noise: noise array (xoriginal-xdenoised)
@@ -18,7 +18,8 @@ function [LOWwavesFrames,ZeroCrosses] = getwavesframes(xdenoised,noisex)
         if numel(Vp)>0
             % Take only small amplitudes
             [~,indxsmallAMps]=max(Vp);
-            ThAmpValley=max(Vbin(indxsmallAMps)+Vwidth(indxsmallAMps),std(noisex));
+            % ThAmpValley=max(Vbin(indxsmallAMps)+Vwidth(indxsmallAMps),std(noisex));
+            ThAmpValley=min(Vbin(indxsmallAMps)+Vwidth(indxsmallAMps),std(noisex));
             LOWwaves=ValleAMPflip(ValleAMPflip<=ThAmpValley);
             LOWwavesFrames=ValleN(ValleAMPflip<=ThAmpValley);
         else

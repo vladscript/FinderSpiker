@@ -56,14 +56,14 @@ for i=1:Ns
     xdenoised=xdenoised-offset_xd;
     xd=xd-offset_xd;
     XDupdate(i,:)=xd;
-%     %% Plot Results 1/3 *************************************
-%     h1=subplot(211);
-%     plot(xd); hold on
-%     plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
-%     plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
-%     plot(xdenoised); hold off;
-%     axis tight; grid on;
-%     disp(i)
+    %% Plot Results 1/3 *************************************
+    h1=subplot(211);
+    plot(xd); hold on
+    plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
+    plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
+    plot(xdenoised); hold off;
+    axis tight; grid on;
+    disp(i)
     %% CHECK if denoised signal is contained in Standard Deviation of Noise
     if max(xdenoised)<std(noisex)
         % disp('>>JUST NOISE')
@@ -108,11 +108,11 @@ for i=1:Ns
             
         % LOWwavesFrames=setdiff(LOWwavesFrames,Framy(Promy>std(noisex)));
         
-%         %% Plot Results 2/3 *************************************
-%         % WAVES POINTS;
-%         hold on;
-%         plot(LOWwavesFrames(2:end-1),xdenoised((LOWwavesFrames(2:end-1))),'*k');
-%         hold off
+        %% Plot Results 2/3 *************************************
+        % WAVES POINTS;
+        hold on;
+        plot(LOWwavesFrames(2:end-1),xdenoised((LOWwavesFrames(2:end-1))),'*k');
+        hold off
         %% VChS-A: Valley-Checking Segmented Algorithm *************************************
         xlin=[];
         n=1;
@@ -138,24 +138,28 @@ for i=1:Ns
 
                 %% DEFINE XLINC (detrendig by parts)
                 if numel(xxtr)<numel(xd)/3
-                    disp('>>Detrending Linearly ...')
+                    disp('>> Detrending Linearly ...')
                     mslope=(xxtr(end)-xxtr(1))/length(xxtr);
                     xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
                     xdets=xxtr-xlinc;
                     if numel(xdets)>3
+                        % Biggest Valley:
                         [~,setPoint]=findpeaks(-xdets,'Npeaks',1,'SortStr','descend');
                         if ~isempty(setPoint)
+                            % If the Valley is beyond half signal's length
                             if setPoint>numel(xdets)/2
-                                mslope=(xdets(setPoint)-xdets(1))/numel(xdets);
+                                % mslope=(xdets(setPoint)-xdets(1))/numel(xdets);
+                                mslope=(xxtr(setPoint)-xxtr(1))/numel(xxtr);
                             else
                                 mslope=(xdets(end)-xdets(setPoint))/numel(xdets);
                             end
-                            xlincsec=mslope*([1:length(xxtr)]-1)+xdets(1);
-                            xlinc=xlinc+xlincsec;
+                            % xlincsec=mslope*([1:length(xxtr)]-1)+xdets(1);
+                            xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
+                            % xlinc=xlincsec;
                             xdets=xxtr-xlinc;
                         end
                         if numel(xdets(xdets>=0))<numel(xdets(xdets<0))
-                            disp('>>Detrending by RLOESS...')
+                            disp('>> Detrending by RLOESS...')
                             xlinc=smooth(xxtr,numel(xxtr),'rloess')';
                             %xdets=xxtr-xlinc;
                         end
@@ -167,18 +171,38 @@ for i=1:Ns
                 xdets=xxtr-xlinc;
                 disp('>>...OK')
                 
-                %% Check Peak'sAMplitude between Valleys of Detrended Segment
-                if length(xxtr-xlinc)>2
-                    [NewLOWwavesFrames,NewZeros] = getwavesframes(xdets,noisex);
-                    % Take Care of Big Vallyes:
-                    BigVallInd=find(-xdets(NewLOWwavesFrames(2:end-1))>1.5*std(noisex))+1;
-                    if ~isempty(BigVallInd)
-                        disp('>> Erasing Big Valleys:')
-                        NewLOWwavesFrames=NewLOWwavesFrames(setdiff(1:numel(NewLOWwavesFrames),BigVallInd));
-                        disp('>>Done.')
-                    else
-                        disp('- No Negative Distortions -')
+                % CHECK iF it symetric pdf around a mode and ***********
+                % and many distributed valleys below zero and noise level
+                % Absolute values of Valley are similar o bigger than Peaks
+                % ISNERT ALGORTIHM HERE
+                if numel(xdets)>3
+                    Peaks=findpeaks(xdets);
+                    Valles=findpeaks(-xdets);
+                    if and(~isempty(Peaks),~isempty(Valles))
+                        AreAmpsDiff=ttest2(abs(Valles),abs(Peaks));
+                        if isnan(AreAmpsDiff)
+                            AreAmpsDiff=1;
+                        end
+                        if ~AreAmpsDiff
+                            % xdets=xdets-min(-Valles);
+                            xdets=xdets+mean(abs(Valles));
+                        end
                     end
+                end
+                % ******************************************************
+                
+                %% Check Peak'sAMplitude between Valleys of Detrended Segment
+                if numel(xdets)>2
+                    [NewLOWwavesFrames,NewZeros] = getwavesframes(xdets,noisex);
+                    % Take Care of Big Vallyes NO NEED THANKS 2 GCaMP :
+                    % BigVallInd=find(-xdets(NewLOWwavesFrames(2:end-1))>1.5*std(noisex))+1;
+                    % if ~isempty(BigVallInd)
+                    %     disp('>> Erasing Big Valleys:')
+                    %     NewLOWwavesFrames=NewLOWwavesFrames(setdiff(1:numel(NewLOWwavesFrames),BigVallInd));
+                    %     disp('>> Done.')
+                    % else
+                    %     disp('- No Negative Distortions -')
+                    % end
                     % NewLOWwavesFrames=NewLOWwavesFrames([1,find(diff(NewLOWwavesFrames(1:end-1))>2)+1,numel(NewLOWwavesFrames)]);
                     if numel(NewLOWwavesFrames)>2
                         xlincnew=[];
@@ -224,9 +248,12 @@ for i=1:Ns
             end
             disp('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Fixing Distortion')
             %% Posterioir Work Arounds
-            xdupdate=xd-xlin;
+            xdupdate=xd-xlin;            
             % xdupdate=xdupdate - var(noisex); % Remove Offset Introduced by Valley-Linear Trending
             [xdenoised,noisex]=mini_denoise(xdupdate);
+            % Make it Non-Negative:
+            xdupdate=xdupdate-(min(xdenoised));
+            xdenoised=xdenoised-(min(xdenoised));
             % Special Fixes
             % Finale (de)-Bleaching *******************************
             FixS=1;
@@ -253,56 +280,83 @@ for i=1:Ns
                 end
             end
             fprintf('\n');
-            if max(xdenoised)<std(noisex)
+            if max(xdenoised)<SpuriousTh*std(noisex)
                 disp('>> JUST NOISE ')
                 xdupdate=xdupdate-xdenoised;
                 xdenoised(:)=0; % make it zeros...
             else
                 [AmpPEaks,FramPeaks]=findpeaks(xdenoised);
+                FramPeaks=FramPeaks(AmpPEaks>std(noisex));
+                [AmpValls,FramValls]=findpeaks(-xdenoised);
+                nAmps=find(AmpPEaks>std(noisex));
                 if isempty(AmpPEaks(AmpPEaks>std(noisex)))
                     disp('>> Fluorescence without Ca++ Transients')
                     xdupdate=xdupdate-xdenoised;
                     xdenoised(:)=0; % make it zeros...
                 else
+                    % For the big&single slow yummies *************************
                     if numel(AmpPEaks(AmpPEaks>std(noisex)))==1
-                        % Check if Peak Rises FASTER than it Falls
-                        FramPeaks=FramPeaks(AmpPEaks>std(noisex));
-                        [AmpValls,FramValls]=findpeaks(-xdenoised);
                         if isempty(AmpValls)
                             % No valleys: strange
                             disp('>> Fluorescence without Valleys')
                             xdupdate=xdupdate-xdenoised;
                             xdenoised(:)=0; % make it zeros...
                         else
-                            for fn=1:numel(FramPeaks)
-                                nAmps=find(AmpPEaks>std(noisex));
-                                naux=1;
-                                while and(and(xdenoised(FramPeaks(fn)-naux)>0,~ismember(FramPeaks(fn)-naux,FramValls)),FramPeaks(fn)-naux>1)
-                                    naux=naux+1;
-                                end
-                                RiseN=naux;
-                                naux=1;
-                                while and(and(xdenoised(FramPeaks(fn)+naux)>0,~ismember(FramPeaks(fn)+naux,FramValls)),FramPeaks(fn)+naux<numel(xdenoised))
-                                    naux=naux+1;
-                                end
-                                FallN=naux;
-                                if RiseN>FallN
-                                    if AmpPEaks(nAmps(fn))<SpuriousTh*std(noisex)
-                                        xdupdate(FramPeaks-RiseN:FramPeaks-FallN)=xdupdate(FramPeaks-RiseN:FramPeaks-FallN)-xdenoised(FramPeaks-RiseN:FramPeaks-FallN);
-                                        xdenoised(FramPeaks-RiseN:FramPeaks-FallN)=0;
-                                        disp('>> Small Peak without Ca++ Transients')
-                                    else
-                                        disp('>> THERE MIGHT BE Ca++ Transients')
-                                    end
-                                    % xdupdate=xdupdate-xdenoised;
-                                    % xdenoised(:)=0; % make it zeros...
-                                else
-                                    disp('>> THERE MIGHT BE Ca++ Transients')
-                                end
+                            fn=1;
+                            naux=1;
+                            while and(and(xdenoised(FramPeaks(fn)-naux)>0,~ismember(FramPeaks(fn)-naux,FramValls)),FramPeaks(fn)-naux>1)
+                                naux=naux+1;
+                            end
+                            RiseN=naux;
+                            naux=1;
+                            while and(and(xdenoised(FramPeaks(fn)+naux)>0,~ismember(FramPeaks(fn)+naux,FramValls)),FramPeaks(fn)+naux<numel(xdenoised))
+                                naux=naux+1;
+                            end
+                            FallN=naux;
+                            if RiseN>FallN
+                                % xdupdate(FramPeaks-RiseN:FramPeaks-FallN)=xdupdate(FramPeaks-RiseN:FramPeaks-FallN)-xdenoised(FramPeaks-RiseN:FramPeaks-FallN);
+                                % xdenoised(FramPeaks-RiseN:FramPeaks-FallN)=0;
+                                xdupdate=xdupdate-xdenoised;
+                                xdenoised(:)=0; % make it zeros...
+                                disp('>> Small Peak without Ca++ Transients')
+                            else
+                                disp('>> THERE MIGHT BE Ca++ Transients')
                             end
                         end
                     else
-                        disp('>> THERE MIGHT BE Ca++ Transients')
+                        OkPeaks=zeros(numel(FramPeaks),1);
+                        for fn=1:numel(FramPeaks)
+                            naux=1;
+                            while and(and(xdenoised(FramPeaks(fn)-naux)>0,~ismember(FramPeaks(fn)-naux,FramValls)),FramPeaks(fn)-naux>1)
+                                naux=naux+1;
+                            end
+                            RiseN=naux;
+                            naux=1;
+                            while and(and(xdenoised(FramPeaks(fn)+naux)>0,~ismember(FramPeaks(fn)+naux,FramValls)),FramPeaks(fn)+naux<numel(xdenoised))
+                                naux=naux+1;
+                            end
+                            FallN=naux;
+                            if RiseN>FallN
+                                if AmpPEaks(nAmps(fn))<SpuriousTh*std(noisex)
+                                    % xdupdate(FramPeaks-RiseN:FramPeaks-FallN)=xdupdate(FramPeaks-RiseN:FramPeaks-FallN)-xdenoised(FramPeaks-RiseN:FramPeaks-FallN);
+                                    % xdenoised(FramPeaks-RiseN:FramPeaks-FallN)=0;
+                                    disp('>> Small Peak without Ca++ Transients')
+                                else
+                                    disp('>> THERE MIGHT BE Ca++ Transients');
+                                    
+                                end
+                                % xdupdate=xdupdate-xdenoised;
+                                % xdenoised(:)=0; % make it zeros...
+                            else
+                                disp('>> THERE MIGHT BE Ca++ Transients')
+                                OkPeaks(fn)=1;
+                            end
+                        end
+                        if sum(OkPeaks==0)==numel(FramPeaks)
+                            xdupdate=xdupdate-xdenoised;
+                            xdenoised(:)=0; % make it zeros...
+                            disp('>> All the Small PEAKS without Ca++ Transients')
+                        end
                     end
                     
                 end
@@ -328,18 +382,18 @@ for i=1:Ns
     %% FEATURE EXTRACTION ############################################
     [SkewSignal(i),SkewNoise(i),SNRbyWT(i),ABratio(i)]=feature_extraction(xdenoised,noisex);
     Xest(i,:)=xdenoised; % SAVE DENOISED  * * * * ** $ $ $ $        OUTPUT
-%     %% CHECK RESULTS 3/3
-%     h2=subplot(212);
-%     plot(XDupdate(i,:)); 
-%     hold on;
-%     plot([0,numel(XDupdate(i,:))],[0,0],'-.k');
-%     plot(xdenoised); 
-%     plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
-%     plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
-%     hold off;
-%     axis tight; grid on;
-%     linkaxes([h1,h2],'x')
-%     disp('check')
+    %% CHECK RESULTS 3/3
+    h2=subplot(212);
+    plot(XDupdate(i,:)); 
+    hold on;
+    plot(xdenoised,'LineWidth',2); 
+    plot([0,numel(XDupdate(i,:))],[0,0],'-.k');
+    plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
+    plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
+    hold off;
+    axis tight; grid on;
+    linkaxes([h1,h2],'x')
+    disp('check')
 end % MAIN LOOP    
 
 
