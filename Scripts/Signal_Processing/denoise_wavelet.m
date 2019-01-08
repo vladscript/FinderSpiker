@@ -57,13 +57,13 @@ for i=1:Ns
     xd=xd-offset_xd;
     XDupdate(i,:)=xd;
     %% Plot Results 1/3 *************************************
-    h1=subplot(211);
-    plot(xd); hold on
-    plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
-    plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
-    plot(xdenoised); hold off;
-    axis tight; grid on;
-    disp(i)
+%     h1=subplot(211);
+%     plot(xd); hold on
+%     plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
+%     plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
+%     plot(xdenoised); hold off;
+%     axis tight; grid on;
+%     disp(i)
     %% CHECK if denoised signal is contained in Standard Deviation of Noise
     if max(xdenoised)<std(noisex)
         % disp('>>JUST NOISE')
@@ -109,10 +109,10 @@ for i=1:Ns
         % LOWwavesFrames=setdiff(LOWwavesFrames,Framy(Promy>std(noisex)));
         
         %% Plot Results 2/3 *************************************
-        % WAVES POINTS;
-        hold on;
-        plot(LOWwavesFrames(2:end-1),xdenoised((LOWwavesFrames(2:end-1))),'*k');
-        hold off
+%         % WAVES POINTS;
+%         hold on;
+%         plot(LOWwavesFrames(2:end-1),xdenoised((LOWwavesFrames(2:end-1))),'*k');
+%         hold off
         %% VChS-A: Valley-Checking Segmented Algorithm *************************************
         xlin=[];
         n=1;
@@ -286,16 +286,16 @@ for i=1:Ns
                 xdenoised(:)=0; % make it zeros...
             else
                 [AmpPEaks,FramPeaks]=findpeaks(xdenoised);
-                FramPeaks=FramPeaks(AmpPEaks>std(noisex));
+                FramPeaks=FramPeaks(AmpPEaks>SpuriousTh*std(noisex));
                 [AmpValls,FramValls]=findpeaks(-xdenoised);
                 nAmps=find(AmpPEaks>std(noisex));
-                if isempty(AmpPEaks(AmpPEaks>std(noisex)))
+                if isempty(AmpPEaks(AmpPEaks>SpuriousTh*std(noisex)))
                     disp('>> Fluorescence without Ca++ Transients')
                     xdupdate=xdupdate-xdenoised;
                     xdenoised(:)=0; % make it zeros...
                 else
                     % For the big&single slow yummies *************************
-                    if numel(AmpPEaks(AmpPEaks>std(noisex)))==1
+                    if numel(AmpPEaks(AmpPEaks>SpuriousTh*std(noisex)))==1
                         if isempty(AmpValls)
                             % No valleys: strange
                             disp('>> Fluorescence without Valleys')
@@ -336,15 +336,8 @@ for i=1:Ns
                                 naux=naux+1;
                             end
                             FallN=naux;
-                            if RiseN>FallN
-                                if AmpPEaks(nAmps(fn))<SpuriousTh*std(noisex)
-                                    % xdupdate(FramPeaks-RiseN:FramPeaks-FallN)=xdupdate(FramPeaks-RiseN:FramPeaks-FallN)-xdenoised(FramPeaks-RiseN:FramPeaks-FallN);
-                                    % xdenoised(FramPeaks-RiseN:FramPeaks-FallN)=0;
-                                    disp('>> Small Peak without Ca++ Transients')
-                                else
-                                    disp('>> THERE MIGHT BE Ca++ Transients');
-                                    
-                                end
+                            if FallN-RiseN<=RiseN
+                                disp('>> Small Peak without Ca++ Transients')
                                 % xdupdate=xdupdate-xdenoised;
                                 % xdenoised(:)=0; % make it zeros...
                             else
@@ -374,27 +367,27 @@ for i=1:Ns
 %                 end
 %                     
 %             end
-            % check out #######################
-            %         plot(xdupdate); pause;
             XDupdate(i,:)=xdupdate;
         end
     end
     %% FEATURE EXTRACTION ############################################
     [SkewSignal(i),SkewNoise(i),SNRbyWT(i),ABratio(i)]=feature_extraction(xdenoised,noisex);
     Xest(i,:)=xdenoised; % SAVE DENOISED  * * * * ** $ $ $ $        OUTPUT
-    %% CHECK RESULTS 3/3
-    h2=subplot(212);
-    plot(XDupdate(i,:)); 
-    hold on;
-    plot(xdenoised,'LineWidth',2); 
-    plot([0,numel(XDupdate(i,:))],[0,0],'-.k');
-    plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
-    plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
-    hold off;
-    axis tight; grid on;
-    linkaxes([h1,h2],'x')
-    disp('check')
-end % MAIN LOOP    
+ %%   CHECK RESULTS 3/3
+%     h2=subplot(212);
+%     plot(XDupdate(i,:)); 
+%     hold on;
+%     plot(xdenoised,'LineWidth',2); 
+%     plot([0,numel(XDupdate(i,:))],[0,0],'-.k');
+%     plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
+%     plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
+%     hold off;
+%     axis tight; grid on;
+%     linkaxes([h1,h2],'x')
+%     disp('check')
+end % MAIN LOOP    %     
+
+
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

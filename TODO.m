@@ -4,26 +4,29 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m
 %% FIXED  READY TO GO @ GIT
-% > Simmilarity Matrix & Dendrogram @ Classifier
-% Bug at Hebbian Sequence
-% Save CSVs NAme File: Experiment(2:end)?
+% Detrending FiXing
+% Miss Detrending Issues w/GCaMP->fix: detrending signal derivative
 
 %% Bugs & New Functions NOW
+
+% Lone Drivers: chek clean signal's samples around if they're above noise
+
+% Check at Signals with Huge Valley (synaptic like)
 
 % Bugs at Rasters with Very LOW ACTIVITY
 % > Get Criteria for CAG_th & Nensembles->Partially Options A,B
 
-% IDENTIFY Features per CONDITOIN when Analyze Concatenated Raster
+% IDENTIFY Features per CONDITION when Analyze Concatenated Raster
 % (condition times)
 
-% Save .mat File even when it wa analyzed at NeuralNetogor GUI
+% Save .mat File even when if it was analyzed at NeuralNetwork GUI
 
 % Spurious Drivers
 
 % Matrix of Dist: Hamming distance of neurons sets at each Condition
 % Save Ensemble Features
-% Miss Detrending Issues w/GCaMP->fix: detrending signal derivative
-% Lone Drivers: chek clean signal's samples around if they're above noise
+
+
 
 % Add button to save Zoom image (MERGED MAGIC)
 % Save Selected Points SELECTED-> add to file .mat

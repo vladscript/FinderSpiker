@@ -94,7 +94,7 @@ if Analyze
     end
     
     % Ensembles Setup ************
-    NensemblesTotal=10;
+    NensemblesTotal=5;
     Dunn=zeros(numel(CAGwithAN),NensemblesTotal);
     ClusterOK=zeros(numel(CAGwithAN),NensemblesTotal);
     MinIntraClusterSim=zeros(numel(CAGwithAN),NensemblesTotal);

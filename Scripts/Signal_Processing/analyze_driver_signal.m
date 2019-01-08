@@ -48,12 +48,21 @@ for c=1:C
     % Initial Maximum Driver->Distortion ##########################
     [~,framax]=max(d);
     if and(framax==1 && ~isempty(d(d~=0)) ,check)
-        nextframe=framax+1;
-        while and(nextframe<numel(xe),and(xe(nextframe)>0,x_sparse(nextframe)>0.5e-3))
-            % x_sparse(nextframe)=0;
-            % d(nextframe)=0;
-            nextframe=nextframe+1;
+        % nextframe=framax+1;
+        [~,framvall]=findpeaks(-xe);
+        if ~isempty(framvall)
+            nextframe=framvall(find(xe(framvall)<std(noisex),1));
+            if isempty(nextframe)
+                nextframe=2;
+            end
+        else
+            nextframe=2;
         end
+        % while and(nextframe<numel(xe),and(xe(nextframe)>0,x_sparse(nextframe)>0.5e-3))
+        %    % x_sparse(nextframe)=0;
+        %    % d(nextframe)=0;
+        %    nextframe=nextframe+1;
+        % end
       
 % Fix Initial Fast Bleaching
 %         Apeaks=findpeaks(xe(1:nextframe));
@@ -61,8 +70,20 @@ for c=1:C
 %             XDfix(c,1:nextframe)=XDfix(c,1:nextframe)-x_sparsePRE(1:nextframe);
 %         else
         if nextframe>3
-            xexp=fit([1:nextframe]',xd(1:nextframe)','exp1');
-            xdecay=xexp(1:nextframe);
+            decayok=true;
+            while decayok
+                xexp=fit([1:nextframe]',xd(1:nextframe)','exp1');
+                xdecay=xexp(1:nextframe);
+                if xdecay(end)>xd(nextframe)
+                    nextframe=nextframe+1;
+                    if nextframe>=numel(xe)
+                        decayok=false;
+                    end
+                else
+                    decayok=false;
+                end
+            end
+            
             xd(1:nextframe)=xd(1:nextframe)-xdecay';
             XDfix(c,:)=xd;
             disp('\___ Initial decay ~~>')

@@ -133,6 +133,7 @@ for i=1:NC
     for j=1:str2double(NumberofVideos{i})
         % Initialize and Read Data
         X=SIGNALS{j,i};
+        X_SPARSE=zeros(size(X));
         [Ns,Frames] = size(X);
         FR=zeros(Ns,round(L*fs));
         TAUS=zeros(Ns,3);
@@ -250,24 +251,20 @@ for i=1:NC
                         Xest(RejectedINDX,:)=XestRfix;
                     end
                 end
-                % Reanalize Sparse Signal to get Active Signals
+                % Check Sparse Signal to get Active Signals
                 disp('Detected Neurons: ')
                 for k=1:Ns 
                     xsk=sparse_convolution(DRIVER(k,:),FR(k,:));
+                    X_SPARSE(k,:)=xsk';
+                    % NOISEX=Xest-XDupdate;
                     if ~isempty(xsk(xsk>=std(xsk-XDupdate(k,:)')))
                         ActiveNeurons=[ActiveNeurons;k];
-                        
                         fprintf('%i,',ActiveNeurons(end));
                     end
                 end
-                % Get Active Neurons
-                % ActiveNeurons=find( sum(DRIVER,2)~=0 );
             else
                 AcceptedINDX=[];
                 RejectedINDX=setdiff(1:Ns,AcceptedINDX);
-                % DRIVER=[]; % Already Initialized in Zeros
-                % FR=[];
-                % LAMBDASS=[];
                 disp('             *********************' )
                 disp('             *********************' )
                 disp('             ******PURE NOISE ****' )
@@ -300,10 +297,6 @@ for i=1:NC
         % DERIVATIVE (cleaned up signal)
         % R3=get_raster(3,Dfix,ActiveNeurons,FR);
         % _________________________________________________________________
-        % Results Monitor Figure ******************************************
-        % figureMonitor=gcf;
-        % figureMonitor.Name=[Experiment(2:end),' ',Names_Conditions{i},' vid:',num2str(j)];
-        % drawnow;
         
         % Cells to save PREPROCESSING ####################################
         DETSIGNALS{j,i}=XDupdate;       % Detrended Signals         *
@@ -312,7 +305,8 @@ for i=1:NC
         Responses{j,i}=FR;              % Fluorophore Responses     
         TAUSall{j,i}=TAUS;              % [taus {rise, fall},gain]  
         preDRIVE{j,i}=DRIVER;           % Drivers
-        preLAMBDAS{j,i}=LAMBDASS;       % lambda Parameter          
+        preLAMBDAS{j,i}=LAMBDASS;       % lambda Parameter
+        SIGNALSclean{j,i}=X_SPARSE;     % Cleansignals
         isSIGNALS{j,i}=ActiveNeurons;   % DETECTTED Signals
         notSIGNALS{j,i}=InactiveNeurons;% UNDETECTED Signals
         RASTER{j,i}=Raster;             % Preliminar Raster         
