@@ -94,232 +94,60 @@ if Analyze
     end
     
     % Ensembles Setup ************
-    NensemblesTotal=5;
-    Dunn=zeros(numel(CAGwithAN),NensemblesTotal);
-    ClusterOK=zeros(numel(CAGwithAN),NensemblesTotal);
-    MinIntraClusterSim=zeros(numel(CAGwithAN),NensemblesTotal);
     % ClassRatio=zeros(numel(CAGwithAN),NensemblesTotal);
-    ErrorClass=ones(numel(CAGwithAN),NensemblesTotal);
+    ErrorClass=ones(numel(CAGwithAN),1);
+    NensemblesOK=ones(numel(CAGwithAN),1);
     %% MAIN LOOPS
-    for Nensembles=2:NensemblesTotal
-        for CAGindex=1:numel(CAGwithAN)
-            % Clustering magic
-            NeuroVectors=zeros(numel(ActiveCells),Nensembles);
-            EnsembledNeurons={};
-            fprintf('>>> Clustering for %i Ensembles ',Nensembles);
-            fprintf('& %i Coactive Neurons\n',CAGwithAN(CAGindex));
-            Rclust=Ractive(:,CAG>=CAGwithAN(CAGindex));
-            [~,ActiveFrames]=size(Rclust);
-            if ActiveFrames>Nensembles
-                Distance=squareform(pdist(Rclust',SimMethod));
-                Sim=1-Distance;
-                LinkageMethod=HBestTree_JPplus(Sim);    % Output
-                Tree=linkage(squareform(Distance,'tovector'),LinkageMethod);
-                frame_ensembles=cluster(Tree,'maxclust',Nensembles); % Output
-                % Evaluate w/Naive Bayes Classiffier:
-                [~,ECV]=Nbayes_Ensembles(Rclust,frame_ensembles);
-                ErrorClass(CAGindex,Nensembles)=ECV;
-                % Get Neurons @ Ensembles:
-                for n=1:Nensembles
-                    EnsembledNeurons{n}=find(sum(Rclust(:,frame_ensembles==n),2));
-                    NeuroVectors(EnsembledNeurons{n},n)=1;
-                    % Intra Cluster Distances
-                    Rclustens=Rclust(EnsembledNeurons{n},frame_ensembles==n);
-                    ClustDist=1-pdist(Rclustens',SimMethod);
-                    if isempty(ClustDist(ClustDist>0))
-                        MinCLustSimm(n)=0;
-                    else
-                        MinCLustSimm(n)=min(ClustDist(ClustDist>0));
-                    end
-                end
-                MinIntraClusterSim(CAGindex,Nensembles)=min(MinCLustSimm);
-                % Criteria to exclude Clusterings
-                % A ensembles belongs to other
-                EnsemblesIndx=isinensemble(NeuroVectors);
-                if isempty(EnsemblesIndx)
-                    % ACCEPTED CLUSTERING
-                    ClusterOK(CAGindex,Nensembles)=1;
-                else
-                    % REJECTED CLUSTERING
-                    disp('>>Redundant Ensemble(s) Found!!!')
-                    [NRepEns,~]=size(EnsemblesIndx);
-                    for nE=1:NRepEns
-                        fprintf('\nEnsemble: %i is in Ensemble %i\n',EnsemblesIndx(nE,1),EnsemblesIndx(nE,2));
-                    end
-                end
-                % 1-neuron Ensembles
-                if sum(sum(NeuroVectors)==1)>0
-                    disp('1-neuron Ensembles');
-                    ClusterOK(CAGindex,Nensembles)=0;
-                end
-                % DunnIndex:
-                Dhamm=pdist(NeuroVectors',SimMethod);
-                if isempty(Dhamm); Dhamm=0; end;
-                Lens=sum(NeuroVectors)/numel(ActiveCells);
-                if isempty(Lens)
-                    Dunn(CAGindex,Nensembles)=0;
-                else
-                    Dunn(CAGindex,Nensembles)=min(Dhamm)/max(Lens); % min distance among ensembles divided by maximum length of ensembles
-                end
-            else
-                disp('>>>> Not enough frames to Analyze.')
-                Dunn(CAGindex,Nensembles)=0;
-            end
-        end
-        fprintf('\n\n');
+    for CAGindex=1:numel(CAGwithAN)   
+        fprintf('>>> Clustering for  %i Coactive Neurons\n',CAGwithAN(CAGindex));
+        Rclust=Ractive(:,CAG>=CAGwithAN(CAGindex));
+        % [~,ActiveFrames]=size(Rclust);
+        [frame_ensembles]=cluster_analyze(Rclust,SimMethod);
+        [~,ECV]=Nbayes_Ensembles(Rclust,frame_ensembles);
+        ErrorClass(CAGindex)=ECV;
+        NensemblesOK(CAGindex)=numel(unique(frame_ensembles));
     end
-    toc;
-    %% GET BEST CLUSTERING:
-    % Minimum DIstance INTRA cluster
-    % Best Classification
-    % & Clusterin Index OK->true
-%     %% OPTION A
-%     IntraClusterDistances=unique(sort(MinIntraClusterSim(:),'descend'),'stable');
-%     CheckCluster=true; n=1;
-%     while CheckCluster
-%         [CAGs,Enss]=find(MinIntraClusterSim==IntraClusterDistances(n));
-%         % Get Classification Errors & ClusterOK indicator
-%         ClassError=[];
-%         okclust=[];
-%         for c=1:numel(CAGs)
-%             ClassError(c)=ErrorClass(CAGs(c),Enss(c));
-%             okclust(c)=ClusterOK(CAGs(c),Enss(c));
-%         end
-%         [~,Okindx]=min(ClassError(okclust>0));
-%         if isempty(Okindx)
-%             disp('>>Keep Searching...>>')
-%             n=n+1;
-%             % Getting Next "Best Clusters"
-%         else
-%             disp('>>Ready')
-%             CAG_THindx=CAGs(Okindx);
-%             Nensembles=Enss(Okindx);
-%             CheckCluster=false;
-%         end
-%     end
-%     CAG_TH=CAGwithAN(CAG_THindx);
-    %% OPTION B
-%     ErroClassAll=sort(ErrorClass(1,:)); % Taking into account all the Raster
-%     CheckCluster=true; n=1;
-%     while CheckCluster
-%         % Ensmables that CLassify best ALL the activity
-%         Enss=find(ErrorClass(1,:)==ErroClassAll(n),1);
-%         % Get best Clusterin CAG threshold
-%         [~,CAGs]=max(MinIntraClusterSim(:,Enss));
-%         
-%         if ClusterOK(CAGs,Enss)==0
-%             disp('>>Keep Searching...>>')
-%             n=n+1;
-%             % Getting Next "Best Clusters"
-%         else
-%             disp('>>Ready')
-%             CAG_THindx=CAGs;
-%             Nensembles=Enss;
-%             CheckCluster=false;
-%         end
-%     end
-%     CAG_TH=CAGwithAN(CAG_THindx);
+    DelayTime=toc;
+    [~,minErrIndx]=min(ErrorClass);
+    disp('Retrieving Cluster Analysis');
+    Rclust=Ractive(:,CAG>=CAGwithAN(minErrIndx));
+    [ActiveCells,~]=find(sum(Rclust,2));
+    % Get the Clustered Frames
+    [frame_ensembles]=cluster_analyze(Rclust,SimMethod);
     
-    %% OPTION C
-    ErroClassAll=sort(ErrorClass(:)); % Taking into account all the Raster
-    CheckCluster=true; n=1;
-    while CheckCluster
-        % Ensmables that CLassify best ALL the activity
-        [CAGs,Enss]=find(ErrorClass==ErroClassAll(n),1);
-        % Get best Clusterin CAG threshold
-        % [~,CAGs]=max(MinIntraClusterSim(:,Enss));
-        
-        if ClusterOK(CAGs,Enss)==0
-            disp('>>Keep Searching...>>')
-            n=n+1;
-            % Getting Next "Best Clusters"
-        else
-            disp('>>Ready')
-            CAG_THindx=CAGs;
-            Nensembles=Enss;
-            CheckCluster=false;
-        end
-        if n>numel(ErroClassAll)
-            CheckCluster=false;
-        end
+    % RE-LABEL Ensembles
+    AppearSequence=unique(frame_ensembles,'stable');
+    relabel_frame_ensembles=zeros(size(frame_ensembles));
+    for n=1:Nensembles
+        relabel_frame_ensembles(frame_ensembles==AppearSequence(n))=n;
     end
-    CAG_TH=CAGwithAN(CAG_THindx);
     
-    % Get CAG Threshold: The one that uses is not affected by
-    % number of ensembles
-    % disp('Getting best Classification:')
-    %[CAG_THindx,Nensembles]=find(ErrorClass==min(ErrorClass(ClusterOK>0)));
+    % Features of the Ensembles:
+    Nensembles=numel(unique(frame_ensembles));
+    NeuroVectors=zeros(numel(ActiveCells),Nensembles);
+    EnsembledNeurons={};
+    for nn=1:Nensembles
+        TwoEnsembledNeurons{nn}=find(sum(Rclust(:,relabel_frame_ensembles==nn),2));
+        TwoNeuroVectors(TwoEnsembledNeurons{nn},nn)=1;
+    end
+    [Model,ECV]=Nbayes_Ensembles(Rclust,relabel_frame_ensembles);
+    ErrorClass(CAGindex)=ECV;
     
-    %MeanErrorNensembles=mean(ErrorClass,2);
-    %[~,CAG_THindx]=min(MeanErrorNensembles(MeanErrorNensembles>0));
-    % Get Number of Ensembles: 
-    % [~,Nensembles]=findpeaks(-ErrorClass(CAG_TH,:),'Npeaks',1);
-    % if isempty(Nensembles)
-    %    disp('>>>Atypical Clustering')
-    %    [~,Nensembles]=findpeaks(-abs(ErrorClass(CAG_TH,:)-mean(ErrorClass(CAG_TH,2:end))),'Npeaks',1);
-    % end
+    % NensemblesOK(minErrIndx);
+    fprintf('>> Analysis lasted %f \n',DelayTime);
+    fprintf('>> Clustering with %i Ensembles & for %i Coactive Neurons\n',NensemblesOK(minErrIndx),CAGwithAN(minErrIndx))
     
-    %% Plotting Result
-    disp('>> Plotting Results:')
-    ScanClusterFig=figure('name',['Clustering Analysis for ',inputname(1)],'numbertitle','off');
-    ScanClusterFig.Position=[778 264 576 399];
-    H1ax=subplot(3,1,[1,2,3]);
-    imagesc(ErrorClass); colormap(gca,jet);
-    ScanClusterFig.Children.YDir='normal';
-    ScanClusterFig.Children.YTick=1:MaxCAG;
-    colorbar('peer',gca);
-    % H2ax=subplot(3,1,3);
-    % H2ax.XLim=[0.5,NensemblesTotal+0.5];
-    % H2ax.Position=[0.13,0.14,0.66,0.19];
-    % bar(H2ax,1:NensemblesTotal,1,'k')
-    xlabel(H1ax,'Number of Ensembles')
-    ylabel(H1ax,'CAG Threshold')
-    % ylabel(H2ax,'Classification Error')
-    title(H1ax,'Validation Error')
-    hold (H1ax,'on'); 
-    plot(H1ax,Nensembles,CAG_TH,'Marker','pentagram','Color','g','MarkerFaceColor','g','MarkerSize',13);
-    hold (H1ax,'off');
-    %% Find the BEST Clusterization
-%     MaxDunn=max(max(Dunn));
-%     [rowM,colM]=find(Dunn==MaxDunn);
-%     if numel(rowM)==1
-%         CAG_TH=rowM;
-%         Nensembles=colM;
-%         fprintf('>>Global Max Dunn Index Found\n>>With %i Ensembles & for %i Coactive Neurons\n',Nensembles,CAG_TH)
-%     else
-%         disp('>>Local Maximum Dunn Index Found');
-%         disp('>>Searching minimum Number of Ensembles and Maximum CAG Threshold...')
-%         Nensembles=min(colM);
-%         CAG_TH=max(rowM(colM==Nensembles));
-%     end
-    %% Final Clustering
-    fprintf('>> Clustering with %i Ensembles & for %i Coactive Neurons\n',Nensembles,CAG_TH)
-    % CLuster and plot SimmMat&dendro:
-    R_Analysis=raster_cluster(R,CAG_TH,Nensembles,SimMethod,1);
-%     Rclust=Ractive(:,CAG>=CAG_TH);
-%     Distance=squareform(pdist(Rclust',SimMethod));
-%     Sim=1-Distance;
-%     LinkageMethod=HBestTree_JPplus(Sim);    % Output
-%     Tree=linkage(squareform(Distance,'tovector'),LinkageMethod);
-%     frame_ensembles=cluster(Tree,'maxclust',Nensembles); % Output
-%     % RE-LABEL Ensembles
-%     AppearSequence=unique(frame_ensembles,'stable');
-%     relabel_frame_ensembles=zeros(size(frame_ensembles));
-%     for n=1:Nensembles
-%         relabel_frame_ensembles(frame_ensembles==AppearSequence(n))=n;
-%     end
-%     % Evaluate w/Naive Bayes Classiffier:
-%     [Model,ECV]=Nbayes_Ensembles(Rclust,relabel_frame_ensembles);
-%     % OUTPUT
-%     R_Analysis.Data.Data=R';  % Frames x Cells (compatibility wit JP's NN)
-%     R_Analysis.Peaks.Threshold=CAG_TH;
-%     R_Analysis.Clustering.TotalStates=Nensembles;
-%     R_Analysis.Clustering.Tree=Tree;
-%     R_Analysis.Clustering.Linkage=LinkageMethod;
-%     R_Analysis.Peaks.Index(CAG>=CAG_TH)=1;
-%     R_Analysis.Clustering.VectorStateIndex=relabel_frame_ensembles;  % Sequence of Ensembles: frame_ensembles
-%     R_Analysis.Classifier.Model=Model;             % Naive Bayes Classifier
-%     R_Analysis.Classifier.ValidationError=ECV;      % Validation Error
+    %% Retrieve Ensmeble Cluster Array *********************************
+    % OUTPUT
+    R_Analysis.Data.Data=R;  % Frames x Cells (compatibility wit JP's NN)
+    R_Analysis.Peaks.Threshold=CAGwithAN(minErrIndx);
+    R_Analysis.Clustering.TotalStates=Nensembles;
+    % R_Analysis.Clustering.Tree=Tree;
+    % R_Analysis.Clustering.Linkage=LinkageMethod;
+    R_Analysis.Peaks.Index(CAG>=CAGwithAN(minErrIndx))=1;
+    R_Analysis.Clustering.VectorStateIndex=relabel_frame_ensembles;  % Sequence of Ensembles: frame_ensembles
+    R_Analysis.Classifier.Model=Model;             % Naive Bayes Classifier
+    R_Analysis.Classifier.ValidationError=ECV;   
 end
-fprintf('>> Clustering with %i Ensembles \n& for %i Coactive Neurons\n',Nensembles,CAG_TH)
+% fprintf('>> Clustering with %i Ensembles \n& for %i Coactive Neurons\n',Nensembles,CAG_TH)
 fprintf('\n>>Script to search Neural Ensembles has ended.\n')

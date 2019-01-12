@@ -177,10 +177,11 @@ while ~strcmp('Yes',okbutton)
     %% SAVE OUTPUT DATASET (.m file)
     %checkname=1; % USE AS INPUT
     while checkname==1
-        DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\FinderSpiker\Processed Data';
-        if exist(DefaultPath,'dir')==0
-            DefaultPath=pwd; % Current Diretory of MATLAB
-        end
+        
+        DefaultPath=pwd; % Current Diretory of FinderSpiker
+        slashes=find(DefaultPath=='\');
+        DefaultPath=[DefaultPath(1:slashes(end)),'\Processed Data'];
+        
         [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
             'MultiSelect', 'off',DefaultPath);
         % dotindex=find(FileName=='.');

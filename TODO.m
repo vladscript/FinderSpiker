@@ -6,27 +6,27 @@
 %% FIXED  READY TO GO @ GIT
 % Detrending FiXing
 % Miss Detrending Issues w/GCaMP->fix: detrending signal derivative
-
+% Updating mat file in directory
 %% Bugs & New Functions NOW
 
-% Lone Drivers: chek clean signal's samples around if they're above noise
+% Somee offset at detrending algorithm 
 
+% Spurious Drivers
+% Lone Drivers: check clean signal's samples around if they're above noise
 % Check at Signals with Huge Valley (synaptic like)
 
-% Bugs at Rasters with Very LOW ACTIVITY
-% > Get Criteria for CAG_th & Nensembles->Partially Options A,B
+% Modify Zoom at Windows in the script: Select_Raster_for_NN.m
 
+% Bugs at Rasters with Very LOW ACTIVITY Exp?
+% > Get Criteria for CAG_th & Nensembles->Partially Options A,B
+% Get and Save CAG temporal Features: Autocorrelation, etc...
 % IDENTIFY Features per CONDITION when Analyze Concatenated Raster
 % (condition times)
 
 % Save .mat File even when if it was analyzed at NeuralNetwork GUI
 
-% Spurious Drivers
-
 % Matrix of Dist: Hamming distance of neurons sets at each Condition
 % Save Ensemble Features
-
-
 
 % Add button to save Zoom image (MERGED MAGIC)
 % Save Selected Points SELECTED-> add to file .mat
@@ -47,9 +47,8 @@
 % Figure: reason whi mean(ROI) withput distortion
 % Load Raw FLuorescenc vs F_0 distortion
 % Analyze Rejects Ones Anyway to infer Artifacts
-% Kalman Filtering at SNR and lambdas pdf's: for optimal threshold
 % Automatize MERGE SELECTOR
-% Setup Intel/Info .mat File-> Default User Direcotry to save info
+% Setup Intel/Info .mat File-> Default User Directory to save info
 % Setup Script: deconvolution parameters
 
 %% STEPS GUIDE *********************************************************
