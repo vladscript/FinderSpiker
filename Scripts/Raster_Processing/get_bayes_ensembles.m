@@ -118,30 +118,38 @@ if Analyze
     % RE-LABEL Ensembles
     AppearSequence=unique(frame_ensembles,'stable');
     relabel_frame_ensembles=zeros(size(frame_ensembles));
-    for n=1:Nensembles
+    for n=1:NensemblesOK(minErrIndx)
         relabel_frame_ensembles(frame_ensembles==AppearSequence(n))=n;
     end
     
     % Features of the Ensembles:
-    Nensembles=numel(unique(frame_ensembles));
-    NeuroVectors=zeros(numel(ActiveCells),Nensembles);
+    % Nensembles=numel(unique(frame_ensembles));
+    NeuroVectors=zeros(numel(ActiveCells),NensemblesOK(minErrIndx));
     EnsembledNeurons={};
-    for nn=1:Nensembles
-        TwoEnsembledNeurons{nn}=find(sum(Rclust(:,relabel_frame_ensembles==nn),2));
-        TwoNeuroVectors(TwoEnsembledNeurons{nn},nn)=1;
+    MeanVarIntraDist=[];
+    for nn=1:NensemblesOK(minErrIndx)
+        EnsembledNeurons{nn}=find(sum(Rclust(:,relabel_frame_ensembles==nn),2));
+        NeuroVectors(EnsembledNeurons{nn},nn)=1;
+        VectorEnsemble=Rclust(:,relabel_frame_ensembles==nn);
+        DhammVectors=pdist(VectorEnsemble',SimMethod);
+        MeanVarIntraDist(nn,:)=[mean(DhammVectors),var(DhammVectors)];
     end
+    DhammEns=pdist(NeuroVectors',SimMethod);
     [Model,ECV]=Nbayes_Ensembles(Rclust,relabel_frame_ensembles);
-    ErrorClass(CAGindex)=ECV;
+    %[label,Posterior]=resubPredict(Model);
+    %C=confusionmat(relabel_frame_ensembles,double(label));
+    % relabel_frame_ensembles=double(label);
+    % ErrorClass(CAGindex)=ECV;
     
     % NensemblesOK(minErrIndx);
-    fprintf('>> Analysis lasted %f \n',DelayTime);
+    fprintf('>> Analysis lasted %3.1f seconds  \n',DelayTime);
     fprintf('>> Clustering with %i Ensembles & for %i Coactive Neurons\n',NensemblesOK(minErrIndx),CAGwithAN(minErrIndx))
     
     %% Retrieve Ensmeble Cluster Array *********************************
     % OUTPUT
-    R_Analysis.Data.Data=R;  % Frames x Cells (compatibility wit JP's NN)
+    R_Analysis.Data.Data=R';  % Frames x Cells (compatibility wit JP's NN)
     R_Analysis.Peaks.Threshold=CAGwithAN(minErrIndx);
-    R_Analysis.Clustering.TotalStates=Nensembles;
+    R_Analysis.Clustering.TotalStates=NensemblesOK(minErrIndx);
     % R_Analysis.Clustering.Tree=Tree;
     % R_Analysis.Clustering.Linkage=LinkageMethod;
     R_Analysis.Peaks.Index(CAG>=CAGwithAN(minErrIndx))=1;

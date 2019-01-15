@@ -16,7 +16,7 @@ function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
     frame_ensembles=cluster(Tree,'maxclust',2); % START
     % NeuroVectors=zeros(numel(ActiveCells),Nensembles);
     TwoEnsembledNeurons={};
-    for nn=1:2
+    for nn=1:Nensembles
         TwoEnsembledNeurons{nn}=find(sum(Rclust(:,frame_ensembles==nn),2));
         %TwoNeuroVectors(TwoEnsembledNeurons{nn},nn)=1;
     end
@@ -92,4 +92,3 @@ function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
         TotalEns=TotalEns+Nensembles;
 
     end
-    disp('>>Analysis Completed.')

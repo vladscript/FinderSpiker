@@ -4,10 +4,16 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m
 %% FIXED  READY TO GO @ GIT
-% Detrending FiXing
-% Miss Detrending Issues w/GCaMP->fix: detrending signal derivative
-% Updating mat file in directory
+% Plot_Raster_V-> square size=4 (Prohibittedsize=3 or size=1)
+%   make the dots_> squares
+
 %% Bugs & New Functions NOW
+
+% UNLABEL frames of CAG(n)=1 AND it belong to more than 1 ensemble
+% PLOTTING COLORS: missing some fast alternated ensembles :
+
+
+
 
 % Somee offset at detrending algorithm 
 

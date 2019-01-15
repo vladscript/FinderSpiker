@@ -39,11 +39,11 @@ for i=1:C
             'MarkerFaceColor',[1,0.6,0.78]); hold on;
     end
     % Dots @ Raster
-%     plot(ts*find(R(j,:))/60,i*R(j,R(j,:)>0),'Marker','square',...
-%         'LineStyle','none',...            
-%         'MarkerEdgeColor','k',...
-%         'MarkerFaceColor','k',...
-%         'MarkerSize',4); hold on;
+    plot(ts*find(R(j,:))/60,i*R(j,R(j,:)>0),'Marker','square',...
+        'LineStyle','none',...            
+        'MarkerEdgeColor','k',...
+        'MarkerFaceColor','k',...
+        'MarkerSize',4); hold on;
     ypositon=[j,1];
     activeframes=find(R(j,:));
     nf=1;
@@ -54,12 +54,8 @@ for i=1:C
         while activeframes(nx+1)==activeframes(nx)+1
             xposition(2)=xposition(2)+1;
             if nx+1==numel(activeframes)
-                activeframes=[activeframes,0];
-                % never and active frame is going to be Zero
-                % Stop sloop;
-            else
-                nx=nx+1;
-            end
+                
+            nx=nx+1;
         end
         % Create Rectangle *************************
         xposs=ts*xposition/60;

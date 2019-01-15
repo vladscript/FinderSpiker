@@ -111,21 +111,51 @@ if Analyze
     [~,minErrIndx]=min(ErrorClass);
     disp('Retrieving Cluster Analysis');
     Rclust=Ractive(:,CAG>=CAGwithAN(minErrIndx));
+    [ActiveCells,~]=find(sum(Rclust,2));
+    % Get the Clustered Frames
     [frame_ensembles]=cluster_analyze(Rclust,SimMethod);
-    Nensembles=numel(unique(frame_ensembles));
-    for nn=1:Nensembles
-        TwoEnsembledNeurons{nn}=find(sum(Rclust(:,frame_ensembles==nn),2));
-        TwoNeuroVectors(TwoEnsembledNeurons{nn},nn)=1;
+    
+    % RE-LABEL Ensembles
+    AppearSequence=unique(frame_ensembles,'stable');
+    relabel_frame_ensembles=zeros(size(frame_ensembles));
+    for n=1:NensemblesOK(minErrIndx)
+        relabel_frame_ensembles(frame_ensembles==AppearSequence(n))=n;
     end
-    [Model,ECV]=Nbayes_Ensembles(Rclust,frame_ensembles);
-    ErrorClass(CAGindex)=ECV;
+    
+    % Features of the Ensembles:
+    % Nensembles=numel(unique(frame_ensembles));
+    NeuroVectors=zeros(numel(ActiveCells),NensemblesOK(minErrIndx));
+    EnsembledNeurons={};
+    MeanVarIntraDist=[];
+    for nn=1:NensemblesOK(minErrIndx)
+        EnsembledNeurons{nn}=find(sum(Rclust(:,relabel_frame_ensembles==nn),2));
+        NeuroVectors(EnsembledNeurons{nn},nn)=1;
+        VectorEnsemble=Rclust(:,relabel_frame_ensembles==nn);
+        DhammVectors=pdist(VectorEnsemble',SimMethod);
+        MeanVarIntraDist(nn,:)=[mean(DhammVectors),var(DhammVectors)];
+    end
+    DhammEns=pdist(NeuroVectors',SimMethod);
+    [Model,ECV]=Nbayes_Ensembles(Rclust,relabel_frame_ensembles);
+    [label,Posterior]=resubPredict(Model);
+    C=confusionmat(relabel_frame_ensembles,double(label));
+    % relabel_frame_ensembles=double(label);
+    % ErrorClass(CAGindex)=ECV;
     
     % NensemblesOK(minErrIndx);
-    fprintf('>> Analysis lasted %f \n',DelayTime);
+    fprintf('>> Analysis lasted %3.1f seconds  \n',DelayTime);
     fprintf('>> Clustering with %i Ensembles & for %i Coactive Neurons\n',NensemblesOK(minErrIndx),CAGwithAN(minErrIndx))
     
     %% Retrieve Ensmeble Cluster Array *********************************
-    
+    % OUTPUT
+    R_Analysis.Data.Data=R';  % Frames x Cells (compatibility wit JP's NN)
+    R_Analysis.Peaks.Threshold=CAGwithAN(minErrIndx);
+    R_Analysis.Clustering.TotalStates=NensemblesOK(minErrIndx);
+    % R_Analysis.Clustering.Tree=Tree;
+    % R_Analysis.Clustering.Linkage=LinkageMethod;
+    R_Analysis.Peaks.Index(CAG>=CAGwithAN(minErrIndx))=1;
+    R_Analysis.Clustering.VectorStateIndex=relabel_frame_ensembles;  % Sequence of Ensembles: frame_ensembles
+    R_Analysis.Classifier.Model=Model;             % Naive Bayes Classifier
+    R_Analysis.Classifier.ValidationError=ECV;   
 end
 % fprintf('>> Clustering with %i Ensembles \n& for %i Coactive Neurons\n',Nensembles,CAG_TH)
 fprintf('\n>>Script to search Neural Ensembles has ended.\n')
