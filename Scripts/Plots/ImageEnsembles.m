@@ -6,8 +6,17 @@
 %   ColorState: Ensemble Colors
 % Output
 % Image with colored ensembles
-function plot_ensambles_fast(R_Analysis,ColorState)
+function ImageEnsembles(R_Analysis,varargin)
+
 %% Setup
+if ~isempty(varargin)
+    ColorState=varargin{1}; % Alread Colored Ensembles
+else
+    TotalNG=R_Analysis.Clustering.TotalStates;
+    NC=1;
+    NGroups{1}=TotalNG;
+    ColorState=colormapensembles(TotalNG,NC,NGroups);
+end
 R=R_Analysis.Data.Data;
 label_Cluster=R_Analysis.Clustering.VectorStateIndex;
 CAGth=R_Analysis.Peaks.Threshold;
@@ -20,18 +29,31 @@ ColorEnsembles=[1,1,1;0,0,0;ColorState(1:Nens,:)];
 % Initialize Oouput
 % Rimage=zeros(size(R));
 % [TotalFrames,~]=size(R);
+%% Make Images
 Rimage=R'; % Cells x Frames
-CAGimage=zeros(max(sum(Rimage,2)))
+CAG=sum(R');
+CAGimage=zeros(max(CAG),size(R,1));
+activityframes=find(CAG);
+for f=1:numel(activityframes)
+    CAGimage(CAG(activityframes(f)),activityframes(f))=1;
+end
+%% Colored Ensembles
 for n=1:Nens
     % Find cells, frames and Nens+2;
     frames_ensemble=active_Frames( label_Cluster==n );
     Rimage(:,frames_ensemble)=R(frames_ensemble,:)'.*(1+n);
+    CAGimage(:,frames_ensemble)=CAGimage(:,frames_ensemble).*(1+n);
 end
 %% Create Figure
 figure; 
 axraster=subplot(3,1,[1,2]);
 imagesc(Rimage);
+axcag=subplot(3,1,3);
+% plot(CAG,'k'); hold on;
+imagesc(CAGimage); % hold off;
 colormap(axraster,ColorEnsembles)
+colormap(axcag,ColorEnsembles)
 axraster.YDir='normal';
-axCAG=subplot(3,1,3);
+axcag.YDir='normal';
+
 

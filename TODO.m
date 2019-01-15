@@ -9,11 +9,8 @@
 
 %% Bugs & New Functions NOW
 
-% UNLABEL frames of CAG(n)=1 AND it belong to more than 1 ensemble
-% PLOTTING COLORS: missing some fast alternated ensembles :
-
-
-
+% PLOTTING COLORS: missing some fast alternated ensembles 
+% :OK plots with images and rectangles each calcium transient
 
 % Somee offset at detrending algorithm 
 

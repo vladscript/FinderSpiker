@@ -1,79 +1,115 @@
 %% Function to plot raster
 % input
-%   R:          Raster Matrix Cells x Frames
-%   indexes:    Index of Neurons
-%   stepy:      Y Tick Set
-%   fs= sampling frequency
+%   R:   Raster Matrix  Cells x Frames
+%   varargin default:
+%           fs=1            Sampling Frequency
+%           stepy=2;        Step between rows Yticks
+%           indexes=1:C;    Sort
+%           ColocateIndx=[];Indexes of Colocalized Neurons
+%           Neurons_Colocalized=[];
+%   Neurons:Colocalized
 % Output
 % figure of the raster in MINUTES
 % Always creates a new figure
-function Plot_Raster_Ensembles(R,indexes,stepy,varargin)
-if numel(varargin)==1
-    fs=varargin{1};
-    ColocateIndx=[];% Indexes of Colocalized Neurons
-    Neurons_Colocalized=[];
-else
-    fs=varargin{1};
-    ColocateIndx=varargin{2};
-    Neurons_Colocalized=find(ColocateIndx);
+function Plot_Raster_Ensembles(R,varargin)
+%% Setup
+N=numel(varargin);
+[C,~]=size(R);
+switch N
+    case 0
+        fs=1; % Discrete Time
+        stepy=2;
+        indexes=1:C;
+        ColocateIndx=[];% Indexes of Colocalized Neurons
+        Neurons_Colocalized=[];
+    case 1
+        fs=varargin{1};
+        stepy=2;
+        indexes=1:C;
+        ColocateIndx=[];% Indexes of Colocalized Neurons
+        Neurons_Colocalized=[];
+    case 2
+        fs=varargin{1};
+        stepy=varargin{2};
+        indexes=1:C;
+        ColocateIndx=[];% Indexes of Colocalized Neurons
+        Neurons_Colocalized=[];
+    case 3
+        fs=varargin{1};
+        stepy=varargin{2};
+        indexes=varargin{3};
+        ColocateIndx=[];% Indexes of Colocalized Neurons
+        Neurons_Colocalized=[];
+    case 4 
+        fs=varargin{1};
+        stepy=varargin{2};
+        indexes=varargin{3};
+        ColocateIndx=varargin{4}; % Indexes of Colocalized Neurons
+        Neurons_Colocalized=find(ColocateIndx);
+    otherwise
 end
+
 figure
 ax1=subplot(3,1,[1,2]);
 hold on;
 % Identify Cell and Frame Matrix Dimension
-[C,F]=size(R);
-if C>F
-    R=R';
-    [C,~]=size(R);
-end
 
-ts=1/fs;
+% if C>F
+%     R=R';
+%     [C,~]=size(R);
+% end
+if fs==1
+    ts=1/fs*60;
+else
+    ts=1/fs;
+end
+% Re-Sort:
+R=R(indexes,:);
 for i=1:C
     j=indexes(i);
+    
+    ypositon=[j+0.25,0.75];
+    activeframes=find(R(j,:));
+    if ~isempty(activeframes)
+        nf=1;
+        xposition(1)=activeframes(1)-0.5;
+        xposition(2)=1;
+        while nf<numel(activeframes)
+            nx=nf;
+            while activeframes(nx+1)==activeframes(nx)+1
+                xposition(2)=xposition(2)+1;
+                if nx+1==numel(activeframes)
+                    activeframes=[activeframes,0];
+                    % never and active frame is going to be Zero
+                    % Stop sloop;
+                else
+                    nx=nx+1;
+                end
+            end
+            % Create Rectangle *************************
+            xposs=ts*xposition/60;
+            rectangle('Position',[xposs(1),ypositon(1),...
+                    xposs(2),ypositon(2)],'Curvature',0.2,...
+                    'EdgeColor','k',...
+                    'FaceColor','k');
+            fprintf('*')
+            % Restart xposition values
+            xposition(1)=activeframes(nx+1)-0.5;
+            xposition(2)=1;
+            nf=nx+1;
+        end
+        fprintf('\n')
+    else
+        fprintf('\n')
+    end
+    % If there is Colocalized Cells
     if ismember(j,Neurons_Colocalized)
-            plot(ts*find(R(j,:))/60,i*R(j,R(j,:)>0),'Marker','square',...
-            'LineWidth',2,...
+            plot(ts*find(R(i,:))/60,i*R(i,R(i,:)>0)+0.6,'Marker','square',...
             'LineStyle','none',...
-            'MarkerSize',7,...
+            'MarkerSize',2,...
             'MarkerEdgeColor',[1,0.6,0.78],...
             'MarkerFaceColor',[1,0.6,0.78]); hold on;
     end
-    % Dots @ Raster
-%     plot(ts*find(R(j,:))/60,i*R(j,R(j,:)>0),'Marker','square',...
-%         'LineStyle','none',...            
-%         'MarkerEdgeColor','k',...
-%         'MarkerFaceColor','k',...
-%         'MarkerSize',4); hold on;
-    ypositon=[j,1];
-    activeframes=find(R(j,:));
-    nf=1;
-    xposition(1)=activeframes(1)-0.5;
-    xposition(2)=1;
-    while nf<numel(activeframes)
-        nx=nf;
-        while activeframes(nx+1)==activeframes(nx)+1
-            xposition(2)=xposition(2)+1;
-            if nx+1==numel(activeframes)
-                activeframes=[activeframes,0];
-                % never and active frame is going to be Zero
-                % Stop sloop;
-            else
-                nx=nx+1;
-            end
-        end
-        % Create Rectangle *************************
-        xposs=ts*xposition/60;
-        rectangle('Position',[xposs(1),ypositon(1),...
-                xposs(2),ypositon(2)],'Curvature',0.2,...
-                'EdgeColor','k',...
-                'FaceColor','k');
-        fprintf('*')
-        % Restart xposition values
-        xposition(1)=activeframes(nx+1)-0.5;
-        xposition(2)=1;
-        nf=nx+1;
-    end
-    fprintf('\n')
 end
 axis([0,ts*(length(R)-1)/60,1,C])
 ylabel('Neural Activity')
@@ -96,7 +132,11 @@ hold on;
 axis([0,ts*(length(R)-1)/60,0,max(sum(R))+1])
 % grid on
 ylabel('CAG')
-xlabel('Minutes')
+if fs==1
+    xlabel('Frames')
+else
+    xlabel('Minutes')
+end
 
 
 set(gca,'Box','off')

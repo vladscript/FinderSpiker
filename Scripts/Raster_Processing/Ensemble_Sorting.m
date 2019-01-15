@@ -124,7 +124,7 @@ ColorState=colormapensembles(TotalNG,NC,NGroups);
 %% Plot Ensembles of Whole Raster ---------------------------------------------------------------------
 %   Original ****************************************
 OriginalExperiment=ExperimentRasterClean;
-Plot_Raster_Ensembles(OriginalExperiment,Indexes,5,fs);                     % Disorted Raster
+Plot_Raster_Ensembles(OriginalExperiment',fs,5,Indexes);                     % Disorted Raster
 disp('Coloring Ensembles...')
 Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CoAc,Indexes);
 disp('Coloring Ensembles Done.')
@@ -135,7 +135,7 @@ if CummFrames==TotalFrames
 end
 Figg=gcf; Figg.Name=['Neural Ensembles of ',Experiment];
 %   Sorted *******************************************
-Plot_Raster_Ensembles(OriginalExperiment,Indexes(New_Order_Clustering),1,fs);   % Sorted Raster
+Plot_Raster_Ensembles(OriginalExperiment',fs,1,Indexes(New_Order_Clustering));   % Sorted Raster
 % Plot_State_Colors;
 disp('Coloring Ensembles...')
 Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CoAc,Indexes(New_Order_Clustering));
@@ -225,7 +225,7 @@ for c=1:NCplot
         % SORTING CONDITION
         Index_Ensemble=Indexes(OrderOneCondition);          % Neurons Label Raster
         % Plotting |
-        Plot_Raster_Ensembles(R,Index_Ensemble,1,fs);       % Sorted Raster
+        Plot_Raster_Ensembles(R',fs,1,Index_Ensemble);       % Sorted Raster
         if CummFrames==TotalFrames && NC==1
             EnsembleFig=gcf; EnsembleFig.Name=Names_Conditions{c};
         else

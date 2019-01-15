@@ -20,7 +20,7 @@
 function R_Analysis = get_bayes_ensembles(R)
 %% Setup
 % About the Raster
-disp('> Getting data...')
+disp('> Getting data ...')
 
 [Cells,Frames]=size(R); % Always More Frames than Cells
 if Cells>Frames
