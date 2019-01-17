@@ -103,8 +103,10 @@ if Analyze
         Rclust=Ractive(:,CAG>=CAGwithAN(CAGindex));
         % [~,ActiveFrames]=size(Rclust);
         [frame_ensembles]=cluster_analyze(Rclust,SimMethod);
+        [~,MaxDistanceIV]=nonsimilarframes(Rclust,SimMethod,0.5);
         [~,ECV]=Nbayes_Ensembles(Rclust,frame_ensembles);
         ErrorClass(CAGindex)=ECV;
+        MaxDIV(CAGindex)=MaxDistanceIV;
         NensemblesOK(CAGindex)=numel(unique(frame_ensembles));
     end
     DelayTime=toc;

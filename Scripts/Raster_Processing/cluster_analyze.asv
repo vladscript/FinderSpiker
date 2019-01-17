@@ -26,8 +26,8 @@ function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
         % Intra Ensembles
         Rclustens=Rclust(TwoEnsembledNeurons{n},frame_ensembles==1+TotalEns);
         % Identify Frames Where Vector are not Very Simmilar
-        % [~,MaxDistanceIV]=nonsimilarframes(Rclustens,SimMethod,0.5);
-        % NeuralVectorNonSim=find(sum(Rclustens(:,NonSimilarIV),2))
+        [NonSimilarIV,MaxDistanceIV]=nonsimilarframes(Rclustens,SimMethod,0.5);
+        NeuralVectorNonSim=find(sum(Rclustens(:,NonSimilarIV),2))
         
         [ActiveCellsEns,~]=find(sum(Rclustens,2));
         DistanceEns=squareform(pdist(Rclustens',SimMethod));
