@@ -361,7 +361,7 @@ ActiveNeurons=find(sum(RASTER_WHOLE_Clean,2)>0);                % INDEX of Activ
 RASTER_WHOLE_Clean=RASTER_WHOLE_Clean(ActiveNeurons,:);
 XY_clean=XY_clean(ActiveNeurons,:);                             % Clean Coordinates
 %% PLOT RESULTS
-Plot_Raster_V(RASTER_WHOLE_Clean,fs);                           % Clean Whole Raster
+Plot_Raster_Ensembles(RASTER_WHOLE_Clean,fs);                           % Clean Whole Raster
 set(gcf,'Name',['ID: ',Experiment,' pre-processing'],'NumberTitle','off')
 Label_Condition_Raster(Names_Conditions,Raster_Condition,fs);   % Labels
 %% SAVE ReSULTS

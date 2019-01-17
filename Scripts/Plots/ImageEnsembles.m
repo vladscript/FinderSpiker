@@ -17,7 +17,7 @@ else
     NGroups{1}=TotalNG;
     ColorState=colormapensembles(TotalNG,NC,NGroups);
 end
-R=R_Analysis.Data.Data;
+R=R_Analysis.Data.Data; % Frams x Cells
 label_Cluster=R_Analysis.Clustering.VectorStateIndex;
 CAGth=R_Analysis.Peaks.Threshold;
 active_Frames=find(sum(R,2)>=CAGth);
@@ -45,7 +45,7 @@ for n=1:Nens
     CAGimage(:,frames_ensemble)=CAGimage(:,frames_ensemble).*(1+n);
 end
 %% Create Figure
-figure; 
+figure; % RASTER
 axraster=subplot(3,1,[1,2]);
 imagesc(Rimage);
 axcag=subplot(3,1,3);
@@ -55,5 +55,6 @@ colormap(axraster,ColorEnsembles)
 colormap(axcag,ColorEnsembles)
 axraster.YDir='normal';
 axcag.YDir='normal';
-
+% figure; % Hebbian Ensembles
+HebbSequence=Ensembles_Transitions(1/60,label_Cluster,active_Frames,ColorEnsembles(3:end,:),1); % ---> save
 

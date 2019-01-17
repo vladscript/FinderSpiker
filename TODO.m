@@ -77,8 +77,7 @@
 % AUTOMATIC
 % >>R_ConditionName1_Analysis=get_bayes_ensembles(R_Dyskinesia);
 % MANUAL
-% Set CAG_TH,  Nensembles & SimMethod='hamming'
-% >>Ri_Analysis = raster_cluster(R_CONDITIONi,CAG_TH,Nensembles,SimMethod); 
+% >>...
 
 % DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI)
 % >> Ensemble_Sorting
@@ -109,4 +108,4 @@
 % >> Raster_Features_Display
 
 %% Legacy Code:
-%   Manual_Driver_Raster_Magic_Ultimate (save as private mine)
+%   Manual_Driver_Raster_Magic_Ultimate (saved as private)

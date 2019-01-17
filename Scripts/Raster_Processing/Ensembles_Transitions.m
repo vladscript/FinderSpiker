@@ -3,7 +3,7 @@
 %   signif_frames:  Frames with Significative CoACtivity
 %   labels_frames:  Ensemble Lalbel
 %   ColorState:     Ensemble Color
-%   If plot=1 else 0
+%   If ifplot=1 plot; else do nothing
 % Output
 %   ensemble_index: Sequence of Ensembles                
 function [ensemble_index]=Ensembles_Transitions(fs,labels_frames,signif_frames,ColorState,ifplot)

@@ -121,7 +121,6 @@ if Analyze
     for n=1:NensemblesOK(minErrIndx)
         relabel_frame_ensembles(frame_ensembles==AppearSequence(n))=n;
     end
-    
     % Features of the Ensembles:
     % Nensembles=numel(unique(frame_ensembles));
     NeuroVectors=zeros(numel(ActiveCells),NensemblesOK(minErrIndx));
@@ -159,3 +158,11 @@ if Analyze
 end
 % fprintf('>> Clustering with %i Ensembles \n& for %i Coactive Neurons\n',Nensembles,CAG_TH)
 fprintf('\n>>Script to search Neural Ensembles has ended.\n')
+fprintf('\n>>Plotting Ensembles:')
+ImageEnsembles(R_Analysis);
+signif_frames=find(CAG>=CAGwithAN(minErrIndx));
+[New_Order_Clustering,~]=OrderClusters(relabel_frame_ensembles,signif_frames,R',NensemblesOK(minErrIndx));
+R_Sorted_Analysis=R_Analysis;
+R_Sorted_Analysis.Data.Data=R(New_Order_Clustering,:)';
+ImageEnsembles(R_Sorted_Analysis);
+fprintf('\n>>Done')

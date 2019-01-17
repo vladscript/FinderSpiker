@@ -94,7 +94,7 @@ else
     ColorState(1:TotalNG,:)=hsv(TotalNG);
 end
 ColorState(end,:)=hubbensemble;
-%% SHOW COLORMAP:
-figure('Position',[800 526 450 150],...
-    'Name','Ensemble Colormap');
-image(1:TotalNG); colormap(ColorState(1:end-1,:))
+% %% SHOW COLORMAP:
+% figure('Position',[800 526 450 150],...
+%     'Name','Ensemble Colormap');
+% image(1:TotalNG); colormap(ColorState(1:end-1,:))
