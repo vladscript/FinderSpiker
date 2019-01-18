@@ -10,20 +10,16 @@
 % :OK plots with images and rectangles each calcium transient
 %% Bugs & New Functions NOW
 
-% > Get Criteria for CAG_th & Nensembles->Partially Options OK
-%   Make Toy Example Generator
-
 % Somee offset at detrending algorithm 
 
 % Spurious Drivers
 % Lone Drivers: check clean signal's samples around if they're above noise
-
 % Check at Signals with Huge Valley (synaptic like)
 
 % Modify Zoom at Windows in the script: Select_Raster_for_NN.m
 
 % Bugs at Rasters with Very LOW ACTIVITY Exp?
-
+% > Get Criteria for CAG_th & Nensembles->Partially Options A,B
 % Get and Save CAG temporal Features: Autocorrelation, etc...
 % IDENTIFY Features per CONDITION when Analyze Concatenated Raster
 % (condition times)
