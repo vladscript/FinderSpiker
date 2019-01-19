@@ -8,10 +8,17 @@
 %   make the dots_> squares
 % PLOTTING COLORS: missing some fast alternated ensembles 
 % :OK plots with images and rectangles each calcium transient
+% > Get Criteria for CAG_th & Nensembles->Partially Options OK
+%   Improveing( Make Toy Example Generator )
 %% Bugs & New Functions NOW
 
-% > Get Criteria for CAG_th & Nensembles->Partially Options OK
-%   Make Toy Example Generator
+% Color of CAG in Ensemble_Sorting.m
+% Use Ensembles_Transition funcitons to plot line colors
+
+% Optimize Ensemble_Sorting to Display and Save Definitive Cluster Analysis
+
+% Compare SIMMILAR and CONFUSING (confmat) ENSEMBLES to MERGE them
+% Merge the Most inter-Cinfusing if its distance it's close enough
 
 % Somee offset at detrending algorithm 
 
@@ -19,6 +26,8 @@
 % Lone Drivers: check clean signal's samples around if they're above noise
 
 % Check at Signals with Huge Valley (synaptic like)
+
+%%% MAKE ALGORITHMIA
 
 % Modify Zoom at Windows in the script: Select_Raster_for_NN.m
 

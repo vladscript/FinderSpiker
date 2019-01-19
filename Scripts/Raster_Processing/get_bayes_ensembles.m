@@ -23,11 +23,11 @@ function R_Analysis = get_bayes_ensembles(R)
 disp('> Getting data ...')
 
 [Cells,Frames]=size(R); % Always More Frames than Cells
-if Cells>Frames
-    R=R';
-    [Cells,Frames]=size(R);
-    disp('>>Raster Transposed.')
-end
+% if Cells>Frames
+%     R=R';
+%     [Cells,Frames]=size(R);
+%     disp('>>Raster Transposed.')
+% end
 ActiveCells=find(sum(R,2));
 % GET ONLY ACTIVE CELLS!
 Ractive=R(ActiveCells,:);
@@ -167,4 +167,8 @@ signif_frames=find(CAG>=CAGwithAN(minErrIndx));
 R_Sorted_Analysis=R_Analysis;
 R_Sorted_Analysis.Data.Data=R(New_Order_Clustering,:)';
 ImageEnsembles(R_Sorted_Analysis);
-fprintf('\n>>Done')
+% Set Indexes at sorted Ensembles
+figHandles = findobj('Type', 'figure');
+figHandles(2).Children(2).YTick=1:max(New_Order_Clustering);
+figHandles(2).Children(2).YTickLabel=New_Order_Clustering;
+fprintf('\n>>Ensembles Done\n')

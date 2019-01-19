@@ -45,7 +45,8 @@ for n=1:Nens
     CAGimage(:,frames_ensemble)=CAGimage(:,frames_ensemble).*(1+n);
 end
 %% Create Figure
-figure; % RASTER
+EnsemFig=figure; % RASTER
+EnsemFig.Name='Neural Ensembles';
 axraster=subplot(3,1,[1,2]);
 imagesc(Rimage);
 axcag=subplot(3,1,3);
@@ -56,5 +57,5 @@ colormap(axcag,ColorEnsembles)
 axraster.YDir='normal';
 axcag.YDir='normal';
 % figure; % Hebbian Ensembles
-HebbSequence=Ensembles_Transitions(1/60,label_Cluster,active_Frames,ColorEnsembles(3:end,:),1); % ---> save
+Ensembles_Transitions(1/60,label_Cluster,active_Frames,ColorEnsembles(3:end,:),1); % ---> save
 
