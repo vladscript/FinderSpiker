@@ -10,19 +10,15 @@
 % Ouput
 % Plot on the Raster plot
 function Plot_State_Colors(labels_frames,signif_frames,ColorState,Experiment,fs,CoAc,indexes)
-% Search of figure (maybe)
+%% Search of figure (maybe)
 TransientHight=0.75; % Same as Plot_Raster_Ensembles.m
-% +++++ colors in Raster +++++
+%% +++++ colors in Raster +++++
+subplot(3,1,[1,2]); hold on;  % ***************@ Actual Raster
 for i=1:length(labels_frames)
     AC=Experiment(signif_frames(i),indexes); % Active Cells
     AC=find(AC==1);
     for j=1:numel(AC)
         % k=indexes(j);
-        subplot(3,1,[1,2]); hold on;  % ***************Raster
-%         plot((1/(fs))*signif_frames(i)/60,AC(j),'Marker','square',...
-%                 'MarkerEdgeColor',ColorState(labels_frames(i),:),...
-%                 'MarkerFaceColor',ColorState(labels_frames(i),:),...
-%                 'MarkerSize',3.4);
         xposition=(1/(fs))*[signif_frames(i)-0.5,1]/60;
         ypositon=[AC(j)-TransientHight/2,TransientHight];
         rectangle('Position',[xposition(1),ypositon(1),...
@@ -32,38 +28,53 @@ for i=1:length(labels_frames)
         fprintf('°')
     end
     fprintf('\n')
-%     % CAG COLORS **********************
-%     subplot(3,1,3); hold on;
-%     Cframe=signif_frames(i);
-%     if i+1>length(labels_frames) % for the last frame
-%         Nframe=Cframe;
-%     else
-%         Nframe=signif_frames(i+1);
-%     end
-%     if Nframe-Cframe>1
-%         plot((1/(fs))*(Cframe-1)/60,CoAc(Cframe),...
-%             'Color',ColorState(labels_frames(i),:),...
-%             'LineWidth',2)
-%     elseif Nframe-Cframe==1
-%         plot((1/(fs))*[Cframe-1,Nframe-1]/60,[CoAc(Cframe),CoAc(Nframe)],...
-%             'Marker','.',...
-%             'MarkerEdgeColor',ColorState(labels_frames(i),:),...
-%             'MarkerFaceColor',ColorState(labels_frames(i),:),...
-%             'MarkerSize',3);
-%     end
-
 end
-
-
-% CAG  *******************************************************
-disp('>>Coloring Ensmebles at CAG')
-% subplot(3,1,3); hold on; % ******************** Coactivity Threshold
-% plot((1/fs)*[0,length(CoAc)]/60,[THR,THR],'--','Color','k')
-% ax=gca;
-% MaxYY=max(sum(Experiment,2));
-% if MaxYY<=THR
-%     MaxYY=THR+1;
-% end
-% ax.YTick=[THR,MaxYY];
-% axis([0,(1/fs)*(length(CoAc))/60,0,max(sum(Experiment,2))+1])
+%% CAG  *******************************************************
+disp('>>Coloring Ensembles at CAG')
+subplot(3,1,3); hold on; % ******************** Coactivity Threshold
+f=1;
+while f<=numel(signif_frames)
+    % Get Segment of the Same Color
+    if f<numel(signif_frames)
+        LengthColor=f+1;
+    else
+        LengthColor=f;
+    end
+    frameA=f;
+    frameB=frameA;
+    if or(LengthColor>numel(signif_frames),f>numel(signif_frames))
+        frameB=0;
+    else
+        aux1=0;
+        while labels_frames(f)==labels_frames(LengthColor) && ...
+                signif_frames(f)==signif_frames(LengthColor)-1 &&...
+                f<=numel(labels_frames) && LengthColor<=numel(labels_frames)
+            frameB=LengthColor-frameA;
+            f=f+1;
+            aux1=aux1+1;
+            fprintf('*')
+        end
+        if aux1==0
+            frameB=0;
+        end
+    end
+    
+    % Plot Segment
+    %Segment=[frameA,frameA+frameB];
+    if frameB>0
+        % LINE
+        plot(signif_frames(frameA:frameA+frameB)/fs/60,CoAc(signif_frames(frameA:frameA+frameB)),...
+        'Color',ColorState(labels_frames(frameA),:),...
+        'LineWidth',2);
+    else
+        % DOT
+        plot(signif_frames(frameA)/fs/60,CoAc(signif_frames(frameA)),...
+            'Marker','^','MarkerSize',3.5,...
+            'MarkerEdgeColor',ColorState(labels_frames(frameA),:),...   
+            'MarkerFaceColor',ColorState(labels_frames(frameA),:));
+    end
+    
+    f=f+1;
+    fprintf('\n')
+end
 disp('>>Colors at CAG.')

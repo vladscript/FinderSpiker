@@ -10,15 +10,19 @@
 % :OK plots with images and rectangles each calcium transient
 % > Get Criteria for CAG_th & Nensembles->Partially Options OK
 %   Improveing( Make Toy Example Generator )
-%% Bugs & New Functions NOW
-
 % Color of CAG in Ensemble_Sorting.m
 % Use Ensembles_Transition funcitons to plot line colors
+
+%% Bugs & New Functions NOW
 
 % Optimize Ensemble_Sorting to Display and Save Definitive Cluster Analysis
 
 % Compare SIMMILAR and CONFUSING (confmat) ENSEMBLES to MERGE them
 % Merge the Most inter-Cinfusing if its distance it's close enough
+
+% Get and Save CAG temporal Features: Autocorrelation, etc...
+% IDENTIFY Features per CONDITION when Analyze Concatenated Raster
+% (condition times)
 
 % Somee offset at detrending algorithm 
 
@@ -32,10 +36,6 @@
 % Modify Zoom at Windows in the script: Select_Raster_for_NN.m
 
 % Bugs at Rasters with Very LOW ACTIVITY Exp?
-
-% Get and Save CAG temporal Features: Autocorrelation, etc...
-% IDENTIFY Features per CONDITION when Analyze Concatenated Raster
-% (condition times)
 
 % Save .mat File even when if it was analyzed at NeuralNetwork GUI
 
