@@ -53,12 +53,7 @@ end
 figure
 ax1=subplot(3,1,[1,2]);
 hold on;
-% Identify Cell and Frame Matrix Dimension
 
-% if C>F
-%     R=R';
-%     [C,~]=size(R);
-% end
 if fs==1
     ts=1/fs*60;
 else
@@ -75,7 +70,8 @@ for i=1:C
     % never and active frame is going to be Zero
     if ~isempty(activeframes)
         nf=1;
-        xposition(1)=activeframes(1)-0.5;
+        % xposition(1)=activeframes(1)-0.5;
+        xposition(1)=activeframes(1);
         xposition(2)=1;
         
         while nf<numel(activeframes)

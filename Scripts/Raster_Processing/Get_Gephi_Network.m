@@ -149,7 +149,7 @@ if ~isempty(FileNameExp)
         % FileNameExp='Network';
     % NodesTable *******************************************
     
-    SaveasName=['\NetWorks-CSV\',Experiment(2:end),'_',FileNameExp,'_Nodes.csv'];
+    SaveasName=['\NetWorks-CSV\',Experiment,'_',FileNameExp,'_Nodes.csv'];
         HeadersNodes={'ID','Label','Latitude','Longitude','Color'};
         Tnodes=table(Cluster_Indexing(1:Ncells)',StatesofNeurons,XY_ensambles(Cluster_Indexing(1:Ncells),2),XY_ensambles(Cluster_Indexing(1:Ncells),1),ColorNeuronCell,...
             'VariableNames',HeadersNodes);
@@ -165,7 +165,7 @@ if ~isempty(FileNameExp)
     % Weight: K-links between them          {OK}
     % Type: Undirected{FIX}                 {OK}
     TypeNetwork=repmat('Undirected',length(SOURCE),1);
-    SaveasName=['NetWorks-CSV\',Experiment(2:end),'_',FileNameExp,'_Links.csv'];
+    SaveasName=['NetWorks-CSV\',Experiment,'_',FileNameExp,'_Links.csv'];
     HeadersLinks={'Source','Target','Weight','Type'};
     Tlinks=table(SOURCE,TARGET,WEIGHT,TypeNetwork,...
         'VariableNames',HeadersLinks);

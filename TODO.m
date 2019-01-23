@@ -4,14 +4,6 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m
 %% FIXED  READY TO GO @ GIT
-% Plot_Raster_V-> square size=4 (Prohibittedsize=3 or size=1)
-%   make the dots_> squares
-% PLOTTING COLORS: missing some fast alternated ensembles 
-% :OK plots with images and rectangles each calcium transient
-% > Get Criteria for CAG_th & Nensembles->Partially Options OK
-%   Improveing( Make Toy Example Generator )
-% Color of CAG in Ensemble_Sorting.m
-% Use Ensembles_Transition funcitons to plot line colors
 
 %% Bugs & New Functions NOW
 
@@ -23,6 +15,9 @@
 % Get and Save CAG temporal Features: Autocorrelation, etc...
 % IDENTIFY Features per CONDITION when Analyze Concatenated Raster
 % (condition times)
+
+% Analyze per Condition:
+% Ensemble Features: Simm Matrix among Ensembles for all Experiment
 
 % Somee offset at detrending algorithm 
 

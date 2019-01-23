@@ -1,7 +1,8 @@
 % Function to Select frames per Condition Manually
-% Extract Descriptive Features.
-% Run After Finder_Spiker_Calcium.m (Processing Blocks) or
-% Load Saved Data in the EPXEIMENT_DATE.mat Files
+% Extract Descriptive RasterFeatures and seve the, @
+% ...\FinderSpiker\Raster Features
+% Run After Finder_Spiker_Calcium.m and Detected & Undetected Scripts
+% Load Saved Data in the EXPERIMENT_DATE.mat Files
 % It runs until selection is OK (according to the user)
 % Input
 %   fs:                 Sampling Frequency
