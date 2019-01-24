@@ -11,6 +11,7 @@
 %   Ensmeble_Features
 function [Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs)
 %% Setup
+SimMethod='hamming';
 % Get Number Of Conditions
 C=numel(R_Condition); % Number of Conditions
 % Get Number of Different Ensmebles
@@ -39,17 +40,23 @@ CyclesTypes=zeros(3,C);         % -> OUTPUT per Condition
 % Ensemble_Features=cell(C,Ne);
 
 %% Main Loop
+
 for c=1:C
     %% DATA
     R=R_Condition{c};               % RASTER
     [AN,Frames]=size(R);            % Total Active Neurons [selected]
     RasterDuration=Frames/fs/60;    % MINUTES
     CAG=sum(R);                     % Co-Activity-Graphy
+    % CAG Statistics
+    AUC=autocorr(CAG,1); % Autocorrelation Coeffcient
+    CAGstats=[AUC(2),mean(CAG),var(CAG),skewness(CAG),kurtosis(CAG)];
     Th=Ensemble_Threshold{c};       % CAG Threshold
     signif_frames=find(CAG>=Th);    % Significatn Frames
     Ensembles_Labels=Ensembled_Labels{c}; % Labels each frame
     if numel(signif_frames)==numel(Ensembles_Labels)
         E=unique(Ensembled_Labels{c}); % Ensambles per condition
+        MaxIntraVec=zeros(1,numel(E));
+        EnsCAGstats=zeros(numel(E),5);
         %% EACH ENSEMBLE
         for e=1:numel(E)
             fprintf('>> Condition %i, Ensemble %i of %i \n',c,e,numel(E));
@@ -62,26 +69,39 @@ for c=1:C
             % Output Indexes
             NeuronsOccupancy(c,e)=numel(Ensembled_Neurons{c,e})/AN;
             % MORE FEATURES
+            Rcluster=R(:,frames_ensemble); % Cells x Frames
+            CAGcluster=sum(Rcluster);
+            AUC=autocorr(CAGcluster,1); % Autocorrelation Coeffcient
+            EnsCAGstats(e,:)=[AUC(2),mean(CAGcluster),var(CAGcluster),skewness(CAGcluster),kurtosis(CAGcluster)];
+            MaxIntraVec(e)=max(pdist(Rcluster',SimMethod));
+            % Inter-Eensemble-Interval & Ensemble Duration
+            IEIall=diff(frames_ensemble);
+            IEI=IEIall(IEIall>1);
+            disp('butt')
         end
     else
         disp('>error<') % likely impossible this ever happens
     end
     %% ENSEMBLES SETs FEATURES
-    NeuroVectors=zeros(AN,length(E));
+    % [CAGstats,EnsCAGstats]-> SAVE as row in the csv
+    NeuroClusters=zeros(AN,numel(E));
     for e=1:length(E)
-        NeuroVectors(Ensembled_Neurons{c,e},e)=1;
+        NeuroClusters(Ensembled_Neurons{c,e},e)=1;
     end
     % CONDITION FEATURES ********************************
-    % Dunn's Index
-    Dhamm=pdist(NeuroVectors','hamming'); % percentage of different neurons
+    % Dunn's Index (sort of):
+    % How Separater Cluster divided how Divided Intra Clusters
+    % <1 More Distance Intra Vectors than Intra Clusters-> Bad Clustering
+    % >1 More Distance Intra Clusters than Intra Vectors-> Good Clustering
+    Dhamm=pdist(NeuroClusters',SimMethod); % percentage of different neurons
     if isempty(Dhamm); Dhamm=0; end;
-    Lens=sum(NeuroVectors)/AN;            % percentage of used neurons
-    if isempty(Lens)
-        DunnIndex(c)=0;
+    if max(MaxIntraVec)>0
+        DunnIndex(c)=min(Dhamm)/max(MaxIntraVec); % min distance among ensembles divided by maximum length of ensembles
     else
-        DunnIndex(c)=min(Dhamm)/max(Lens); % min distance among ensembles divided by maximum length of ensembles
+        DunnIndex(c)=0; % min distance among ensembles divided by maximum length of ensembles
     end
     % MORE FEATURES #########
+    
     % Hebbian Sequence
     HS=Ensembles_Labels(diff(signif_frames)>1);
     HebbianSequence{c}=HS;

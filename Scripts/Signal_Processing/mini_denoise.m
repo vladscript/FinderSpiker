@@ -1,3 +1,11 @@
+% Function to denoise signal bye wavelet analysys
+% It use the 'sym8' and the degree increases
+% until the autocorrelation finds a local minimum
+% Input:
+%   xd: signal
+% Ouput
+%   xdenoised: denoised signal
+%   noisex:     noise=xd-xdenoised
 function [xdenoised,noisex]=mini_denoise(xd)
     dbw=1;          % Degree (Order )Wavelet
     gradacf=-10;
