@@ -140,7 +140,7 @@ end
 FileNameExp = inputdlg('Save Network as: ',...
              'CSV files for Gephi Visualization', [1 100]);
 if ~isempty(FileNameExp)
-         FileNameExp=FileNameExp{:};
+     FileNameExp=FileNameExp{:};
         % HEADER:                   State
         % ID: index on Neuron       {OK}
         % Label: Color/States       {OK}

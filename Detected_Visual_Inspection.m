@@ -1,4 +1,6 @@
-% # Check False Positive 
+%% Setup
+Update_Directory;
+%% # Check False Positive 
 % Accepted and processed Data
 global indxSIGNALSOK;
 indxSIGNALSOK=cell(size(isSIGNALS));

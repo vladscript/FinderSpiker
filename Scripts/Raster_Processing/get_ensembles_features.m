@@ -2,54 +2,57 @@
 % It gets the Neurons that participate in each ensemble
 % R(F)un after Clustering only
 % INPUT:
-%   R_Condition:        from Selected Raster
-%   Ensemble_Threshold
-%   Ensembled_Labels
-%   fs: sampling frequency
+%   R_Condition:        Cell of Rasters from Selected Raster
+%   Ensemble_Threshold  Cell of vectors
+%   Ensembled_Labels    Cell of vectors
+%   fs                 sampling frequency
 % OUTPUT
 %   Ensembled_Neurons
 %   Ensmeble_Features
 function [Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs)
 %% Setup
 % Get Number Of Conditions
-[~,C]=size(R_Condition);
-
+C=numel(R_Condition); % Number of Conditions
 % Get Number of Different Ensmebles
 Ensambles=[];
 for c=1:C
     Ensambles=[Ensambles;unique(Ensembled_Labels{c})];
 end
-Ensambles =   unique(Ensambles);
+Ensambles=unique(Ensambles);
 Ne=numel(Ensambles); % TOTAL NUMBER OF ENSEMBLES (all experiment)
 
 % Initialize Output: Condition  x Ensembles
 Ensembled_Neurons=cell(C,Ne);   % -> OUTPUT per ENSEMBLE
 Ensembles_Rate=zeros(C,Ne);     % -> OUTPUT per ENSEMBLE
 NeuronsOccupancy=zeros(C,Ne);   % -> OUTPUT per ENSEMBLE
-Dunn=zeros(1,C);                % -> OUTPUT per Condition
+% MORE FEATURES ##########################################
+DunnIndex=zeros(1,C);                % -> OUTPUT per Condition
 HebbianSequence=cell(1,C);      
 Transitions=cell(1,C);
 Ntransitions=zeros(1,C);        
 Rate_Transitions=zeros(1,C);    % -> OUTPUT per Condition
 Ratecycles=zeros(1,C);          % -> OUTPUT per Condition
 CyclesTypes=zeros(3,C);         % -> OUTPUT per Condition
-    % TypeCycles(1)->Simple
-    % TypeCycles(2)->Closed
-    % TypeCycles(3)->Open
+% TypeCycles(1)->Simple
+% TypeCycles(2)->Closed
+% TypeCycles(3)->Open
 % Ensemble_Features=cell(C,Ne);
 
 %% Main Loop
 for c=1:C
+    %% DATA
     R=R_Condition{c};               % RASTER
     [AN,Frames]=size(R);            % Total Active Neurons [selected]
     RasterDuration=Frames/fs/60;    % MINUTES
-    CAG=sum(R);                     % Coactivigram
-    Th=Ensemble_Threshold{c};       % Significant Threshold
+    CAG=sum(R);                     % Co-Activity-Graphy
+    Th=Ensemble_Threshold{c};       % CAG Threshold
     signif_frames=find(CAG>=Th);    % Significatn Frames
     Ensembles_Labels=Ensembled_Labels{c}; % Labels each frame
     if numel(signif_frames)==numel(Ensembles_Labels)
         E=unique(Ensembled_Labels{c}); % Ensambles per condition
-        for e=1:length(E)
+        %% EACH ENSEMBLE
+        for e=1:numel(E)
+            fprintf('>> Condition %i, Ensemble %i of %i \n',c,e,numel(E));
             frames_ensemble=signif_frames(Ensembles_Labels==E(e));
             TimeOccupancy=numel(frames_ensemble)/numel(signif_frames);
             EnsembleActivations=numel(find(diff(frames_ensemble)>1));
@@ -58,11 +61,12 @@ for c=1:C
             Ensembled_Neurons{c,e}=find(sum(R(:,frames_ensemble),2));
             % Output Indexes
             NeuronsOccupancy(c,e)=numel(Ensembled_Neurons{c,e})/AN;
+            % MORE FEATURES
         end
     else
         disp('>error<') % likely impossible this ever happens
     end
-    % Dunn's Index
+    %% ENSEMBLES SETs FEATURES
     NeuroVectors=zeros(AN,length(E));
     for e=1:length(E)
         NeuroVectors(Ensembled_Neurons{c,e},e)=1;
@@ -73,10 +77,11 @@ for c=1:C
     if isempty(Dhamm); Dhamm=0; end;
     Lens=sum(NeuroVectors)/AN;            % percentage of used neurons
     if isempty(Lens)
-        Dunn(c)=0;
+        DunnIndex(c)=0;
     else
-        Dunn(c)=min(Dhamm)/max(Lens); % min distance among ensembles divided by maximum length of ensembles
+        DunnIndex(c)=min(Dhamm)/max(Lens); % min distance among ensembles divided by maximum length of ensembles
     end
+    % MORE FEATURES #########
     % Hebbian Sequence
     HS=Ensembles_Labels(diff(signif_frames)>1);
     HebbianSequence{c}=HS;
@@ -97,7 +102,6 @@ for c=1:C
             i=1;
             while i<=length(Cy)
                 Cycle=ET(auxt:t+Cy(i));
-                %
                 % Check what kind of Hebbian Path: only for Cycle with all
                 % Active Ensemables
                 % Simple
@@ -151,7 +155,7 @@ for c=1:C
     Ratecycles(c)=sum(TypeCycles)/RasterDuration;
     if c<C; disp('Next Condition'); end;
 end
-%% Rate of Change of Neruons inEnsembles
+%% Rate of Change of Neurons in Ensembles
 % ONly for C>1 conditions
 if C>1
     RateNeuronsChanges=zeros(C-1,Ne);
@@ -185,7 +189,7 @@ Features_Ensemble.Rate=Ensembles_Rate;
 Features_Ensemble.Dominance=Dominance_Ensemble;
 % Features_Ensemble.Threshold=Dominance_Ensemble;
 % Features_Ensemble.AllEnsemble=Dominance_Ensemble;
-Features_Condition.Dunn=Dunn;
+Features_Condition.Dunn=DunnIndex;
 Features_Condition.RateTrans=Rate_Transitions;
 Features_Condition.RateCycles=Ratecycles;
 Features_Condition.CyclesType=CyclesTypes;

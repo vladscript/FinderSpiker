@@ -22,7 +22,7 @@ function R_Analysis = get_bayes_ensembles(R)
 % About the Raster
 disp('> Getting data ...')
 
-[Cells,Frames]=size(R); % Always More Frames than Cells
+[~,Frames]=size(R); % Always More Frames than Cells
 % if Cells>Frames
 %     R=R';
 %     [Cells,Frames]=size(R);

@@ -32,10 +32,11 @@ end
 
 if ifplot
     %% Plot in Minutes
+    % Always plot after a Raster Analysis to get the axis right
     Axis_details=gca;
     fig_Ensembles_Transitions=figure('Position', [415 172 560 122],...
         'Name','Hebbian Pathways');
-    plot(time_ensemble/fs/60,ensemble_index,'k','LineWidth',1); hold on
+    plot(time_ensemble/fs/60,ensemble_index,'k','LineWidth',2); hold on
     Ntran=length(ensemble_index);
     for i=1:Ntran
         plot(time_ensemble(i)/fs/60,ensemble_index(i),'o',...

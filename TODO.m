@@ -4,20 +4,20 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m
 %% FIXED  READY TO GO @ GIT
+% Ensemble Sorting: ok
 
 %% Bugs & New Functions NOW
 
 % Optimize Ensemble_Sorting to Display and Save Definitive Cluster Analysis
 
+% Get and Save CAG temporal Features
+
+% Ensemble Features: Simm Matrix among Ensembles for all Experiment
+
 % Compare SIMMILAR and CONFUSING (confmat) ENSEMBLES to MERGE them
 % Merge the Most inter-Cinfusing if its distance it's close enough
 
-% Get and Save CAG temporal Features: Autocorrelation, etc...
-% IDENTIFY Features per CONDITION when Analyze Concatenated Raster
-% (condition times)
-
-% Analyze per Condition:
-% Ensemble Features: Simm Matrix among Ensembles for all Experiment
+% Delete : Plot_Ensembles_Experiment & Plot_Hebbian_Paths
 
 % Somee offset at detrending algorithm 
 
@@ -82,18 +82,17 @@
 % >>R_ConditionName1=R_Condition{1};
 % AUTOMATIC
 % >>R_ConditionName1_Analysis=get_bayes_ensembles(R_Dyskinesia);
+% Review results fast:
+% >>ImageEnsembles(R_ConditionName1_Analysis);
 % MANUAL
 % >>...
 
 % DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI)
 % >> Ensemble_Sorting
 
-% PLOTSSS
+% PLOTS FAST
 % >>Plot_Ensembles_Experiment(R_Condition,EnsembleName,Ensembled_Labels,Ensemble_Threshold,UniRMutiE,ColorState,fs,[]);
 % >>Plot_Hebbian_Paths(R_Condition,Ensemble_Threshold,Ensembled_Labels,Names_Conditions,ColorState,fs);
-% SAVE ENSEMBLES DATA
-% >>[Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs);
-% >>save_features_ensembles(Experiment,Names_Conditions,Features_Ensemble,Features_Condition)
 
 % ENSEMBLES FEATURES BOXPLOTS
 % >>Ensembles_Features_Display

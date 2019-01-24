@@ -29,7 +29,7 @@ for c=1:NC
     if ismember('Clustering',NamesFields)   % Ensembles Activity
         NGroups{c}=NN_data.Clustering.TotalStates;          % Number of Groups
         SIG_FRAMES{c}=find(NN_data.Peaks.Index);            % Frames with CAG above Threshold
-        LABELS{c}=NN_data.Clustering.VectorStateIndex;      % Ensemble Labels
+        LABELS{c}=NN_data.Clustering.VectorStateIndex+CummGroups;      % Ensemble Labels
         THR{c,1}=NN_data.Peaks.Threshold;                   % CAG Threshold
         fprintf('>> Ensembles in Condition %i \n',c)
         tabulate(LABELS{c});
@@ -47,7 +47,7 @@ for c=1:NC
     % Total Number of Frames
     CummFrames=CummFrames+LENGHTRASTER{c};
     % Frame Labels
-    labels_frames=[labels_frames;LABELS{c}+CummGroups];
+    labels_frames=[labels_frames;LABELS{c}];
     % Total Number of Groups
     CummGroups=CummGroups+NGroups{c};
     % Group COunter:
