@@ -24,9 +24,9 @@ Ensambles=unique(Ensambles);
 Ne=numel(Ensambles); % TOTAL NUMBER OF ENSEMBLES (all experiment)
 % Initialize OUTPUTS        Condition  x Ensembles
 Ensembled_Neurons=cell(C,max(Nenscond));
-Ensembles_Rate=zeros(C,Ne);
-NeuronsOccupancy=zeros(C,Ne);
-TimeOccupancy=zeros(C,Ne);
+Ensembles_Rate=zeros(C,max(Nenscond));
+NeuronsOccupancy=zeros(C,max(Nenscond));
+TimeOccupancy=zeros(C,max(Nenscond));
 EnsCAGstats={};
 % -> OUTPUT                 Condition
 DunnIndex=zeros(1,C);
