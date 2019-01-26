@@ -169,13 +169,13 @@ for c=1:NCplot
         % ************************************************************
         % Features  of Ensembles ########################
         Ensembled_Labels{c}=labels;
-        Ensemble_Threshold{c}=THR{c};
+        Ensemble_Threshold(c)=THR{c};
     else       %% Non-Ensembles
         ShNeuron=0;
         ActivityLength=0;
         % Features  of Ensembles ########################
         Ensembled_Labels{c}=[];
-        Ensemble_Threshold{c}=THR{c};
+        Ensemble_Threshold(c)=THR{c};
     end
     % Update auxiliar variables
     if UniRMutiE

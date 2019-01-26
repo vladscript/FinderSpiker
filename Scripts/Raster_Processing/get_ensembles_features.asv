@@ -82,8 +82,8 @@ for c=1:C
         r=zeros(size(CAG));
         r(frames_ensemble)=1;
         [IEIs,EDs]=interval_duration_events(r);
-        IEIsExp{c,e}=IEIs/fs;   % [SECONDS]
-        EDsExp{c,e}=EDs/fs;     % [SECONDS]
+        IEIsExp{c,e}=IEIs;
+        EDsExp{c,e}=EDs;
         IEIstats{c,e}=[mean(IEIs),var(IEIs),skewness(IEIs),kurtosis(IEIs)];
         EDstats{c,e}=[mean(EDs),var(EDs),skewness(EDs),kurtosis(EDs)];
         %disp('butt')
@@ -182,7 +182,7 @@ end
 NeuralClusters=zeros(AN,Ne);
 col=1;
 for ncond=1:C
-    for nens=1:Nenscond(ncond)
+    for nens=1:max(Nenscond(c))
         NeuralClusters(Ensembled_Neurons{ncond,nens},col)=1;
         col=col+1;
     end
@@ -200,10 +200,10 @@ Features_Ensemble.Dominance=Dominance_Ensemble;
 Features_Ensemble.TimeOccupancy=TimeOccupancy;
 Features_Ensemble.NeuronsOccupancy=NeuronsOccupancy;
 Features_Ensemble.EnsCAGstats=EnsCAGstats;
-Features_Ensemble.IEIstats=IEIstats; % [seconds]
-Features_Ensemble.EDstats=EDstats;   % [seconds]
-Features_Ensemble.IEIsExp=IEIsExp;   % [seconds]
-Features_Ensemble.EDsExp=EDsExp;     % [seconds]
+Features_Ensemble.IEIstats=IEIstats*(1/fs); % [seconds]
+Features_Ensemble.EDstats=EDstats*(1/fs);   % [seconds]
+Features_Ensemble.IEIsExp=IEIsExp*(1/fs);   % [seconds]
+Features_Ensemble.EDsExp=EDsExp*(1/fs);     % [seconds]
 % Vectors of Condition x 1
 Features_Condition.Dunn=DunnIndex;
 Features_Condition.RateTrans=Rate_Transitions;
@@ -214,7 +214,5 @@ Features_Condition.Threshold=Ensemble_Threshold;
 Features_Condition.MIV=MIV;
 Features_Condition.ECV_Cond=ECV_Cond;
 Features_Condition.Model_Cond=Model_Cond;
-Features_Condition.CrossEnsmebleSimm=CrossEnsmebleSimm;
-Features_Condition.Nenscond=Nenscond;
 disp('>>Feature Extraction of Neural Ensemble: Done.')
 %% disp('END OF THE WORLD')
