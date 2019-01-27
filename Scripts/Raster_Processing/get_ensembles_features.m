@@ -187,34 +187,47 @@ for ncond=1:C
         col=col+1;
     end
 end
-CrossEnsmebleSimm=ones(Ne);
+% CrossEnsmebleSimm=ones(Ne);
 CrossEnsmebleSimm=1-squareform( pdist(NeuralClusters',SimMethod) );
 
 
 %% OUTPUTS ***************************************************************
-Dominance_Ensemble=NeuronsOccupancy.*Ensembles_Rate;
-% Matrices of Conditon x Ensembles
-Features_Ensemble.Neurons=Ensembled_Neurons;
-Features_Ensemble.Rate=Ensembles_Rate;
-Features_Ensemble.Dominance=Dominance_Ensemble;
-Features_Ensemble.TimeOccupancy=TimeOccupancy;
-Features_Ensemble.NeuronsOccupancy=NeuronsOccupancy;
-Features_Ensemble.EnsCAGstats=EnsCAGstats;
-Features_Ensemble.IEIstats=IEIstats; % [seconds]
-Features_Ensemble.EDstats=EDstats;   % [seconds]
-Features_Ensemble.IEIsExp=IEIsExp;   % [seconds]
-Features_Ensemble.EDsExp=EDsExp;     % [seconds]
-% Vectors of Condition x 1
+
+%                       Vectors of Condition x 1
+% ABOUT the CLUSTERING
+Features_Condition.Nenscond=Nenscond;
+Features_Condition.Threshold=Ensemble_Threshold;
 Features_Condition.Dunn=DunnIndex;
+Features_Condition.MIV=MIV;
+Features_Condition.ECV_Cond=ECV_Cond;
+% ABOUT the ALTERNANCE & REVERBERATION
 Features_Condition.RateTrans=Rate_Transitions;
 Features_Condition.RateCycles=Ratecycles;
 Features_Condition.CyclesType=CyclesTypes;
+% ABOUT CO-ACTIVITY GRAPHY
 Features_Condition.CAGstats=CAGstats;
-Features_Condition.Threshold=Ensemble_Threshold;
-Features_Condition.MIV=MIV;
-Features_Condition.ECV_Cond=ECV_Cond;
+
+%                                   MAT File:
 Features_Condition.Model_Cond=Model_Cond;
 Features_Condition.CrossEnsmebleSimm=CrossEnsmebleSimm;
-Features_Condition.Nenscond=Nenscond;
+
+% Domminance:
+Dominance_Ensemble=NeuronsOccupancy.*Ensembles_Rate;
+% Matrices of Conditon x Ensembles
+Features_Ensemble.Neurons=Ensembled_Neurons;
+% Time and Size of Ensembles
+Features_Ensemble.NeuronsOccupancy=NeuronsOccupancy;
+Features_Ensemble.TimeOccupancy=TimeOccupancy;
+Features_Ensemble.Dominance=Dominance_Ensemble;
+Features_Ensemble.Rate=Ensembles_Rate;
+% Ensemble-CAG features
+Features_Ensemble.EnsCAGstats=EnsCAGstats;
+Features_Ensemble.IEIstats=IEIstats; % [seconds]
+Features_Ensemble.EDstats=EDstats;   % [seconds]
+
+%                                   MAT File
+Features_Ensemble.IEIsExp=IEIsExp;   % [seconds]
+Features_Ensemble.EDsExp=EDsExp;     % [seconds]
+
 disp('>>Feature Extraction of Neural Ensemble: Done.')
 %% disp('END OF THE WORLD')

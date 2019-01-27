@@ -12,6 +12,8 @@
 
 % Ensemble Features: Simm Matrix among Ensembles for all Experiment
 
+% Retreive functional Network Features
+
 % Compare SIMMILAR and CONFUSING (confmat) ENSEMBLES to MERGE them
 % Merge the Most inter-Cinfusing if its distance it's close enough
 

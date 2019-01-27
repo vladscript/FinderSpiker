@@ -10,6 +10,7 @@
 function save_features_ensembles(Experiment,Names_Conditions,Features_Ensemble,Features_Condition)
 % Setup
 % Saving Directory: one above where Finder Spiker is..
+Experiment=Experiment(Experiment~='\');     % NAMES PATCH
 FileDirSave=pwd;
 slashes=find(FileDirSave=='\');
 FileDirSave=FileDirSave(1:slashes(end));
@@ -27,6 +28,7 @@ while checkname==1
     if strcmp(FileName(1:end-4),Experiment)
         checkname=0;
         % SAVE DATA
+        disp('>>Updating .mat file...')
         save([PathName,FileName],'Features_Ensemble','Features_Condition',...
             '-append');
         disp([Experiment,'   -> UPDATED (Ensembles Features)'])
@@ -47,48 +49,70 @@ if iscell(Names_Conditions)
 else
     C=1;
 end
+%% Save Files for each COndition
+HeadersFeaturesCondition={'Nensembles','Threshold','Dunns','MaxIntraVec','ClassError',...
+                     'RateTrans','RateCycles','SimpleCycles','ClosedCycles','OpenedCycles',...
+                     'CAGauc','CAGmean','CAGvar','CAGskew','CAGkurt'};
+HeadersFeaturesEnsembles={'Neurons','Time','Domminace','Rate',...
+     'ensCAGauc','ensCAGmean','ensCAGvar','ensCAGskew','ensCAGkurt'...
+     'IEImean','IEIvar','IEIskew','IEIkurt'...
+     'EDmean','EDvar','EDskew','EDkurt'...
+     'CAGauc','CAGmean','CAGvar','CAGskew','CAGkurt'};
+% ROWS Ensembles are added: Ens1; Ens2; ... Ensj
 
 for c=1:C
-    HeadersFeatures={'Ensembles','Dunns','RateTrans','RateCycles','Dominant',...
-    'SimpleCycles','ClosedCycles','OpenedCycles'};
-    Tensemblesfeatures=table;
-    % Condition Table
+    fprintf('>> Creating Table Ensemble Feautures of %s \n',Names_Conditions{c});
+    %% General INTEL about Neurla Ensembles
+    % Features Columns of the Table ***************************************
     Name=Names_Conditions{c};
-    [~,NE]=size(Features_Ensemble.Neurons);             % N ensembles
+    NE=Features_Ensemble.Nenscond(c);                   % N ensembles
+    Th=Features_Condition.Threshold;                    % Threshold
     DunnIndx=Features_Condition.Dunn(c);                % Dunns Index
+    MaxIntraVec=Features_Condition.MIV(c);              % Max Distance Intra Vectors
+    ClassError=Features_Condition.ECV_Cond(c);          % Classification Error
     RateTran=Features_Condition.RateTrans(c);           % Rate Transitions
     RateCycl=Features_Condition.RateCycles(c);          % Rate Cycles
-    [~,EnseDom]=max(Features_Ensemble.Dominance(c,:));  % Dominant Ensemble
-    % Simple Cycles
+    % [%] Simple Cycles
     Portion_simple=Features_Condition.CyclesType(1,c)/sum(Features_Condition.CyclesType(:,c));
-    % Closed Cycles
+    % [%] Closed Cycles
     Portion_closed=Features_Condition.CyclesType(2,c)/sum(Features_Condition.CyclesType(:,c));
-    % Opened Cycles
+    % [%] Opened Cycles
     Portion_opened=Features_Condition.CyclesType(3,c)/sum(Features_Condition.CyclesType(:,c));
-    % INITIALIZE TABLE
-    Tensemblesfeatures=table(NE,DunnIndx,RateTran,RateCycl,EnseDom,...
-        Portion_simple,Portion_closed,Portion_opened);
-    for n=1:NE
-        HeadersFeatures{end+1}=['RateEns_',num2str(n)];
-        Tensemblesfeatures(1,end+1)=table(Features_Ensemble.Rate(c,n));
-    end
-    for n=1:NE
-        HeadersFeatures{end+1}=['DomEns_',num2str(n)];
-        Tensemblesfeatures(1,end+1)=table(Features_Ensemble.Dominance(c,n));
-    end
-    Tensemblesfeatures.Properties.VariableNames=HeadersFeatures;
+    CAGauc=Features_Condition.CAGstats(c,1);            % CAG AutoCorrelation Coefficient
+    CAGmean=Features_Condition.CAGstats(c,2);           % CAG Mean
+    CAGvar=Features_Condition.CAGstats(c,3);            % CAG Variance
+    CAGskew=Features_Condition.CAGstats(c,4);           % CAG Skewness
+    CAGkurt=Features_Condition.CAGstats(c,5);           % CAG Kurtosis
+    % ********************************************************************
+    % Create Table
+    Tensemblesfeatures=table(NE,Th,DunnIndx,MaxIntraVec,ClassError,...
+        RateTran,RateCycl,Portion_simple,Portion_closed,Portion_opened,...
+        CAGauc,CAGmean,CAGvar,CAGskew,CAGkurt);
+    Tensemblesfeatures.Properties.VariableNames=HeadersFeaturesCondition;
     % Save CSV
     if isdir([FileDirSave,NameDir])
-        writetable(Tensemblesfeatures,[FileDirSave,NameDir,Experiment(2:end),'_',Name,'_EF.csv'],...
+        disp('>>Saving...')
+        writetable(Tensemblesfeatures,[FileDirSave,NameDir,Experiment,'_',Name,'.csv'],...
             'Delimiter',',','QuoteStrings',true);
         disp(['Saved Ensemble Features: ',Experiment,'-',Names_Conditions{c}])
     else % Create Directory
-        disp('Directory >Ensemble Features< created')
+        disp('>>Directory >Ensemble Features< created')
+        disp('>>Saving...')
         mkdir([FileDirSave,NameDir]);
-        writetable(Tensemblesfeatures,[FileDirSave,NameDir,Experiment(2:end),'_',Name,'_EF.csv'],...
+        writetable(Tensemblesfeatures,[FileDirSave,NameDir,Experiment,'_',Name,'.csv'],...
             'Delimiter',',','QuoteStrings',true);
         disp('Ensemble Features Directory Created');
         disp(['Saved Ensemble Features: ',Experiment,'-',Names_Conditions{c}])
     end
+    %% Detailed Ensembles INTEL
+    % [~,EnseDom]=max(Features_Ensemble.Dominance(c,:));  % Dominant Ensemble
+%     for n=1:NE
+%         HeadersFeatures{end+1}=['RateEns_',num2str(n)];
+%         Tensemblesfeatures(1,end+1)=table(Features_Ensemble.Rate(c,n));
+%     end
+%     for n=1:NE
+%         HeadersFeatures{end+1}=['DomEns_',num2str(n)];
+%         Tensemblesfeatures(1,end+1)=table(Features_Ensemble.Dominance(c,n));
+%     end
     
 end
