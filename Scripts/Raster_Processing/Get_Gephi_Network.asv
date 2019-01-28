@@ -16,16 +16,12 @@
 %   Experiment                  Experiment ID
 %   Dialogue Input:             File Name to save
 
-% Structure Ouput
-%   fNet.SharedNeuron:          N neurons shared by all ensembles
-%   fNet.AM:                    Adjacency Matrix
-%   fNet.SynStrengthStats       Weights Link Statistics
-%   fNet.MaxSynLinks            Maximum of Links Between Neurons
-%   fNet.MaxCoupledPair         Pair of Max Connected Neurons
-% CSV files 4 Gephi Software:
-%   EXPID_Condition_Nodes.csv  ID/Label/Coordinates/State's Colors
-%   EXPID_Condition_Links.csv Source/Target/Weight
-function fNet=Get_Gephi_Network(Raster,XY_selected,Neurons_State,Cluster_Indexing,ColorState,labels_frames,Experiment)
+% Ouput
+%   SharedNeuron:       N neurons shared by all ensembles
+% CSV files fro Gephi:
+%   Nodes.csv  ID/Label/Coordinates/State's Colors
+%   Links.csv Source/Target/Weight
+function SharedNeruons=Get_Gephi_Network(Raster,XY_selected,Neurons_State,Cluster_Indexing,ColorState,labels_frames,Experiment)
 %% Setup
 [~,NStates]=size(Neurons_State); % Total States
 ActiveNeurons=[];
@@ -140,18 +136,14 @@ for i=1:Ncells-1
     end
 end
 %% NETWORK OUTPUTS ******************************************************
-% N Cells that participate in all Ensembles
-fNet.SharedNeruons=SharedNeruons;
 % Adjacency (Normalized) Matrix
 fNet.AM=AdjacencyMatrix;
 % Synaptic Strength: weigths of conecctions statistics
 fNet.SynStrengthStats=[mean(WEIGHT),var(WEIGHT),skewness(WEIGHT),kurtosis(WEIGHT)];
-% Maximum Synpatic Strength in Links
-fNet.MaxSynLinks=MaxSynLinks;
 % Max Coupled Neurons
 IndexMaxW=find(WEIGHT==1);
 fNet.MaxCoupledPair=[SOURCE(IndexMaxW),TARGET(IndexMaxW)];
-
+fNet.MaxSynLinks=MaxSynLinks;
 
 %% Nodes & Links Table *******************************************************
 % Input Dialogues

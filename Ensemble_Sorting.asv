@@ -138,16 +138,8 @@ end
 %% Exporting to GEPHI and Ensemble Data per Condition
 NG=0;
 AuxC=0;
-NetworkCondition=cell(NCplot,1);
 % Input: ColorState, from Clustering Analysis
 for c=1:NCplot
-    % Initialize Output
-    % Max Links Between Neurons
-    Network{c}.MaxSynLinks=0;
-    % Max Links Between Neurons
-    Network{c}.MaxCoupledPair=[0,0]; % Neurons A,B
-    % Satitstics of Weights Connections (Synaptic Strength)
-    Network{c}.SynStrengthStats=[0,0,0,0];
     % Get raw data **************************************************
     R=Rasters{c}(:,IndexesActive);  % frames x cells
     ActNeu=find(sum(R,1)>0);        % Active Neurons in each Raster: ENS & NON ENS
@@ -174,8 +166,8 @@ for c=1:NCplot
         HebbSequence=Ensembles_Transitions(fs,labels,sigframes,ColorState,0); % ---> save
         % Save Network to Gephi**********************************
         fNet=Get_Gephi_Network(R,XY_selectedClean,Neurons_State_Cluster,OrderOneCondition,ColorState,labels,Experiment);
-        NetworkCondition{c}=fNet;
-        ShNeuron(c)=fNet.SharedNeruons/numel(ActNeu);
+        
+        ShNeuron(c)=CoreN/numel(ActNeu);
         % ************************************************************
         % Features  of Ensembles ########################
         Ensembled_Labels{c}=labels;
@@ -198,8 +190,6 @@ end
 %% GET & SAVE NEURAL ENSEMBLE FEATURES
 [Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs);
 Features_Condition.CoreNeurons=ShNeuron;
-% Network Features
-Features_Condition.Network=NetworkCondition;
 save_features_ensembles(Experiment,Names_Conditions,Features_Ensemble,Features_Condition);
 
 %% Save SORTING,COORDINATES and COLOR ENSEMBLES

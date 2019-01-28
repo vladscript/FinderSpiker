@@ -51,8 +51,8 @@ for c=1:C
     RasterDuration=Frames/fs/60;    % MINUTES
     CAG=sum(R);                     % Co-Activity-Graphy
     %% CAG Statistics
-    AUC=autocorr(CAG,1); % Autocorrelation Coeffcient
-    CAGstats(c,:)=[AUC(2),mean(CAG),var(CAG),skewness(CAG),kurtosis(CAG)];
+    AUC=autocorr(CAG,1); % CAG Autocorrelation Coefficient
+    CAGstats(c,:)=AUC(2);
     Th=Ensemble_Threshold(c);       % CAG Threshold
     % Thresholds(c)=Th;
     signif_frames=find(CAG>=Th);    % Significatn Frames
@@ -68,7 +68,7 @@ for c=1:C
         TimeOccupancy(c,e)=numel(frames_ensemble)/numel(signif_frames);
         EnsembleActivations=numel(find(diff(frames_ensemble)>1));
         % Ouput Measure Features by ENSEMBLE
-        Ensembles_Rate(c,e)=EnsembleActivations/RasterDuration;
+        Ensembles_Rate(c,e)=EnsembleActivations/RasterDuration; %[act/min]
         Ensembled_Neurons{c,e}=find(sum(R(:,frames_ensemble),2));
         % Output Indexes
         NeuronsOccupancy(c,e)=numel(Ensembled_Neurons{c,e})/AN;
@@ -212,8 +212,9 @@ Features_Condition.Model_Cond=Model_Cond;
 Features_Condition.CrossEnsmebleSimm=CrossEnsmebleSimm;
 
 % Domminance:
-Dominance_Ensemble=NeuronsOccupancy.*Ensembles_Rate;
-% Matrices of Conditon x Ensembles
+% Dominance_Ensemble=NeuronsOccupancy.*Ensembles_Rate;
+Dominance_Ensemble=NeuronsOccupancy.*TimeOccupancy;
+%                           Matrices of Conditon x Ensembles
 Features_Ensemble.Neurons=Ensembled_Neurons;
 % Time and Size of Ensembles
 Features_Ensemble.NeuronsOccupancy=NeuronsOccupancy;
