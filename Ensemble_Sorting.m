@@ -219,9 +219,11 @@ if CummFrames==TotalFrames
         if strcmp(FileName(1:end-4),Experiment)
             checkname=0;
             % SAVE DATA
-            disp('>>Updating .mat File...')
+            disp('>>Updating .mat with Neural Ensemble Analysis...')
             save([PathName,FileName],'XY_cluster','New_Order_Clustering',...
-                'ColorState','-append');
+                                    'Features_Ensemble','Features_Condition',...
+                                    'ColorState','-append');
+            disp('>>Done.')
             disp('>>Saving Analysis...')
             % Save Selected Analysis Variables
             for c=1:NC
@@ -241,5 +243,5 @@ if CummFrames==TotalFrames
         end
     end
 end
-
+disp('>>END.')
 %% END OF THE WORLD

@@ -18,15 +18,14 @@ function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
     tbl=tabulate(frame_ensembles);
     SingleEns=find(tbl(:,2)==1);
     Rnewclust=Rclust;
-    aux=1; % frames2ignore=[];
+    aux=1; frames2ignore=[];
     while ~isempty(SingleEns)
         fprintf('>>Ignoring Single Frame Ensemble %i-th trial\n',aux)
         NsingEns=numel(SingleEns);
-        frames2ignore=[];
         for k=1:NsingEns
             frames2ignore=find(frame_ensembles==SingleEns(k));
         end
-        Rnewclust(:,frames2ignore)=0; % Ignore these vector
+        Rnewclust(:,frames2ignore)=0; % Shorter Duration
         Distance=squareform(pdist(Rnewclust',SimMethod));
         Sim=1-Distance;
         LinkageMethod=HBestTree_JPplus(Sim);    % Output
@@ -37,7 +36,7 @@ function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
         SingleEns=find(tbl(:,2)==1);
         aux=aux+1;
     end
-    % frame_ensembles(frames2ignore)=0;
+    frame_ensembles(frames2ignore)=0;
     
     % NeuroVectors=zeros(numel(ActiveCells),Nensembles);
     TwoEnsembledNeurons={};

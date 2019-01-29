@@ -25,7 +25,7 @@ for i=1:length(labels_frames)
                 xposition(2),ypositon(2)],'Curvature',0.2,...
                 'EdgeColor',ColorState(labels_frames(i),:),...
                 'FaceColor',ColorState(labels_frames(i),:));
-        fprintf('°')
+        fprintf('>>coloring cell %i ',AC(j))
     end
     fprintf('\n')
 end

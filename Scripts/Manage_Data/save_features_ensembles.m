@@ -16,30 +16,30 @@ slashes=find(FileDirSave=='\');
 FileDirSave=FileDirSave(1:slashes(end));
 
 %% SAVE OUTPUT DATASET (.m file)
-checkname=1;
-while checkname==1
-    DefaultPath=[FileDirSave,'Processed Data'];
-    if exist(DefaultPath,'dir')==0
-        DefaultPath=pwd; % Current Diretory of MATLAB
-    end
-    [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
-        'MultiSelect', 'off',DefaultPath);
-    dotindex=find(FileName=='.');
-    if strcmp(FileName(1:end-4),Experiment)
-        checkname=0;
-        % SAVE DATA
-        disp('>>Updating .mat file...')
-        save([PathName,FileName],'Features_Ensemble','Features_Condition',...
-            '-append');
-        disp([Experiment,'   -> UPDATED (Ensembles Features)'])
-    elseif FileName==0
-        checkname=0;
-        disp('*************DISCARDED************')
-    else
-        disp('Not the same Experiment!')
-        disp('Try again!')
-    end
-end    
+% checkname=1;
+% while checkname==1
+%     DefaultPath=[FileDirSave,'Processed Data'];
+%     if exist(DefaultPath,'dir')==0
+%         DefaultPath=pwd; % Current Diretory of MATLAB
+%     end
+%     [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
+%         'MultiSelect', 'off',DefaultPath);
+%     dotindex=find(FileName=='.');
+%     if strcmp(FileName(1:end-4),Experiment)
+%         checkname=0;
+%         % SAVE DATA
+%         disp('>>Updating .mat file...')
+%         save([PathName,FileName],'Features_Ensemble','Features_Condition',...
+%             '-append');
+%         disp([Experiment,'   -> UPDATED (Ensembles Features)'])
+%     elseif FileName==0
+%         checkname=0;
+%         disp('*************DISCARDED************')
+%     else
+%         disp('Not the same Experiment!')
+%         disp('Try again!')
+%     end
+% end    
 %% SAVE CSV FILES
 % Direcotry Name
 NameDir='Ensemble Features\';
@@ -160,7 +160,7 @@ for c=1:C
     TensemblesDetails.Properties.VariableNames=HeadersFeaturesEnsembles;
     % Save CSV
     if isdir([FileDirSave,NameDir])
-        disp('>>Saving Neural Ensemsbles Details...')
+        disp('>>Saving Neural Ensembles Details...')
         writetable(TensemblesDetails,[FileDirSave,NameDir,Experiment,'_',Name,'_DET.csv'],...
             'Delimiter',',','QuoteStrings',true);
         disp(['Saved Ensemble Details: ',Experiment,'-',Names_Conditions{c}])
@@ -174,4 +174,5 @@ for c=1:C
         disp(['Saved Ensemble Details: ',Experiment,'-',Names_Conditions{c}])
     end
 end
-disp('>>END.')
+disp('>> Data Exported at \Ensemble Features.')
+% disp('>>END.')

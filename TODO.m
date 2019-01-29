@@ -1,44 +1,40 @@
-%% NOTES # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-% Manual Mode->Necessary to know the statistics power
+%% PERMANTEN NOTES # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+% Manual Mode is divideed in two parts->
+% Necessary to know the statistical power of the Automatic Mode:
 % of the automatic method by dividing in -+ and -- (false+ & false-)
 % Old Version Manual Mode:
-%   Manual_Driver_Raster_Magic.m
+%   Manual_Driver_Raster_Magic.m (becoming unnecessary)
 %% FIXED  READY TO GO @ GIT
-% Ensemble Sorting: ok
-% Optimize Ensemble_Sorting to Display and Save Definitive Cluster Analysis
-% Get and Save CAG temporal Features
-% Ensemble Features: Simm Matrix among Ensembles for all Experiment
-% Retreive functional Network Features
-% Delete : Plot_Ensembles_Experiment & Plot_Hebbian_Paths
-% Matrix of Dist: Hamming distance of neurons sets at each Condition
-% Save Ensemble Features
+
 %% Bugs & New Functions NOW
 
-% Look for Bugs
+% Look for Bugs:
+% Ignore Single-Frame Ensembles-> OK (zero vector)
+% Bugs at Rasters with Very LOW ACTIVITY Exp?
+% Save .mat File even when if it was analyzed at NeuralNetwork GUI
+
 % Compare SIMMILAR and CONFUSING (confmat) ENSEMBLES to MERGE them
 % Merge the Most inter-Cinfusing if its distance it's close enough
 
-% Somee offset at detrending algorithm 
+% SIGNAL PROCESSING RELATED
+%   Somee offset at detrending algorithm 
+%   Spurious Drivers
+%       Lone Drivers: check clean signal's samples around if they're above noise
+%   Check at Signals with Huge Valley (synaptic like)
 
-% Spurious Drivers
-% Lone Drivers: check clean signal's samples around if they're above noise
-
-% Check at Signals with Huge Valley (synaptic like)
-
-% retreive of Original Signals, coordinates, etc
+% retreive of Original Signals, coordinates, etc:
 
 %%% MAKE ALGORITHMIA
 
 % Modify Zoom at Windows in the script: Select_Raster_for_NN.m
 
-% Bugs at Rasters with Very LOW ACTIVITY Exp?
-
-% Save .mat File even when if it was analyzed at NeuralNetwork GUI
+% delete Plot_Raster_V.m
 
 % Add button to save Zoom image (MERGED MAGIC)
 % Save Selected Points SELECTED-> add to file .mat
 % Add Highlight Neuron Using Mouse at Plot_Raster
 % and other colors in the MERGE script : MAGENTA
+
 % Threshold to get NETWORK !!!!!!!!
 
 % Inspection of Each ROI...
@@ -46,8 +42,7 @@
 %   Undetected_Visual_Inspection
 
 % CLUSTERING STUFF ***********************
-% Threshold: prior numbercoactivyt:
-% [THCOAC]=mctest(R,'modes')
+% Threshold: Given by Best Classifiaction Validation
 
 
 %% FUTURE **********************************
@@ -59,7 +54,7 @@
 % Setup Script: deconvolution parameters
 
 %% STEPS GUIDE *********************************************************
-% PROCESSING
+% SIGNAL PROCESSING: Detect Calcium Transients Events
 % >>Finder_Spiker_Calcium
 % >>Detected_Visual_Inspection
 % >>Undetected_Visual_Inspection
@@ -67,33 +62,26 @@
 
 % RASTER SELECTION
 % ACTUAL MODE: @ Original Coordiantes Order
-% >>[RASTER_Selected_Clean,XY_selected,R_Condition,Onsets]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment);
+% >>Select_Rasters
 
 % RETRIEVE RASTER for ANALYSIS
 % >>R=RASTER_Selected_Clean'; % ALL CONDITIONS
-% >>R_CONDTION1=R_Condition{1}';
+% >>R_CONDITION1=R_Condition{1}; % Cells x Frames (dim)
 % ...
-% >>R_CONDTIONi=R_Condition{i}';
+% >>R_CONDITIONi=R_Condition{i};
 
-% CLUSTERING ENSEMBLES
-% For everi i conditoneach R_CONDITIONi:
-% >>R_ConditionName1=R_Condition{1};
+% CLUSTERING NEURONAL ENSEMBLES
 % AUTOMATIC
-% >>R_ConditionName1_Analysis=get_bayes_ensembles(R_Dyskinesia);
-% Review results fast:
-% >>ImageEnsembles(R_ConditionName1_Analysis);
+% >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDTIONi);
 % MANUAL
-% >>...
+% >>R_COND_Analysis = raster_cluster(R_COND,CAG_TH,Nensmbles,'hamming');
 
 % DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI)
+% Neural ensemble and Functional Network Features Extraction
 % >> Ensemble_Sorting
 
-% PLOTS FAST
-% >>Plot_Ensembles_Experiment(R_Condition,EnsembleName,Ensembled_Labels,Ensemble_Threshold,UniRMutiE,ColorState,fs,[]);
-% >>Plot_Hebbian_Paths(R_Condition,Ensemble_Threshold,Ensembled_Labels,Names_Conditions,ColorState,fs);
-
-% ENSEMBLES FEATURES BOXPLOTS
-% >>Ensembles_Features_Display
+% PLOT FAST
+% >> ImageEnsembles(R_ConditionNamej_Analysis);
 
 % COLOCALIZATION OF MARKED CELLS
 % >>Merge_Finder_Magic
@@ -102,13 +90,21 @@
 % 1) Plot Raster (without sorting) from:
 % >>[Rsel,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,RASTER,XY_merged,XY);
 % Each Rsel{n} is the selected raster
-% >>Rjunto=[Rsel{1},Rsel{2},Rsel{3}]; Plot_Raster_V(Rjunto);
+% >>Rjunto=[Rsel{1},Rsel{2},Rsel{3}]; Plot_Raster_Ensembles(Rjunto);
 % Find Cell of Interest: Ci
 % >>[XS,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,SIGNALSclean,XY_merged,XY);
 % >>figure; plot(XS{c}(Ci,:))
 
+% N-EXPERIMENTS RESULTS ******
+
 % LOAD RASTER FEATURES FOR A SET OF EXPERIMENTS
 % >> Raster_Features_Display
+
+% ENSEMBLES FEATURES BOXPLOTS (*)
+% >>Ensembles_Features_Display
+
+% Cummulative Features for differente Features:
+% such as RoA of several cells and experiments
 
 %% Legacy Code:
 %   Manual_Driver_Raster_Magic_Ultimate (saved as private)

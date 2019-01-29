@@ -29,7 +29,7 @@ Mdl=fitcnb(X,Y,'DistributionNames','kernel');
 disp('>>Classiffier Trained.')
 disp('>>Validating....')
 % 10-fold Cross Validation
-[label,Posterior]=resubPredict(Mdl);
+[label,~]=resubPredict(Mdl);
 ECV=1-numel(find(label==Y))/numel(Y);
 fprintf('Cross-Validated Classification Error: %3.1f %%\n',100*ECV);
 disp('>>Done.')

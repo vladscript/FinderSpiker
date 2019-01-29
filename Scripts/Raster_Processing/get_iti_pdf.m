@@ -25,33 +25,10 @@ ISIs=[];
 TranLengths=[];
 for c=1:Cells
     r=R(c,:);
-    [ISIs,TranLengths]=interval_duration_events(r);
-    % disp(c);
-%     if ~isempty(r(r>0))
-%         dr=diff(r); 
-%         % +dr -> start Interval
-%         % -dr -> end Interval
-%         StartsIntervasl=find(dr>0);
-%         EndsIntervasl=find(dr<0);
-%         if and(~isempty(StartsIntervasl),~isempty(EndsIntervasl))
-%             % If it started at Initial Transient
-%             if StartsIntervasl(1)>EndsIntervasl(1)
-%                 EndsIntervasl=EndsIntervasl(2:end);
-%             end
-%             % If it ended at with out End of Transient
-%             if StartsIntervasl(end)>EndsIntervasl(end)
-%                 StartsIntervasl=StartsIntervasl(1:end-1);
-%             end
-%             if numel(StartsIntervasl)==numel(EndsIntervasl)
-%                 if numel(StartsIntervasl)>1
-%                     ISIs=[ISIs,StartsIntervasl(2:end)-EndsIntervasl(1:end-1)];
-%                 end
-%                 TranLengths=[TranLengths, EndsIntervasl-StartsIntervasl];
-%             else
-%                 disp('WTF?');
-%             end
-%         end
-%     end
+    [ISIcell,TranLengthscell]=interval_duration_events(r);
+    ISIs=[ISIs,ISIcell];
+    TranLengths=[TranLengths,TranLengthscell];
+    disp(c);
 end
 %% GET PDFs
 if numel(ISIs(ISIs>0))>1
