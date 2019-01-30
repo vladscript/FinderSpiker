@@ -67,7 +67,11 @@ function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
             EnsembledNeurons={};
             SUB_frame_ensembles=cluster(TreeEns,'maxclust',Nensembles); % START
             [~,ECVens]=Nbayes_Ensembles(Rclustens,SUB_frame_ensembles);
-
+            % brake
+            if Nensembles==3
+                disp('butt');
+            end
+            
             for nn=1:Nensembles
                 EnsembledNeurons{nn}=find(sum(Rclustens(:,SUB_frame_ensembles==nn),2));
                 NeuroVectors(EnsembledNeurons{nn},nn)=1;

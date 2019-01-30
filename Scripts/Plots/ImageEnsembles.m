@@ -1,13 +1,12 @@
 % Raster Ensembles Using Images FAST
 % Input
 %   R_Analysis: Raster Condition Structure
-%           RasterFrames x Cells
+%           Raster: Frames x Cells
 %   labels_frames
 %   ColorState: Ensemble Colors
 % Output
 % Image with colored ensembles
-function ImageEnsembles(R_Analysis,varargin)
-
+function ImageEnsembles(R_Analysis,plothebb,varargin)
 %% Setup
 if ~isempty(varargin)
     ColorState=varargin{1}; % Alread Colored Ensembles
@@ -17,6 +16,7 @@ else
     NGroups{1}=TotalNG;
     ColorState=colormapensembles(TotalNG,NC,NGroups);
 end
+
 R=R_Analysis.Data.Data; % Frams x Cells
 label_Cluster=R_Analysis.Clustering.VectorStateIndex;
 CAGth=R_Analysis.Peaks.Threshold;
@@ -57,5 +57,5 @@ colormap(axcag,ColorEnsembles)
 axraster.YDir='normal';
 axcag.YDir='normal';
 % figure; % Hebbian Ensembles
-Ensembles_Transitions(1/60,label_Cluster,active_Frames,ColorEnsembles(3:end,:),1); % ---> save
+Ensembles_Transitions(1/60,label_Cluster,active_Frames,ColorEnsembles(3:end,:),plothebb); % ---> save
 linkaxes([axraster,axcag],'x');

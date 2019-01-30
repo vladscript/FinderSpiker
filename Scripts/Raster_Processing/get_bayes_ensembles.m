@@ -159,16 +159,16 @@ if Analyze
     R_Analysis.Classifier.ValidationError=ECV;   
 end
 % fprintf('>> Clustering with %i Ensembles \n& for %i Coactive Neurons\n',Nensembles,CAG_TH)
-fprintf('\n>>Script to search Neural Ensembles has ended.\n')
+fprintf('\n>>Algorithm has found Neural Ensembles.\n')
 fprintf('\n>>Plotting Ensembles:')
-ImageEnsembles(R_Analysis);
+ImageEnsembles(R_Analysis,1);
 signif_frames=find(CAG>=CAGwithAN(minErrIndx));
 [New_Order_Clustering,~]=OrderClusters(relabel_frame_ensembles,signif_frames,R',NensemblesOK(minErrIndx));
 R_Sorted_Analysis=R_Analysis;
 R_Sorted_Analysis.Data.Data=R(New_Order_Clustering,:)';
-ImageEnsembles(R_Sorted_Analysis);
+ImageEnsembles(R_Sorted_Analysis,0);
 % Set Indexes at sorted Ensembles
 figHandles = findobj('Type', 'figure');
-figHandles(2).Children(2).YTick=1:max(New_Order_Clustering);
-figHandles(2).Children(2).YTickLabel=New_Order_Clustering;
+figHandles(3).Children(2).YTick=1:max(New_Order_Clustering);
+figHandles(3).Children(2).YTickLabel=New_Order_Clustering;
 fprintf('\n>>Ensembles Done\n')
