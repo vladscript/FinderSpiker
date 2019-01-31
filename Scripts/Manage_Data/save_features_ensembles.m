@@ -122,6 +122,12 @@ for c=1:C
     DominanceIndex=Features_Ensemble.Dominance(c,1:NE)';
     % Ensemble Rate [act/min]
     EnseRate=Features_Ensemble.Rate(c,1:NE)';
+    % Initialize sizes right
+    EnsCAGauc=zeros(NE,1);EnsCAGmean=EnsCAGauc; EnsCAGvar=EnsCAGauc;
+    EnsCAGskew=EnsCAGauc; EnsCAGkurt=EnsCAGauc; EnsIEImean=EnsCAGauc;
+    EnsIEIvar=EnsCAGauc; EnsIEIskew=EnsCAGauc; EnsIEIkurt=EnsCAGauc;
+    EnsEDmean=EnsCAGauc; EnsEDvar=EnsCAGauc; EnsEDskew=EnsCAGauc;
+    EnsEDkurt=EnsCAGauc;
     for n=1:NE
         % Ensemble Co-Activity-Graphy ACC *******************
         EnsCAGauc(n,1)=Features_Ensemble.EnsCAGstats{c,n}(1);

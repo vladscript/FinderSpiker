@@ -132,8 +132,8 @@ if Analyze
         if numel(diffsamples(diffsamples==1))>3*numel(samples)/4
             fprintf('>>Ensemble Dominant Sequenty Activated %3.1f %% \n',100*numel(diffsamples(diffsamples==1))/numel(samples))
             % Re-cluster Dominant Ensemble
-            RclustDom=Ractive(:,samples);
-            [re_frame_ensembles]=cluster_analyze_lite(RclustDom,SimMethod);
+            Rclust=Ractive(:,samples);
+            [re_frame_ensembles]=cluster_analyze_lite(Rclust,SimMethod);
             Nensoffset=numel(unique(re_frame_ensembles));
             frame_ensembles_copy=frame_ensembles+Nensoffset;
             frame_ensembles_copy(frame_ensembles_copy==ExcEns+Nensoffset)=re_frame_ensembles;

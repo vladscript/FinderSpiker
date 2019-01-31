@@ -127,3 +127,5 @@ Plot_Raster_Ensembles(RasterRandom,1,1,NewIndx);
 disp('>> Press any key To Analyze');
 pause;
 RasterRandom_Analysis=get_bayes_ensembles(RasterRandom);
+%% END
+fprintf('\n               In the Algortihm We Trust\n\n')

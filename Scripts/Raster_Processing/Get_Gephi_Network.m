@@ -65,8 +65,17 @@ for i=1:Ncells
         StatesofNeurons{i}=num2str(0);
         disp('Non-Ensamble Neuron')
     else
-        StatesN=num2str( StatesN );
-        StatesofNeurons{i}=StatesN(StatesN~=' ');
+        stateword=[];
+        for w=1:numel(StatesN)
+            if w==numel(StatesN)
+                stateword=[stateword,num2str(StatesN(w))];
+            else
+                stateword=[stateword,[num2str(StatesN(w)),',']];
+            end
+        end
+        StatesofNeurons{i}=stateword;
+        % StatesN=num2str( StatesN );
+        % StatesofNeurons{i}=StatesN(StatesN~=' ');
     end
     [~,NSin]=size(StatesofNeurons{i}); % N-States neuron is IN
     % Neuron Colors******************************
@@ -87,9 +96,14 @@ for i=1:Ncells
             disp('Potential Hub Detected --->')
     %                                           2 or more-ensemble Neurons
     else
-       CurretnEnsembles=[];
-        for q=1:numel(StatesofNeurons{i})
-            CurretnEnsembles=[CurretnEnsembles,str2double( StatesofNeurons{i}(q) )];
+        CurretnEnsembles=[];
+        % get N chars == ',' +1        
+        Nchar=numel(StatesofNeurons{i}==',');
+        ComasPos=[0,find(StatesofNeurons{i}==','),Nchar+1];
+        for q=1:numel(ComasPos)-1
+            prechar=ComasPos(q)+1;
+            poschar=ComasPos(q+1)-1;
+            CurretnEnsembles=[CurretnEnsembles,str2double( StatesofNeurons{i}(prechar:poschar) )];
         end
         % Choose the ensemble with less neurons:
         [~,minEnsemble]=min(CountersStates(CurretnEnsembles));

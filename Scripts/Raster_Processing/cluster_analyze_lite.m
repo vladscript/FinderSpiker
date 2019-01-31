@@ -7,7 +7,7 @@
 %   SimMethod:  Simmilarity Method: 'hamming'
 % Ouput
 % frame_ensembles Labeled Frames of the Neural Ensemble
-function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
+function [frame_ensembles]=cluster_analyze_lite(Rclust,SimMethod)
     % BINARY CLASSIFICATION ***************************************
     Distance=squareform(pdist(Rclust',SimMethod));
     Sim=1-Distance;
@@ -48,19 +48,24 @@ function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
     % Analyze the Main two Tree Branches  #################################
     TotalEns=0; SUB_ENS_frames={}; DhammEns={};
     for n=1:2
-        % Intra Ensembles
-        Rclustens=Rclust(TwoEnsembledNeurons{n},frame_ensembles==1+TotalEns);
-        % Identify Frames Where Vector are not Very Simmilar
-        % [~,MaxDistanceIV]=nonsimilarframes(Rclustens,SimMethod,0.5);
-        % NeuralVectorNonSim=find(sum(Rclustens(:,NonSimilarIV),2))
-        
-        [ActiveCellsEns,~]=find(sum(Rclustens,2));
-        DistanceEns=squareform(pdist(Rclustens',SimMethod));
-        SimEns=1-DistanceEns;
-        LinkageMethodEns=HBestTree_JPplus(SimEns);    % Output
-        TreeEns=linkage(squareform(DistanceEns,'tovector'),LinkageMethodEns);
-        % Initialize stuff
-        EnsambleOK=true; Nensembles=2; preECVens=1;
+        % Clusterize only the biggest ensemble ONLY
+        if numel(frame_ensembles(frame_ensembles==1+TotalEns))<numel(frame_ensembles)/2
+            EnsambleOK=false; Nensembles=2; preMAXens=numel(frame_ensembles);
+        else
+            % Intra Ensembles
+            Rclustens=Rclust(TwoEnsembledNeurons{n},frame_ensembles==1+TotalEns);
+            % Identify Frames Where Vector are not Very Simmilar
+            % [~,MaxDistanceIV]=nonsimilarframes(Rclustens,SimMethod,0.5);
+            % NeuralVectorNonSim=find(sum(Rclustens(:,NonSimilarIV),2))
+
+            [ActiveCellsEns,~]=find(sum(Rclustens,2));
+            DistanceEns=squareform(pdist(Rclustens',SimMethod));
+            SimEns=1-DistanceEns;
+            LinkageMethodEns=HBestTree_JPplus(SimEns);    % Output
+            TreeEns=linkage(squareform(DistanceEns,'tovector'),LinkageMethodEns);
+            % Initialize stuff
+            EnsambleOK=true; Nensembles=2; preMAXens=numel(frame_ensembles);
+        end
         while EnsambleOK
             fprintf('>>> Clustering for  %i Ensembles \n',Nensembles);
             NeuroVectors=zeros(numel(ActiveCellsEns),Nensembles);
@@ -90,43 +95,34 @@ function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
                 aux=aux+1;
             end
             
-            
-            [~,ECVens]=Nbayes_Ensembles(Rclustens,SUB_frame_ensembles);
-            for nn=1:Nensembles
-                EnsembledNeurons{nn}=find(sum(Rclustens(:,SUB_frame_ensembles==nn),2));
-                NeuroVectors(EnsembledNeurons{nn},nn)=1;
-            end
             % Single Frame Ensembles
             if ~isempty(SingleEns)
                 EnsambleOK=false;
                 disp('>> Unique-frame Ensemble: rejected.')
             end
             
-            % Redundant Ensembles
-            EnsemblesIndx=isinensemble(NeuroVectors);
-            if ~isempty(EnsemblesIndx)
-                disp('>>Redundant Ensemble(s) Found!!!')
-                [NRepEns,~]=size(EnsemblesIndx);
-                for nE=1:NRepEns
-                    fprintf('\nEnsemble: %i is in Ensemble %i\n',EnsemblesIndx(nE,1),EnsemblesIndx(nE,2));
-                end
-                EnsambleOK=false;
+            for nn=1:Nensembles
+                EnsembledNeurons{nn}=find(sum(Rclustens(:,SUB_frame_ensembles==nn),2));
+                NeuroVectors(EnsembledNeurons{nn},nn)=1;
             end
-            disp('>>Done.')
-
+            
+            
             % 1-neuron Ensembles
             if sum(sum(NeuroVectors)==1)>0
                 disp('1-neuron Ensembles');
                 EnsambleOK=false;
             end
 
-            % Increased Error Classification
-            if preECVens-ECVens<0
+            % Decreas Max Counts Ensemble
+            tbl=tabulate(SUB_frame_ensembles);
+            MaxEns= max(tbl(:,2));
+            if preMAXens-MaxEns<0 || max(tbl(:,3))<50
                 EnsambleOK=false;
             end
-            preECVens=ECVens;
+            preMAXens=MaxEns;
+            
             if EnsambleOK
-                % Only increas if it's OK
+                % It only increases if it's OK
                 Nensembles=Nensembles+1;
             end
         end

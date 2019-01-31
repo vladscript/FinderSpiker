@@ -16,12 +16,17 @@
 %
 % V2.0 output deleted & subplots - modified JP Nov-2012
 % Plus Edition in October 2018.
+% Plus Edition in January 2019 by github/vladscript.
 
 function recommended = HBestTree_JPplus(Sim)
 
-method={'average','centroid','complete','median','single','ward','weighted'};
+% method={'average','centroid','complete','median','single','ward','weighted'};
+% 'complete' caused MATLAB crashings
+% method={'average','ward','weighted'};
+method={'average','centroid','median','single','ward','weighted'};
 
 for i=1:numel(method)
+    fprintf('> Method Consistency for %s Linkage is:',method{i});
     % Hierarchical Cluster Tree
     Tree = linkage(squareform(1-Sim,'tovector'),method{i});
     
@@ -30,7 +35,8 @@ for i=1:numel(method)
     Consistency=sum(Consistency(:,4))/...
         (length(Consistency)-length(find(Consistency(:,3)==1)));
     Validation(i)=Consistency;
-    fprintf('> Method Consistency for %s Linkage is %3.3f \n',method{i},Consistency);
+    fprintf('%3.3f \n',Validation(i));
+    
 end
 [~,Index]=sort(Validation,'descend');
 method=method(Index);
