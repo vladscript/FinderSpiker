@@ -18,7 +18,12 @@
 %       Classifier.Model=Model;             % Naive Bayes Classifier
 %       Classifier.ValidationError=ECV;      % Validation Error
 function R_Analysis = get_bayes_ensembles(R)
-%% Setup
+%% Setup 
+% Threholds
+SimmEnsTH=0.8;          % Ensemble simmilarity 
+TimeDommEns=55;         % % Portion of presence of one ensemble
+parseq=3/4;             % Portion in a ensemble is activated
+RatioHebb=10;           % Minimum % Of the Hebbian Ratio
 % About the Raster
 disp('> Getting data ...')
 
@@ -101,14 +106,20 @@ if Analyze
     for CAGindex=1:numel(CAGwithAN)   
         fprintf('>>> Clustering for  %i Coactive Neurons\n',CAGwithAN(CAGindex));
         Rclust=Ractive(:,CAG>=CAGwithAN(CAGindex));
-        % [~,ActiveFrames]=size(Rclust);
-        [frame_ensembles]=cluster_analyze(Rclust,SimMethod);
-        
-        [~,MaxDistanceIV]=nonsimilarframes(Rclust,SimMethod,0.5);
-        [~,ECV]=Nbayes_Ensembles(Rclust,frame_ensembles);
+        [~,ActiveFrames]=size(Rclust);
+        if ActiveFrames>1
+            [frame_ensembles]=cluster_analyze(Rclust,SimMethod);
+            [~,MaxDistanceIV]=nonsimilarframes(Rclust,SimMethod,0.5);
+            [~,ECV]=Nbayes_Ensembles(Rclust,frame_ensembles);
+            MaxDIV(CAGindex)=MaxDistanceIV;
+            NensemblesOK(CAGindex)=numel(unique(frame_ensembles));
+        else
+            ECV=100;
+            frame_ensembles=1;
+            NensemblesOK(CAGindex)=1;
+        end
+        SAVE_FRAMES{CAGindex}=frame_ensembles;
         ErrorClass(CAGindex)=ECV;
-        MaxDIV(CAGindex)=MaxDistanceIV;
-        NensemblesOK(CAGindex)=numel(unique(frame_ensembles));
     end
     DelayTime=toc;
     [~,minErrIndx]=min(ErrorClass);
@@ -116,36 +127,95 @@ if Analyze
     Rclust=Ractive(:,CAG>=CAGwithAN(minErrIndx));
     [ActiveCells,~]=find(sum(Rclust,2));
     % Get the Clustered Frames
-    [frame_ensembles]=cluster_analyze(Rclust,SimMethod);
+    % [frame_ensembles]=cluster_analyze(Rclust,SimMethod);
+    frame_ensembles=SAVE_FRAMES{CAGwithAN(minErrIndx)}; % saving time!!!!
     
     %% WORK AROUND ********************************************************
     % Excesive Dominant Ensemble ##########################################
     % This causes *cluster artifacts*
     tbl=tabulate(frame_ensembles); % Get counts for each ensemble
+    Nenspre=numel(unique(frame_ensembles));
+    framesCAG=find(CAG>=CAGwithAN(minErrIndx));
     [TimePer,ExcEns]=max(tbl(:,3)); % Percentage of presence
-    if TimePer>80
+    if TimePer>TimeDommEns
         disp('>>Possible Extremely Dominant Ensemble')
-        framesCAG=find(CAG>=CAGwithAN(minErrIndx));
         % Is it alterned or sequentlty activated
         samples=framesCAG(frame_ensembles==ExcEns);
         diffsamples=diff(samples);
-        if numel(diffsamples(diffsamples==1))>3*numel(samples)/4
-            fprintf('>>Ensemble Dominant Sequenty Activated %3.1f %% \n',100*numel(diffsamples(diffsamples==1))/numel(samples))
+        if numel(diffsamples(diffsamples==1))>numel(samples)*parseq
+            fprintf('>>Ensemble Dominant Permanently Activated %3.1f %% of the time\n',100*numel(diffsamples(diffsamples==1))/numel(samples))
             % Re-cluster Dominant Ensemble
             RclustDom=Ractive(:,samples);
             [re_frame_ensembles]=cluster_analyze_lite(RclustDom,SimMethod);
+            
+            HebbSequence=Ensembles_Transitions(1,re_frame_ensembles,samples,[],0) ;
+            hebbtbl=tabulate(HebbSequence);
+            smallens=find(hebbtbl(:,3)<RatioHebb);
+            for k=1:numel(smallens)
+                re_frame_ensembles(re_frame_ensembles==smallens(k))=smallens(1);
+            end
+            Ensd=unique(re_frame_ensembles);
+            kens=numel(Ensd);
+            re_frame_ensembles_copy=re_frame_ensembles;
+            for k=1:kens
+                re_frame_ensembles(re_frame_ensembles_copy==Ensd(k))=k;
+            end
             Nensoffset=numel(unique(re_frame_ensembles));
             frame_ensembles_copy=frame_ensembles+Nensoffset;
             frame_ensembles_copy(frame_ensembles_copy==ExcEns+Nensoffset)=re_frame_ensembles;
             frame_ensembles=frame_ensembles_copy;
+            Ensd=unique(frame_ensembles);
+            kens=numel(Ensd);
+            frame_ensembles_copy=frame_ensembles;
+            for k=1:kens
+                frame_ensembles(frame_ensembles_copy==Ensd(k))=k;
+            end
         else
             disp('>>Ensemble Dominant but Alternating.')
         end
     else
     end
     
+    % Joint Simmilar Clusters
+    NensOK=numel(unique(frame_ensembles));
+    %% Cross Simmilar Neural Ensembles Are 
+% Features of the Ensembles:
+    % Nensembles=numel(unique(frame_ensembles));
+%     NeuroVectors=zeros(numel(ActiveCells),NensOK);
+%     EnsembledNeurons={};
+%     MeanVarIntraDist=[];
+%     for nn=1:NensOK
+%         EnsembledNeurons{nn}=find(sum(Rclust(:,relabel_frame_ensembles==nn),2));
+%         NeuroVectors(EnsembledNeurons{nn},nn)=1;
+%         VectorEnsemble=Rclust(:,relabel_frame_ensembles==nn);
+%         DhammVectors=pdist(VectorEnsemble',SimMethod);
+%         MeanVarIntraDist(nn,:)=[mean(DhammVectors),var(DhammVectors)];
+%     end
+%     DhammEns=1-squareform( pdist(NeuroVectors',SimMethod) );
+    % Get Simmilar Paris
+%     Pairs={}; aux=1; EnsAcc=[];
+%     for d=1:NensOK-1
+%         SimEns=find(DhammEns(d,:)>SimmEnsTH);
+%         if ~isempty(SimEns(SimEns>d))
+%             Pairs{aux}=[d,SimEns(SimEns>d)];
+%             aux=aux+1;
+%         end
+%     end
     
-    
+    % HebbSequence=Ensembles_Transitions(1,frame_ensembles,framesCAG,[],0) ;
+    hebbtbl=tabulate(frame_ensembles);
+    frame_ensembles_copy=frame_ensembles;
+    smallens=find(hebbtbl(:,3)<RatioHebb);
+    for k=1:numel(smallens)
+        frame_ensembles(frame_ensembles_copy==smallens(k))=smallens(1);
+    end
+    Ensd=unique(frame_ensembles);
+    kens=numel(Ensd);
+    frame_ensembles_copy=frame_ensembles;
+    for k=1:kens
+        frame_ensembles(frame_ensembles_copy==Ensd(k))=k;
+    end
+            
     % RE-LABEL Ensembles
     AppearSequence=unique(frame_ensembles,'stable');
     relabel_frame_ensembles=zeros(size(frame_ensembles));
@@ -153,19 +223,7 @@ if Analyze
     for n=1:NensOK
         relabel_frame_ensembles(frame_ensembles==AppearSequence(n))=n;
     end
-    % Features of the Ensembles:
-    % Nensembles=numel(unique(frame_ensembles));
-    NeuroVectors=zeros(numel(ActiveCells),NensOK);
-    EnsembledNeurons={};
-    MeanVarIntraDist=[];
-    for nn=1:NensOK
-        EnsembledNeurons{nn}=find(sum(Rclust(:,relabel_frame_ensembles==nn),2));
-        NeuroVectors(EnsembledNeurons{nn},nn)=1;
-        VectorEnsemble=Rclust(:,relabel_frame_ensembles==nn);
-        DhammVectors=pdist(VectorEnsemble',SimMethod);
-        MeanVarIntraDist(nn,:)=[mean(DhammVectors),var(DhammVectors)];
-    end
-    DhammEns=pdist(NeuroVectors',SimMethod);
+    % Classifier **********************************
     [Model,ECV]=Nbayes_Ensembles(Rclust,relabel_frame_ensembles);
     %[label,Posterior]=resubPredict(Model);
     %C=confusionmat(relabel_frame_ensembles,double(label));

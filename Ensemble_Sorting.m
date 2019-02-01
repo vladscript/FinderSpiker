@@ -68,7 +68,28 @@ Indexes=1:length(XY_selectedClean); % Indexes for Active Neurons
 Index_Ensemble=Indexes;
 CAG=sum(ExperimentRasterClean,2);   % CAG :Co-Activity-Graphy
 %% Sorting Clustering
-[New_Order_Clustering,Neurons_State]=OrderClusters(labels_frames,signif_frames,ExperimentRasterClean,TotalNG);
+disp('>>Sorting Neurons')
+if TotalNG<6
+    [New_Order_Clustering,~]=OrderClusters(labels_frames,signif_frames,ExperimentRasterClean,TotalNG);
+    re_sort=true;
+else
+    Nens=cell2mat(NGroups); n=1; oksort=true;
+    re_sort=false;
+    while oksort
+        if Nens(n)<6
+            oksort=false;
+            fprintf('>>Re-sorting according to %s Ensembles\n',Names_Conditions{n});
+            [New_Order_Clustering,~]=OrderClusters(labels_frames,signif_frames,ExperimentRasterClean,Nens(n));
+            re_sort=true; 
+        end
+        n=n+1;
+    end
+    if ~re_sort
+        New_Order_Clustering=Indexes;
+        disp('>>No resort')
+    end
+end
+disp('>>Neurons Sorted.')
 % Coordinates
 XY_cluster=XY_selectedClean(New_Order_Clustering,:); % Re-SORTED COORDINATES OF ENSEMBLES
 % Indexes=sort(Indexes(New_Order_Clustering));    % useless
@@ -89,16 +110,19 @@ if CummFrames==TotalFrames
 end
 Figg=gcf; Figg.Name=['Neural Ensembles of ',Experiment];
 %   Sorted *******************************************
-Plot_Raster_Ensembles(OriginalExperiment',fs,1,Indexes(New_Order_Clustering));   % Sorted Raster
-% Plot_State_Colors;
-disp('Coloring Ensembles...')
-Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CAG,Indexes(New_Order_Clustering));
-disp('Coloring Ensembles Done.')
-plot_CAG_threshold(THR,LENGHTRASTER,fs)
-if CummFrames==TotalFrames
-    Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
+if re_sort
+    Plot_Raster_Ensembles(OriginalExperiment',fs,1,Indexes(New_Order_Clustering));   % Sorted Raster
+    % Plot_State_Colors;
+    disp('Coloring Ensembles...')
+    Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CAG,Indexes(New_Order_Clustering));
+    disp('Coloring Ensembles Done.')
+    plot_CAG_threshold(THR,LENGHTRASTER,fs)
+    if CummFrames==TotalFrames
+        Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
+    end
+    Figg=gcf; Figg.Name=['Neural Ensembles (resorted) of ',Experiment];
 end
-Figg=gcf; Figg.Name=['Neural Ensembles (resorted) of ',Experiment];
+
 % Ensemble Transitions HEBBIAN SEQUENCE **************
 Ensembles_Transitions(fs,labels_frames,signif_frames,ColorState,1);
 

@@ -83,8 +83,13 @@ for c=1:C
     % Max Links Between Neurons
     MaxSynLinks=Features_Condition.Network{c}.MaxSynLinks;
     % Max Links Between Neurons
-    MaxConnA=Features_Condition.Network{c}.MaxCoupledPair(1); % Neuron A
-    MaxConnB=Features_Condition.Network{c}.MaxCoupledPair(2); % Neuron B
+    if MaxSynLinks>0
+        MaxConnA=Features_Condition.Network{c}.MaxCoupledPair(1); % Neuron A
+        MaxConnB=Features_Condition.Network{c}.MaxCoupledPair(2); % Neuron B
+    else
+        MaxConnA=0; % Neuron A
+        MaxConnB=0; % Neuron B
+    end
     % Satitstics of Weights Connections (Synaptic Strength)
     SynMean=Features_Condition.Network{c}.SynStrengthStats(1);  % mean
     SynVar=Features_Condition.Network{c}.SynStrengthStats(2);   % variance

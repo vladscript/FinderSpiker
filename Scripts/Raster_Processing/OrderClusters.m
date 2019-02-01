@@ -21,9 +21,6 @@ end
 %% Neurons in each Ensemble
 Neurons_State={};
 EnsemblesList=unique(labels_frames);
-% if numel(EnsemblesList)~=NG
-%     NG=numel(EnsemblesList); % little trick
-% end
 
 for g=1:NG
     Current_State=EnsemblesList(g);
@@ -42,6 +39,7 @@ for g=1:length(CO)
     Nneurons_Group=0;
     for gg=1:Ncomb
         % Obtain Neurons ACtive for combiantion of states: CO{g}(gg,:)
+        fprintf('>')
         Current_Neurons=unique ( cell2mat( Neurons_State(CO{g}(gg,:)) ) ); 
         ElseGroups=setdiff(1:NG,CO{g}(gg,:));
         AuxCell=Neurons_State(ElseGroups(:)); % Recently Modified
@@ -52,8 +50,9 @@ for g=1:length(CO)
         FirstGroups(aux)=CO{g}(gg); % Only to order according to: 1,2,3,...
         Nneurons_Group=Nneurons_Group+length(Indexes_Group_Comb{aux});
         aux=aux+1;
-    end 
+    end
     NNeurons_Size_Group(g)=Nneurons_Group;   % - - - - - > OUTPUT
+    fprintf('%i\n',g)
 end
 
 %% Final Sorting

@@ -3,10 +3,10 @@
 % have other cluster that helps to classfify better
 % the neural ensembles
 % Input
-%   Rclust:     Thresholded Raster to Analyze
-%   SimMethod:  Simmilarity Method: 'hamming'
+%   Rclust:         Thresholded Raster to Analyze
+%   SimMethod:      Simmilarity Method: 'hamming'
 % Ouput
-% frame_ensembles Labeled Frames of the Neural Ensemble
+% frame_ensembles   Labeled Frames of the Neural Ensemble
 function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
     % BINARY CLASSIFICATION ***************************************
     Distance=squareform(pdist(Rclust',SimMethod));
@@ -19,7 +19,7 @@ function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
     SingleEns=find(tbl(:,2)==1);
     Rnewclust=Rclust;
     aux=1; % frames2ignore=[];
-    while ~isempty(SingleEns)
+    while and(~isempty(SingleEns),aux<10)
         fprintf('>>Ignoring Single Frame Ensemble %i-th trial\n',aux)
         NsingEns=numel(SingleEns);
         frames2ignore=[];
@@ -37,6 +37,9 @@ function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
         SingleEns=find(tbl(:,2)==1);
         aux=aux+1;
     end
+    if ~isempty(SingleEns)
+        disp('>>WARNING')
+    end
     % frame_ensembles(frames2ignore)=0;
     
     % NeuroVectors=zeros(numel(ActiveCells),Nensembles);
@@ -50,17 +53,22 @@ function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
     for n=1:2
         % Intra Ensembles
         Rclustens=Rclust(TwoEnsembledNeurons{n},frame_ensembles==1+TotalEns);
+        if size(Rclustens,2)==1
+            EnsambleOK=false;
+            Nensembles=2;
+        else
+            [ActiveCellsEns,~]=find(sum(Rclustens,2));
+            DistanceEns=squareform(pdist(Rclustens',SimMethod));
+            SimEns=1-DistanceEns;
+            LinkageMethodEns=HBestTree_JPplus(SimEns);    % Output
+            TreeEns=linkage(squareform(DistanceEns,'tovector'),LinkageMethodEns);
+            % Initialize stuff
+            EnsambleOK=true; Nensembles=2; preECVens=1;
+        end
         % Identify Frames Where Vector are not Very Simmilar
         % [~,MaxDistanceIV]=nonsimilarframes(Rclustens,SimMethod,0.5);
         % NeuralVectorNonSim=find(sum(Rclustens(:,NonSimilarIV),2))
         
-        [ActiveCellsEns,~]=find(sum(Rclustens,2));
-        DistanceEns=squareform(pdist(Rclustens',SimMethod));
-        SimEns=1-DistanceEns;
-        LinkageMethodEns=HBestTree_JPplus(SimEns);    % Output
-        TreeEns=linkage(squareform(DistanceEns,'tovector'),LinkageMethodEns);
-        % Initialize stuff
-        EnsambleOK=true; Nensembles=2; preECVens=1;
         while EnsambleOK
             fprintf('>>> Clustering for  %i Ensembles \n',Nensembles);
             NeuroVectors=zeros(numel(ActiveCellsEns),Nensembles);

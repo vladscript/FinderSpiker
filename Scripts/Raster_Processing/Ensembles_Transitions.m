@@ -45,5 +45,5 @@ if ifplot
             'MarkerSize',10); 
     end
     hold off;
-    axis([Axis_details.XLim,1,max(ensemble_index)])
+    axis([Axis_details.XLim,0.5,max(ensemble_index)+0.5])
 end

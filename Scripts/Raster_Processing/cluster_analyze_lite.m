@@ -19,7 +19,7 @@ function [frame_ensembles]=cluster_analyze_lite(Rclust,SimMethod)
     SingleEns=find(tbl(:,2)==1);
     Rnewclust=Rclust;
     aux=1; % frames2ignore=[];
-    while ~isempty(SingleEns)
+    while and(~isempty(SingleEns),aux<10)
         fprintf('>>Ignoring Single Frame Ensemble %i-th trial\n',aux)
         NsingEns=numel(SingleEns);
         frames2ignore=[];

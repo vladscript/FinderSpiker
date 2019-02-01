@@ -75,9 +75,15 @@ for c=1:C
         % MORE FEATURES
         Rcluster=R(:,frames_ensemble); % Cells x Frames
         CAGcluster=sum(Rcluster);
-        AUC=autocorr(CAGcluster,1); % Autocorrelation Coeffcient
-        EnsCAGstats{c,e}=[AUC(2),mean(CAGcluster),var(CAGcluster),skewness(CAGcluster),kurtosis(CAGcluster)];
-        MaxIntraVec(c)=max(pdist(Rcluster',SimMethod));
+        if numel(CAGcluster)>1
+            AUC=autocorr(CAGcluster,1); % Autocorrelation Coeffcient
+            EnsCAGstats{c,e}=[AUC(2),mean(CAGcluster),var(CAGcluster),skewness(CAGcluster),kurtosis(CAGcluster)];
+            MaxIntraVec(c)=max(pdist(Rcluster',SimMethod));
+        else
+            EnsCAGstats{c,e}=[0,mean(CAGcluster),var(CAGcluster),skewness(CAGcluster),kurtosis(CAGcluster)];
+            MaxIntraVec(c)=0;
+        
+        end
         % Inter-Eensemble-Interval & Ensemble Duration
         r=zeros(size(CAG));
         r(frames_ensemble)=1;

@@ -153,6 +153,12 @@ for i=1:Ncells-1
         end
     end
 end
+if isempty(SOURCE)
+    SOURCE=0;
+    TARGET=0;
+    WEIGHT=0;
+    disp('>>NO NETWORK FOUND')
+end
 %% NETWORK OUTPUTS ******************************************************
 % N Cells that participate in all Ensembles
 fNet.SharedNeruons=SharedNeruons;
@@ -197,7 +203,12 @@ if ~isempty(FileNameExp)
     % Target: Neuron j                      {OK}
     % Weight: K-links between them          {OK}
     % Type: Undirected{FIX}                 {OK}
-    TypeNetwork=repmat('Undirected',length(SOURCE),1);
+    if numel(SOURCE)>1
+        TypeNetwork=repmat('Undirected',length(SOURCE),1);
+    else
+        TypeNetwork=mat2cell('Undirected',1);
+    end
+    
     SaveasName=['NetWorks-CSV\',Experiment,'_',FileNameExp,'_Links.csv'];
     HeadersLinks={'Source','Target','Weight','Type'};
     Tlinks=table(SOURCE,TARGET,WEIGHT,TypeNetwork,...
