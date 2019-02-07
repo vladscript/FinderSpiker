@@ -5,21 +5,18 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
 %% FIXED  READY TO GO @ GIT
-% Linkage Bug: not using complete linkage
-% Clustering Managing
-% Bug at saving Features: column sizes
-% Clustering ensembles:Force to cluster Dominante Ensembles
+% 
 %% Bugs & New Functions NOW
 
-% Look for Bugs: ok [re-start....
+% Visualizers for several Experiments:
+% >Rasters,             done
+% >Ensembles,           done
+% >Ensembles details,    
+% >Networks             done
 
-% Bugs at Rasters with Very LOW ACTIVITY Exp?
+% plot or not plot line among paired exps: just for 2 conditions
+
 % Save .mat File even when if it was analyzed at NeuralNetwork GUI
-
-% Fature with single-frame ensembles
-
-% Compare SIMMILAR and CONFUSING (confmat) ENSEMBLES to MERGE them
-% Merge the Most inter-Cinfusing if its distance it's close enough
 
 % SIGNAL PROCESSING RELATED
 %   Somee offset at detrending algorithm 
@@ -28,6 +25,7 @@
 %   Check at Signals with Huge Valley (synaptic like)
 
 % retreive of Original Signals, coordinates, etc:
+% Re make clean video
 
 %%% MAKE ALGORITHMIA
 
@@ -40,14 +38,9 @@
 % Add Highlight Neuron Using Mouse at Plot_Raster
 % and other colors in the MERGE script : MAGENTA
 
-% Threshold to get NETWORK !!!!!!!!
-
 % Inspection of Each ROI...
 % Detect when its empty detected or undetected at :
 %   Undetected_Visual_Inspection
-
-% CLUSTERING STUFF ***********************
-% Threshold: Given by Best Classifiaction Validation
 
 
 %% FUTURE **********************************
@@ -79,13 +72,13 @@
 % AUTOMATIC
 % >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDTIONi);
 % MANUAL
-% >>R_COND_Analysis = raster_cluster(R_COND,CAG_TH,Nensmbles,'hamming');
+% >>R_COND_Analysis = raster_cluster(R_COND,CAG_TH,Nensembles,'hamming');
 
 % DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI)
 % Neural ensemble and Functional Network Features Extraction
 % >> Ensemble_Sorting
 
-% PLOT FAST
+% PLOT ENSEMBLES FAST
 % >> ImageEnsembles(R_ConditionNamej_Analysis);
 
 % COLOCALIZATION OF MARKED CELLS
