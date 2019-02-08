@@ -1,6 +1,5 @@
 %% GET RASTER
 [New_Index,Raster_Condition,RASTER_WHOLE]=SortNeuronsCondition(RASTER);
-% Plot_Raster_V(RASTER_WHOLE(New_Index,:),fs);
 RASTER_WHOLE_Clean=RASTER_WHOLE(New_Index,:);
 ActiveNeurons=find(sum(RASTER_WHOLE_Clean,2)>0);                % INDEX of Active NEURONS only
 RASTER_WHOLE_Clean=RASTER_WHOLE_Clean(ActiveNeurons,:);

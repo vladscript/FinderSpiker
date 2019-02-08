@@ -5,18 +5,18 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
 %% FIXED  READY TO GO @ GIT
-% Visualizer of CDF for RoA,IEventI,EventD: (+)and (-) colocated cells
+% Visualizers: Rasters, Ensembles, Ensembles Detailed
+% plot or not plot line among paired exps: just for 2 conditions
 
 %% Bugs & New Functions NOW
 
-% Visualizer of CDF for RoA,IEnsembleI,Ensemble
 % Save Feature - Label Table->for ML
 
 % Visualizers for several Experiments:
 % >Rasters,             done
 % >Ensembles,           done
 % >Ensembles details,   done
-% >Networks             Integrate
+% >Networks             
 
 
 % Save .mat File even when if it was analyzed at NeuralNetwork GUI
@@ -37,8 +37,6 @@
 % Modify Zoom at Windows in the script: Select_Raster_for_NN.m
 
 % delete Plot_Raster_V.m
-
-% Test Visualizer of CDF for (+)and (-) colocated cells
 
 % Add button to save Zoom image (MERGED MAGIC)
 % Save Selected Points SELECTED-> add to file .mat
