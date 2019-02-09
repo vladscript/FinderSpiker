@@ -118,7 +118,28 @@ title(k3,'skew Weight')
 k4=subplot(2,2,4);  % Proportion Simple Cycles
 plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,19,k4)
 title(k4,'kurt Weight')
-
+%% Make and Save Table
+okbutton = questdlg('Make CSV Table?');
+waitfor(okbutton); 
+if strcmp('Yes',okbutton)
+    % Set Save Name
+    timesave=clock;
+    TS=num2str(timesave(1:5));
+    TS=TS(TS~=' ');
+    SaveFile=['\Ensemble_Features_',TS,'.csv'];
+    % Select Destiny
+    PathSave=uigetdir(CurrentPathOK);
+    disp('>>Making CSV table...')
+    TableFeatures=maketableraster(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions);
+    writetable(TableFeatures,[PathSave,SaveFile],...
+                    'Delimiter',',','QuoteStrings',true);
+    fprintf('>> Data saved @: %s\n',[PathSave,SaveFile])
+else
+    fprintf('>>Unsaved data.\n')
+end
+fprintf('>>Cleaning Workspace: ')
+clear
+fprintf('done\n')
 
 % %% Pie Charts of Kind of Cycles
 % % 'ISImean','ISImode','ISIvar','ISIskew','ISIkurt',...

@@ -175,7 +175,7 @@ if strcmp('Yes',okbutton)
     TableFeatures=maketableraster(RASTER_NAMES,RASTER_FEATURES,Names_Conditions);
     writetable(TableFeatures,[PathSave,SaveFile],...
                     'Delimiter',',','QuoteStrings',true);
-    fprintf('>> Data saved @: %s\n',[PathSave,SaveFile])
+    fprintf('>> Data saved @: %s\n',PathSave)
 else
     fprintf('>>Unsaved data.\n')
 end

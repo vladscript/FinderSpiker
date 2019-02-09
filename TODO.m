@@ -6,18 +6,19 @@
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
 %% FIXED  READY TO GO @ GIT
 % Visualizer of CDF for RoA,IEventI,EventD: (+)and (-) colocated cells
+% Visualizer of CDF for RoA,IEnsembleI,Ensemble
+% Visualizer of Simmilarity Matrix
+% Save Feature - Label Table->for ML
 
 %% Bugs & New Functions NOW
 
-% Visualizer of CDF for RoA,IEnsembleI,Ensemble
-% Save Feature - Label Table->for ML
 
-% Visualizers for several Experiments:
+
+% Visualizers for several Experiments:  
 % >Rasters,             done
 % >Ensembles,           done
 % >Ensembles details,   done
-% >Networks             Integrate
-
+% >Networks             Integrate*
 
 % Save .mat File even when if it was analyzed at NeuralNetwork GUI
 % Test Mike's Clsutering Algorithm 4 CoActivity (transposed matrix)and save as weel
@@ -100,16 +101,22 @@
 % >>[XS,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,SIGNALSclean,XY_merged,XY);
 % >>figure; plot(XS{c}(Ci,:))
 
-% N-EXPERIMENTS RESULTS ******
+% N-EXPERIMENTS RESULTS ###################################################
 
-% LOAD RASTER FEATURES FOR A SET OF EXPERIMENTS
+% LOAD & GET FEATURES FOR A SET OF EXPERIMENTS*****************************
+% These scripts save feature tables for Machine Learning
+
+% RASTER FEATURES
 % >> Raster_Features_Display
-
-% ENSEMBLES FEATURES BOXPLOTS (*)
+% ENSEMBLES GENERAL FEATURES 
 % >>Ensembles_Features_Display
+% ENSEMBLES DETAILED FEATURES 
+% >>Ensembles_Features_Detailed_Display
 
-% Cummulative Features for differente Features:
-% such as RoA of several cells and experiments
+% ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS ****************************
+% >>Accumulate_RoA_IEI_ED
+% >>Accumulate_Ensembles_RoEn_IEnI_EnD
+% >>Accumulate_Simm_Matrix
 
 %% Legacy Code:
 %   Manual_Driver_Raster_Magic_Ultimate (saved as private)
