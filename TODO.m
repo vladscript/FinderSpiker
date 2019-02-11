@@ -4,23 +4,25 @@
 % of the automatic method by dividing in -+ and -- (false+ & false-)
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
+
+% Features  of Experiments:  
+% >Rasters,             MATLAB script
+% >Ensembles,           MATLAB script
+% >Ensembles details,   MATLAB script
+% >Networks             from Gephi
+
 %% FIXED  READY TO GO @ GIT
-% Visualizer of CDF for RoA,IEventI,EventD: (+)and (-) colocated cells
-% Visualizer of CDF for RoA,IEnsembleI,Ensemble
-% Visualizer of Simmilarity Matrix
-% Save Feature - Label Table->for ML
+% >Bug @ Ensemble Details table Visualizer: Experiment IDs
 
 %% Bugs & New Functions NOW
 
+% Integrate all Features in single Datasets:
+% RASTER|ENSEMBLES|ENSEMBLESdetailed|NETWORK
 
-
-% Visualizers for several Experiments:  
-% >Rasters,             done
-% >Ensembles,           done
-% >Ensembles details,   done
-% >Networks             Integrate*
+% Discard "UNINFORMATIVE" Features 
 
 % Save .mat File even when if it was analyzed at NeuralNetwork GUI
+
 % Test Mike's Clsutering Algorithm 4 CoActivity (transposed matrix)and save as weel
 
 % SIGNAL PROCESSING RELATED
@@ -35,8 +37,6 @@
 
 %%% MAKE ALGORITHMIA
 
-% Modify Zoom at Windows in the script: Select_Raster_for_NN.m
-
 % delete Plot_Raster_V.m
 
 % Test Visualizer of CDF for (+)and (-) colocated cells
@@ -46,7 +46,8 @@
 % Add Highlight Neuron Using Mouse at Plot_Raster
 % and other colors in the MERGE script : MAGENTA
 
-% Inspection of Each ROI...
+% Inspection for Each ROI...
+
 % Detect when its empty detected or undetected at :
 %   Undetected_Visual_Inspection
 
@@ -55,6 +56,7 @@
 % Figure: reason whi mean(ROI) withput distortion
 % Load Raw FLuorescenc vs F_0 distortion
 % Analyze Rejects Ones Anyway to infer Artifacts
+% Processing Times/Detections/etc from log files
 % Automatize MERGE SELECTOR
 % Setup Intel/Info .mat File-> Default User Directory to save info
 % Setup Script: deconvolution parameters
@@ -107,6 +109,7 @@
 % These scripts save feature tables for Machine Learning
 
 % RASTER FEATURES
+% Choose All CSV files at once
 % >> Raster_Features_Display
 % ENSEMBLES GENERAL FEATURES 
 % >>Ensembles_Features_Display
@@ -114,9 +117,8 @@
 % >>Ensembles_Features_Detailed_Display
 
 % ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS ****************************
+% Choose One-by-One .mat Files
 % >>Accumulate_RoA_IEI_ED
 % >>Accumulate_Ensembles_RoEn_IEnI_EnD
 % >>Accumulate_Simm_Matrix
 
-%% Legacy Code:
-%   Manual_Driver_Raster_Magic_Ultimate (saved as private)

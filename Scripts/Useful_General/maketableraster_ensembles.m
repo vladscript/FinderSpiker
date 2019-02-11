@@ -16,8 +16,8 @@ for c=1:NC
         ActualName={};
         for k=1:Nens
             ActualName{k,1}=RASTER_NAMES{c}(e);
+            TotalNames=[TotalNames;ActualName{k,1}];
         end
-        TotalNames=[TotalNames;ActualName];
     end
     ActualCondition={};
     for k=1:Nfeats
