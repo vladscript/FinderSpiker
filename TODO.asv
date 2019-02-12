@@ -1,4 +1,4 @@
-%% PERMANTENT NOTES # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+%% PERMANTEN NOTES # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 % Manual Mode is divideed in two parts->
 % Necessary to know the statistical power of the Automatic Mode:
 % of the automatic method by dividing in -+ and -- (false+ & false-)
@@ -13,11 +13,11 @@
 
 %% FIXED  READY TO GO @ GIT
 % >Bug @ Ensemble Details table Visualizer: Experiment IDs
-% Integrate all Features in single Datasets for each Category
-% RASTER|ENSEMBLES|ENSEMBLESdetailed|NETWORK (MANUALLY)
+
 %% Bugs & New Functions NOW
 
-% Load and Classify Set Of Features with Naive Bayes Classifier
+% Integrate all Features in single Datasets:
+% RASTER|ENSEMBLES|ENSEMBLESdetailed|NETWORK
 
 % Discard "UNINFORMATIVE" Features 
 
@@ -116,7 +116,7 @@
 % ENSEMBLES DETAILED FEATURES 
 % >>Ensembles_Features_Detailed_Display
 % Scritp to Merged them and make a DATASET for Machine Learning:
-% >>Merge_Feature_Datasets
+Merge_Feature_Datasets
 
 % ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS ****************************
 % Choose One-by-One .mat Files
