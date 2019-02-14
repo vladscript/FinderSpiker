@@ -7,19 +7,22 @@
 
 % Features  of Experiments:  
 % >Rasters,             MATLAB script
-% >Ensembles,           MATLAB script
-% >Ensembles details,   MATLAB script
+% >Ensembles general    MATLAB script
+% >Ensembles details    MATLAB script
 % >Networks             from Gephi
 
 %% FIXED  READY TO GO @ GIT
 % >Bug @ Ensemble Details table Visualizer: Experiment IDs
 % Integrate all Features in single Datasets for each Category
 % RASTER|ENSEMBLES|ENSEMBLESdetailed|NETWORK (MANUALLY)
+% Load and Classify Set Of Features with Naive Bayes Classifier
 %% Bugs & New Functions NOW
 
-% Load and Classify Set Of Features with Naive Bayes Classifier
+% Get best trio or pair of features that best classify vs PCA
 
 % Discard "UNINFORMATIVE" Features 
+
+% Too Many features-> PCA reduction
 
 % Save .mat File even when if it was analyzed at NeuralNetwork GUI
 
