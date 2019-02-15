@@ -21,7 +21,16 @@ CategoryFeature=FileName(1:SpacesIndx(2)-1);
 % Number of Features
 [DatasetSize,NFeatures]=size(X);
 NameFeatures=Xraw.Properties.VariableNames(3:end);
-%% Evaluate Features
+%% Evaluate Feature's Values to BAN Features->EXperiments:
+% Generat Output List
+% By definition ignore data that has or have:
+% Raster_Activity
+%   RateNeurons=0: No Activity
+%   RateNeurons=0: No Activity
+% General_Ensembles
+% Detailed_Ensembles
+
+
 % Find Specific Zeros or NaNs
 % % RejectData=[];
 % % for d=1:DatasetSize

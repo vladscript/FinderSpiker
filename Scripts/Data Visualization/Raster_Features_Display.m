@@ -2,7 +2,7 @@
 % Script that read and plot boxplots of Raster Features: [24]
 % between or among Conditions for Several Experiments.
 %                                                                      Figs
-% 'RateNeurons','ActivityTime','MeanActivity','EffectiveActivity',...   [1]
+% 'RateNeurons','ActivityTime','ActiveRatioCAG','EffectiveActivity',... [1]
 % 'ISImean','ISImode','ISIvar','ISIskew','ISIkurt',...                  [2]
 % 'Lengthmean','Lengthmode','Lengthvar','Lengthskew','Lengthkurt',...   [2]
 % 'CAGmean','CAGmode','CAGvar','CAGskew','CAGkurt',...                  [3]
@@ -63,13 +63,13 @@ FeaturesA=figure;
 FeaturesA.Name='Activity Indexes';
 h1=subplot(2,2,1); % Active Neurons
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,1,h1)
-title(h1,'Ratio of Active Neurons')
+title(h1,'Active Neurons')
 h2=subplot(2,2,2); % Duration
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,2,h2)
-title(h2,'Activity Time Ratio')
+title(h2,'Active Time Fraction')
 h3=subplot(2,2,3); % Mean Activity
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,3,h3)
-title(h3,'Mean Activity')
+title(h3,'Active CAG Area Ratio')
 h4=subplot(2,2,4); % Effective Activity
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,4,h4)
 title(h4,'Effective Activity')

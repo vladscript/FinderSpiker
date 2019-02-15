@@ -96,7 +96,7 @@ while ~strcmp('Yes',okbutton)
     title(h3,'CAG PDF','FontSize',7)
     hold(h1,'on'); hold(h2,'on'); hold(h3,'on');
     %% Feature Table Column Names
-    HeadersFeatures={'RateNeurons','ActivityTimeFraction','MeanActivity','EffectiveActivity',...
+    HeadersFeatures={'RateNeurons','ActivityTimeFraction','ActiveRatioCAG','EffectiveActivity',...
         'ISImean','ISImode','ISIvar','ISIskew','ISIkurt',...
         'Lengthmean','Lengthmode','Lengthvar','Lengthskew','Lengthkurt',...
         'CAGmean','CAGmode','CAGvar','CAGskew','CAGkurt',...
@@ -111,7 +111,7 @@ while ~strcmp('Yes',okbutton)
         R_Condition{c}=R(ActiveNeurons,:);
         % XY_Condition{c}=XY_selected;
         % Activity Indexes:*******************************************
-        [Descriptive,AI_1(c,1),AI_2(c,1)]=get_general_features(R);
+        [Descriptive,AI_1(c,1),AI_2(c,1)]=get_general_features(R_Condition{c});
         AN=Descriptive.AN;
         DurAc=Descriptive.DurAc; % Number of Active Frames
         CAG=Descriptive.CAG;

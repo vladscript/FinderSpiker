@@ -18,11 +18,15 @@
 % Load and Classify Set Of Features with Naive Bayes Classifier
 %% Bugs & New Functions NOW
 
-% Get best trio or pair of features that best classify vs PCA
+% >bug at Raster_Act_Features-> From Only Active Selected Cells
 
-% Discard "UNINFORMATIVE" Features 
+% Discard "UNINFORMATIVE or NOISY" Features:
+% Ban Features Values
 
-% Too Many features-> PCA reduction
+% Get best subset of features that best classify vs PCA
+
+% For Results Visualization
+% All-Features->PCA (dim red)-> SVM
 
 % Save .mat File even when if it was analyzed at NeuralNetwork GUI
 
