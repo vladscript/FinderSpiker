@@ -73,11 +73,11 @@ for c=1:C
     RateTran=Features_Condition.RateTrans(c);           % Rate Transitions
     RateCycl=Features_Condition.RateCycles(c);          % Rate Cycles
     % [%] Simple Cycles
-    Portion_simple=Features_Condition.CyclesType(1,c)/sum(Features_Condition.CyclesType(:,c));
+    Portion_simple=100*Features_Condition.CyclesType(1,c)/sum(Features_Condition.CyclesType(:,c));
     % [%] Closed Cycles
-    Portion_closed=Features_Condition.CyclesType(2,c)/sum(Features_Condition.CyclesType(:,c));
+    Portion_closed=100*Features_Condition.CyclesType(2,c)/sum(Features_Condition.CyclesType(:,c));
     % [%] Opened Cycles
-    Portion_opened=Features_Condition.CyclesType(3,c)/sum(Features_Condition.CyclesType(:,c));
+    Portion_opened=100*Features_Condition.CyclesType(3,c)/sum(Features_Condition.CyclesType(:,c));
     CAGauc=Features_Condition.CAGstats(c,1);            % CAG AutoCorrelation Coefficient
     CoreSize=Features_Condition.CoreNeurons(c);         % Ratio of neurons in all Ensembles
     % Max Links Between Neurons

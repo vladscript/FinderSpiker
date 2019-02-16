@@ -22,9 +22,14 @@
 %% Setup
 Update_Directory;
 %% Select Number of Analyzed Rasters ######
-NC = inputdlg('Enter Number of Analyzed Conditions:',...
-         'Conditions', [1 50]);
-NC= str2double(NC{:}); 
+% NC = inputdlg('Enter Number of Analyzed Conditions:',...
+%          'Conditions', [1 50]);
+% NC= str2double(NC{:}); 
+NC=numel(R_Condition);
+TxtCnd=cell2mat(Names_Conditions);
+InitialMSG=msgbox(Names_Conditions,'Neural Ensembles');
+uiwait(InitialMSG);
+delete(InitialMSG);
 
 %% Read Result from NeuralNetworks Clustering Results Structure
 WorkspaceVariables=who;     % Variable Names at Workspace

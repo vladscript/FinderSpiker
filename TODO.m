@@ -16,12 +16,14 @@
 % Integrate all Features in single Datasets for each Category
 % RASTER|ENSEMBLES|ENSEMBLESdetailed|NETWORK (MANUALLY)
 % Load and Classify Set Of Features with Naive Bayes Classifier
+% >bug at Raster_Act_Features-> From Only Active Selected Cells & Indexes
+% Bug At Cycles Retrieveing (!)
 %% Bugs & New Functions NOW
 
-% >bug at Raster_Act_Features-> From Only Active Selected Cells
+% ReSAVE Ensembles Features !!!
 
 % Discard "UNINFORMATIVE or NOISY" Features:
-% Ban Features Values
+%                   *Defined by Experiment*
 
 % Get best subset of features that best classify vs PCA
 
@@ -88,8 +90,8 @@
 % CLUSTERING NEURONAL ENSEMBLES
 % AUTOMATIC
 % >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDTIONi);
-% MANUAL
-% >>R_COND_Analysis = raster_cluster(R_COND,CAG_TH,Nensembles,'hamming');
+% MANUAL GUI: Neural_Networks
+
 
 % DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI)
 % Neural ensemble and Functional Network Features Extraction
@@ -101,7 +103,7 @@
 % COLOCALIZATION OF MARKED CELLS
 % >>Merge_Finder_Magic
 
-% INPSECTION to RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION
+% INSPECTION to RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION
 % 1) Plot Raster (without sorting) from:
 % >>[Rsel,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,RASTER,XY_merged,XY);
 % Each Rsel{n} is the selected raster
@@ -113,16 +115,17 @@
 % N-EXPERIMENTS RESULTS ###################################################
 
 % LOAD & GET FEATURES FOR A SET OF EXPERIMENTS*****************************
-% These scripts save feature tables for Machine Learning
+% These scripts save feature tables 
+% for Machine Learning or Statistical Analysis
 
 % RASTER FEATURES
 % Choose All CSV files at once
-% >> Raster_Features_Display
+% >>Raster_Features_Display
 % ENSEMBLES GENERAL FEATURES 
 % >>Ensembles_Features_Display
 % ENSEMBLES DETAILED FEATURES 
 % >>Ensembles_Features_Detailed_Display
-% Scritp to Merged them and make a DATASET for Machine Learning:
+% Script to Merged them and make a DATASET for Machine Learning:
 % >>Merge_Feature_Datasets
 
 % ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS ****************************
@@ -131,3 +134,4 @@
 % >>Accumulate_Ensembles_RoEn_IEnI_EnD
 % >>Accumulate_Simm_Matrix
 
+%% END ####################################################################

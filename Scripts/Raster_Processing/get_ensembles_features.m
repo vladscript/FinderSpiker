@@ -114,72 +114,20 @@ for c=1:C
     MIV(c)=max(MaxIntraVec);
     
     % Hebbian Sequence
-    HS=Ensembles_Labels(diff(signif_frames)>1);
-    % HebbianSequence{c}=HS;
+    DifEns=diff(Ensembles_Labels);
+    IndxDifEns=find(DifEns)+1;
+    IndxDifEns=[1;IndxDifEns];
+    HS=Ensembles_Labels(IndxDifEns);
+    
     % Transitions: Ensmbles Change deactivate and activate [ALTERNANCE]
     ET= HS(diff([HS;0])~=0);
     Transitions{c}=ET;
-    Ntransitions(c)=numel(ET);
-    Rate_Transitions(c)=numel(ET)/RasterDuration; % Transitions per MINUTE
-    % Cycles of Ensembles [REVERBERATION] return to a given ensemble (after activate all ensembles)
-    TypeCycles=zeros(3,1);
-    tcounter=[]; t=1;
-    Tremaining=1;
-    while and(~isempty(Tremaining),~isempty(ET))
-        ActualEnsemble=ET(t);
-        Cy=find(ET(t+1:end)==ActualEnsemble);
-        if ~isempty(Cy)
-            auxt=t;
-            i=1;
-            % Check what kind of Hebbian Path: only for Cycle with all Active Ensemables
-            while i<=length(Cy)
-                Cycle=ET(auxt:t+Cy(i));
-                % Simple
-                if and(numel(Cycle)==length(E)+1,numel(unique(Cycle))==numel(E))
-                    disp(Cycle')
-                    disp('Simple')
-                    TypeCycles(1)=TypeCycles(1)+1;
-                    tcounter=[tcounter;t;Cy(1:i)+t];
-                    auxt=t+Cy(i);
-                    i=i+1;
-                elseif numel(unique(Cycle))==numel(E)
-                    disp(Cycle')
-                    CycleMat=zeros(max(E));
-                    for j=1:length(Cycle)-1
-                        CycleMat(Cycle(j),Cycle(j+1))=CycleMat(Cycle(j),Cycle(j+1))+1;
-                    end
-                    % Check for upper and lower triangles
-                    CS=sum(triu(CycleMat)+triu(CycleMat'));
-                    % If there were sequences from 2 to end
-                    if sum(CS(2:end)>0)==numel(E)-1
-                        disp('Closed')
-                        TypeCycles(2)=TypeCycles(2)+1;
-                        tcounter=[tcounter;t;Cy(1:i)+t];
-                        auxt=t+Cy(i);
-                        i=i+1;
-                    else
-                        disp('Open')
-                        TypeCycles(3)=TypeCycles(3)+1;
-                        tcounter=[tcounter;t;Cy(1:i)+t];
-                        auxt=t+Cy(i);
-                        i=i+1;
-                    end
-                else
-                    tcounter=[tcounter;t;Cy(1:i)+t];
-                    i=i+1;
-                    auxt=t;
-                end
-                tcounter=unique(tcounter);
-            end
-        else
-            Cycle=[];
-            tcounter=unique([tcounter;t]);
-        end
-        Tremaining=setdiff(1:numel(ET)-1,tcounter);
-        if ~isempty(Tremaining)
-            t=Tremaining(1);
-        end
-    end
+    Ntransitions(c)=numel(ET)-1;
+    Rate_Transitions(c)=(numel(ET)-1)/RasterDuration; % Transitions per MINUTE
+    % Euler Cycles of Ensembles [REVERBERATION] return 
+    % to any given ensemble 
+    % (after activate all ensembles)
+    TypeCycles=eulercycles_hebbseq(ET,E);
     CyclesTypes(:,c)=TypeCycles;
     Ratecycles(c)=sum(TypeCycles)/RasterDuration;
     if c<C; disp('Next Condition'); end;
