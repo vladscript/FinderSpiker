@@ -34,33 +34,21 @@ Xraster=readtable([PathName,FileName]);
 Yraster=categorical(table2array( Xraster(:,1)) );   % Labels
 EXPIDraster=table2array( Xraster(:,2));             % EXPIDs Cell of Strings
 FeaturesRaster=Xraster.Properties.VariableNames;    % Feature Names
-
+% FeatRaster=table2cell(    Xraster(1,:));                             
+% Xraster=table2array( Xraster(:,3:end) );            % DataSet
 
 % Ensembles General Minimal Constraint:
 % Load File 
 [FileName,PathName] = uigetfile('*.csv','General Ensembles Dataset',...
     'MultiSelect', 'off',CurrentPathOK);
+
 Xensemble=readtable([PathName,FileName]);
+% Labels
 Yensemble=categorical(table2array( Xensemble(:,1)) );   % Categorical ARRAYS
 EXPIDensemble=table2array( Xensemble(:,2));             % EXPIDs Cell of Strings
 FeaturesEnsemble=Xensemble.Properties.VariableNames;    % Feature Names
-ignftr=[13,14,15]; % Links/Neuron A->euron B Most Connected
-acceptcols=setdiff(1:numel(FeaturesEnsemble),ignftr);
-Xensemble=Xensemble(:,acceptcols);
-FeaturesEnsemble=FeaturesEnsemble(acceptcols);
-% Load NETWORK excel
-[FileName,PathName,MoreFiles] = uigetfile('*.xlsx','Network Dataset file',...
-    'MultiSelect', 'off',CurrentPathOK);
-Xnet=readtable([PathName,FileName]);        % Table
-% Check table
-LimitRow=find(isnan(table2array (Xnet(:,3) ) ),1)-1;
-LimitCol=12;
-Xnet=Xnet(1:LimitRow,1:LimitCol);
-Ynet=categorical(table2array( Xnet(:,1)) );    % Labels
-EXPIDnet=table2array( Xnet(:,2));             % Cell of Strings
-FeaturesNet=Xnet.Properties.VariableNames(3:end);    % Feature Names
-
-
+% FeatEnsembles=Xensemble(1,:)                            % Feature Names
+% Xensemble=table2array( Xensemble(:,3:end) );            % Dataset
 %% Filter Experiment IDs *************************************************
 % Discriminant Feature Loop
 DFNames=fieldnames(DF);
@@ -97,5 +85,4 @@ for n=1:numel(DFNames)
     end
 end
 RejectedExperiments=unique(RejectedExperiments);
-%% MERGE DATASETS: RASTER|ENSEMBLES|NETWORK
-% get same sorting for labels and Dateset rows WITHOUT THE REJECTED ONES
+%% Output ****************************************************************

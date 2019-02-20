@@ -10,7 +10,7 @@
 % 'SynWeight_skew','SynWeight_kurt'                 [3]
 %% Read CSV Files
 NC = inputdlg('Number of Conditions: ',...
-             'Raster Features', [1 75]);
+             'General Ensemble Features', [1 75]);
 NC = str2double(NC{:});    
 % Setup Conditions
 Conditions_String='Condition_';
@@ -128,7 +128,7 @@ if strcmp('Yes',okbutton)
     TS=TS(TS~=' ');
     SaveFile=['\Ensemble_Features_',TS,'.csv'];
     % Select Destiny
-    PathSave=uigetdir(CurrentPathOK);
+    PathSave=uigetdir(CurrentPathOK,'Set Directory to save Ensemble Features');
     disp('>>Making CSV table...')
     TableFeatures=maketableraster(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions);
     writetable(TableFeatures,[PathSave,SaveFile],...

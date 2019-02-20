@@ -71,7 +71,7 @@ if strcmp('Yes',okbutton)
     SelectedCatergory(SelectedCatergory==' ')='_';
     SaveFile=[SelectedCatergory,'_Dataset_',TS,'.csv'];
     % Select Destiny
-    PathSave=uigetdir(CurrentPathOK);
+    PathSave=uigetdir(CurrentPathOK,['Set Directory to save Dataset of :',SelectedCatergory]);
     disp('>>Making CSV table...')
     writetable(FeaturesSingle,[PathSave,'\',SaveFile],...
                     'Delimiter',',','QuoteStrings',true);

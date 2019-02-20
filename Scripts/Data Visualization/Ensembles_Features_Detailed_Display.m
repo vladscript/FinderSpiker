@@ -10,7 +10,7 @@
 % 'EDmean','EDvar','EDskew','EDkurt',...            [4]
 %% Read CSV Files
 NC = inputdlg('Number of Conditions: ',...
-             'Raster Features', [1 75]);
+             'Detailed Neural Ensembles Features', [1 75]);
 NC = str2double(NC{:});    
 % Setup Conditions
 Conditions_String='Condition_';
@@ -136,7 +136,7 @@ if strcmp('Yes',okbutton)
     TS=TS(TS~=' ');
     SaveFile=['\Detailed_Ensemble_Features_',TS,'.csv'];
     % Select Destiny
-    PathSave=uigetdir(CurrentPathOK);
+    PathSave=uigetdir(CurrentPathOK,'Set Directory to save Detailed Ensemble Features');
     disp('>>Making CSV table...')
     TableFeatures=maketableraster_ensembles(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,NensemblesCondition,Names_Conditions);
     writetable(TableFeatures,[PathSave,SaveFile],...

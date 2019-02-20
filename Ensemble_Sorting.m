@@ -26,8 +26,12 @@ Update_Directory;
 %          'Conditions', [1 50]);
 % NC= str2double(NC{:}); 
 NC=numel(R_Condition);
-TxtCnd=cell2mat(Names_Conditions);
-InitialMSG=msgbox(Names_Conditions,'Neural Ensembles');
+TxtCnd{1,1}=['Experimental Conditions of ',num2str(Experiment),':']
+for n=1:NC
+    TxtCnd{n+1,1}=Names_Conditions{n};
+end
+InitialMSG=msgbox(TxtCnd,'Experimental Conditions:');
+% InitialMSG.Position=[450,340,125,130];
 uiwait(InitialMSG);
 delete(InitialMSG);
 

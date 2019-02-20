@@ -19,10 +19,7 @@
 % >bug at Raster_Act_Features-> From Only Active Selected Cells & Indexes
 % Bug At Cycles Retrieveing (!)
 % ReSAVE Ensembles Features !!!
-% Bug @ NBC and Best Subset Features
 %% Bugs & New Functions NOW
-
-% Merge & Classify ALL features: raster/ensemble/ network
 
 % Get best subset of features that best classify vs PCA
 
