@@ -22,6 +22,7 @@
 % Bug @ NBC and Best Subset Features
 %% Bugs & New Functions NOW
 
+% Sort Experiment IDs accroding to condition
 % Merge & Classify ALL features: raster/ensemble/ network
 
 % Get best subset of features that best classify vs PCA
