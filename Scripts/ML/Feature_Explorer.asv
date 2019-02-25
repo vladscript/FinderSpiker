@@ -90,13 +90,13 @@ for lrow=1:numel(Labels)
             DeltaAllFeature=[];
             for e=1:numel(EXPlist)
                 IndxTable=find(ismember(EXPIDs,EXPlist{e}));
-                % Cond_A - Cond_B: COND_B/COND_A
                 RowA=IndxTable(Y(IndxTable)==DeltaCondition(1));
                 RowB=IndxTable(Y(IndxTable)==DeltaCondition(2));
                 % Relative Changes
-                DeltaFeature(X(RowB,:)~=0)=X(RowB,X(RowB,:)~=0)./X(RowA,X(RowB,:)~=0);
-                DeltaFeature(X(RowB,:)==0)=X(RowA,X(RowB,:)==0)-X(RowB,X(RowB,:)==0);
-                DeltaAllFeature=[DeltaAllFeature;100*DeltaFeature];
+                
+                DeltaFeature(X(RowB,:)~=0)=X(RowA,X(RowB,:)~=0)./X(RowB,X(RowB,:)~=0);
+                DeltaFeature(X(RowB,:)==0)=X(RowA,X(RowB,:)==0)-X(RowB,X(RowB,:)==0)
+                DeltaAllFeature=[DeltaAllFeature;DeltaFeature];
             end
             DeltaExps{lrow,lcol}=DeltaAllFeature;
         else

@@ -12,18 +12,8 @@
 % >Networks             from Gephi
 
 %% FIXED  READY TO GO @ GIT
-% >Bug @ Ensemble Details table Visualizer: Experiment IDs
-% Integrate all Features in single Datasets for each Category
-% RASTER|ENSEMBLES|ENSEMBLESdetailed|NETWORK (MANUALLY)
-% Load and Classify Set Of Features with Naive Bayes Classifier
-% >bug at Raster_Act_Features-> From Only Active Selected Cells & Indexes
-% Bug At Cycles Retrieveing (!)
-% ReSAVE Ensembles Features !!!
-% Bug @ NBC and Best Subset Features
+% Feature Explorer
 %% Bugs & New Functions NOW
-
-% Sort Experiment IDs accroding to condition
-% Merge & Classify ALL features: raster/ensemble/ network
 
 % Get best subset of features that best classify vs PCA
 
@@ -43,6 +33,8 @@
 % RETRIEVE SIGNALS & RECONSTRUCT VIDEO
 % retreive of Original Signals, coordinates, etc:
 % Re make clean video
+
+% Compare Amantadine Doses
 
 %%% MAKE ALGORITHMIA
 
