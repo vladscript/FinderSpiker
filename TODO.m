@@ -12,19 +12,21 @@
 % >Networks             from Gephi
 
 %% FIXED  READY TO GO @ GIT
-% Feature Explorer
-% Signal Processing: Symetric Transients
+
+% Save .mat File even when if it was analyzed at NeuralNetwork GUI
+
 %% Bugs & New Functions NOW
 
+% Test Mike's Clsutering Algorithm 4 CoActivity (transposed matrix)and save as weel
 
 % Get best subset of features that best classify vs PCA
 
 % For Results Visualization
 % All-Features->PCA (dim red)-> SVM
 
-% Save .mat File even when if it was analyzed at NeuralNetwork GUI
+% Statistics
 
-% Test Mike's Clsutering Algorithm 4 CoActivity (transposed matrix)and save as weel
+% Compare Amantadine Doses
 
 % SIGNAL PROCESSING RELATED
 %   Spurious Drivers
@@ -34,8 +36,6 @@
 % RETRIEVE SIGNALS & RECONSTRUCT VIDEO
 % retreive of Original Signals, coordinates, etc:
 % Re make clean video
-
-% Compare Amantadine Doses
 
 %%% MAKE ALGORITHMIA
 
@@ -83,7 +83,8 @@
 % CLUSTERING NEURONAL ENSEMBLES
 % AUTOMATIC
 % >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDTIONi);
-% MANUAL GUI: Neural_Networks
+% MANUAL GUI (by JP): 
+% >>NeuralNetwork 
 
 
 % DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI)
