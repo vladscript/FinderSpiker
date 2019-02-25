@@ -288,7 +288,7 @@ for i=1:Ns
                 [AmpPEaks,FramPeaks]=findpeaks(xdenoised);
                 FramPeaks=FramPeaks(AmpPEaks>SpuriousTh*std(noisex));
                 [AmpValls,FramValls]=findpeaks(-xdenoised);
-                nAmps=find(AmpPEaks>std(noisex));
+                nAmps=find(AmpPEaks>SpuriousTh*std(noisex));
                 if isempty(AmpPEaks(AmpPEaks>SpuriousTh*std(noisex)))
                     disp('>> Fluorescence without Ca++ Transients')
                     xdupdate=xdupdate-xdenoised;
@@ -336,8 +336,8 @@ for i=1:Ns
                                 naux=naux+1;
                             end
                             FallN=naux;
-                            if FallN-RiseN<=RiseN
-                                disp('>> Small Peak without Ca++ Transients')
+                            if FallN<RiseN
+                                disp('>> Symetric Waveform.')
                                 % xdupdate=xdupdate-xdenoised;
                                 % xdenoised(:)=0; % make it zeros...
                             else

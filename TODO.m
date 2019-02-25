@@ -13,7 +13,9 @@
 
 %% FIXED  READY TO GO @ GIT
 % Feature Explorer
+% Signal Processing: Symetric Transients
 %% Bugs & New Functions NOW
+
 
 % Get best subset of features that best classify vs PCA
 
@@ -25,7 +27,6 @@
 % Test Mike's Clsutering Algorithm 4 CoActivity (transposed matrix)and save as weel
 
 % SIGNAL PROCESSING RELATED
-%   Somee offset at detrending algorithm 
 %   Spurious Drivers
 %       Lone Drivers: check clean signal's samples around if they're above noise
 %   Check at Signals with Huge Valley (synaptic like)
