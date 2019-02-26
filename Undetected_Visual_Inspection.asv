@@ -20,5 +20,5 @@ if Nvidok<Ndata
     indxSIGNALSOK = Calcium_Magic(notSIGNALS);
     VisualInspector(2)=true;
 else
-    disp('>>No rejected Data: all cell were detected')
+    disp('>>No rejected Data: all cell wer')
 end

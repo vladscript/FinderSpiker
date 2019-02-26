@@ -310,6 +310,7 @@ for i=1:NC
         isSIGNALS{j,i}=ActiveNeurons;   % DETECTTED Signals
         notSIGNALS{j,i}=InactiveNeurons;% UNDETECTED Signals
         RASTER{j,i}=Raster;             % Preliminar Raster         
+        SNRlambda{j,i}=10*log(var(XDupdate')./var(X_SPARSE'));
         
         % Table Data For Processing Log Details ##########################
         TimeProcessing=toc;             % Processing Latency [s]

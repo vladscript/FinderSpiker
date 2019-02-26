@@ -19,9 +19,5 @@ for c=1:C
     end
 end
 
-if Nvidok>0
-    indxSIGNALSOK = Calcium_Magic(isSIGNALS);
-    VisualInspector(1)=true;
-else
-    disp('>>NO DETECTED CELLS: all cells were undetected')
-end
+indxSIGNALSOK = Calcium_Magic(isSIGNALS);
+VisualInspector(1)=true;

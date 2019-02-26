@@ -13,6 +13,9 @@ if strcmp(FileName(end-3:end),'xlsx')
     Xraw=readtable([PathName,FileName]);        % Table
     % Check table
     LimitRow=find(isnan(table2array (Xraw(:,3) ) ),1)-1;
+    if isempty(LimitRow)
+        LimitRow=numel(Xraw(:,3));
+    end
     LimitCol=12;
     Xraw=Xraw(1:LimitRow,1:LimitCol);
     Y=categorical(table2array( Xraw(:,1)) );    % Labels

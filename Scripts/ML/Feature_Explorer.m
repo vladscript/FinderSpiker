@@ -14,9 +14,9 @@ FeatureNames=Xraw.Properties.VariableNames(3:end);  % Feature Names
 
 %% Correlation among Features
 FeaturesCorr=corr(X);
+figure; imagesc(FeaturesCorr)
 
-
-%% p-values: statistical tests
+%% p-values: statistical tests: ttest
 Nfeat=numel(FeatureNames);
 Labels=unique(Y);
 Nconditions=numel(Labels);
@@ -128,7 +128,8 @@ for c=1:numel(ReferenceCondition)
     figure;
     for IndexFeat=1:50
         boxplot(DeltaNum(:,IndexFeat),ConditionLabel);
-        ylabel(FeatureNames{IndexFeat});
+        ylab=ylabel(['%\Delta',FeatureNames{IndexFeat}]);
+        ylab.Interpreter='tex';
         title(['Reference: ',char(TitleFig)])
         pause;
     end

@@ -112,7 +112,7 @@
 % These scripts save feature tables 
 % for Machine Learning or Statistical Analysis
 
-% RASTER FEATURES
+% RASTER FEATURES AND TABLES MAKER
 % Choose All CSV files at once
 % >>Raster_Features_Display
 % ENSEMBLES GENERAL FEATURES 
@@ -127,6 +127,9 @@
 
 % MACHINE LEARNING: choose a Dataset:
 % >>Features_Datasets_NBC
+
+% DATA EXPLORING
+% >>Feature_Explorer
 
 % ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS ****************************
 % Choose One-by-One .mat Files

@@ -55,6 +55,9 @@ FeaturesEnsemble=FeaturesEnsemble(acceptcols);
 Xnet=readtable([PathName,FileName]);            % Table
 % Check table
 LimitRow=find(isnan(table2array (Xnet(:,3) ) ),1)-1;
+if isempty(LimitRow)
+    LimitRow=numel(Xnet(:,3));
+end
 LimitCol=12;
 Xnet=Xnet(1:LimitRow,1:LimitCol);
 Ynet=categorical(table2array( Xnet(:,1)) );     % Labels
