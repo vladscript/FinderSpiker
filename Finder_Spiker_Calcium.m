@@ -299,18 +299,19 @@ for i=1:NC
         % _________________________________________________________________
         
         % Cells to save PREPROCESSING ####################################
-        DETSIGNALS{j,i}=XDupdate;       % Detrended Signals         *
-        ESTSIGNALS{j,i}=Xest;           % Wavelet Denoised          *
-        SNRwavelet{j,i}=SNRbyWT;        % Empirical SNR             
-        Responses{j,i}=FR;              % Fluorophore Responses     
-        TAUSall{j,i}=TAUS;              % [taus {rise, fall},gain]  
+        DETSIGNALS{j,i}=XDupdate;       % Detrended Signals
+        ESTSIGNALS{j,i}=Xest;           % Wavelet Denoised
+        SNRwavelet{j,i}=SNRbyWT;        % Empirical SNR
+        Responses{j,i}=FR;              % Fluorophore Responses
+        TAUSall{j,i}=TAUS;              % [taus {rise, fall},gain]
         preDRIVE{j,i}=DRIVER;           % Drivers
         preLAMBDAS{j,i}=LAMBDASS;       % lambda Parameter
         SIGNALSclean{j,i}=X_SPARSE;     % Cleansignals
         isSIGNALS{j,i}=ActiveNeurons;   % DETECTTED Signals
         notSIGNALS{j,i}=InactiveNeurons;% UNDETECTED Signals
-        RASTER{j,i}=Raster;             % Preliminar Raster         
-        SNRlambda{j,i}=10*log(var(XDupdate')./var(X_SPARSE'));
+        RASTER{j,i}=Raster;             % Preliminar Raster
+                                        % Singal Noise Ration:
+        SNRlambda{j,i}=10*log(var(XDupdate')./var(X_SPARSE')); 
         
         % Table Data For Processing Log Details ##########################
         TimeProcessing=toc;             % Processing Latency [s]

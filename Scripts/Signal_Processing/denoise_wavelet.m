@@ -109,7 +109,7 @@ for i=1:Ns
         % LOWwavesFrames=setdiff(LOWwavesFrames,Framy(Promy>std(noisex)));
         
         %% Plot Results 2/3 *************************************
-%         % WAVES POINTS;
+        % WAVES POINTS;
 %         hold on;
 %         plot(LOWwavesFrames(2:end-1),xdenoised((LOWwavesFrames(2:end-1))),'*k');
 %         hold off
@@ -174,7 +174,6 @@ for i=1:Ns
                 % CHECK iF it symetric pdf around a mode and ***********
                 % and many distributed valleys below zero and noise level
                 % Absolute values of Valley are similar o bigger than Peaks
-                % ISNERT ALGORTIHM HERE
                 if numel(xdets)>3
                     Peaks=findpeaks(xdets);
                     Valles=findpeaks(-xdets);
@@ -246,17 +245,38 @@ for i=1:Ns
                 xlin=[xlin,xlinc];
                 n=n+1; % NEXT VALLEY-ZeroCross
             end
-            disp('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Fixing Distortion')
+            disp('~   ~  ~ ~ Fixing Distortion')
             %% Posterioir Work Arounds
             xdupdate=xd-xlin;            
             % xdupdate=xdupdate - var(noisex); % Remove Offset Introduced by Valley-Linear Trending
             [xdenoised,noisex]=mini_denoise(xdupdate);
-            % Make it Non-Negative:
-            xdupdate=xdupdate-(min(xdenoised));
-            xdenoised=xdenoised-(min(xdenoised));
+            
+            % Make it Non-Negative: OFFSETTIN SOME SIGNALS
+            %xdupdate=xdupdate-(min(xdenoised));
+            %xdenoised=xdenoised-(min(xdenoised));
+%             % TOO MUCH NEGATIVITY FIXING:
+%             if min(xdenoised)<-std(noisex)
+%                 deltaoffset=abs(-std(noisex)-min(xdenoised));
+%                 xdupdate=xdupdate+deltaoffset;
+%                 xdenoised=xdenoised+deltaoffset;
+%                 disp('>>Fixed Negativity: :D')
+%             end
+            
+            % Final Detrending
+            [LOWwavesFrames,~]=getwavesframes(xdenoised,noisex);
+            NEGpoints=find(xdenoised(LOWwavesFrames(2:end-1))<0);
+            if ~isempty(NEGpoints)
+                delineframes=LOWwavesFrames(NEGpoints+1);
+                disp('>> Detrending: [final fix]')
+                xdeline=getdeline(delineframes,xdenoised);
+                xdupdate=xdupdate-xdeline;
+                xdenoised=xdenoised-xdeline;
+            end
+            disp('>> Detrending: [OK]')
+            
             % Special Fixes
             % Finale (de)-Bleaching *******************************
-            FixS=1;
+            % FixS=1;
             if xdenoised(end)==max(xdenoised) && numel(LOWwavesFrames)>3
                 dxden=diff(xdenoised);
                 FixS=LOWwavesFrames(end-1);
@@ -355,18 +375,7 @@ for i=1:Ns
                 end
                 
             end
-%             % Basal Activity Detectos
-%             [~,maxPeakFrame]=findpeaks(xdupdate,'Npeaks',1,'SortStr','descend');
-%             if ~isempty(maxPeakFrame)
-%                 % Pre Peak
-%                 if min(xd(1:maxPeakFrame))>std(noisex)
-%                     disp('Possible Initial Basal Activity')
-%                 % Post Peak
-%                 elseif min(xd(maxPeakFrame:end))>std(noisex)
-%                     disp('Possible Final Basal Activity')
-%                 end
-%                     
-%             end
+            % Update Value:
             XDupdate(i,:)=xdupdate;
         end
     end
@@ -379,10 +388,11 @@ for i=1:Ns
 %     hold on;
 %     plot(xdenoised,'LineWidth',2); 
 %     plot([0,numel(XDupdate(i,:))],[0,0],'-.k');
-%     plot([0,numel(xd)],[std(noisex),std(noisex)],'-.r');
-%     plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.r');
+%     plot([0,numel(xd)],[std(noisex),std(noisex)],'-.g');
+%     plot([0,numel(xd)],-[std(noisex),std(noisex)],'-.g');
 %     hold off;
 %     axis tight; grid on;
+%     title(num2str(i))
 %     linkaxes([h1,h2],'x')
 %     disp('check')
 end % MAIN LOOP    %     

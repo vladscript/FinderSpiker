@@ -12,12 +12,9 @@
 % >Networks             from Gephi
 
 %% FIXED  READY TO GO @ GIT
-
-% Save .mat File even when if it was analyzed at NeuralNetwork GUI
+% Big Bug @ Detrending Algortithm
 
 %% Bugs & New Functions NOW
-
-% Test Mike's Clsutering Algorithm 4 CoActivity (transposed matrix)and save as weel
 
 % Get best subset of features that best classify vs PCA
 
@@ -26,11 +23,9 @@
 
 % Statistics
 
-% Compare Amantadine Doses
+% Test Mike's Clsutering Algorithm 4 CoActivity (transposed matrix)and save as weel
 
 % SIGNAL PROCESSING RELATED
-%   Spurious Drivers
-%       Lone Drivers: check clean signal's samples around if they're above noise
 %   Check at Signals with Huge Valley (synaptic like)
 
 % RETRIEVE SIGNALS & RECONSTRUCT VIDEO
@@ -55,6 +50,7 @@
 
 
 %% FUTURE **********************************
+% Look at Line Equation: 0:N-1 or 1:N
 % Figure: reason whi mean(ROI) withput distortion
 % Load Raw FLuorescenc vs F_0 distortion
 % Analyze Rejects Ones Anyway to infer Artifacts

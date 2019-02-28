@@ -49,7 +49,7 @@ for c=1:C
     [~,framax]=max(d);
     if and(framax==1 && ~isempty(d(d~=0)) ,check)
         % nextframe=framax+1;
-        [~,framvall]=findpeaks(-xe);
+        [~,framvall]=findpeaks(-xe); % valleys
         if ~isempty(framvall)
             nextframe=framvall(find(xe(framvall)<std(noisex),1));
             if isempty(nextframe)
@@ -177,6 +177,10 @@ for c=1:C
     if check==0
         Xestfix(c,:)=x_sparse;
     end
+    % Spurious Drivers:
+    dbuffer=d;
+    d(:)=0;
+    d(sign(dbuffer).*sign(x_sparse')>0)=dbuffer(sign(dbuffer).*sign(x_sparse')>0);
 end
 %     %% CHECK STUFF
 %     plot(xd,'b'); hold on;
