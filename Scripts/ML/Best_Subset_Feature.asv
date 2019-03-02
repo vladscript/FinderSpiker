@@ -145,9 +145,8 @@ figure; hold on;
 for s=1:numel(order)
     [Xroc,Yroc,Troc,AUC(s)] = perfcurve(Y,score(:,s),char(order(s)));
     plot(Xroc,Yroc)
-    LegLab{s}=char(order(s));
 end
-hold off; legend(LegLab)
+hold off;
 xlabel('False positive rate') 
 ylabel('True positive rate')
 % pause

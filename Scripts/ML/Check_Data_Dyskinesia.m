@@ -8,10 +8,13 @@
 % Output:
 %   List of Experiments IDs to ban
 %% Setup Criteria Thresholds *******************************************
+
+% Thresholds are MINIMAL values ACCEPTDE
+
 % DISCARD NEGATIVE EXPERIMENTS
 % Discriminate the Following Features
 % For Initial Condition Usually
-% Thresholds are MINIMAL values ACCEPTDE
+
 ConditionNameCheck='Dyskinesia';
 % Raster Activity Minimal Constraint:
 DF.RateNeurons_Threshold=0;
