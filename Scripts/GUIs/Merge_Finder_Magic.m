@@ -1,6 +1,7 @@
 %% Script to Run Colocalization function ----------------------------------
 % run afte selection:
 % Decalare New Variables
+Experiment=Experiment(Experiment~='\');     % NAMES PATCH
 global XY_merged;
 % global ColocateIndx;
 global MetaDataColocaliation;
@@ -69,12 +70,12 @@ set(h5, 'YScale', 'log'); set(h6, 'YScale', 'log');
 set(h4, 'XScale', 'log'); set(h8, 'XScale', 'log');
 %% The POSITIVE ONES ******************************************************
 [Merged_IndexSorted,~,RASTER_MERGED]=SortNeuronsCondition(R_merged);
-Plot_Raster_V(RASTER_MERGED(Merged_IndexSorted,:),fs);                           % Clean Whole Raster
+Plot_Raster_Ensembles(RASTER_MERGED(Merged_IndexSorted,:),fs);                           % Clean Whole Raster
 set(gcf,'Name',['ID: ',Experiment(2:end),' Merged ',MetaDataColocaliation.Cells{1},' Cells with ',MetaDataColocaliation.Dye{1}],'NumberTitle','off')
 Label_Condition_Raster(Names_Conditions,R_merged,fs);   % Labels
 % The NEGATIVE ONE(S) **********************************
 [Merged_IndexSorted,~,RASTER_NOMERGED]=SortNeuronsCondition(R_nomerged);
-Plot_Raster_V(RASTER_NOMERGED(Merged_IndexSorted,:),fs);                           % Clean Whole Raster
+Plot_Raster_Ensembles(RASTER_NOMERGED(Merged_IndexSorted,:),fs);                           % Clean Whole Raster
 set(gcf,'Name',['ID: ',Experiment(2:end),' NO merged '],'NumberTitle','off')
 Label_Condition_Raster(Names_Conditions,R_merged,fs);   % Labels
 %% UPDATE MAT FILE *******************************************************
@@ -85,7 +86,7 @@ end
 [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
     'MultiSelect', 'off',DefaultPath);
 dotindex=find(FileName=='.');
-if strcmp(FileName(1:dotindex-1),Experiment(2:end))
+if strcmp(FileName(1:dotindex-1),Experiment)
     checkname=0;
     % SAVE DATA
     save([PathName,FileName],'XY_merged',...

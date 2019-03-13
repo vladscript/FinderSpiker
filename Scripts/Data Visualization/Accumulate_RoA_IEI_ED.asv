@@ -75,9 +75,9 @@ while MoreFiles
         RoA_ALL{c}=[RoA_ALL{c}();sum(R_ALL(AllActive,:),2)./F_ALL];
         if aremerged
             PosActive=find(sum(R_merged{c},2));
-            RoA_POS{c}=[RoA_POS{c};sum(R_merged{c}(PosActive,:),2)./F_POS];
-            NegActive=find(sum(R_nomerged{c},2));
-            RoA_NEG{c}=[RoA_NEG{c};sum(R_nomerged{c}(NegActive,:),2)./F_NEG];        
+            RoA_POS{c}=[RoA_POS{c};sum(R_merged{c}(),2)./F_POS];
+            
+            RoA_NEG{c}=[RoA_NEG{c};sum(R_nomerged{c},2)./F_NEG];        
         end
         % Inter Calcium Transient Interval & Calcium Transient Duration
         ISIs=[];

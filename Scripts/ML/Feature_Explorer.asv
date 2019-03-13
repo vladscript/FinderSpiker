@@ -20,7 +20,6 @@ figure; imagesc(FeaturesCorr)
 Nfeat=numel(FeatureNames);
 Labels=unique(Y);
 Nconditions=numel(Labels);
-HypTest=zeros(Nfeat,Nconditions);
 for f=1:Nfeat
     pMatrix=ones(Nconditions);
     for c=1:Nconditions
@@ -32,10 +31,7 @@ for f=1:Nfeat
             A=X(Aindx,f);
             B=X(Bindx,f);
             % [h,p]=ttest2(A,B);
-            [h,p]=kstest2(A,B);
-            if h
-                HypTest(f,[c,elseCond(e)])=1;
-            end
+            [h,p]=kstest2(A,B)
             pMatrix(c,elseCond(e))=p;
             %p=kruskalwallis([A;B],[Y(Aindx);Y(Bindx)])
             fprintf('%3.2f\n',p);

@@ -31,7 +31,7 @@
 
 %%% MAKE ALGORITHMIA
 
-% delete >Plot_Raster_V.m >Plot_Merged_NotMerged.m
+% delete Plot_Raster_V.m
 
 % Make PCA of RASTER: 
 % denoise raster: get most variance PCs and rebuild raster
@@ -90,9 +90,8 @@
 
 % COLOCALIZATION OF MARKED CELLS
 % >>Merge_Finder_Magic
-% Save CSV Features of Merged Cells:
+% Save Features of Merged Cells:
 % >>Select_Raster_for_NN(fs,R_merged,XY,Names_Conditions,Experiment);
-% >>Select_Raster_for_NN(fs,R_nomerged,XY,Names_Conditions,Experiment);
 
 % INSPECTION to RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION
 % 1) Plot Raster (without sorting) from:

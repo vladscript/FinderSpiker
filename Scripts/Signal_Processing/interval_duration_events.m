@@ -33,5 +33,6 @@ if ~isempty(r(r>0))
         end
     end
 else
-    disp('>>No events found.')
+    fprintf('.')
 end
+fprintf('\n')
