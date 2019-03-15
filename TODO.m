@@ -67,6 +67,9 @@
 % ACTUAL MODE: @ Original Coordiantes Order
 % >>Select_Rasters
 
+% CHECK RASTER DURATIONs:
+% >>RasterDurations=get_raster_durations(Onsets,R_Condition,fs);
+
 % RETRIEVE RASTER for ANALYSIS
 % >>R=RASTER_Selected_Clean'; % ALL CONDITIONS
 % >>R_CONDITION1=R_Condition{1}; % Cells x Frames (dim)
@@ -93,14 +96,16 @@
 % Save CSV Features of Merged Cells:
 % >>Select_Raster_for_NN(fs,R_merged,XY,Names_Conditions,Experiment);
 % >>Select_Raster_for_NN(fs,R_nomerged,XY,Names_Conditions,Experiment);
+% Check Raster plots:
+% >>Plot_Merged_NotMerged
 
-% INSPECTION to RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION
-% 1) Plot Raster (without sorting) from:
-% >>[Rsel,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,RASTER,XY_merged,XY);
-% Each Rsel{n} is the selected raster
-% >>Rjunto=[Rsel{1},Rsel{2},Rsel{3}]; Plot_Raster_Ensembles(Rjunto);
-% Find Cell of Interest: Ci
-% >>[XS,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,SIGNALSclean,XY_merged,XY);
+% RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION
+% 1) Plot Raster (*without sorting*) from:
+% >>[Rsel,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,RASTER,XY_subset,XY);
+% >>Rjunto=[Rsel{1},Rsel{...},Rsel{NConditions}]; 
+% >>Plot_Raster_Ensembles(Rjunto);
+% 2) Find Cell Signal of Interest: Ci
+% >>[XS,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,SIGNALSclean,XY_subset,XY);
 % >>figure; plot(XS{c}(Ci,:))
 
 % N-EXPERIMENTS RESULTS ###################################################
@@ -129,9 +134,10 @@
 % >>Feature_Explorer
 
 % ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS ****************************
-% Choose One-by-One .mat Files
+% Choose One-by-One .mat Files-> Save .mat Files:
 % >>Accumulate_RoA_IEI_ED
 % >>Accumulate_Ensembles_RoEn_IEnI_EnD
 % >>Accumulate_Simm_Matrix
 
+% Plot_Accumulate_CDF; % To plot Results
 %% END ####################################################################

@@ -1,11 +1,31 @@
-%% GET RASTER
+%% Setup
 Update_Directory;
 Experiment=Experiment(Experiment~='\');     % NAMES PATCH
-[New_Index,Raster_Condition,RASTER_WHOLE]=SortNeuronsCondition(RASTER);
-RASTER_WHOLE_Clean=RASTER_WHOLE(New_Index,:);
-ActiveNeurons=find(sum(RASTER_WHOLE_Clean,2)>0);                % INDEX of Active NEURONS only
-RASTER_WHOLE_Clean=RASTER_WHOLE_Clean(ActiveNeurons,:);
-%% PLOT RESULTS
-Plot_Raster_Ensembles(RASTER_WHOLE_Clean,fs);                           % Clean Whole Raster
-set(gcf,'Name',['ID: ',Experiment,' processed'],'NumberTitle','off')
-Label_Condition_Raster(Names_Conditions,Raster_Condition,fs);   % Labels
+
+%% Script that plots the raster of the Selected OR the Whole Clean raster
+if exist('RASTER_Selected_Clean','var')
+    disp('>>Plotting Selected Raster to Analyze: ')
+    Plot_Raster_Ensembles(RASTER_Selected_Clean,fs);
+    CurrentFig=gcf;
+    CurrentFig.Name=['ID: ',Experiment,' Selected to Analyze'];
+    CurrentFig.NumberTitle='off';
+    
+    Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
+    disp('>>Raster Ready to Analyze.')
+elseif exist('RASTER_CONCAT','var')
+    disp('>>Plotting Clean Raster: ')
+    Plot_Raster_Ensembles(RASTER_CONCAT,fs);
+    CurrentFig=gcf;
+    CurrentFig.Name=['ID: ',Experiment,' Clean Raster'];
+    CurrentFig.NumberTitle='off';
+    Label_Condition_Raster(Names_Conditions,Raster_Condition,fs);   % Labels
+    disp('>>Next Step: Select Frames of Raster.')
+else 
+    disp('>>Plotting Raster from Automatic Processing ')
+    Plot_Raster_Ensembles(RASTER_WHOLE_Clean,fs);
+    CurrentFig=gcf;
+    CurrentFig.Name=['ID: ',Experiment,' from Automatic Processing'];
+    CurrentFig.NumberTitle='off';
+    Label_Condition_Raster(Names_Conditions,RASTER,fs);   % Labels
+    disp('>>Next Step: Inspect Signals: Detected & Undetected.')
+end

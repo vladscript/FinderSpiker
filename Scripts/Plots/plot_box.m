@@ -27,7 +27,8 @@ function plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,f,axis,varargin)
         Nexps(c)=numel(RASTER_NAMES{c});
     end
     if plotlines
-        if and(and(NC>1 , ~isempty(find(diff(Nexps)==0)) ),NC<3)
+        % if and(and(NC>1 , ~isempty(find(diff(Nexps)==0)) ),NC<3)
+        if and(NC>1 , ~isempty(find(diff(Nexps)==0)) )
             hold(axis,'on');
             Names=RASTER_NAMES{1};
             N=numel(Names);

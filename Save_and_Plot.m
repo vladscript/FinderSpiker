@@ -11,7 +11,11 @@ QoE=round(100*length(TotalActiveNeurons)/length(XY),2);
 fprintf('Actual \nActive \nNeurons: %d %%\n',round(QoE));
 % SEE RESULTS ################################################
 Plot_Raster_Ensembles(RASTER_CONCAT,fs);                           % Clean Whole Raster
-set(gcf,'Name',['ID: ',Experiment],'NumberTitle','off')
+% set(gcf,'Name',['ID: ',Experiment],'NumberTitle','off')
+CurrentFig=gcf;
+CurrentFig.Name = ['ID: ',Experiment,' ready to Analyze'];
+CurrentFig.NumberTitle='off';
+
 Label_Condition_Raster(Names_Conditions,Raster_Condition,fs);   % Labels    
 %% Update Data: VisualInspector,Oddsmatrix, Raster_Condition
 checkname=1; oksave=false;

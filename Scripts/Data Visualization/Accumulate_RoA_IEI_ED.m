@@ -6,7 +6,7 @@
 %   Load experiment manually from different folder: one by one
 %   R_Condition:  Selected rasters of the Experiment
 %   aremerged:    if merged cells have been identified
-%   fs: Sampling Frequencu
+%   fs:           Sampling Frequency
 % Output
 %    RoA_ALL:   Rate of Activity
 %    ICaTI:     Inter Calcium Transient Interval
@@ -129,28 +129,7 @@ while MoreFiles
 end
 disp('>>end.')
 %% Save Stuff to .mat File at Processed Data Folder
-plot_cdf_cell(RoA_ALL,Names_Conditions);
-xlabel('RoA')
-plot_cdf_cell(ISIs_ALL,Names_Conditions);
-xlabel('ISI')
-plot_cdf_cell(TranLengths_ALL,Names_Conditions);
-xlabel('ED')
-if aremerged
-    % POSITIVE
-    plot_cdf_cell(RoA_POS,Names_Conditions);
-    xlabel('RoA'); set(gcf,'Name','POSITIVE')
-    plot_cdf_cell(ISIs_POS,Names_Conditions);
-    xlabel('ISI'); set(gcf,'Name','POSITIVE')
-    plot_cdf_cell(TranLengths_POS,Names_Conditions);
-    xlabel('ED'); set(gcf,'Name','POSITIVE')
-    % NEGATIVE
-    plot_cdf_cell(RoA_NEG,Names_Conditions);
-    xlabel('RoA'); set(gcf,'Name','NEGATIVE')
-    plot_cdf_cell(ISIs_NEG,Names_Conditions);
-    xlabel('ISI'); set(gcf,'Name','NEGATIVE')
-    plot_cdf_cell(TranLengths_NEG,Names_Conditions);
-    xlabel('ED'); set(gcf,'Name','NEGATIVE')
-end
+Plot_Accumulate_CDF;
 okbutton = questdlg('Save data?');
 waitfor(okbutton); 
 if strcmp('Yes',okbutton)
