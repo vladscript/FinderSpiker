@@ -26,7 +26,7 @@ function [XY_merged,MetaDataColocaliation]=get_merged_coordinates_delux(Experime
 global XY_merged;
 % global ColocateIndx;
 global MetaDataColocaliation;
-Experiment=Experiment(2:end); % delete Slahs from Name ID
+Experiment=Experiment(Experiment~='\');     % NAMES PATCH
 N=length(XY(:,1));
 
 X_col=[];

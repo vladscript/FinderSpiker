@@ -50,12 +50,12 @@ FileDirSave=pwd;
 Slashes=find(FileDirSave=='\');
 FileDirSave=FileDirSave(1:Slashes(end)-1);
 if isdir([FileDirSave,'\Features Tables'])
-    writetable(Tfeat,[FileDirSave,'\Features Tables',FileProcessingFeatures],...
+    writetable(Tfeat,[FileDirSave,'\Features Tables\',FileProcessingFeatures],...
         'Delimiter',',','QuoteStrings',true);
     disp('Saved Table Features')
 else % Create Directory
     disp('Directory >Resume Tables< created')
-    mkdir([FileDirSave,'\Features Tables']);
+    mkdir([FileDirSave,'\Features Tables\']);
     writetable(Tfeat,[FileDirSave,'\Features Tables',FileProcessingFeatures],...
         'Delimiter',',','QuoteStrings',true);
     disp('Saved Table Features')

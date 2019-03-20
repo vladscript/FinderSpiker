@@ -5,25 +5,14 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
 
-% Features  of Experiments:  
-% >Rasters,             MATLAB script
-% >Ensembles general    MATLAB script
-% >Ensembles details    MATLAB script
-% >Networks             from Gephi
-
 %% FIXED  READY TO GO @ GIT
-% Big Bug @ Detrending Algortithm
 
 %% Bugs & New Functions NOW
 
 % Get best subset of features that best classify vs PCA
-
 % All-Features->PCA (dim red)-> SVM: not really good
-
 % Statistics
-
 % Test Mike's Clsutering Algorithm 4 CoActivity (transposed matrix)and save as weel
-
 
 % RETRIEVE SIGNALS & RECONSTRUCT VIDEO
 % retreive of Original Signals, coordinates, etc:
@@ -31,12 +20,10 @@
 
 %%% MAKE ALGORITHMIA
 
-% delete >Plot_Raster_V.m >Plot_Merged_NotMerged.m
+% delete >Plot_Raster_V.m; gen_feat_table_merged.m
 
 % Make PCA of RASTER: 
 % denoise raster: get most variance PCs and rebuild raster
-
-% Test Visualizer of CDF for (+)and (-) colocated cells
 
 % Add button to save Zoom image (MERGED MAGIC)
 % Save Selected Points SELECTED-> add to file .mat
@@ -46,8 +33,9 @@
 
 
 %% FUTURE **********************************
+% Driver Issues
 % Look at Line Equation: 0:N-1 or 1:N   [*]
-% Figure: reason whi mean(ROI) withput distortion
+% Figure: reason whi mean(ROI) without distortion
 % Load Raw FLuorescenc vs F_0 distortion
 % Analyze Rejects Ones Anyway to infer Artifacts
 % Processing Times/Detections/etc from log files
@@ -62,16 +50,17 @@
 % >>Detected_Visual_Inspection
 % >>Undetected_Visual_Inspection
 % >>Save_and_Plot
+% >>Plot_Experiment
 
 % RASTER SELECTION
 % ACTUAL MODE: @ Original Coordiantes Order
 % >>Select_Rasters
 
-% CHECK RASTER DURATIONs:
+% CHECK RASTER's Selection DURATIONs:
 % >>RasterDurations=get_raster_durations(Onsets,R_Condition,fs);
 
 % RETRIEVE RASTER for ANALYSIS
-% >>R=RASTER_Selected_Clean'; % ALL CONDITIONS
+% >>R=RASTER_Selected_Clean'; % ALL CONDITIONS CONCATeNATED
 % >>R_CONDITION1=R_Condition{1}; % Cells x Frames (dim)
 % ...
 % >>R_CONDITIONi=R_Condition{i};
@@ -81,7 +70,6 @@
 % >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDTIONi);
 % MANUAL GUI (by JP): 
 % >>NeuralNetwork 
-
 
 % DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI)
 % Neural ensemble and Functional Network Features Extraction
@@ -93,13 +81,16 @@
 
 % COLOCALIZATION OF MARKED CELLS
 % >>Merge_Finder_Magic
-% Save CSV Features of Merged Cells:
+%       It gets outputs: R_merged,R_nomerged,MetaDataColocaliation
+% Save CSV Raster-Features of Merged Cells:
 % >>Select_Raster_for_NN(fs,R_merged,XY,Names_Conditions,Experiment);
 % >>Select_Raster_for_NN(fs,R_nomerged,XY,Names_Conditions,Experiment);
 % Check Raster plots:
 % >>Plot_Merged_NotMerged
 
 % RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION
+% 0) Get Merged Coordinates (IF SO)
+% >> XY_merged=XY_selected(MetaDataColocaliation.PositiveCells,:);
 % 1) Plot Raster (*without sorting*) from:
 % >>[Rsel,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,RASTER,XY_subset,XY);
 % >>Rjunto=[Rsel{1},Rsel{...},Rsel{NConditions}]; 

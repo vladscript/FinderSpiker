@@ -16,6 +16,7 @@
 %    RoA_NEG: uncolocated cells
 %% Setup
 % Initial:
+clear; close all; clc;
 runs=1;             % Runs Counter
 EXPS={};            % List Of Experiments
 
@@ -51,7 +52,7 @@ while MoreFiles
     end
     %%  Loop to Accummulate Data
     for c=1:NC
-        fprintf('Getting Data from %s ',Names_Conditions{c})
+        fprintf('\nGetting Data from %s ',Names_Conditions{c})
         % Read Raster
         R_ALL=R_Condition{c};
         if aremerged
