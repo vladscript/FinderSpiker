@@ -26,7 +26,7 @@ D=makecellsxframes(D);
 XDupdate=makecellsxframes(XDupdate);
 Xest=makecellsxframes(Xest);
 % Initial Decay due to firing or "fast bleaching"
-[C,~]=size(D); % Length of okINDX
+[C,~]=size(D); % Length of okINDX (!) carefull if size(D)=[1,F]
 % Initialize Output
 Xestfix=Xest;
 XDfix=XDupdate;

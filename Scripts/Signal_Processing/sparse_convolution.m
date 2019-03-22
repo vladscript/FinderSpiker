@@ -5,10 +5,15 @@
 % Output
 %   x_sparse: drive vector
 function x_sparse=sparse_convolution(d,r)
-d=d';
-r=r';
-L=length(r);
-Np=length(d);
+d=makerowvector(d)';
+r=makerowvector(r)';
+L=numel(r);
+Np=numel(d);
+% To avoid probles with the size of the response
+if L>Np
+    r=r(1:Np);
+    L=numel(r);    
+end
 % Build Response Matrix
 Cols = [r;zeros(abs(Np-L),1)];
 Rows = [r(1),zeros(1,Np-1)];
