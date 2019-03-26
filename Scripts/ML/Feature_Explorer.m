@@ -120,14 +120,14 @@ for c=1:numel(ReferenceCondition)
     TitleFig=Labels(RefIndex(c));
     DeltaNum=[]; ConditionLabel={}; % To Make Boxplots
     for r=1:numel(Labels)
-        if ~isempty(DeltaExps{r,RefIndex(c)})
+        if ~isempty(DeltaExps{RefIndex(c),r})
            % Gather All The Deltas 
            VersusCondition=Labels(r);
-           Nexps=size(DeltaExps{r,RefIndex(c)},1);
+           Nexps=size(DeltaExps{RefIndex(c),r},1);
            for e=1:Nexps
                 ConditionLabel=[ConditionLabel;['+ ',char(VersusCondition)]];
            end
-           DeltaNum=[DeltaNum;DeltaExps{r,RefIndex(c)}];
+           DeltaNum=[DeltaNum;DeltaExps{RefIndex(c),r}];
         end
     end
     figure;

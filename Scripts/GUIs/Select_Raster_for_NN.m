@@ -111,7 +111,10 @@ while ~strcmp('Yes',okbutton)
         R_Condition{c}=R(ActiveNeurons,:);
         % XY_Condition{c}=XY_selected;
         % Activity Indexes:*******************************************
-        [Descriptive,AI_1(c,1),AI_2(c,1)]=get_general_features(R_Condition{c});
+        % Feature of the Only Active Rows of the Raster
+        % [Descriptive,AI_1(c,1),AI_2(c,1)]=get_general_features(R_Condition{c});
+        % Feature of ALL Rows of the Raster (BETTER OFF!)
+        [Descriptive,AI_1(c,1),AI_2(c,1)]=get_general_features(R);
         AN=Descriptive.AN;
         DurAc=Descriptive.DurAc; % Number of Active Frames
         CAG=Descriptive.CAG;

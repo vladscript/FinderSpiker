@@ -6,6 +6,7 @@
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
 
 %% FIXED  READY TO GO @ GIT
+% Importnan Update @ RoA Feature Calcullation
 
 %% Bugs & New Functions NOW
 
@@ -13,6 +14,8 @@
 % All-Features->PCA (dim red)-> SVM: not really good
 % Statistics
 % Test Mike's Clsutering Algorithm 4 CoActivity (transposed matrix)and save as weel
+
+% MAKE NETWORK OF NON ENSEMBLED RASTERs
 
 % RETRIEVE SIGNALS & RECONSTRUCT VIDEO
 % retreive of Original Signals, coordinates, etc:
