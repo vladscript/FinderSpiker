@@ -6,7 +6,7 @@
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
 
 %% FIXED  READY TO GO @ GIT
-% Importnan Update @ RoA Feature Calcullation
+% Importnat Update @ RoA Feature Calcullation
 
 %% Bugs & New Functions NOW
 

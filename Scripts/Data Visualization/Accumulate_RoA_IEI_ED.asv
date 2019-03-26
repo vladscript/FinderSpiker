@@ -72,14 +72,16 @@ while MoreFiles
         % Cummulate Stuff *************************************************
         % Rate of Activity: CaTransients frames / Total Frames
         AllActive=find(sum(R_ALL,2));
-        fprintf('with %i of %i Active Neurons \n',numel(AllActive),numel(sum(R_ALL,2)));
+        fprintf('with %i cells\n',numel(AllActive))
         % ONLY ACTIVE
         % RoA_ALL{c}=[RoA_ALL{c}();sum(R_ALL(AllActive,:),2)./F_ALL];
-        % ALL NEURONS: (better off!) Inclueded [Zero-Rates]
+        % ALL NEURONS: (better off!) Inclueded Zero-Rates
         RoA_ALL{c}=[RoA_ALL{c}();sum(R_ALL,2)./F_ALL];
         if aremerged
-            RoA_POS{c}=[RoA_POS{c};sum(R_merged{c},2)./F_POS];
-            RoA_NEG{c}=[RoA_NEG{c};sum(R_nomerged{c},2)./F_NEG];        
+            PosActive=find(sum(R_merged{c},2));
+            RoA_POS{c}=[RoA_POS{c};sum(R_merged{c}(PosActive,:),2)./F_POS];
+            NegActive=find(sum(R_nomerged{c},2));
+            RoA_NEG{c}=[RoA_NEG{c};sum(R_nomerged{c}(NegActive,:),2)./F_NEG];        
         end
         % Inter Calcium Transient Interval & Calcium Transient Duration
         ISIs=[];
@@ -139,7 +141,7 @@ if strcmp('Yes',okbutton)
     timesave=clock;
     TS=num2str(timesave(1:5));
     TS=TS(TS~=' ');
-    SaveFile=['\RoA_ACC_',TS,'.mat'];
+    SaveFile=['\RoA_',TS,'.mat'];
     % Select Destiny
     PathSave=uigetdir(CurrentPathOK);
     if ~aremerged
