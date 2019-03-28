@@ -74,92 +74,137 @@ h4=subplot(2,2,4); % Effective Activity
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,4,h4)
 title(h4,'Effective Activity')
 %% ITI & LT Statistics Features
-% 'ISImean','ISImode','ISIvar','ISIskew','ISIkurt',...
-% 'Lengthmean','Lengthmode','Lengthvar','Lengthskew','Lengthkurt'
+% 'ISImean','ISImode','ISImedian','ISIvar','ISIskew','ISIkurt',...
+% 'Lengthmean','Lengthmode','Lengthmedian','Lengthvar','Lengthskew','Lengthkurt'
 FeaturesB=figure;
 FeaturesB.Name='IEI & ED statistics';
-g1=subplot(2,5,1); % ISI mean
+g1=subplot(2,6,1); % ISI mean
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,5,g1)
 title(g1,'IEI mean')
 h1.YLim=[0,1];grid(h1,'on');
 
-g2=subplot(2,5,2); % ISImode
+g2=subplot(2,6,2); % ISImode
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,6,g2)
 title(g2,'IEI mode')
 
-g3=subplot(2,5,3); % ISIvar
+g3=subplot(2,6,3); % ISImedian
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,7,g3)
-title(g3,'IEI variance')
+title(g3,'IEI median')
 
-g4=subplot(2,5,4); % ISIskew
+g4=subplot(2,6,4); % ISIvar
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,8,g4)
-title(g4,'IEI skewness')
+title(g4,'IEI variance')
 
-g5=subplot(2,5,5); % ISIkurt
+g5=subplot(2,6,5); % ISIskew
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,9,g5)
-title(g5,'IEI kurtosis')
+title(g5,'IEI skewness')
 
-g6=subplot(2,5,6); % Length mean
+g6=subplot(2,6,6); % ISIkurt
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,10,g6)
-title(g6,'ED mean')
+title(g6,'IEI kurtosis')
 
-g7=subplot(2,5,7); % Length mode
+g7=subplot(2,6,7); % Length mean
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,11,g7)
-title(g7,'ED mode')
+title(g7,'ED mean')
 
-g8=subplot(2,5,8); % Length var
+g8=subplot(2,6,8); % Length mode
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,12,g8)
-title(g8,'ED variance')
+title(g8,'ED mode')
 
-g9=subplot(2,5,9); % Length skew
+g9=subplot(2,6,9); % Length median
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,13,g9)
-title(g9,'ED skewness')
+title(g9,'ED mode')
 
-g10=subplot(2,5,10); % Length kurt
+g10=subplot(2,6,10); % Length var
 plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,14,g10)
-title(g10,'ED kurtosis')
+title(g10,'ED variance')
+
+g11=subplot(2,6,11); % Length skew
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,15,g11)
+title(g11,'ED skewness')
+
+g12=subplot(2,6,12); % Length kurt
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,16,g12)
+title(g12,'ED kurtosis')
+
 %% CAG & RoA Features
 FeaturesC=figure;
 FeaturesC.Name='Raster Features: CAG & RoA Statitics';
-j1=subplot(2,5,1); % CAG mean
-plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,15,j1)
+j1=subplot(2,6,1); % CAG mean
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,17,j1)
 title(j1,'CAG mean')
 
-j2=subplot(2,5,2); % CAG mode
-plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,16,j2)
+j2=subplot(2,6,2); % CAG mode
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,18,j2)
 title(j2,'CAG mode')
 
-j3=subplot(2,5,3); % CAG var
-plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,17,j3)
-title(j3,'CAG variance')
+j3=subplot(2,6,3); % CAG median
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,19,j3)
+title(j3,'CAG median')
 
-j4=subplot(2,5,4); % CAG skew
-plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,18,j4)
-title(j4,'CAG skewness')
+j4=subplot(2,6,4); % CAG var
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,20,j4)
+title(j4,'CAG variance')
 
-j5=subplot(2,5,5); % CAG kurt
-plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,19,j5)
-title(j5,'CAG kurtosis')
+j5=subplot(2,6,5); % CAG skew
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,21,j5)
+title(j5,'CAG skewness')
 
-j6=subplot(2,5,6); % RoA mean
-plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,20,j6)
-title(j6,'RoA mean')
+j6=subplot(2,6,6); % CAG kurt
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,22,j6)
+title(j6,'CAG kurtosis')
 
-j7=subplot(2,5,7); % RoA mode
-plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,21,j7)
-title(j7,'RoA mode')
+j7=subplot(2,6,7); % RoA mean
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,23,j7)
+title(j7,'RoA mean')
 
-j8=subplot(2,5,8); % RoA var
-plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,22,j8)
-title(j8,'RoA variance')
+j8=subplot(2,6,8); % RoA mode
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,24,j8)
+title(j8,'RoA mode')
 
-j9=subplot(2,5,9); % RoA skew
-plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,23,j9)
-title(j9,'RoA skewness')
+j9=subplot(2,6,9); % RoA median
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,25,j9)
+title(j9,'RoA median')
 
-j10=subplot(2,5,10); % RoA kurt
-plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,24,j10)
-title(j10,'RoA kurtosis')
+j10=subplot(2,6,10); % RoA var
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,26,j10)
+title(j10,'RoA variance')
+
+j11=subplot(2,6,11); % RoA skew
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,27,j11)
+title(j11,'RoA skewness')
+
+j12=subplot(2,6,12); % RoA kurt
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,28,j12)
+title(j12,'RoA kurtosis')
+
+%% RoT Features (Rate of Calcium Transients)
+FeaturesD=figure;
+FeaturesD.Name='Raster Features: Rate of Calcium Transients Statitics';
+k1=subplot(2,3,1); % RoT mean
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,29,k1)
+title(k1,'RoT mean')
+
+k2=subplot(2,3,2); % RoT mode
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,30,k2)
+title(k2,'RoT mode')
+
+k3=subplot(2,3,3); % RoT median
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,31,k3)
+title(k3,'RoT median')
+
+k4=subplot(2,3,4); % RoT var
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,32,k4)
+title(k4,'RoT variance')
+
+k5=subplot(2,3,5); % RoT skew
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,33,k5)
+title(k5,'RoT skewness')
+
+k6=subplot(2,3,6); % RoT kurt
+plot_box(RASTER_NAMES,RASTER_FEATURES,Names_Conditions,34,k6)
+title(k6,'RoT kurtosis')
+
 %% Make and Save Table
 okbutton = questdlg('Make CSV Table?');
 waitfor(okbutton); 

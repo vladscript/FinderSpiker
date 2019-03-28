@@ -77,10 +77,10 @@ for c=1:C
         CAGcluster=sum(Rcluster);
         if numel(CAGcluster)>1
             AUC=autocorr(CAGcluster,1); % Autocorrelation Coeffcient
-            EnsCAGstats{c,e}=[AUC(2),mean(CAGcluster),var(CAGcluster),skewness(CAGcluster),kurtosis(CAGcluster)];
+            EnsCAGstats{c,e}=[AUC(2),mean(CAGcluster),median(CAGcluster),var(CAGcluster),skewness(CAGcluster),kurtosis(CAGcluster)];
             MaxIntraVec(c)=max(pdist(Rcluster',SimMethod));
         else
-            EnsCAGstats{c,e}=[0,mean(CAGcluster),var(CAGcluster),skewness(CAGcluster),kurtosis(CAGcluster)];
+            EnsCAGstats{c,e}=[0,mean(CAGcluster),median(CAGcluster),var(CAGcluster),skewness(CAGcluster),kurtosis(CAGcluster)];
             MaxIntraVec(c)=0;
         
         end
@@ -90,8 +90,8 @@ for c=1:C
         [IEIs,EDs]=interval_duration_events(r);
         IEIsExp{c,e}=IEIs/fs;   % [SECONDS]
         EDsExp{c,e}=EDs/fs;     % [SECONDS]
-        IEIstats{c,e}=[mean(IEIs),var(IEIs),skewness(IEIs),kurtosis(IEIs)];
-        EDstats{c,e}=[mean(EDs),var(EDs),skewness(EDs),kurtosis(EDs)];
+        IEIstats{c,e}=[mean(IEIs),median(IEIs),var(IEIs),skewness(IEIs),kurtosis(IEIs)];
+        EDstats{c,e}=[mean(EDs),median(EDs),var(EDs),skewness(EDs),kurtosis(EDs)];
         %disp('butt')
     end
     %% ENSEMBLES SETs FEATURES

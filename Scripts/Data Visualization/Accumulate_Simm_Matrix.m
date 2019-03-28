@@ -1,5 +1,5 @@
-% Function to accumulate Rate of Ensmbles(RoE)
-% of each Ensmble For each Experiment of the same
+% Function to accumulate Simmilitude Matrices
+% of each Ensemble Analysis For each Experiment of the same
 % experimental setup, i.e., same experimental conditions
 
 % Input

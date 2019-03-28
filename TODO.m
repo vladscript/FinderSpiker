@@ -7,8 +7,20 @@
 
 %% FIXED  READY TO GO @ GIT
 % Importnat Update @ RoA Feature Calcullation
+% GET Spikes Rate for Cell and Mean Spike Rate of Raster. OK
 
 %% Bugs & New Functions NOW
+
+% EDIT #######
+% get_ensembles_features
+% GET SPIKES *******************************************
+% ENSEMBLES GENERAL FEATURES 
+% >>Ensembles_Features_Display
+% ENSEMBLES DETAILED FEATURES 
+% >>Ensembles_Features_Detailed_Display
+% ******************************************************
+
+% Hamming Distance among Raster Conditions
 
 % Get best subset of features that best classify vs PCA
 % All-Features->PCA (dim red)-> SVM: not really good
@@ -85,7 +97,7 @@
 % COLOCALIZATION OF MARKED CELLS
 % >>Merge_Finder_Magic
 %       It gets outputs: R_merged,R_nomerged,MetaDataColocaliation
-% Save CSV Raster-Features of Merged Cells:
+% Save CSV Raster-Features of Merged & NO-Merged Cells:
 % >>Select_Raster_for_NN(fs,R_merged,XY,Names_Conditions,Experiment);
 % >>Select_Raster_for_NN(fs,R_nomerged,XY,Names_Conditions,Experiment);
 % Check Raster plots:

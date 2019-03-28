@@ -28,6 +28,8 @@ for c=1:Cells
     [ISIcell,TranLengthscell]=interval_duration_events(r);
     ISIs=[ISIs,ISIcell];
     TranLengths=[TranLengths,TranLengthscell];
+    % Transien Rate
+    RoT(c)=numel(TranLengthscell)*fs/numel(r)*60; % Ca Transients per MINUTE
     disp(c);
 end
 %% GET PDFs
@@ -45,16 +47,7 @@ else
 end
     
 %% STATISTICS
-%   MEAN, MODE, VARIANCE,SKEWNESS,KURTOSIS x ITI and Length pdfs
-StatsFeatures=[mean(ISIs/fs),mode(ISIs/fs),var(ISIs/fs),skewness(ISIs/fs),kurtosis(ISIs/fs),...
-mean(TranLengths/fs),mode(TranLengths/fs),var(TranLengths/fs),skewness(TranLengths/fs),kurtosis(TranLengths/fs)];
-% %% CHECK PLOT
-% figure
-% subplot(1,2,1); plot(ISIbin,ISIp)
-% axis tight; grid on;
-% title('InterTranInterval pdf')
-% xlabel('[s]')
-% subplot(1,2,2); plot(Lengthbin,Lengthp)
-% axis tight; grid on;
-% title('Ca++ Tran. Length pdf')
-% xlabel('[s]')
+%   MEAN, MODE, MEDIAN, VARIANCE,SKEWNESS,KURTOSIS x ITI and Length pdfs
+StatsFeatures=[mean(ISIs/fs),mode(ISIs/fs),median(ISIs/fs),var(ISIs/fs),skewness(ISIs/fs),kurtosis(ISIs/fs),...
+mean(TranLengths/fs),mode(TranLengths/fs),median(TranLengths/fs),var(TranLengths/fs),skewness(TranLengths/fs),kurtosis(TranLengths/fs),...
+mean(RoT),mode(RoT),median(RoT),var(RoT),skewness(RoT),kurtosis(RoT)];
