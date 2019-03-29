@@ -42,12 +42,12 @@ end
 TotalPairs=size(AllPair,1);
 auxCyles=1;
 while and(~isempty(Tremaining),~isempty(ET))
-    ActualEnsemble=ET(t);                   % Get Ensemeble
-    Cy=find(ET(t+1:end)==ActualEnsemble);   % Ensemble Realization Frames
+    ActualEnsemble=ET(t);                   % Get Ensemble by Order
+    Cy=find(ET(t+1:end)==ActualEnsemble);   % Following Ensemble Realization Index
     % Check ONly if there were more than 1 Ensemble Realization
     if ~isempty(Cy)     
-        auxt=t;
-        i=1;
+        auxt=t; % Following Ensembles Index Start
+        i=1;    % Index of the Ensemble Realization
         % Eulerian Cycles: all-Ensemble Realizations
         % Search of the Ensembles Between Actual and Folowing
         % Ensembles Realizations and Classify Kind of Cycle:
@@ -77,8 +77,10 @@ while and(~isempty(Tremaining),~isempty(ET))
                 CounterPairs=zeros(TotalPairs,1);
                 for p=1:numel(rowX)
                     ActualPair=unique(PairSeq(p,:));
-                    [~,indexPair]=intersect(AllPair,ActualPair,'rows');
-                    CounterPairs(indexPair)=CounterPairs(indexPair)+1;
+                    if numel(ActualPair)>1
+                        [~,indexPair]=intersect(AllPair,ActualPair,'rows');
+                        CounterPairs(indexPair)=CounterPairs(indexPair)+1;
+                    end
                 end
                 % AllPairs/CouterPairs histogram of pairs of Sequences
                 % Check for upper and lower triangles
@@ -87,8 +89,8 @@ while and(~isempty(Tremaining),~isempty(ET))
                 if sum(CounterPairs>0)==TotalPairs
                     disp('    \--> Closed Cycle')
                     TypeCycles(2)=TypeCycles(2)+1;
-                    tcounter=[tcounter;t;Cy(1:i)+t];
-                    auxt=t+Cy(i);
+                    tcounter=[tcounter;t;Cy(1:i)+t]; % Start & End Index of the Cycle
+                    auxt=t+Cy(i); % Next Ensemble Realization Index
                     i=i+1;
                     TableCycles{auxCyles,1}='Closed';
                     TableCycles{auxCyles,2}=Cycle;
@@ -105,8 +107,9 @@ while and(~isempty(Tremaining),~isempty(ET))
                 end
             else % Next Ensemble Realization
                 disp('>>No Euler Ensembles Activations')
-                tcounter=[tcounter;t;Cy(1:i)+t];
-                i=i+1;
+                tcounter=[tcounter;t;Cy(1:i)+t]; % ALL INDEXES CHECKED
+                auxt=t+Cy(i); % INcreas Index of the Following Ensemble Realizations
+                i=i+1; % Next Ensemble Realization
                 % auxt=t;
             end
             tcounter=unique(tcounter);
@@ -115,7 +118,7 @@ while and(~isempty(Tremaining),~isempty(ET))
         Cycle=[];
         tcounter=unique([tcounter;t]);
     end
-    Tremaining=setdiff(1:numel(ET)-1,tcounter);
+    Tremaining=setdiff(1:numel(ET)-1,tcounter); % CHECKED INDEXES
     if ~isempty(Tremaining)
         t=Tremaining(1);
     end

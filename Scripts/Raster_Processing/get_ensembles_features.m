@@ -53,11 +53,10 @@ for c=1:C
     %% CAG Statistics
     AUC=autocorr(CAG,1); % CAG Autocorrelation Coefficient
     CAGstats(c,:)=AUC(2);
-    Th=Ensemble_Threshold(c);       % CAG Threshold
-    % Thresholds(c)=Th;
-    signif_frames=find(CAG>=Th);    % Significatn Frames
-    Ensembles_Labels=Ensembled_Labels{c}; % Labels each frame
-    E=unique(Ensembled_Labels{c}); % Ensambles per condition
+    Th=Ensemble_Threshold(c);               % CAG Threshold
+    signif_frames=find(CAG>=Th);            % Significant Frames
+    Ensembles_Labels=Ensembled_Labels{c};   % Labels each frame
+    E=unique(Ensembled_Labels{c});          % Ensembles per condition
     %% Classification Error
     [Model_Cond{c},ECV_Cond(c)]=Nbayes_Ensembles(R(:,signif_frames),Ensembles_Labels);
     %% EACH ENSEMBLE
@@ -119,6 +118,15 @@ for c=1:C
     IndxDifEns=[1;IndxDifEns];
     HS=Ensembles_Labels(IndxDifEns);
     
+    
+    
+    % RETRIEVE TIMES OF THE HS (!!!)
+    % from here: (?)
+    % signif_frames(IndxDifEns)
+    
+    
+    
+    
     % Transitions: Ensmbles Change deactivate and activate [ALTERNANCE]
     ET= HS(diff([HS;0])~=0);
     Transitions{c}=ET;
@@ -158,13 +166,13 @@ Features_Condition.ECV_Cond=ECV_Cond;
 Features_Condition.RateTrans=Rate_Transitions;
 Features_Condition.RateCycles=Ratecycles;
 Features_Condition.CyclesType=CyclesTypes;
-Features_Condition.CyclesTable=TableCycles;
 % ABOUT CO-ACTIVITY GRAPHY
 Features_Condition.CAGstats=CAGstats;
 
 %                                   MAT File:
 Features_Condition.Model_Cond=Model_Cond;
 Features_Condition.CrossEnsmebleSimm=CrossEnsmebleSimm;
+Features_Condition.CyclesTable=TableCycles;
 
 % Domminance:
 % Dominance_Ensemble=NeuronsOccupancy.*Ensembles_Rate;
