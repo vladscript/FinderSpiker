@@ -127,7 +127,7 @@ for c=1:C
     % Euler Cycles of Ensembles [REVERBERATION] return 
     % to any given ensemble 
     % (after activate all ensembles)
-    [TableCycles,TypeCycles]=eulercycles_hebbseq(ET,E);
+    [TablTypeCycles=eulercycles_hebbseq(ET,E);
     CyclesTypes(:,c)=TypeCycles;
     Ratecycles(c)=sum(TypeCycles)/RasterDuration;
     if c<C; disp('Next Condition'); end;
@@ -158,7 +158,6 @@ Features_Condition.ECV_Cond=ECV_Cond;
 Features_Condition.RateTrans=Rate_Transitions;
 Features_Condition.RateCycles=Ratecycles;
 Features_Condition.CyclesType=CyclesTypes;
-Features_Condition.CyclesTable=TableCycles;
 % ABOUT CO-ACTIVITY GRAPHY
 Features_Condition.CAGstats=CAGstats;
 

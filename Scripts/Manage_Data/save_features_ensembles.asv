@@ -132,13 +132,10 @@ for c=1:C
     % Ensemble Rate [act/min]
     EnseRate=Features_Ensemble.Rate(c,1:NE)';
     % *Initialize* sizes right
-    EnsCAGauc=zeros(NE,1);EnsCAGmean=EnsCAGauc; EnsCAGmode=EnsCAGauc;
-    EnsCAGmedian=EnsCAGauc; EnsCAGvar=EnsCAGauc;
-    EnsCAGskew=EnsCAGauc; EnsCAGkurt=EnsCAGauc; 
-    EnsIEImean=EnsCAGauc; EnsIEImode=EnsCAGauc; EnsIEImedian=EnsCAGauc;
+    EnsCAGauc=zeros(NE,1);EnsCAGmean=EnsCAGauc; EnsCAGvar=EnsCAGauc;
+    EnsCAGskew=EnsCAGauc; EnsCAGkurt=EnsCAGauc; EnsIEImean=EnsCAGauc;
     EnsIEIvar=EnsCAGauc; EnsIEIskew=EnsCAGauc; EnsIEIkurt=EnsCAGauc;
-    EnsEDmean=EnsCAGauc; EnsEDmode=EnsCAGauc; EnsEDmedian=EnsCAGauc;
-    EnsEDvar=EnsCAGauc; EnsEDskew=EnsCAGauc;
+    EnsEDmean=EnsCAGauc; EnsEDvar=EnsCAGauc; EnsEDskew=EnsCAGauc;
     EnsEDkurt=EnsCAGauc;
     for n=1:NE
         % Ensemble Co-Activity-Graphy ACC *******************
@@ -146,21 +143,21 @@ for c=1:C
         % Ensemble Co-Activity-Graphy Mean
         EnsCAGmean(n,1)=Features_Ensemble.EnsCAGstats{c,n}(2);
         % Ensemble Co-Activity-Graphy Mode
-        EnsCAGmode(n,1)=Features_Ensemble.EnsCAGstats{c,n}(3);
+        EnsCAGmean(n,1)=Features_Ensemble.EnsCAGstats{c,n}(3);
         % Ensemble Co-Activity-Graphy Median
-        EnsCAGmedian(n,1)=Features_Ensemble.EnsCAGstats{c,n}(4);
+        EnsCAGmean(n,1)=Features_Ensemble.EnsCAGstats{c,n}(4);
         % Ensemble Co-Activity-Graphy Variance
         EnsCAGvar(n,1)=Features_Ensemble.EnsCAGstats{c,n}(5);
         % Ensemble Co-Activity-Graphy Skewness
         EnsCAGskew(n,1)=Features_Ensemble.EnsCAGstats{c,n}(6);
         % Ensemble Co-Activity-Graphy Kurtosis
         EnsCAGkurt(n,1)=Features_Ensemble.EnsCAGstats{c,n}(7);
-        % Inter Ensemble Interval Mean ******************
+        % Inter Ensemble Interval Mean **********************
         EnsIEImean(n,1)=Features_Ensemble.IEIstats{c,n}(1);
-        % Inter Ensemble Interval Mode 
-        EnsIEImode(n,1)=Features_Ensemble.IEIstats{c,n}(2);
-        % Inter Ensemble Interval Median
-        EnsIEImedian(n,1)=Features_Ensemble.IEIstats{c,n}(3);
+        % Inter Ensemble Interval Mode **********************
+        EnsIEImean(n,1)=Features_Ensemble.IEIstats{c,n}(2);
+        % Inter Ensemble Interval Median **********************
+        EnsIEImean(n,1)=Features_Ensemble.IEIstats{c,n}(3);
         % Inter Ensemble Interval Variance
         EnsIEIvar(n,1)=Features_Ensemble.IEIstats{c,n}(4);
         % Inter Ensemble Interval Skewness
@@ -169,24 +166,20 @@ for c=1:C
         EnsIEIkurt(n,1)=Features_Ensemble.IEIstats{c,n}(6);
         % Ensemble Duration Mean ****************************
         EnsEDmean(n,1)=Features_Ensemble.EDstats{c,n}(1);
-        % Ensemble Duration Mode
-        EnsEDmode(n,1)=Features_Ensemble.EDstats{c,n}(2);
-        % Ensemble Duration Median 
-        EnsEDmedian(n,1)=Features_Ensemble.EDstats{c,n}(3);
         % Ensemble Duration Variance
-        EnsEDvar(n,1)=Features_Ensemble.EDstats{c,n}(4);
+        EnsEDvar(n,1)=Features_Ensemble.EDstats{c,n}(2);
         % Ensemble Duration Skewness
-        EnsEDskew(n,1)=Features_Ensemble.EDstats{c,n}(5);
+        EnsEDskew(n,1)=Features_Ensemble.EDstats{c,n}(3);
         % Ensemble Duration Kurtosis
-        EnsEDkurt(n,1)=Features_Ensemble.EDstats{c,n}(6);
+        EnsEDkurt(n,1)=Features_Ensemble.EDstats{c,n}(4);
     end
     % ********************************************************************
     % Create Table
     TensemblesDetails=table(NeuronsOccupancy,TimeOccupancy,DominanceIndex,...
         EnseRate,...
-        EnsCAGauc,EnsCAGmean,EnsCAGmode,EnsCAGmedian,EnsCAGvar,EnsCAGskew,EnsCAGkurt,...
-        EnsIEImean,EnsIEImode,EnsIEImedian,EnsIEIvar,EnsIEIskew,EnsIEIkurt,...
-        EnsEDmean,EnsEDmode,EnsEDmedian,EnsEDvar,EnsEDskew,EnsEDkurt);
+        EnsCAGauc,EnsCAGmean,EnsCAGvar,EnsCAGskew,EnsCAGkurt,...
+        EnsIEImean,EnsIEIvar,EnsIEIskew,EnsIEIkurt,...
+        EnsEDmean,EnsEDvar,EnsEDskew,EnsEDkurt);
     TensemblesDetails.Properties.VariableNames=HeadersFeaturesEnsembles;
     % Save CSV
     if isdir([FileDirSave,NameDir])
@@ -200,7 +193,7 @@ for c=1:C
         mkdir([FileDirSave,NameDir]);
         writetable(Tensemblesfeatures,[FileDirSave,NameDir,Experiment,'_',Name,'_DET.csv'],...
             'Delimiter',',','QuoteStrings',true);
-        disp('>>Ensemble Features Directory Created');
+        disp('Ensemble Features Directory Created');
         disp(['Saved Ensemble Details: ',Experiment,'-',Names_Conditions{c}])
     end
 end

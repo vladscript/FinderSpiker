@@ -21,7 +21,7 @@
 %   fNet.AM:                    Adjacency Matrix
 %   fNet.SynStrengthStats       Weights Link Statistics
 %   fNet.MaxSynLinks            Maximum of Links Between Neurons
-%   fNet.MaxCoupledPair         Pair of Max Connected Neurons
+%   fNet.MaxCoupledPair         Pair of Max Connected Neurons (visualization purpose)
 % CSV files 4 Gephi Software:
 %   EXPID_Condition_Nodes.csv  ID/Label/Coordinates/State's Colors
 %   EXPID_Condition_Links.csv Source/Target/Weight
@@ -165,7 +165,7 @@ fNet.SharedNeruons=SharedNeruons;
 % Adjacency (Normalized) Matrix
 fNet.AM=AdjacencyMatrix;
 % Synaptic Strength: weigths of conecctions statistics
-fNet.SynStrengthStats=[mean(WEIGHT),var(WEIGHT),skewness(WEIGHT),kurtosis(WEIGHT)];
+fNet.SynStrengthStats=[mean(WEIGHT),mode(WEIGHT),median(WEIGHT),var(WEIGHT),skewness(WEIGHT),kurtosis(WEIGHT)];
 % Maximum Synpatic Strength in Links
 fNet.MaxSynLinks=MaxSynLinks;
 % Max Coupled Neurons
