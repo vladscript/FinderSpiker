@@ -164,6 +164,7 @@ end
 fNet.SharedNeruons=SharedNeruons;
 % Adjacency (Normalized) Matrix
 fNet.AM=AdjacencyMatrix;
+% THRESHOLD (?)-> here
 % Synaptic Strength: weigths of conecctions statistics
 fNet.SynStrengthStats=[mean(WEIGHT),mode(WEIGHT),median(WEIGHT),var(WEIGHT),skewness(WEIGHT),kurtosis(WEIGHT)];
 % Maximum Synpatic Strength in Links

@@ -112,28 +112,28 @@ title(k1,'mean Links Weight')
 k2=subplot(2,3,2);  % Mode Links Weight
 plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,17,k2)
 title(k2,'mode Links Weight')
-k3=subplot(2,3,3);  % Median Links Weight
+k3=subplot(2,3,2);  % Median Links Weight
 plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,18,k3)
 title(k3,'medianLinks Weight')
-k4=subplot(2,3,4);  % Variance Links Weight
+k4=subplot(2,3,2);  % Variance Links Weight
 plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,19,k4)
 title(k4,'var Links Weight')
-k5=subplot(2,3,5);  % Skewness Links Weight
+k5=subplot(2,3,3);  % Skewness Links Weight
 plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,20,k5)
 title(k5,'skew Links Weight')
-k6=subplot(2,3,6);  % Kurtosis Links Weight
+k6=subplot(2,3,4);  % Kurtosis Links Weight
 plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,21,k6)
 title(k6,'kurt Links Weight')
 
 %% Network related Features
 FeaturesD=figure;
-FeaturesD.Name='Alternative & Reactivation Ensemble Index';
+FeaturesD.Name='Alternance & Reactivation Ensemble Index';
 l1=subplot(2,1,1);  % Alternance Index
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,22,l1)
-title(l1,'Alternative Ensemble Index')
-l2=subplot(2,1,2);  % Reactivation Index
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,23,l2)
-title(l2,'Reactivation Ensemble Index')
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,22,k1)
+title(k1,'mean Links Weight')
+k2=subplot(2,1,2);  % Reactivation Index
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,23,k2)
+title(k2,'mode Links Weight')
 %% Make and Save Table
 okbutton = questdlg('Make CSV Table?');
 waitfor(okbutton); 

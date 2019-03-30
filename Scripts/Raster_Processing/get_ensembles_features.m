@@ -117,27 +117,63 @@ for c=1:C
     IndxDifEns=find(DifEns)+1;
     IndxDifEns=[1;IndxDifEns];
     HS=Ensembles_Labels(IndxDifEns);
-    
-    
-    
     % RETRIEVE TIMES OF THE HS (!!!)
-    % from here: (?)
-    % signif_frames(IndxDifEns)
-    
-    
-    
-    
+    EnsembleTimes=signif_frames(IndxDifEns)';
     % Transitions: Ensmbles Change deactivate and activate [ALTERNANCE]
     ET= HS(diff([HS;0])~=0);
     Transitions{c}=ET;
     Ntransitions(c)=numel(ET)-1;
     Rate_Transitions(c)=(numel(ET)-1)/RasterDuration; % Transitions per MINUTE
+    % Alternate or Reactivate Proportion of the Sequence
+    Reactivations=0;
+    Alternations=0;
+    AltIndex(c)=0;
+    ReaIndex(c)=0;
+    if numel(ET)>1
+        for e=1:numel(ET)-1
+             if ET(e)==ET(e+1)
+                 Reactivations=Reactivations+1;
+             else
+                 Alternations=Alternations+1;
+             end
+        end
+        AltIndex(c)=Alternations/(numel(ET)-1);
+        ReaIndex(c)=Reactivations/(numel(ET)-1);
+    end
+    
     % Euler Cycles of Ensembles [REVERBERATION] return 
     % to any given ensemble 
     % (after activate all ensembles)
     [TableCycles,TypeCycles]=eulercycles_hebbseq(ET,E);
     CyclesTypes(:,c)=TypeCycles;
-    Ratecycles(c)=sum(TypeCycles)/RasterDuration;
+    Ratecycles(c)=sum(TypeCycles)/RasterDuration; % [cycles/min]
+    % Timing of the Cycles #########################################
+    Ncy=size(TableCycles,1);
+    Starkts=[]; % Saver Start Index of THe Cycles
+    if Ncy>0
+        for n=1:Ncy
+            Cycle=TableCycles{n,2};
+            searchin=true;
+            nn=1;
+            while searchin
+                SegmentDiffE=ET(nn:nn-1+numel(Cycle))-Cycle;
+                if sum(SegmentDiffE==0)==numel(Cycle)&&~ismember(nn,Starkts)
+                    TableCycles{n,3}=EnsembleTimes(nn)/fs; % [SECONDS]
+                    TableCycles{n,4}=EnsembleTimes(nn-1+numel(Cycle))/fs; % [SECONDS]
+                    Starkts=[Starkts,nn];
+                    disp('>>Found Cycle')
+                    %ETcopy(nn)=-666; % unmark!
+                    searchin=false;
+                end
+                nn=nn+1;
+            end
+        end
+    end
+    TableCyclesCell{c}=TableCycles;
+    %     TableCYcles:
+    % Type      Sequence     ConditioinStart[s] ConditionEnd[s]:
+    % 'simple'  1,2,3,1      10                     12    
+    
     if c<C; disp('Next Condition'); end;
 end
 %% Cross Simmilar Neural Ensembles Are 
@@ -163,16 +199,19 @@ Features_Condition.Dunn=DunnIndex;
 Features_Condition.MIV=MIV;
 Features_Condition.ECV_Cond=ECV_Cond;
 % ABOUT the ALTERNANCE & REVERBERATION
+Features_Condition.HebbianSeq=Transitions;
 Features_Condition.RateTrans=Rate_Transitions;
 Features_Condition.RateCycles=Ratecycles;
 Features_Condition.CyclesType=CyclesTypes;
+Features_Condition.AltIndx=AltIndex;
+Features_Condition.ReaIndx=ReaIndex;
 % ABOUT CO-ACTIVITY GRAPHY
 Features_Condition.CAGstats=CAGstats;
 
 %                                   MAT File:
 Features_Condition.Model_Cond=Model_Cond;
 Features_Condition.CrossEnsmebleSimm=CrossEnsmebleSimm;
-Features_Condition.CyclesTable=TableCycles;
+Features_Condition.CyclesTable=TableCyclesCell; % Type and Sequence
 
 % Domminance:
 % Dominance_Ensemble=NeuronsOccupancy.*Ensembles_Rate;

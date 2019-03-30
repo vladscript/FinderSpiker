@@ -51,9 +51,10 @@ else
 end
 %% Save Files for each COndition
 HeadersFeaturesCondition={'Nensembles','Threshold','Dunns','MaxIntraVec','ClassError',...
-                     'RateTrans','RateCycles','SimpleCycles','ClosedCycles','OpenedCycles',...
+                     'RateTrans','RateCycles','SimpleCyclesP','ClosedCyclesP','OpenedCyclesP',...
                      'CAGauc','CoreSize','MaxSynLinks','MaxConn_A','MaxConn_B',...
-                     'SynWeigthMean','SynWeigthMode','SynWeightMedian','SynWeigthVar','SynWeigthSkew','SynWeigthKurt'};
+                     'SynWeigthMean','SynWeigthMode','SynWeightMedian','SynWeigthVar','SynWeigthSkew','SynWeigthKurt',...
+                     'AlternativeIndx','RecurrentIndx'};
 HeadersFeaturesEnsembles={'NeuronsRation','Time','Dominance','Rate',...
      'ensCAGauc','ensCAGmean','ensCAGmode','ensCAGmedian','ensCAGvar','ensCAGskew','ensCAGkurt'...
      'IEImean','IEImode','IEImedian','IEIvar','IEIskew','IEIkurt'...
@@ -74,10 +75,13 @@ for c=1:C
     RateCycl=Features_Condition.RateCycles(c);          % Rate Cycles
     % [%] Simple Cycles
     Portion_simple=100*Features_Condition.CyclesType(1,c)/sum(Features_Condition.CyclesType(:,c));
+    if isnan(Portion_simple); Portion_simple=0; end;
     % [%] Closed Cycles
     Portion_closed=100*Features_Condition.CyclesType(2,c)/sum(Features_Condition.CyclesType(:,c));
+    if isnan(Portion_closed); Portion_closed=0; end;
     % [%] Opened Cycles
     Portion_opened=100*Features_Condition.CyclesType(3,c)/sum(Features_Condition.CyclesType(:,c));
+    if isnan(Portion_opened); Portion_opened=0; end;
     CAGauc=Features_Condition.CAGstats(c,1);            % CAG AutoCorrelation Coefficient
     CoreSize=Features_Condition.CoreNeurons(c);         % Ratio of neurons in all Ensembles
     % Max Links Between Neurons
@@ -99,12 +103,17 @@ for c=1:C
     SynVar=Features_Condition.Network{c}.SynStrengthStats(4);   % variance
     SynSkew=Features_Condition.Network{c}.SynStrengthStats(5);  % skewness
     SynKurt=Features_Condition.Network{c}.SynStrengthStats(6);  % kurtosis
+    % Alternative Index
+    AlternationIndex=Features_Condition.AltIndx(c);
+    % Recurrent Index
+    RecurrentIndex=Features_Condition.ReaIndx(c);
     % ********************************************************************
     % Create Table
     Tensemblesfeatures=table(NE,Th,DunnIndx,MaxIntraVec,ClassError,...
         RateTran,RateCycl,Portion_simple,Portion_closed,Portion_opened,...
         CAGauc,CoreSize,MaxSynLinks,MaxConnA,MaxConnB,...
-        SynMean,SynMode,SynMedian,SynVar,SynSkew,SynKurt);
+        SynMean,SynMode,SynMedian,SynVar,SynSkew,SynKurt,...
+        AlternationIndex,RecurrentIndex);
     Tensemblesfeatures.Properties.VariableNames=HeadersFeaturesCondition;
     % Save CSV
     if isdir([FileDirSave,NameDir])

@@ -109,41 +109,35 @@ plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,12,j1,0)
 title(j1,'mean IEI')
 j2=subplot(2,3,2);  % mode IEI
 plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,13,j2,0)
-title(j2,'mode IEI')
+title(j2,'mean IEI')
 j3=subplot(2,3,3);  % median IEI
 plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,14,j3,0)
-title(j3,'median IEI')
+title(j3,'mean IEI')
 j4=subplot(2,3,4);  % var IEI
 plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,15,j4,0)
-title(j4,'var IEI')
+title(j2,'var IEI')
 j5=subplot(2,3,5);  % skew IEI
 plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,16,j5,0)
-title(j5,'skew IEI')
+title(j3,'skew IEI')
 j6=subplot(2,3,6);  % kurt IEI
 plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,17,j6,0)
-title(j6,'kurt IEI')
+title(j4,'kurt IEI')
 
 %% Inter Ensmeble Interval Satatistics
 FeaturesD=figure;
 FeaturesD.Name='Ensemble Duration Statistics';
-k1=subplot(2,3,1);  % mean ED
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,18,k1,0)
+k1=subplot(2,2,1);  % mean ED
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,14,k1,0)
 title(k1,'mean ED')
-k2=subplot(2,3,2);  % mode ED
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,19,k2,0)
-title(k2,'mode ED')
-k3=subplot(2,3,3);  % median ED
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,20,k3,0)
-title(k3,'median ED')
-k4=subplot(2,3,4);  % var IEI
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,21,k4,0)
-title(k4,'var ED')
-k5=subplot(2,3,5);  % skew IEI
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,22,k5,0)
-title(k5,'skew ED')
-k6=subplot(2,3,6);  % kurt IEI
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,23,k6,0)
-title(k6,'kurt ED')
+k2=subplot(2,2,2);  % var IEI
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,15,k2,0)
+title(k2,'var ED')
+k3=subplot(2,2,3);  % skew IEI
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,16,k3,0)
+title(k3,'skew ED')
+k4=subplot(2,2,4);  % kurt IEI
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,17,k4,0)
+title(k4,'kurt ED')
 %% Make and Save Table
 okbutton = questdlg('Make CSV Table?');
 waitfor(okbutton); 
