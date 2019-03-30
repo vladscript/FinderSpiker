@@ -7,17 +7,11 @@
 
 %% FIXED  READY TO GO @ GIT
 % Importnat Update @ RoA Feature Calcullation
-% GET Spikes Rate for Cell and Mean Spike Rate of Raster. OK
+% GET New Ensemble Features
 
 %% Bugs & New Functions NOW
 
-% EDIT #######
-% get_ensembles_features
-% GET SPIKES *******************************************
-% ENSEMBLES GENERAL FEATURES 
-% >>Ensembles_Features_Display
-% ENSEMBLES DETAILED FEATURES 
-% >>Ensembles_Features_Detailed_Display
+% ANALZY DYSKINESIA DATA
 % ******************************************************
 
 % Hamming Distance among Raster Conditions

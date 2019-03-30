@@ -32,6 +32,8 @@ while MoreFiles
         RoE_ALL=cell(1,NC);
         IEnIs_ALL=cell(1,NC);
         EnD_ALL=cell(1,NC);
+        NensCyc_ALL=cell(3,NC);
+        LatencyCyc_ALL=cell(3,NC);
     end
     %%  Loop to Accummulate Data
     for c=1:NC
@@ -48,6 +50,25 @@ while MoreFiles
         RoE_ALL{c}=[RoE_ALL{c};RateEnsembles];
         IEnIs_ALL{c}=[IEnIs_ALL{c};IEnI];
         EnD_ALL{c}=[EnD_ALL{c};EnD];
+        % Sort of Cycles
+        if ~isempty(Features_Condition.CyclesTable{c})
+            CycleTable=Features_Condition.CyclesTable{c};
+            Ncycles=size(Features_Condition.CyclesTable{c},1);
+            for n=1:Ncycles
+                CycleType=CycleTable{n,1};
+                switch CycleType
+                case 'Simple'
+                    NensCyc_ALL{1,c}=[NensCyc_ALL{1,c},numel(CycleTable{n,2})];
+                    LatencyCyc_ALL{1,c}=[LatencyCyc_ALL{1,c},CycleTable{n,4}-CycleTable{n,3}];
+                case 'Closed'
+                    NensCyc_ALL{2,c}=[NensCyc_ALL{2,c},numel(CycleTable{n,2})];
+                    LatencyCyc_ALL{2,c}=[LatencyCyc_ALL{2,c},CycleTable{n,4}-CycleTable{n,3}];
+                case 'Open'
+                    NensCyc_ALL{3,c}=[NensCyc_ALL{3,c},numel(CycleTable{n,2})];
+                    LatencyCyc_ALL{3,c}=[LatencyCyc_ALL{3,c},CycleTable{n,4}-CycleTable{n,3}];
+                end
+            end
+        end
         % + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
     end
     % Disp Experiments Selected:
@@ -62,6 +83,12 @@ disp('>>end.')
 plot_cdf_cell(RoE_ALL,Names_Conditions);
 plot_cdf_cell(IEnIs_ALL,Names_Conditions);
 plot_cdf_cell(EnD_ALL,Names_Conditions);
+plot_cdf_cell(NensCyc_ALL(1,:),Names_Conditions);
+plot_cdf_cell(NensCyc_ALL(2,:),Names_Conditions);
+plot_cdf_cell(NensCyc_ALL(3,:),Names_Conditions);
+plot_cdf_cell(LatencyCyc_ALL(1,:),Names_Conditions);
+plot_cdf_cell(LatencyCyc_ALL(2,:),Names_Conditions);
+plot_cdf_cell(LatencyCyc_ALL(3,:),Names_Conditions);
 okbutton = questdlg('Save data?');
 waitfor(okbutton); 
 if strcmp('Yes',okbutton)
@@ -74,7 +101,7 @@ if strcmp('Yes',okbutton)
     PathSave=uigetdir(CurrentPathOK);
     disp('>>saving data...')
     save([PathSave,SaveFile],'EXPS','Names_Conditions','RoE_ALL',...
-        'IEnIs_ALL','EnD_ALL');
+        'IEnIs_ALL','EnD_ALL','NensCyc_ALL','LatencyCyc_ALL');
     fprintf('>> Data saved @: %s\n',[PathSave,SaveFile])
 else
     fprintf('>>Unsaved data.\n')
