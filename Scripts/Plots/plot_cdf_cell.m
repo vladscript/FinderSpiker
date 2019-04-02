@@ -8,7 +8,7 @@ ax1=subplot(1,1,1);
 hold(ax1,'on');
 for c=1:NC
     if ~isempty(RoA_All{c})
-        if min(RoA_All{c}),max(RoA_All{c})
+        if min(RoA_All{c})~=max(RoA_All{c})
             ksdensity(RoA_All{c},linspace(min(RoA_All{c}),max(RoA_All{c}),100),...
                 'function','cdf');
         else

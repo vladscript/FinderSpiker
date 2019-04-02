@@ -4,6 +4,11 @@
 % of the automatic method by dividing in -+ and -- (false+ & false-)
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
+%%
+% 
+% # ITEM1
+% # ITEM2
+% 
 
 %% FIXED  READY TO GO @ GIT
 % Importnat Update @ RoA Feature Calcullation
@@ -11,10 +16,10 @@
 
 %% Bugs & New Functions NOW
 
+% Hamming Distance among Raster Conditions
+
 % ANALZY DYSKINESIA DATA
 % ******************************************************
-
-% Hamming Distance among Raster Conditions
 
 % Get best subset of features that best classify vs PCA
 % All-Features->PCA (dim red)-> SVM: not really good
