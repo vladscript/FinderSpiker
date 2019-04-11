@@ -1,6 +1,6 @@
 function xlinc=getlinearsegment(xxtr,StdNoise,n)
 % CHEck Initial and Final Samples
-mslope=(xxtr(end)-xxtr(1))/length(xxtr);
+mslope=(xxtr(end)-xxtr(1))/numel(xxtr);
 xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
    if  and( xxtr(1)>StdNoise , xxtr(end)>-StdNoise)
         % 1st and Final Sample Test above noise
@@ -27,7 +27,8 @@ xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
                     xlinc=mslope*([1:length(xxtr)]-1)+xxtr(B);
                     xtest=xxtr-xlinc;
                     % what comes around->works-around
-                    if numel(xtest(xtest<0))>numel(xtest(xtest>=0))
+                    if numel(xtest(xtest<0))>numel(xtest(xtest>=0)) &&...
+                            numel(xxtr<0)
                         % xexp=fit([1:length(xxtr)]',xxtr','exp1');
                         % xlinc=xexp(1:length(xxtr))';
                         xlinc=xxtr;
@@ -42,8 +43,8 @@ xlinc=mslope*([1:length(xxtr)]-1)+xxtr(1);
             end
             % Exponential  Decaying at the Start
         else
-            mslope=0;
-            xlinc=mslope*([1:length(xxtr)]-1);
+            % mslope=0;
+            % xlinc=mslope*([1:length(xxtr)]-1);
             % Possible Calcium Transient
         end
     elseif and(xxtr(1)<0,xxtr(end)<-StdNoise)

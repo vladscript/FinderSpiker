@@ -69,21 +69,38 @@ for c=1:C
 %         if isempty(Apeaks)
 %             XDfix(c,1:nextframe)=XDfix(c,1:nextframe)-x_sparsePRE(1:nextframe);
 %         else
-        if nextframe>3
-            decayok=true;
-            while decayok
+        % dxe=diff(xe); % derivative of clean signal
+%         if nextframe>3
+%             decayok=true;
+%             while decayok
+%                 xexp=fit([1:nextframe]',xd(1:nextframe)','exp1');
+%                 xdecay=xexp(1:nextframe);
+%                 if xdecay(end)>xd(nextframe)
+%                     nextframe=nextframe+1;
+%                     if nextframe>=numel(xe)
+%                         decayok=false;
+%                     end
+%                 else
+%                     decayok=false;
+%                 end
+%             end
+%             
+%             xd(1:nextframe)=xd(1:nextframe)-xdecay';
+%             XDfix(c,:)=xd;
+%             disp('\___ Initial decay ~~>')
+%         end
+        if and(nextframe>3,xe(1)>std(noisex))
+            % Check if there is a Peak in Between
+            AmpP=findpeaks(xe(1:nextframe));
+            if isempty(AmpP); AmpP=0; end
+            if AmpP<std(noisex)
+                % if NO : exponential decay
                 xexp=fit([1:nextframe]',xd(1:nextframe)','exp1');
                 xdecay=xexp(1:nextframe);
-                if xdecay(end)>xd(nextframe)
-                    nextframe=nextframe+1;
-                    if nextframe>=numel(xe)
-                        decayok=false;
-                    end
-                else
-                    decayok=false;
-                end
+            else
+                % if DOES set a line
+                xdecay=getlinearsegment(xe(1:nextframe),std(noisex),1)';
             end
-            
             xd(1:nextframe)=xd(1:nextframe)-xdecay';
             XDfix(c,:)=xd;
             disp('\___ Initial decay ~~>')
@@ -180,9 +197,9 @@ for c=1:C
     % Spurious Drivers:
     dbuffer=d;
     d(:)=0;
-    d(sign(dbuffer).*sign(x_sparse')>0)=dbuffer(sign(dbuffer).*sign(x_sparse')>0);
-end
-%     %% CHECK STUFF
+    dx_sparse=[diff(x_sparse);0];
+    d(sign(dbuffer).*sign(dx_sparse')>0)=dbuffer(sign(dbuffer).*sign(dx_sparse')>0);
+    %     %% CHECK STUFF
 %     plot(xd,'b'); hold on;
 %     plot(xe,'m'); hold on;
 %     plot(x_sparse,'g','LineWidth',2);
@@ -190,4 +207,6 @@ end
 %     bar(d); hold off;
 %     %pause
 %     disp(c) 
+end
+
 end % END OF THE WORLD

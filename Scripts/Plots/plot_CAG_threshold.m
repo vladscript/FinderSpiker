@@ -1,6 +1,8 @@
 % Use Only if there is a Raster Plotted Already
 % Input:
-% THR: Cell of Threshold(s)
+%   THR: Cell of Threshold(s) by Condition
+%   Cell of Raster Lengths (frames) by Condition
+%   Sampling Frequency (Hz)
 % Outpu:
 % Segmented line of THreshold in subplot(1,3,3)
 function plot_CAG_threshold(THR,LENGHTRASTER,fs)

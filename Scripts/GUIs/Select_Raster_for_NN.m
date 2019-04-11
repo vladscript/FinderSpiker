@@ -85,16 +85,16 @@ while ~strcmp('Yes',okbutton)
     CummAc=[];
     TotalN=length(ActiveNeurons);
     %% Create FigureS to plot PDFs & Features
-    PDFsFigure=figure;
-    PDFsFigure.Name=['Descriptive Activity PDFs of: ',Experiment];
-    PDFsFigure.Position=[-3 407 956 254];
-    h1=subplot(1,3,1); % ITI pdf
-    h2=subplot(1,3,2); % Length pdf
-    h3=subplot(1,3,3); % CAG pdf
-    title(h1,'InterTransient PDF','FontSize',7)
-    title(h2,'Length Transient PDF','FontSize',7)
-    title(h3,'CAG PDF','FontSize',7)
-    hold(h1,'on'); hold(h2,'on'); hold(h3,'on');
+%     PDFsFigure=figure;
+%     PDFsFigure.Name=['Descriptive Activity PDFs of: ',Experiment];
+%     PDFsFigure.Position=[-3 407 956 254];
+%     h1=subplot(1,3,1); % ITI pdf
+%     h2=subplot(1,3,2); % Length pdf
+%     h3=subplot(1,3,3); % CAG pdf
+%     title(h1,'InterTransient PDF','FontSize',7)
+%     title(h2,'Length Transient PDF','FontSize',7)
+%     title(h3,'CAG PDF','FontSize',7)
+%     hold(h1,'on'); hold(h2,'on'); hold(h3,'on');
     %% Feature Table Column Names
     HeadersFeatures={'RateNeurons','ActivityTimeFraction','ActiveRatioCAG','EffectiveActivity',...
         'ISImean','ISImode','ISImedian','ISIvar','ISIskew','ISIkurt',...
@@ -127,13 +127,13 @@ while ~strcmp('Yes',okbutton)
         % Statistics from pdfs*******************************************
         % Inter Transients Interval pdf &
         % Transient Length pdf
-        [ISIbin,ISIp,Lengthp,Lengthbin,StatsFeatures]=get_iti_pdf(R_Condition{c},fs);
+        [~,~,~,~,StatsFeatures]=get_iti_pdf(R_Condition{c},fs);
         % CoActivityGram Statistics & pdf: IMPORTANT!!!!
         if or(max(CAG)==0,min(CAG)==max(CAG))
             CAGbin=linspace(min(CAG),max(CAG),100);
             CAGp=zeros(size(CAGbin));
         else
-            [CAGp,CAGbin]=ksdensity(CAG,linspace(min(CAG),max(CAG),100));
+            [~,~]=ksdensity(CAG,linspace(min(CAG),max(CAG),100));
         end
         % Feature Table *******************************************
         % 'RateofNeurons','ActivityDuration','MeanActivity','EffectiveActivity',...
@@ -169,17 +169,17 @@ while ~strcmp('Yes',okbutton)
         end
         % PLOTS *************************************
         % PDFs
-        plot(h1,ISIbin,ISIp,'LineWidth',2)
-        plot(h2,Lengthbin,Lengthp,'LineWidth',2)
-        plot(h3,CAGbin,CAGp,'LineWidth',2)
+%         plot(h1,ISIbin,ISIp,'LineWidth',2)
+%         plot(h2,Lengthbin,Lengthp,'LineWidth',2)
+%         plot(h3,CAGbin,CAGp,'LineWidth',2)
     end
     %% Ending PLot
-    xlabel(h1,'t[s]'); xlabel(h2,'t[s]'); xlabel(h3,'Coactive Neurons');
-    axis(h1,'tight'), axis(h2,'tight'); axis(h3,'tight');
-    grid(h1,'on'); grid(h2,'on'); grid(h3,'on');
-    hold(h1,'off'); hold(h2,'off'); hold(h3,'off');
-    legend(h1,Names_Conditions);
-    set(h1, 'YScale', 'log'); set(h2, 'YScale', 'log');
+%     xlabel(h1,'t[s]'); xlabel(h2,'t[s]'); xlabel(h3,'Coactive Neurons');
+%     axis(h1,'tight'), axis(h2,'tight'); axis(h3,'tight');
+%     grid(h1,'on'); grid(h2,'on'); grid(h3,'on');
+%     hold(h1,'off'); hold(h2,'off'); hold(h3,'off');
+%     legend(h1,Names_Conditions);
+%     set(h1, 'YScale', 'log'); set(h2, 'YScale', 'log');
     okbutton = questdlg('Selection Alright?');
     %% SAVE OUTPUT DATASET (.m file)
     %checkname=1; % USE AS INPUT

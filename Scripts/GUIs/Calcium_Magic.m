@@ -465,7 +465,7 @@ detectedneurons=[];
                 end
         end
         checksignals.Name=[RubricTitle,Names_Conditions{i},' Video: ',num2str(j),...
-                            'Exp ID: ',Experiment(2:end)];
+                            'Exp ID: ',Experiment];
         indx_neuron=1; 
         isSIGNAL=indxSIGNALS{j,i};
         [Cells,Frames]=size(SIGNALS{j,i});

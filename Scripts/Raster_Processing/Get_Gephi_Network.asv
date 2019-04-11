@@ -134,7 +134,7 @@ for i=1:Ncells
     ColorNeuronCell{i}=ColorNeuronStr;
 end
 %% Adjacency Matrix:
-% This counts how many frames a Pair of Neurons Fired Together
+% This counts how many frames a couple of Neurons Fire Together
 % Be Cell i-th and Cell j-th
 % AdjacencyMatrix(i,j)=Number of join firing;
 AdjacencyMatrix=GetAdjacencyMatrix(Raster_ensambles);
@@ -195,7 +195,7 @@ if ~isempty(FileNameExp)
         disp('Folder [NetWorks-CSV] created')
         mkdir([DirSave(1:poslash(end)-1),CarpetName]);
     end
-    SaveasName=[CarpetName,'\',Experiment,'_',FileNameExp,'_NODES.csv'];
+    SaveasName=[CarpetName,'\',Experiment,'_',FileNameExp,'_Nodes.csv'];
     HeadersNodes={'ID','Label','Latitude','Longitude','Color'};
     Tnodes=table(Cluster_Indexing(1:Ncells)',StatesofNeurons,XY_ensambles(Cluster_Indexing(1:Ncells),2),XY_ensambles(Cluster_Indexing(1:Ncells),1),ColorNeuronCell,...
             'VariableNames',HeadersNodes);
@@ -214,7 +214,7 @@ if ~isempty(FileNameExp)
         TypeNetwork=mat2cell('Undirected',1);
     end
     
-    SaveasName=[CarpetName,'\',Experiment,'_',FileNameExp,'_EDGES.csv'];
+    SaveasName=['NetWorks-CSV\',Experiment,'_',FileNameExp,'_Links.csv'];
     HeadersLinks={'Source','Target','Weight','Type'};
     Tlinks=table(SOURCE,TARGET,WEIGHT,TypeNetwork,...
         'VariableNames',HeadersLinks);

@@ -104,6 +104,12 @@ XY_cluster=XY_selectedClean(New_Order_Clustering,:); % Re-SORTED COORDINATES OF 
 % Indexes=sort(Indexes(New_Order_Clustering));    % useless
 %% COLORMAP ENSEMBLES
 ColorState=colormapensembles(TotalNG,NC,NGroups);
+% GUI to Choose Color SET
+% Necessary: add CBREWER third-party function
+% % % % % % % Nens=10;
+% % % % % % % CT=cbrewer('qual','Set1',Nens);
+% % % % % % % imagesc([1:Nens])
+% % % % % % % colormap(CT)
 %% Plot Ensembles of Whole Raster ---------------------------------------------------------------------
 Experiment=Experiment(Experiment~='\');     % NAMES PATCH
 %   Original ****************************************

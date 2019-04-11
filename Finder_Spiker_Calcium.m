@@ -101,20 +101,16 @@ slashes=find(FileDirSave=='\');
 FileDirSave=FileDirSave(1:slashes(end));
 %% Save data
 % Get the Experiment ID:
+FolderNamePD='\Processed Data';
 slashes=find(PathName=='\');
 Experiment=PathName(slashes(end-1)+1:slashes(end)-1); % Experiment ID
-if isdir([FileDirSave,'\Processed Data'])
-    save([FileDirSave,'\Processed Data\',Experiment,'.mat'],'Experiment','SIGNALS',...
-    'Names_Conditions','NumberofVideos','XY','fs','r');
-    disp('SAVED RAW DATA')
-else % Create Directory
-    disp('Directory >Processed Data< created')
-    mkdir([FileDirSave,'\Processed Data']);
-    save([FileDirSave,'\Processed Data\',Experiment,'.mat'],'Experiment','SIGNALS',...
-    'Names_Conditions','NumberofVideos','XY','fs','r');
-    disp('SAVED RAW DATA')
+if ~isdir([FileDirSave,FolderNamePD])
+    disp('Folder [Processed Data] created')
+    mkdir([FileDirSave,FolderNamePD]);
 end
-
+save([FileDirSave,FolderNamePD,'\',Experiment,'.mat'],'Experiment','SIGNALS',...
+    'Names_Conditions','NumberofVideos','XY','fs','r');
+    disp('SAVED RAW DATA')
 %% SETUP PROCESSING PARAMTERS ******************************
 % Setup for Auto Regressive Process Estimation
 % L=30;              % seconds  of the Fluorophore Response
@@ -128,7 +124,6 @@ ColumnNames={'Fluo_Dye','f_s','DetectedCells','Frames',...
         'minSNR','minSkewness','TimeProcessing'};
 disp('**************** +++[Processing]+++ *************************')
 for i=1:NC
-% for i=2:NC
     auxj=0;
     for j=1:str2double(NumberofVideos{i})
         % Initialize and Read Data
@@ -314,6 +309,9 @@ for i=1:NC
         SNRlambda{j,i}=10*log(var(XDupdate')./var(X_SPARSE')); 
         
         % Table Data For Processing Log Details ##########################
+        if ~exist('Th_SNR','var')
+            Th_SNR=max(SNRbyWT);
+        end
         TimeProcessing=toc;             % Processing Latency [s]
         T=table( dyename,{num2str(fs)},{num2str(length(ActiveNeurons))},...
             {num2str(Frames)},{num2str(Th_SNR)},{num2str(Th_Skew)},...

@@ -111,7 +111,10 @@ for i=1:C
             'MarkerFaceColor',[1,0.6,0.78]); hold on;
     end
 end
-axis([0,ts*(length(R))/60,1-TransientHight/2,C+TransientHight/2])
+if C>0
+    axis([0,ts*(size(R,2))/60,1-TransientHight/2,C+TransientHight/2])
+end
+    
 ylabel('Neural Activity')
 set(gca,'XTick',[])
 set(gca,'Box','off')
@@ -128,8 +131,9 @@ if ~isempty(ColocateIndx)
     plot(ts*(0:length(sum(R))-1)/60,sum(R(Neurons_Colocalized,:)),'Color',[1,0.6,0.78],'LineWidth',1.1)
 end
 hold off;
-
-axis([0,ts*(length(R)-1)/60,0,max(sum(R))+1])
+if C>0
+    axis([0,ts*(size(R,2)-1)/60,0,max(sum(R))+1])
+end
 % grid on
 ylabel('CAG')
 if fs==1
