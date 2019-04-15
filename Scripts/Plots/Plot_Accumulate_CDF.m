@@ -1,4 +1,4 @@
-if exist('RoA_POS')
+if exist('RoA_POS','var')
     aremerged=true;    % Are there already colocated cells
 else
     aremerged=false;    % Are there already colocated cells

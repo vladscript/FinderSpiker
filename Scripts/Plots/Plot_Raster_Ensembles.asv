@@ -52,7 +52,6 @@ switch N
         stepy=varargin{2};
         indexes=varargin{3};
         ColocateIndx=varargin{4}; % Indexes of Colocalized Neurons
-        ColColor=varargin{5};
         Neurons_Colocalized=find(ColocateIndx);
     otherwise
 end

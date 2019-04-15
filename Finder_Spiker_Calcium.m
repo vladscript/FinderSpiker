@@ -47,12 +47,12 @@ end
 fs=NaN; % To read fs to get into the following loop:
 while isnan(fs) % Interface error user reading fs
     fs = inputdlg('Sampling Frequency [Hz] : ',...
-                 'VIDEOS', [1 50]);
+                 'Frames per Second or', [1 75]);
     fs = str2double(fs{:});
 end
 % Read Fluorophore DYe
 dyename = inputdlg('Fluorophore : ',...
-             'DYE', [1 50]);
+             'DYE', [1 75]);
 % fs = str2double(fs{:});
 
 %% Read Names, Path and Coordinates***********************************

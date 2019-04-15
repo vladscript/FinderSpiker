@@ -37,8 +37,8 @@ name='Names';
 numlines=[1 75];
 Names_Conditions=inputdlg(Cond_Names,name,numlines,Names_default);
 % 3th Input Dialogue
-name='Videos';
-numlines=1;
+name=' Number of Videos for each Condition';
+% numlines=1;
 NumberofVideos=inputdlg(Names_Conditions,name,numlines,NVids_default);
 
 %% Read and get all Coordinates*********************************************

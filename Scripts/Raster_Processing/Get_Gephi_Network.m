@@ -138,9 +138,9 @@ end
 % Be Cell i-th and Cell j-th
 % AdjacencyMatrix(i,j)=Number of join firing;
 AdjacencyMatrix=GetAdjacencyMatrix(Raster_ensambles);
-MaxSynLinks=max(max(AdjacencyMatrix));
+MaxSynLinks=max(AdjacencyMatrix(:));
 AdjacencyMatrix=AdjacencyMatrix./MaxSynLinks; % NORMALIZED
-% Get Source, Target and Weigth for eache link NO SORTED
+% Get Source, Target and Weigth for each link UNSORTED
 SOURCE=[];
 TARGET=[];
 WEIGHT=[];
