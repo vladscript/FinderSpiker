@@ -12,6 +12,7 @@
 % Empty Raster Plot
 % Detrending Algortihm UPDATE *
 % Directory to save NETWORK!!!
+% IMPORTANT: Network Link Weigths Updated NORMALIZED
 %% Bugs & New Functions NOW
 
 % Hamming Distance among active Nuerons of Different Conditions

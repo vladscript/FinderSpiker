@@ -134,12 +134,13 @@ for i=1:Ncells
     ColorNeuronCell{i}=ColorNeuronStr;
 end
 %% Adjacency Matrix:
+% AS in Get_Total_Network
 % This counts how many frames a Pair of Neurons Fired Together
 % Be Cell i-th and Cell j-th
 % AdjacencyMatrix(i,j)=Number of join firing;
 AdjacencyMatrix=GetAdjacencyMatrix(Raster_ensambles);
 MaxSynLinks=max(AdjacencyMatrix(:));
-AdjacencyMatrix=AdjacencyMatrix./MaxSynLinks; % NORMALIZED
+% AdjacencyMatrix=AdjacencyMatrix./MaxSynLinks; % NORMALIZED
 % Get Source, Target and Weigth for each link UNSORTED
 SOURCE=[];
 TARGET=[];
@@ -170,7 +171,7 @@ fNet.SynStrengthStats=[mean(WEIGHT),mode(WEIGHT),median(WEIGHT),var(WEIGHT),skew
 % Maximum Synpatic Strength in Links
 fNet.MaxSynLinks=MaxSynLinks;
 % Max Coupled Neurons
-IndexMaxW=find(WEIGHT==1);
+[~,IndexMaxW]=max(WEIGHT);
 fNet.MaxCoupledPair=[SOURCE(IndexMaxW),TARGET(IndexMaxW)];
 
 

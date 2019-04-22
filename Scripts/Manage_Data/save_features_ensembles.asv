@@ -120,10 +120,12 @@ for c=1:C
         mkdir([FileDirSave,NameDir]);
         disp('>>Directory >Ensemble Features< created')
     end
-    disp('>>Saving...') 
-    writetable(Tensemblesfeatures,[FileDirSave,NameDir,Experiment,'_',Name,'.csv'],...
-        'Delimiter',',','QuoteStrings',true);
-    disp(['>>Saved at /Ensemble Features: ',Experiment,'-',Names_Conditions{c}])
+        disp('>>Saving...') 
+        writetable(Tensemblesfeatures,[FileDirSave,NameDir,Experiment,'_',Name,'.csv'],...
+            'Delimiter',',','QuoteStrings',true);
+
+        disp(['>>Saved at /Ensemble Features: ',Experiment,'-',Names_Conditions{c}])
+    end
     %% Detailed Ensembles INTEL ###########################################
     % Features For each Ensemble (rows of the table)
     % [%] Active Neurons (observed) [column vectors!]

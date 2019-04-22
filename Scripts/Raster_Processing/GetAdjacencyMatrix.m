@@ -1,10 +1,11 @@
-% Get Adjacency Matrix from Activity Matrix (Raster)
+% Get Adjacency Matrix from Activity Matrix Normalized by Time (Raster)
 % Fire together Wire together
 % Assuming having more frames than cells ALWAYS!
 % Input
 %   R: Raster dim: Cells x Frames
 % Output
-%   A: Adjacency Matrix dim: Cells x Cells
+%   A: Adjacency Matrix dim: Cells x Cells where:
+%       a_ij: percentage of time that the i-th & j-rh fired together
 function AdjacencyMatrix=GetAdjacencyMatrix(Raster)
 [C,frames]=size(Raster);
 % It is supossed to have more frames than cells ALWAYS!
@@ -25,5 +26,5 @@ for f=1:length(ActiveFrames)% Frames loop
 end
 % Set Zero to the DIAGONAL:
 AdjacencyMatrix=AdjacencyMatrix.*~eye(size(AdjacencyMatrix));
-% UpperMatrix=triu(AdjacencyMatrix,1);
-% TotalConnectionsRaw=UpperMatrix( UpperMatrix>0);
+MaxSynLinks=max(AdjacencyMatrix(:));
+AdjacencyMatrix=AdjacencyMatrix./frames; % NORMALIZED

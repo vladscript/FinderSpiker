@@ -1,4 +1,5 @@
 % Script that gets the Network from Whole Raster
+% Run after loading MAT file
 % Input:
 %   R_Condition: Cell of Rasters
 %   MetaDataColocaliation: List of [+] & [-] Cells
@@ -8,6 +9,8 @@
 % Update .mat File
 %%***************************************************************
 % Initial Setup 
+Update_Directory;
+Experiment=Experiment(Experiment~='\');
 Ncells=size(R_Condition{1},1);
 StatesofNeurons=ones(Ncells,1);
 ColorNeuronCell=zeros(Ncells,3);
@@ -19,7 +22,7 @@ figureCM.Position=[612 515 560 118];
 imagesc([1:10]);
 CM=hsv(10);
 figureCM.Colormap=CM;
-ColorIndx= inputdlg('Set Color Index [1:10],0 is black, else is pink: ',...
+ColorIndx= inputdlg('Set Color Index [1:10], 0 is black (-) Cells, else option will be pink: ',...
          'Select color for + Cells', [1 70]);
 waitfor(ColorIndx);
 delete(figureCM);
@@ -28,21 +31,32 @@ if ismember(CIndx,[1:10])
     PositiveCellsColor=255*CM(CIndx,:);
 elseif CIndx==0;
     PositiveCellsColor=[0,0,0];
-    disp('Color set as deep BLACK')
+    disp('>>Color set as deep DARKNESS, i.e., black')
 else
     PositiveCellsColor=255*[1,0.6,0.78];
-    disp('Color set as deep PINK')
+    disp('>>Color set as deep PINK')
 end
 %% Check if There Are Merged Neurons
 if exist('MetaDataColocaliation','var')
+    disp('>Merge Cells ID: Done')
     aremerged=true;   % Are there already colocated cells
     PositiveCells=MetaDataColocaliation.PositiveCells;
     NegativeCells=MetaDataColocaliation.NegativeCells;
+    % For the plotting:
+    IndexPositiveCells=zeros(Ncells,1);
+    IndexPositiveCells(PositiveCells)=1;
+    SortingIndex=[PositiveCells;NegativeCells];
+    NameCells=MetaDataColocaliation.Cells{1};
     % Set Color:
     ColorNeuronCell(PositiveCells,:)=repmat(PositiveCellsColor,numel(PositiveCells),1);
 else
+    disp('>ALL Cells ')
     aremerged=false;  % Are there already colocated cells
     ColorNeuronCell=repmat(PositiveCellsColor,Ncells,1);
+    % For the Plotting
+    IndexPositiveCells=ones(Ncells,1);
+    SortingIndex=1:Ncells;
+    NameCells='ALL';
 end
 %% MAKE char Vector of Colors
 ColorString=cell(Ncells,1);
@@ -56,12 +70,23 @@ for n=1:Ncells
     end
 end
 %% Make Networks ****************************************************
+NameDir='Ensemble Features\';
+FileDirSave=pwd;
+slashes=find(FileDirSave=='\');
+FileDirSave=FileDirSave(1:slashes(end));
 for c=1:C
-    Raster=R_Condition{c};    
+    Raster=R_Condition{c};
+    CAG=sum(Raster);
+    AUCf=autocorr(CAG);
+    AUCcag=AUCf(2);
+    Frames=size(Raster,2);
     % TOTAL NETWORK #######################################################
+    % As in Get_Gephi_Network***
     AdjacencyMatrix=GetAdjacencyMatrix(Raster);
     MaxSynLinks=max(AdjacencyMatrix(:));
-    AdjacencyMatrix=AdjacencyMatrix./MaxSynLinks; % NORMALIZED
+    fprintf('Maximum Time Neurons Connected: %3.2f seconds\n',Frames*MaxSynLinks/fs);
+    fprintf('%3.2f %% percentage of the Experiment\n',100*MaxSynLinks);
+
     % Get Source, Target and Weigth for eache link NO SORTED
     SOURCE=[];
     TARGET=[];
@@ -81,11 +106,13 @@ for c=1:C
         WEIGHT=0;
         disp('>>NO NETWORK FOUND')
     end
+    % NETWORK FEATURES ***********************************************
     SynStrengthStats=[mean(WEIGHT),mode(WEIGHT),median(WEIGHT),var(WEIGHT),skewness(WEIGHT),kurtosis(WEIGHT)];
     IndexMaxW=find(WEIGHT==1);
     MaxCoupledPair=[SOURCE(IndexMaxW),TARGET(IndexMaxW)];
-    
-    FileNameExp = inputdlg(['Save ',Names_Conditions{1},' of ',Experiment,' TOTAL Network as: '],...
+    fprintf('Most Linked Neurons: %i <-> %i\n',MaxCoupledPair(1),MaxCoupledPair(2))
+    % SAVE CSVs for GEPHI  ***********************************************
+    FileNameExp = inputdlg(['Save ',Names_Conditions{c},'Network of ',Experiment,' TOTAL Network as: '],...
              'CSV files for Gephi Visualization', [1 100]);
     if ~isempty(FileNameExp)
         FileNameExp=FileNameExp{:};
@@ -124,6 +151,7 @@ for c=1:C
 
         SaveasName=[CarpetName,'\',Experiment,'_',FileNameExp,'_EDGES_TOTAL.csv'];
         HeadersLinks={'Source','Target','Weight','Type'};
+        % Make Table (without dancing xD)
         Tlinks=table(SOURCE,TARGET,WEIGHT,TypeNetwork,...
             'VariableNames',HeadersLinks);
         writetable(Tlinks,[DirSave(1:poslash(end)),SaveasName],'Delimiter',',','QuoteStrings',true);
@@ -131,20 +159,91 @@ for c=1:C
         disp('      * Saved Total Network *');
         disp('      ***********************');
     else
-        disp('[> NETWORK NOT SAVED <]')
+        disp('[> NETWORK WAS NOT SAVED <]')
     end
-    % Make Table (without dancing xD)
-    
+    % Save Fetures of [+],[-] OR ALL
+    if aremerged
+        % Separate [+] & [-] and ALL
+        HeadersPopulation={'AUC_pos','AUC_neg',...
+            'mean_pp','mode_pp','median_pp','var_pp','skew_pp','kurt_pp',...
+            'mean_nn','mode_nn','median_nn','var_nn','skew_nn','kurt_nn',...
+            'mean_pn','mode_pn','median_pn','var_pn','skew_pn','kurt_pn'};
+        % Positive Cells ***********************************************
+        R_pos=R_merged{c};
+        CAGpos=sum(R_pos);
+        AUCf=autocorr(CAGpos,1);
+        AUCcagpos=AUCf(2);
+        % AMpos=AdjacencyMatrix(sort(PositiveCells),sort(PositiveCells));
+        SOURCEpos=SOURCE(ismember(SOURCE,PositiveCells));
+        TARGETpos=TARGET(ismember(SOURCE,PositiveCells));
+        WEIGHTpos=WEIGHT(ismember(SOURCE,PositiveCells));
+        % Weight by Population Mixtures:
+        WPoswPos=WEIGHTpos(ismember(TARGETpos,PositiveCells));
+        WPoswNeg=WEIGHTpos(ismember(TARGETpos,NegativeCells));
+        % Negative Cells ***********************************************
+        R_neg=R_nomerged{c};
+        CAGneg=sum(R_neg);
+        AUCf=autocorr(CAGneg,1);
+        AUCcagneg=AUCf(2);
+        % AMneg=AdjacencyMatrix(sort(NegativeCells),sort(NegativeCells));
+        SOURCEneg=SOURCE(ismember(SOURCE,NegativeCells));
+        TARGETneg=TARGET(ismember(SOURCE,NegativeCells));
+        WEIGHTneg=WEIGHT(ismember(SOURCE,NegativeCells));
+        % Weight by Population Mixtures:
+        WNegwNeg=WEIGHTneg(ismember(TARGETneg,NegativeCells));
+        WNegwPos=WEIGHTneg(ismember(TARGETneg,PositiveCells));
+        % Merge
+        Walte=[WNegwPos;WPoswNeg];
+        % Save Stuff
+        % Positive Weight Links
+        SynStatsPos=[mean(WEIGHTpos),mode(WEIGHTpos),median(WEIGHTpos),var(WEIGHTpos),skewness(WEIGHTpos),kurtosis(WEIGHTpos)];
+        % Negative Weight Links
+        SynStatsNeg=[mean(WEIGHTneg),mode(WEIGHTneg),median(WEIGHTneg),var(WEIGHTpos),skewness(WEIGHTpos),kurtosis(WEIGHTpos)];
+        % Only Positive Weight Links ##################################
+        SynPosPos=[mean(WPoswPos),mode(WPoswPos),median(WPoswPos),var(WPoswPos),skewness(WPoswPos),kurtosis(WPoswPos)];
+        % Only Negative Weight Links ##################################
+        SynNegNeg=[mean(WNegwNeg),mode(WNegwNeg),median(WNegwNeg),var(WNegwNeg),skewness(WNegwNeg),kurtosis(WNegwNeg)];
+        % Only Alternate Weight Links #################################
+        SynAlt=[mean(Walte),mode(Walte),median(Walte),var(Walte),skewness(Walte),kurtosis(Walte)];
+        TfeatsPopulation=table(AUCcagpos,AUCcagneg,...
+            SynPosPos(1),SynPosPos(2),SynPosPos(3),SynPosPos(4),SynPosPos(5),SynPosPos(6),...
+            SynNegNeg(1),SynNegNeg(2),SynNegNeg(3),SynNegNeg(4),SynNegNeg(5),SynNegNeg(6),...
+            SynAlt(1),SynAlt(2),SynAlt(3),SynAlt(4),SynAlt(5),SynAlt(6),...
+            'VariableNames',HeadersPopulation);
+        % MAKE CSVs
+        if ~isdir([FileDirSave,NameDir])
+            mkdir([FileDirSave,NameDir]);
+            disp('>>Directory >Ensemble Features< created')
+        end
+        disp('>>Saving...') 
+        writetable(TfeatsPopulation,[FileDirSave,NameDir,Experiment,'_',...
+            Names_Conditions{c},'_TOTAL_fNET','.csv'],...
+            'Delimiter',',','QuoteStrings',true);
+        disp(['>>Saved at /Ensemble Features: ',Experiment,'-',Names_Conditions{c}])
+    end
+    % Save ALL cells Features
+    %Headers
+    HeadersTOTAL={'AUC_tot',...
+            'mean_tot','mode_tot','median_tot','var_tot','skew_tot','kurt_tot'};
+    %table
+    TfeatsALL=table(AUCcag,...
+            SynStrengthStats(1),SynStrengthStats(2),SynStrengthStats(3),...
+            SynStrengthStats(4),SynStrengthStats(5),SynStrengthStats(6),...
+            'VariableNames',HeadersTOTAL);
+    %Save
+    if ~isdir([FileDirSave,NameDir])
+        mkdir([FileDirSave,NameDir]);
+        disp('>>Directory >Ensemble Features< created')
+    end
+    disp('>>Saving...') 
+    writetable(TfeatsALL,[FileDirSave,NameDir,Experiment,'_',...
+        Names_Conditions{c},'_TOTAL_fNET','.csv'],...
+        'Delimiter',',','QuoteStrings',true);
+    disp(['>>Saved at /Ensemble Features: ',Experiment,'-',Names_Conditions{c}])
 end
-if aremerged
-    % Plot Raster with separated [+] Cells
-    IndexPositiveCells=zeros(Ncells,1);
-    IndexPositiveCells(PositiveCells)=1;
-    % Plot_Raster_Ensembles(RASTER_Selected_Clean,fs,10,1:Ncells,IndexPositiveCells);
-    Plot_Raster_Ensembles(RASTER_Selected_Clean,fs,10,[PositiveCells;NegativeCells],IndexPositiveCells);
-    ActualFig=gcf;
-    ActualFig.Name=['Highlighted ',MetaDataColocaliation.Cells,' Cells']
-        
-
-end
+%% Plot Raster ####################################################
+Plot_Raster_Ensembles(RASTER_Selected_Clean,fs,1,SortingIndex,IndexPositiveCells,PositiveCellsColor/255);
+ActualFig=gcf;
+ActualFig.Name=['Highlighted ',NameCells,' Cells of: ',Experiment];
+Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
     
