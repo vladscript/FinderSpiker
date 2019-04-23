@@ -74,6 +74,9 @@ NameDir='Ensemble Features\';
 FileDirSave=pwd;
 slashes=find(FileDirSave=='\');
 FileDirSave=FileDirSave(1:slashes(end));
+step=-0.05;
+ColorsMap=cbrewer('qual','Set1',C*2);
+legobj=[];
 for c=1:C
     Raster=R_Condition{c};
     CAG=sum(Raster);
@@ -127,7 +130,7 @@ for c=1:C
         DirSave=pwd;
         poslash=find(DirSave=='\');
         if ~isdir([DirSave(1:poslash(end)-1),CarpetName])
-            disp('Folder [NetWorks-CSV] created')
+            disp(['Folder [',CarpetName,'] created'])
             mkdir([DirSave(1:poslash(end)-1),CarpetName]);
         end
         SaveasName=[CarpetName,'\',Experiment,'_',FileNameExp,'_NODES_TOTAL.csv'];
@@ -240,10 +243,22 @@ for c=1:C
         Names_Conditions{c},'_TOTAL_fNET','.csv'],...
         'Delimiter',',','QuoteStrings',true);
     disp(['>>Saved at /Ensemble Features: ',Experiment,'-',Names_Conditions{c}])
+    %% Plot Histogram Plots of the Wieghted Links
+    step=step+.2;
+    hplot{c}=raincloud_plot(100*WEIGHT,'color',ColorsMap(2*(c-1)+1,:),'box_on',1,'alphaval',0.5,...
+     'box_dodge', 1, 'box_dodge_amount',step , 'dot_dodge_amount', step, 'box_col_match',1,...
+     'band_width',0.2);
+    legobj=[legobj,hplot{c}{1}];
 end
+legend(legobj,Names_Conditions);
+xlabel('%TimeLinked')
+title('PDF')
+axis tight; grid on;
+FigPDF=gcf;
+FigPDF.Name='Distribution of Linking Percentage';
 %% Plot Raster ####################################################
 Plot_Raster_Ensembles(RASTER_Selected_Clean,fs,1,SortingIndex,IndexPositiveCells,PositiveCellsColor/255);
 ActualFig=gcf;
 ActualFig.Name=['Highlighted ',NameCells,' Cells of: ',Experiment];
 Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
-    
+

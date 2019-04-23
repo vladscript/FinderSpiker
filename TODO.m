@@ -4,16 +4,11 @@
 % of the automatic method by dividing in -+ and -- (false+ & false-)
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
-
 %% FIXED  READY TO GO @ GIT
-% Importnat Update @ RoA Feature Calcullation
-% GET New Ensemble Features
-% Bug @ title Calium_Magic
-% Empty Raster Plot
-% Detrending Algortihm UPDATE *
-% Directory to save NETWORK!!!
-% IMPORTANT: Network Link Weigths Updated NORMALIZED
+% IMPORTANT: Network Link Weigths Updated NORMALIZED: 23/abr/19
 %% Bugs & New Functions NOW
+
+% STATS visualization!
 
 % Hamming Distance among active Nuerons of Different Conditions
 % ANALYZE DYSKINESIA DATA
@@ -58,42 +53,47 @@
 % Setup Script: deconvolution parameters
 % Check at Signals with Huge Valley (synaptic like)
 
-%% STEPS GUIDE *********************************************************
-% SIGNAL PROCESSING: Detect Calcium Transients Events
+%% STEPS GUIDE ############################################################
+
+% SIGNAL PROCESSING: Detect Calcium Transients Events**********************
 % >>Finder_Spiker_Calcium
 % >>Detected_Visual_Inspection
 % >>Undetected_Visual_Inspection
 % >>Save_and_Plot
 % >>Plot_Experiment
 
-% RASTER SELECTION
+% RASTER SELECTION*********************************************************
 % ACTUAL MODE: @ Original Coordiantes Order
 % >>Select_Rasters
 
-% CHECK RASTER's Selection DURATIONs:
+% CHECK RASTER's Selection DURATIONs: *************************************
 % >>RasterDurations=get_raster_durations(Onsets,R_Condition,fs);
 
-% RETRIEVE RASTER for ANALYSIS
+% RETRIEVE RASTER for ANALYSIS ********************************************
 % >>R=RASTER_Selected_Clean'; % ALL CONDITIONS CONCATeNATED
 % >>R_CONDITION1=R_Condition{1}; % Cells x Frames (dim)
 % ...
 % >>R_CONDITIONi=R_Condition{i};
 
-% CLUSTERING NEURONAL ENSEMBLES
+% TOTAL NETWORK (without Ensembles) ***************************************
+% Save Links Features without Thresholding
+% >>Get_Total_Network
+
+% CLUSTERING NEURONAL ENSEMBLES *******************************************
 % AUTOMATIC
 % >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDTIONi);
 % MANUAL GUI (by JP): 
 % >>NeuralNetwork 
 
-% DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI)
+% DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI) ************
 % Neural ensemble and Functional Network Features Extraction
 % >> Ensemble_Sorting
 
-% PLOT ENSEMBLES FAST
+% PLOT ENSEMBLES FAST *****************************************************
 % >> ImageEnsembles(R_ConditionNamej_Analysis); % without  Hebbian Sequences
 % >> ImageEnsembles(R_Dyskinesia_Analysis,1); % with Hebbian Sequences
 
-% COLOCALIZATION OF MARKED CELLS
+% COLOCALIZATION OF MARKED CELLS ******************************************
 % >>Merge_Finder_Magic
 %       It gets outputs: R_merged,R_nomerged,MetaDataColocaliation
 % Save CSV Raster-Features of Merged & NO-Merged Cells:
@@ -102,7 +102,7 @@
 % Check Raster plots:
 % >>Plot_Merged_NotMerged
 
-% RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION
+% RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION ************************
 % 0) Get Merged Coordinates (IF SO)
 % >> XY_merged=XY_selected(MetaDataColocaliation.PositiveCells,:);
 % 1) Plot Raster (*without sorting*) from:
