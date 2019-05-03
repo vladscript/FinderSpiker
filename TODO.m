@@ -5,19 +5,17 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
 %% FIXED  READY TO GO @ GIT
-% IMPORTANT: Network Link Weigths Updated NORMALIZED: 23/abr/19
+
 %% Bugs & New Functions NOW
 
 % STATS visualization!
 
-% Hamming Distance among active Nuerons of Different Conditions
+% Statistics: automate
+
+% Hamming Distance among active Neurons of Different Conditions
 % ANALYZE DYSKINESIA DATA
 
-% MAKE NETWORK OF NON ENSEMBLED RASTERs
 % MAKE NETWORK highlight special neuron population
-
-% add CBREWER as ENSEMBLE COLOR SELECTOR
-% Statistics: automate
 
 
 % Test Mike's Clsutering Algorithm 4 CoActivity (transposed matrix)and save as weel
@@ -41,7 +39,7 @@
 % Make RGB sum at Functional Network
 % driver ghost Issuee(?)
 
-%% FUTURE **********************************
+%% FUTURE *****************************************************************
 % Driver Issues
 % Look at Line Equation: 0:N-1 or 1:N   [*]
 % Figure: reason whi mean(ROI) without distortion
@@ -69,15 +67,15 @@
 % CHECK RASTER's Selection DURATIONs: *************************************
 % >>RasterDurations=get_raster_durations(Onsets,R_Condition,fs);
 
+% TOTAL NETWORK (without Ensembles) ***************************************
+% Save Links Features without Thresholding
+% >>Get_Total_Network
+
 % RETRIEVE RASTER for ANALYSIS ********************************************
 % >>R=RASTER_Selected_Clean'; % ALL CONDITIONS CONCATeNATED
 % >>R_CONDITION1=R_Condition{1}; % Cells x Frames (dim)
 % ...
 % >>R_CONDITIONi=R_Condition{i};
-
-% TOTAL NETWORK (without Ensembles) ***************************************
-% Save Links Features without Thresholding
-% >>Get_Total_Network
 
 % CLUSTERING NEURONAL ENSEMBLES *******************************************
 % AUTOMATIC
@@ -129,9 +127,6 @@
 % >>Ensembles_Features_Detailed_Display
 % Script to Merged them and make a DATASET for Machine Learning:
 % >>Merge_Feature_Datasets
-
-% IGNORE EXPERIMENTS:
-% >>Check_Data_Dyskinesia % (user defined)
 
 % MACHINE LEARNING: choose a Dataset:
 % >>Features_Datasets_NBC

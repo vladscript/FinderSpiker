@@ -76,7 +76,7 @@ disp('>>Evaluating...')
 ErrorSelFeat=1-numel(find(Y==Yhat))/numel(Y);
 fprintf('Cross-Validated  Subset Classification Error: %3.1f %%\n',100*ErrorSelFeat);
 
-if ErrorSelFeat<=ECVall
+if ErrorSelFeat<ECVall
     %% Removing More Features
     aux=1;
     RejectSets={};

@@ -16,18 +16,23 @@ StatesofNeurons=ones(Ncells,1);
 ColorNeuronCell=zeros(Ncells,3);
 C=size(R_Condition,2);
 %% SELECT COLOR FOR (+) cells
+Ncolors=12;
+ColorMapName='Paired'; % See CBREWER help to see details
 figureCM=figure;
-figureCM.Name='HSV colormap';
+figureCM.Name=[ColorMapName,' qualitative colormap from  CBREWER'];
 figureCM.Position=[612 515 560 118];
-imagesc([1:10]);
-CM=hsv(10);
+imagesc([1:Ncolors]);
+% CM=hsv(10);
+CM=cbrewer('qual',ColorMapName,Ncolors);
 figureCM.Colormap=CM;
+figureCM.Children.XTick=1:Ncolors;
+figureCM.Children.YTick=[];
 ColorIndx= inputdlg('Set Color Index [1:10], 0 is black (-) Cells, else option will be pink: ',...
          'Select color for + Cells', [1 70]);
 waitfor(ColorIndx);
 delete(figureCM);
 CIndx=str2num(ColorIndx{1});
-if ismember(CIndx,[1:10])
+if ismember(CIndx,[1:Ncolors])
     PositiveCellsColor=255*CM(CIndx,:);
 elseif CIndx==0;
     PositiveCellsColor=[0,0,0];

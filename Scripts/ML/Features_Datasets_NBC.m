@@ -22,6 +22,7 @@ if strcmp(FileName(end-3:end),'xlsx')
     EXPIDs=table2array( Xraw(:,2));             % Cell of Strings
     X=table2array( Xraw(:,3:end) );             % Dataset
 else
+    disp('>>Raster/Ensemble Features')
     Xraw=readtable([PathName,FileName]);        % Table
     Y=categorical(table2array( Xraw(:,1)) );    % Labels
     EXPIDs=table2array( Xraw(:,2));             % Cell of Strings

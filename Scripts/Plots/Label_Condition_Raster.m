@@ -7,12 +7,17 @@
 % Output
 %    Annotation to Current Figure in Minutes
 function Label_Condition_Raster(Names_Conditions,Raster_Condition,fs)
-[~,NC]=size(Raster_Condition);
+[NVs,NC]=size(Raster_Condition);
 
 % Read & Get Proportion of Raster Lengths
 FramesTotal=0;
+FramesCondition=zeros(NC,1);
 for i=1:NC
-    [~,FramesCondition(i)]=size(Raster_Condition{i});
+    FramVids=0;
+    for j=1:NVs
+        FramVids=FramVids+size(Raster_Condition{j,i},2);    
+    end
+    FramesCondition(i)=FramVids;
     FramesTotal=FramesTotal+FramesCondition(i);
 end
 FractionFrame=FramesCondition/FramesTotal;

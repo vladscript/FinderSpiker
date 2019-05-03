@@ -104,6 +104,7 @@ FileDirSave=FileDirSave(1:slashes(end));
 FolderNamePD='\Processed Data';
 slashes=find(PathName=='\');
 Experiment=PathName(slashes(end-1)+1:slashes(end)-1); % Experiment ID
+Experiment(find(Experiment==' '))='_'; % REPLACE SpaceS with '_'
 if ~isdir([FileDirSave,FolderNamePD])
     disp('Folder [Processed Data] created')
     mkdir([FileDirSave,FolderNamePD]);
