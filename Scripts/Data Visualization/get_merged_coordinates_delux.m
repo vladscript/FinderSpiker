@@ -81,8 +81,8 @@ fprintf(' Image in Grayscale of  %i  bits \n',Nbits);
 kindcells = inputdlg('Cell Type : ',...
              'Kind of ... ', [1 50]);
 %% Open Dialogue Box to Read Video
-calciumind= inputdlg('Fluorophoro: ',...
-             'Ca++ Indicator', [1 50]);
+calciumind= inputdlg('Fluorophore: ',...
+             'Ca++ Activity Indicator', [1 50]);
 [FileNameVideo,PathNameVideo] = uigetfile('*.avi',[' Pick the ',calciumind{1},' Video(s)',Experiment],...
             'MultiSelect', 'on',PathNameImage);
 % Sample Frames of Videos: First, Middle & Final Frame of each Video
@@ -161,7 +161,7 @@ CM{4}=rgb2gray(BLUEmap);
 % PLot Figure
 getcoord=figure('numbertitle','off',...
     'name',['Colocalization of ',kindcells{1},' cells @ ',Experiment],...
-    'Position',[6 151 1099 523]);
+    'Position',[6 151 1099 523],'Color',[0,0,0]);
 
 %     'keypressfcn',@exit_function,...
 %     'ButtonDownFcn',@selec_ROI);
@@ -176,12 +176,15 @@ colormap(h2,CM{RGBindexesB})
 h3=subplot(1,3,3);
 rgbA=ind2rgb(ImageAverage,CM{RGBindexesA});
 rgbB=ind2rgb(meanFrame,CM{RGBindexesB});
+rgbAorigin=ind2rgb(ImageAverage,CM{RGBindexesA});
+rgbBorigin=ind2rgb(meanFrame,CM{RGBindexesB});
 rgbC=imadd(rgbA,rgbB);
 imshow(rgbC);
 % imcontrast(h2);
-h1.Position=[-0.34,0.15,1,0.65];
-h2.Position=[-0.005,0.15,1,0.65];
-h3.Position=[0.33,0.15,1,0.65];
+
+h1.Position=[-0.34,0.15,W/max([H,W]),H/max([H,W])];
+h2.Position=[-0.005,0.15,W/max([H,W]),H/max([H,W])];
+h3.Position=[0.33,0.15,W/max([H,W]),H/max([H,W])];
 linkaxes([h1,h2,h3],'xy')
 
 title(h1,dyename)
@@ -194,25 +197,25 @@ title(h3,'Merge & Active Cells')
 % Plot Coordinates & Get ROI pixels
 Meshxy_Circle=[]; 
 aux1=1;
-for n=1:N
+for nc=1:N
 %     rectangle('Position',[XY(n,1)-r(n)/2,XY(n,2)-r(n)/2,2*r(n),2*r(n)],...
 %             'Curvature',[1 1],'LineWidth',1,'EdgeColor','r');
     disp('Ploting Active Coordinates');
     subplot(h1)
     hold(h1,'on'); % PLOT AT DYE MARKER
-    rectangle('Position',[XY(n,1)-r(n),XY(n,2)-r(n),2*r(n),2*r(n)],...
+    rectangle('Position',[XY(nc,1)-r(nc),XY(nc,2)-r(nc),2*r(nc),2*r(nc)],...
         'Curvature',[1 1],'LineWidth',2,'EdgeColor','k');
     hold(h1,'off'); % PLOT AT DYE MARKER
     
     subplot(h3)
     hold(h3,'on'); % PLOT AT MERGE
-    rectangle('Position',[XY(n,1)-r(n),XY(n,2)-r(n),2*r(n),2*r(n)],...
+    rectangle('Position',[XY(nc,1)-r(nc),XY(nc,2)-r(nc),2*r(nc),2*r(nc)],...
         'Curvature',[1 1],'LineWidth',1,'EdgeColor','r');
     hold(h3,'off'); % PLOT AT MERGE
     
     % ROI pixels
-    Mx=XY(n,1)-(r):XY(n,1)+(r); % range in x of square
-    My=XY(n,2)-(r):XY(n,2)+(r); % range in y of square
+    Mx=XY(nc,1)-(r):XY(nc,1)+(r); % range in x of square
+    My=XY(nc,2)-(r):XY(nc,2)+(r); % range in y of square
     for i=1:length(Mx)
         % chech if it's in image's limits Xaxis
         if Mx(i)>0 && Mx(i)<=W 
@@ -220,9 +223,9 @@ for n=1:N
                 % chech if it's in image's limits Yaxis
                 if My(j)>0 && My(j)<=H 
                     % check if it's in circle
-                    if (Mx(i)-XY(n,1))^2+(My(j)-XY(n,2))^2<=r(n)^2
+                    if (Mx(i)-XY(nc,1))^2+(My(j)-XY(nc,2))^2<=r(nc)^2
                         Meshxy_Circle=[Meshxy_Circle;Mx(i),My(j)];
-                        ROIcounter(n)=aux1;
+                        ROIcounter(nc)=aux1;
                         aux1=aux1+1;
                     end
                 end
@@ -284,7 +287,13 @@ CellNavigator=uicontrol('Style','slider',...
 % pause;
 %% Get Points 
 % Help Message
-fhelp=msgbox('Push Select XY and use normal button clicks to add points. A shift-, right-, or double-click adds a final point and ends the selection. Pressing Return or Enter ends the selection without adding a final point. Pressing Backspace or Delete removes the previously selected point.','Help','help');
+fhelp=msgbox({'Push Select XY and use normal button clicks to add points in the Merge and Active Cells Panel',...
+    '',...
+    'Navigate each Coordinate with the Scrollbar below',...
+    '',...
+    'Pressing Return or Enter ends the selection without adding a final point.',...
+    '',...
+    'Pressing Backspace or Delete removes the previously selected point.'},'How to','help');
 % IT GETS POINTS ONLY IN THE CIRCLES OF THE COORDINATES
 Meshxy_Circle=round(Meshxy_Circle);
 X_col=[];Y_col=[];
@@ -441,7 +450,7 @@ function InitializeImContrast(~,~,OriginContrast)
         ImageOriginal=ImageAverage;
         ImageCopy=ImageAverageCopy;
     else
-        disp('>> Calcium Fluorescence')
+        disp('>> Calcium Activity Fluorescence')
         axish=h2;
         % Restart Original Contrast
         meanFrameCopy=meanFrame;
@@ -451,7 +460,7 @@ function InitializeImContrast(~,~,OriginContrast)
     % Re Plot Original Stuff
     axish.Children(end).CData=ImageOriginal;
     axish.Children(end).CDataMapping='scaled';
-    % Restar Contrast
+    % Restart Contrast
     ReplotImage(axish,1,OriginContrast)
     % Adjust CONTRAST GUI
     disp('>>Initializing Image Contrast Adjust...')
@@ -503,24 +512,22 @@ function cellnavigation(CellNavigator,~)
         % Take care of negative or BIGGER pixels:!!!!!!!
         if x_min<1; x_min=1; end
         if y_min<1; y_min=1; end
-        if x_max>H; x_max=H; end
-        if y_max>W; y_max=W; end
+        if x_max>W; x_max=W; end
+        if y_max>H; y_max=H; end
         % Adjust Values
         disp('>>Adjusting Contrast ... ')
-        % window_min = round(0.75*min(min(ImageAverage(x_min:x_max,y_min:y_max))));
-        % window_max = round(1.25*max(max(ImageAverage(x_min:x_max,y_min:y_max))));
-        [window_min,window_max]=get_limits(ImageAverage(y_min:y_max,x_min:x_max));
+        
         % DYE IMAGE (neuron marker) ###################################
-        ImageAverageCopy=ImageAverage;
-        rgbA=ind2rgb(ImageAverageCopy,CM{RGBindexesA});
-        rgbA=rgb2ind(rgbA,CM{RGBindexesA});
-        % ImageAverageCopy=imadjust(ImageAverageCopy,[double(window_min),double(window_max)]/255,[]);
-        ImageAverageCopy=imadjust(ImageAverageCopy,[window_min,window_max]/255,[]);
+        AuxDye=rgb2ind(rgbAorigin,CM{RGBindexesA});
+        [window_min,window_max]=get_limits(AuxDye(y_min:y_max,x_min:x_max));
+        ImageAverageCopy=imadjust(AuxDye,[window_min,window_max]/255,[]);
+        
+%         ImageAverageCopy=imadjust(ImageAverageCopy,[window_min,window_max]/255,[]);
         % REPLOT
         % RGBindexesA=rgbChooseDye.Value;
         % rgbA=getrgb(ImageAverageCopy,RGBindexesA);
         rgbA=ind2rgb(ImageAverageCopy,CM{RGBindexesA});
-        rgbB=ind2rgb(ImageAverageCopy,CM{RGBindexesB});
+        rgbB=ind2rgb(meanFrameCopy,CM{RGBindexesB});
         if RGBindexesA<numel(RGBNames)
             h1.Children(end).CData=ImageAverageCopy;
             if and(RGBindexesB<4,RGBindexesA~=RGBindexesB)
@@ -530,14 +537,14 @@ function cellnavigation(CellNavigator,~)
         end        
 
         % Calcium Fluorescence (calcium indicator)
-        % window_min = round(0.75*min(min(meanFrame(x_min:x_max,y_min:y_max))));
-        % window_max = round(1.25*max(max(meanFrame(x_min:x_max,y_min:y_max))));
-        [window_min,window_max]=get_limits(meanFrame(y_min:y_max,x_min:x_max));
-        meanFrameCopy=meanFrame;
-        meanFrameCopy=imadjust(meanFrameCopy,[window_min,window_max]/255,[]);
+        
+        % [window_min,window_max]=get_limits(meanFrame(y_min:y_max,x_min:x_max));
+        AuxFluo=rgb2ind(rgbBorigin,CM{RGBindexesB});
+        [window_min,window_max]=get_limits(AuxFluo(y_min:y_max,x_min:x_max));
+        meanFrameCopy=imadjust(AuxFluo,[window_min,window_max]/255,[]);
         % REPLOT
         RGBindexesB=rgbChooseCa.Value;
-        rgbA=ind2rgb(meanFrameCopy,CM{RGBindexesA});
+        rgbA=ind2rgb(ImageAverageCopy,CM{RGBindexesA});
         rgbB=ind2rgb(meanFrameCopy,CM{RGBindexesB});
         % rgbB=getrgb(meanFrameCopy,RGBindexesB);
         if RGBindexesA<4 
@@ -552,6 +559,7 @@ function cellnavigation(CellNavigator,~)
     % Nested Inception Function
     function[minlimit,maxlimit]=get_limits(ImageSegment)
         disp('>>Recalculating Limits')
+%         [Iind,mapind]=gray2ind(ImageSegment,2^Nbits);
         grayvalues=double(ImageSegment(:));
         if numel(grayvalues)>4
             [px,binx]=ksdensity(grayvalues,linspace(min(grayvalues),max(grayvalues),100));

@@ -26,7 +26,7 @@
 
 %%% MAKE ALGORITHMIA
 
-% delete >Plot_Raster_V.m; gen_feat_table_merged.m
+% delete >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
 
 % Make PCA of RASTER: 
 % denoise raster: get most variance PCs and rebuild raster
@@ -58,6 +58,7 @@
 % >>Detected_Visual_Inspection
 % >>Undetected_Visual_Inspection
 % >>Save_and_Plot
+% REVIEW DATA:
 % >>Plot_Experiment
 
 % RASTER SELECTION*********************************************************
@@ -89,9 +90,10 @@
 
 % PLOT ENSEMBLES FAST *****************************************************
 % >> ImageEnsembles(R_ConditionNamej_Analysis); % without  Hebbian Sequences
-% >> ImageEnsembles(R_Dyskinesia_Analysis,1); % with Hebbian Sequences
+% >> ImageEnsembles(R_ConditionNamej_Analysis,1); % with Hebbian Sequences
 
 % COLOCALIZATION OF MARKED CELLS ******************************************
+% % % Previously LOAD MAT FILE (?)
 % >>Merge_Finder_Magic
 %       It gets outputs: R_merged,R_nomerged,MetaDataColocaliation
 % Save CSV Raster-Features of Merged & NO-Merged Cells:
@@ -127,6 +129,10 @@
 % >>Ensembles_Features_Detailed_Display
 % Script to Merged them and make a DATASET for Machine Learning:
 % >>Merge_Feature_Datasets
+
+% MAKE DATASETS FROM GEPHI NETWORK FEATURES
+% >>Get_Gephi_Data;
+% >>Make_Statistics_Gephi_Features
 
 % MACHINE LEARNING: choose a Dataset:
 % >>Features_Datasets_NBC

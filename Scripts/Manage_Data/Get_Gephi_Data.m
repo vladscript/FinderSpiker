@@ -59,14 +59,33 @@ for c=1:NC
         EXPS{runs,1}=FileName
         CurrentPathOK=PathName;
         runs=runs+1;
-        [FileName,PathName,MoreFiles] = uigetfile('*.csv',['Condition: ',num2str(c),' Gephi Data .csv file'],...
+        [FileName,PathName,MoreFiles] = uigetfile('*.csv',['Condition: ',num2str(c),...
+            ' : ',Names_Conditions{c},' Gephi Data .csv file| Press CANCEL to start the Following Condition'],...
         'MultiSelect', 'off',CurrentPathOK);
         auxc=auxc+1;
     end
     % To get into the (fruit) loop again
     if c<NC
         MoreFiles=true;
-        [FileName,PathName,MoreFiles] = uigetfile('*.csv',['Condition: ',num2str(c+1),' Gephi Data .csv file'],...
+        [FileName,PathName,MoreFiles] = uigetfile('*.csv',['Condition: ',num2str(c+1),...
+            ' : ',Names_Conditions{c+1},' Gephi Data .csv file'],...
         'MultiSelect', 'off',CurrentPathOK);
     end
 end
+disp('>>Loading Gephi Data :Done.')
+disp('>>Saving Gephi Data ...')
+%% Save  Data
+
+% Input dialogue
+CurrentPathOK=[Dirpwd(1:slashesindx(end))];
+
+[file,path] = uiputfile('myNetwrokDataSet.mat','Save file name');
+if file ~=0
+    fullFileName = fullfile(path, file);
+    save(fullFileName,'GEPHIDATA','Names_Conditions');
+    disp('>>Network Dataset: Saved.')
+else
+    disp('>>CANCEL')
+end
+%% FINISH
+clear; close all; clc; disp('>>DONE')
