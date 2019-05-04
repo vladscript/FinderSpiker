@@ -20,7 +20,7 @@
 % Example:
 % Experiment='test'; XY=[100,100]; r=5
 % [XY_merged,ColocateIndx]=get_merged_coordinates(Experiment,XY_selected,r);
-function [XY_merged,MetaDataColocaliation]=get_merged_coordinates_delux(Experiment,XY,r)
+function [XY_merged,MetaDataColocaliation]=get_merged_coordinates_delux(Experiment,caactind,XY,r)
 %% Setup
 % Global Variables:
 global XY_merged;
@@ -81,8 +81,12 @@ fprintf(' Image in Grayscale of  %i  bits \n',Nbits);
 kindcells = inputdlg('Cell Type : ',...
              'Kind of ... ', [1 50]);
 %% Open Dialogue Box to Read Video
-calciumind= inputdlg('Fluorophore: ',...
-             'Ca++ Activity Indicator', [1 50]);
+% calciumind= inputdlg('Fluorophore: ',...
+%              'Ca++ Activity Indicator', [1 50]);
+
+uiwait(msgbox(caactind,'Calcium Imaging Indicator','help'));
+calciumind=caactind;
+
 [FileNameVideo,PathNameVideo] = uigetfile('*.avi',[' Pick the ',calciumind{1},' Video(s)',Experiment],...
             'MultiSelect', 'on',PathNameImage);
 % Sample Frames of Videos: First, Middle & Final Frame of each Video
@@ -187,9 +191,9 @@ h2.Position=[-0.005,0.15,W/max([H,W]),H/max([H,W])];
 h3.Position=[0.33,0.15,W/max([H,W]),H/max([H,W])];
 linkaxes([h1,h2,h3],'xy')
 
-title(h1,dyename)
-title(h2,calciumind)
-title(h3,'Merge & Active Cells')
+title(h1,dyename,'Color',[0.7,0.7,0.9])
+title(h2,calciumind,'Color',[0.7,0.7,0.9])
+title(h3,'Merge & Active Cells','Color',[0.7,0.7,0.9])
 % Fixing Position
 % getcoord.Position=[104 387 1193 283];
 
@@ -245,10 +249,10 @@ rgbChooseDye=uicontrol('Style','popup',...
 
 % Imcontrast for Dye Image
 DyeContrast=uicontrol('Style','togglebutton',...
-'String','DYE CONTRAST',...
+'String','DyeAdj',...
 'Units','normalized',...
 'Callback',{@InitializeImContrast,'Dye'},...
-'Position',[0.2 0.9 0.1 0.1]);
+'Position',[0.3 0.9 0.075 0.1]);
 
 
 % Color for Calcium INdicator
@@ -261,17 +265,17 @@ rgbChooseCa=uicontrol('Style','popup',...
 
 % Imcontrast for Dye Image
 FluoContrast=uicontrol('Style','togglebutton',...
-'String','FRAME CONTRAST',...
+'String','Ca++Adj',...
 'Callback',{@InitializeImContrast,'Ca'},...
 'Units','normalized',...
-'Position',[0.5 0.9 0.1 0.1]);
+'Position',[0.6 0.9 0.095 0.1]);
 
 % Selector Activator
 Selector=uicontrol('Style','togglebutton',...
 'String','Select XY',...
 'Callback',@getselection,...
 'Units','normalized',...
-'Position',[0.8 0.85 0.1 0.1]);
+'Position',[0.9 0.9 0.1 0.1]);
 
 % Cell Navigator
 CellNavigator=uicontrol('Style','slider',...

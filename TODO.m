@@ -5,14 +5,14 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
 %% FIXED  READY TO GO @ GIT
-
+% Merge_Finder_Magic: updated an owrking
+% Bug at detrending
 %% Bugs & New Functions NOW
 
 % STATS visualization!
-
 % Statistics: automate
-
 % Hamming Distance among active Neurons of Different Conditions
+
 % ANALYZE DYSKINESIA DATA
 
 % MAKE NETWORK highlight special neuron population

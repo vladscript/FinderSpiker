@@ -12,7 +12,7 @@
 %   SkewNoise:  Skewness of Noise
 function [Xest,SNRbyWT,SkewSignal,ABratio,SkewNoise,XDupdate]=denoise_wavelet(XD)
 %% Setup ****************************
-SpuriousTh=1.25;    % Threshold for Peaks
+SpuriousTh=1.75;        % Threshold for Peaks
 [Ns,Frames]=size(XD);
 Xest=zeros(Ns,Frames);
 SkewSignal=zeros(Ns,1);
@@ -422,6 +422,7 @@ for i=1:Ns
                 else
                     % For the big&single slow yummies *************************
                     if numel(AmpPEaks(AmpPEaks>SpuriousTh*std(noisex)))==1
+                        disp('>>Single Transient Signal')
                         if isempty(AmpValls)
                             % No valleys: strange
                             disp('>> Fluorescence without Valleys')
@@ -440,11 +441,10 @@ for i=1:Ns
                             end
                             FallN=naux;
                             if RiseN>FallN
-                                % xdupdate(FramPeaks-RiseN:FramPeaks-FallN)=xdupdate(FramPeaks-RiseN:FramPeaks-FallN)-xdenoised(FramPeaks-RiseN:FramPeaks-FallN);
-                                % xdenoised(FramPeaks-RiseN:FramPeaks-FallN)=0;
-                                xdupdate=xdupdate-xdenoised;
-                                xdenoised(:)=0; % make it zeros...
-                                disp('>> Small Peak without Ca++ Transients')
+                                % WAY TOO STRICT ***********
+                                % xdupdate=xdupdate-xdenoised;
+                                % xdenoised(:)=0; % make it zeros...
+                                disp('>> Single Small Peak without Ca++ Transients')
                             else
                                 disp('>> THERE MIGHT BE Ca++ Transients')
                             end

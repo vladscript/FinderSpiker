@@ -3,9 +3,10 @@
 % Decalare New Variables
 Experiment=Experiment(Experiment~='\');     % NAMES PATCH
 global XY_merged;
+% global dyename;
 % global ColocateIndx;
 global MetaDataColocaliation;
-[XY_merged,MetaDataColocaliation]=get_merged_coordinates_delux(Experiment,XY_selected,r);
+[XY_merged,MetaDataColocaliation]=get_merged_coordinates_delux(Experiment,dyename,XY_selected,r);
 waitfor(gcf);
 %% Plot Stuff -------------------------------------------------------------
 [Ntotal,~]=size(XY_selected);
