@@ -5,8 +5,8 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
 %% FIXED  READY TO GO @ GIT
-% Merge_Finder_Magic: updated an owrking
-% Bug at detrending
+% Stats from Any Netwrok Feature: done!
+
 %% Bugs & New Functions NOW
 
 % STATS visualization!
@@ -132,10 +132,10 @@
 
 % MAKE DATASETS FROM GEPHI NETWORK FEATURES
 % >>Get_Gephi_Data;
-% >>Make_Statistics_Gephi_Features
+% >>Make_Statistics_Gephi_Features;
 
 % MACHINE LEARNING: choose a Dataset:
-% >>Features_Datasets_NBC
+% >>Features_Datasets_NBC;
 
 % DATA EXPLORING
 % >>Feature_Explorer

@@ -80,7 +80,9 @@ FileDirSave=pwd;
 slashes=find(FileDirSave=='\');
 FileDirSave=FileDirSave(1:slashes(end));
 step=-0.05;
-ColorsMap=cbrewer('qual','Set1',C*2);
+SetColorMap; % SAME AS AIMs colors
+% ColorsMap=cbrewer('qual','Set1',C*2);
+ColorsMap=cbrewer(KindMap,ColorMapName,Ncolors);
 legobj=[];
 for c=1:C
     Raster=R_Condition{c};
@@ -250,7 +252,7 @@ for c=1:C
     disp(['>>Saved at /Ensemble Features: ',Experiment,'-',Names_Conditions{c}])
     %% Plot Histogram Plots of the Wieghted Links
     step=step+.2;
-    hplot{c}=raincloud_plot(100*WEIGHT,'color',ColorsMap(2*(c-1)+1,:),'box_on',1,'alphaval',0.5,...
+    hplot{c}=raincloud_plot(100*WEIGHT,'color',ColorsMap(c,:),'box_on',1,'alphaval',0.5,...
      'box_dodge', 1, 'box_dodge_amount',step , 'dot_dodge_amount', step, 'box_col_match',1,...
      'band_width',0.2);
     legobj=[legobj,hplot{c}{1}];

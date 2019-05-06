@@ -125,8 +125,21 @@ jit = (rand(size(X)) - 0.5) * wdth;
 quartiles   = quantile(X, [0.25 0.75 0.5]);
 iqr         = quartiles(2) - quartiles(1);
 Xs          = sort(X);
-whiskers(1) = min(Xs(Xs > (quartiles(1) - (1.5 * iqr))));
-whiskers(2) = max(Xs(Xs < (quartiles(2) + (1.5 * iqr))));
+if max(Xs)>min(Xs)
+    if ~isempty(Xs(Xs > (quartiles(1) - (1.5 * iqr))))
+        whiskers(1) = min(Xs(Xs > (quartiles(1) - (1.5 * iqr))));
+    else
+        whiskers(1) = min(Xs);
+    end
+    if ~isempty(Xs(Xs < (quartiles(2) + (1.5 * iqr))))
+        whiskers(2) = max(Xs(Xs < (quartiles(2) + (1.5 * iqr))));
+    else
+        whiskers(2) = max(Xs);
+    end
+else
+    whiskers(1) = min(Xs);
+    whiskers(2) = max(Xs);
+end
 Y           = [quartiles whiskers];
 
 % raindrops
