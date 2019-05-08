@@ -411,7 +411,10 @@ function ReplotImage(~,~,axisIndx)
         RGBindexesB=RGBindexes;
         RGBindexesA=RGBindexesAlter;
     end
-    colormap(axish,CM{RGBindexes})
+    colormap(axish,CM{RGBindexes});
+    % RE-SET ORIGNAL rgb IMAGES
+    rgbAorigin=ind2rgb(ImageAverage,CM{RGBindexesA});
+    rgbBorigin=ind2rgb(meanFrame,CM{RGBindexesB});
     if RGBindexes~=RGBindexesAlter
         rgbA=ind2rgb(ImageAverageCopy,CM{RGBindexesA});
         rgbB=ind2rgb(meanFrameCopy,CM{RGBindexesB});

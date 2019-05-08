@@ -5,20 +5,15 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
 %% FIXED  READY TO GO @ GIT
-% Stats from Any Netwrok Feature: done!
-
+% 
 %% Bugs & New Functions NOW
 
-% STATS visualization!
+% ANALYZE DYSKINESIA DATA AIMs
+
 % Statistics: automate
 % Hamming Distance among active Neurons of Different Conditions
 
-% ANALYZE DYSKINESIA DATA
-
 % MAKE NETWORK highlight special neuron population
-
-
-% Test Mike's Clsutering Algorithm 4 CoActivity (transposed matrix)and save as weel
 
 % RETRIEVE SIGNALS & RECONSTRUCT VIDEO
 % retreive of Original Signals, coordinates, etc:
@@ -30,6 +25,8 @@
 
 % Make PCA of RASTER: 
 % denoise raster: get most variance PCs and rebuild raster
+
+% Test Mike's Clustering Algorithm 4 CoActivity (transposed matrix)and save as weel
 
 % Add button to save Zoom image (MERGED MAGIC)
 % Save Selected Points SELECTED-> add to file .mat
