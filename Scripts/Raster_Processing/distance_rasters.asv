@@ -1,0 +1,24 @@
+%% script gets mean PDF of Distance:
+% between or among different conditions of
+% rasters:
+% Each Columns is a binary vector
+
+function PdfDist=distance_rasters(R_Condition,varargin)
+if ~isempty(varargin)
+    NameDistance=varargin{1};
+else
+    NameDistance='hamming';
+end
+fprintf('Distance to measure: %s\n',NameDistance);
+% Setup
+NC=size(R_Condition,2);
+if NC>1
+    for c=1:NC
+        R=R_Condition(c);
+        [Ncells,Frames]=size(R);
+        AC=zeros(Ncells,c);
+        =find(sum(R,2))
+    end
+else
+    disp('>>Not Useful for only 1 Condition')
+end

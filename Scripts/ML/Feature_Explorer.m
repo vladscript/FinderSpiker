@@ -13,10 +13,10 @@ FeatureNames=Xraw.Properties.VariableNames(3:end);  % Feature Names
 %% Feature Explorer ********************************
 
 %% Correlation among Features
-FeaturesCorr=corr(X);
-figure; imagesc(FeaturesCorr)
+% FeaturesCorr=corr(X);
+% figure; imagesc(FeaturesCorr)
 
-%% p-values: statistical tests: ttest
+%% p-values: descriptive statistical tests
 Nfeat=numel(FeatureNames);
 Labels=unique(Y);
 Nconditions=numel(Labels);

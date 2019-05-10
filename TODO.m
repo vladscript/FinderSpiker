@@ -8,7 +8,13 @@
 % 
 %% Bugs & New Functions NOW
 
-% ANALYZE DYSKINESIA DATA AIMs
+% Ensemble_Sorting: to ALL Dyskinesia Data
+% Make Gphi Datasets of Features  Gephi
+% Get_Total_Network
+
+% ANALYZE DYSKINESIA DATA AIMs: Statistics+Mafy's Data
+
+% Adjust Contrast and Sliding Cells in Merge_Finder
 
 % Statistics: automate
 % Hamming Distance among active Neurons of Different Conditions
@@ -19,7 +25,7 @@
 % retreive of Original Signals, coordinates, etc:
 % Re make clean video
 
-%%% MAKE ALGORITHMIA
+
 
 % delete >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
 
@@ -28,6 +34,7 @@
 
 % Test Mike's Clustering Algorithm 4 CoActivity (transposed matrix)and save as weel
 
+%%% MAKE ALGORITHMIA
 % Add button to save Zoom image (MERGED MAGIC)
 % Save Selected Points SELECTED-> add to file .mat
 % Add Highlight Neuron Using Mouse at Plot_Raster
