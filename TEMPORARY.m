@@ -1,40 +1,6 @@
-% Script to sort  and merge for Rasters for Several Analized Conditions
-% from get_bayes_ensembles and from NeuralNetworks by JP
-% Input
-%  NC:  How many Conditions: Input Dialogue
-%  Raster_Analays Strucutre from NN: [ Frames x Cells ]
-%  Strucutre from NN:   input from workspace:
-%                       Raster
-%                       Significative Frames
-%                       Label of Ensembles
-%  RASTER_Selected_Clean: to get Total SELECTED Frames
-%  XY_Selected: Selected Active Coordinates
-%  fs
-%  Experiment ID
-% Output
-%  New_Order_Clustering:    Ensemble Sorting
-%  XY_cluster:              Ensembled-Sorted Indexes
-%  Neural Ensemble Features:
-%               Nensembles    
-%  Functional Network Features:                
-%               Gephi CSV files
-
 %% Setup
 Update_Directory;
-%% Select Number of Analyzed Rasters ######
-% NC = inputdlg('Enter Number of Analyzed Conditions:',...
-%          'Conditions', [1 50]);
-% NC= str2double(NC{:}); 
 NC=numel(R_Condition);
-TxtCnd{1,1}=['Experimental Conditions of ',num2str(Experiment),':']
-for n=1:NC
-    TxtCnd{n+1,1}=Names_Conditions{n};
-end
-InitialMSG=msgbox(TxtCnd,'Experimental Conditions:');
-% InitialMSG.Position=[450,340,125,130];
-uiwait(InitialMSG);
-delete(InitialMSG);
-
 %% Read Result from NeuralNetworks Clustering Results Structure
 WorkspaceVariables=who;     % Variable Names at Workspace
 Condition_Names={};         % Condition Names
@@ -51,12 +17,8 @@ for c=1:NC
     indexes_name=find(AuxName=='_');
     Condition_Names{c}=AuxName(indexes_name(1)+1:indexes_name(end)-1);
 end
-
-%% Select Sort of Color for Gephi Visualization
-answer = questdlg('Mix colors for Gephi Visualization?', ...
-	'Mix Color Ensembles', ...
-	'YES','NO','NO');
-
+%%
+answer='YES';
 
 %% Get DATA from Analysis Variables and CONCATENATE
 % RASTERS ARE: [FRAMES x CELLS] -----------
@@ -83,6 +45,7 @@ end
 Indexes=1:length(XY_selectedClean); % Indexes for Active Neurons
 Index_Ensemble=Indexes;
 CAG=sum(ExperimentRasterClean,2);   % CAG :Co-Activity-Graphy
+
 %% Sorting Clustering
 disp('>>Sorting Neurons')
 if TotalNG<6
@@ -111,42 +74,11 @@ XY_cluster=XY_selectedClean(New_Order_Clustering,:); % Re-SORTED COORDINATES OF 
 % Indexes=sort(Indexes(New_Order_Clustering));    % useless
 %% COLORMAP ENSEMBLES
 ColorState=colormapensembles(TotalNG,NC,NGroups);
-% GUI to Choose Color SET
-% Necessary: add CBREWER third-party function
-% % % % % % % Nens=10;
-% % % % % % % CT=cbrewer('qual','Set1',Nens);
-% % % % % % % imagesc([1:Nens])
-% % % % % % % colormap(CT)
+
 %% Plot Ensembles of Whole Raster ---------------------------------------------------------------------
 Experiment=Experiment(Experiment~='\');     % NAMES PATCH
 %   Original ****************************************
 OriginalExperiment=ExperimentRasterClean;
-Plot_Raster_Ensembles(OriginalExperiment',fs,5,Indexes);    % Disorted Raster
-disp('Coloring Ensembles...')
-Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CAG,Indexes);
-disp('Coloring Ensembles Done.')
-% plot_CAG_threshold(THR,R_Condition,fs)
-plot_CAG_threshold(THR,LENGHTRASTER,fs)
-if CummFrames==TotalFrames
-    Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
-end
-Figg=gcf; Figg.Name=['Neural Ensembles of ',Experiment];
-%   Sorted *******************************************
-if re_sort
-    Plot_Raster_Ensembles(OriginalExperiment',fs,1,Indexes(New_Order_Clustering));   % Sorted Raster
-    % Plot_State_Colors;
-    disp('Coloring Ensembles...')
-    Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CAG,Indexes(New_Order_Clustering));
-    disp('Coloring Ensembles Done.')
-    plot_CAG_threshold(THR,LENGHTRASTER,fs)
-    if CummFrames==TotalFrames
-        Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
-    end
-    Figg=gcf; Figg.Name=['Neural Ensembles (resorted) of ',Experiment];
-end
-
-% Ensemble Transitions HEBBIAN SEQUENCE **************
-Ensembles_Transitions(fs,labels_frames,signif_frames,ColorState,1);
 
 %% IF ALL EXPERIMENT in ONE Analysis
 NCplot=NC;
@@ -254,53 +186,3 @@ for c=1:NCplot
     end
 
 end
-%% GET & SAVE NEURAL ENSEMBLE FEATURES
-[Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs);
-Features_Condition.CoreNeurons=ShNeuron;
-% Network Features
-Features_Condition.Network=NetworkCondition;
-save_features_ensembles(Experiment,Names_Conditions,Features_Ensemble,Features_Condition);
-
-%% Save SORTING,COORDINATES and COLOR ENSEMBLES
-% Save this Only if it was Analyzed the whole enchilada
-if CummFrames==TotalFrames
-    checkname=1;
-    while checkname==1
-        ActualDir=pwd;
-        SlashesIndx=find(ActualDir=='\');
-        DefaultPath=[ActualDir(1:SlashesIndx(end)),'Processed Data'];
-        if exist(DefaultPath,'dir')==0
-            DefaultPath=pwd; % Current Diretory of Finder Spiker
-        end
-        [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
-            'MultiSelect', 'off',DefaultPath);
-        % dotindex=find(FileName=='.');
-        if strcmp(FileName(1:end-4),Experiment)
-            checkname=0;
-            % SAVE DATA
-            disp('>>Updating .mat with Neural Ensemble Analysis...')
-            save([PathName,FileName],'XY_cluster','New_Order_Clustering',...
-                                    'Features_Ensemble','Features_Condition',...
-                                    'ColorState','-append');
-            disp('>>Done.')
-            disp('>>Saving Analysis...')
-            % Save Selected Analysis Variables
-            for c=1:NC
-                fprintf('>> Saving %s Analysis ... ',NameCond{c,1});
-                save([PathName,FileName],VarNames{c},...
-                '-append');
-                fprintf('Done \n');
-            end
-            disp([Experiment,'   -> UPDATED (Ensembles Sorting Data)'])
-        elseif FileName==0
-            checkname=0;
-            disp('ENSEMBLES SORTING DISCARDED')
-            disp('NOT SAVED')
-        else
-            disp('Not the same Experiment!')
-            disp('Try again!')
-        end
-    end
-end
-disp('>>END.')
-%% END OF THE WORLD

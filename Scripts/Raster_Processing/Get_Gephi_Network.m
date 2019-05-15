@@ -25,7 +25,7 @@
 % CSV files 4 Gephi Software:
 %   EXPID_Condition_Nodes.csv  ID/Label/Coordinates/State's Colors
 %   EXPID_Condition_Links.csv Source/Target/Weight
-function fNet=Get_Gephi_Network(Raster,XY_selected,Neurons_State,Cluster_Indexing,ColorState,labels_frames,Experiment)
+function fNet=Get_Gephi_Network(Raster,XY_selected,Neurons_State,Cluster_Indexing,ColorState,labels_frames,Experiment,varargin)
 %% Setup
 [~,NStates]=size(Neurons_State); % Total States
 ActiveNeurons=[];
@@ -43,7 +43,14 @@ Raster_ensambles=Raster(:,ActiveNeurons);
 Ncells=C;
 % Number of States
 NG=NStates;
-
+% Color Mode
+if isempty(varargin)
+    disp('>>Color Mode: COMPENSATE')
+    colormode='compensate';
+else
+    disp('>>Color Mode: MIXER')
+    colormode='mixer';
+end
 %% Ensemble whom Neurons Belong to ********************************
 EnsemblesList=unique(labels_frames);    % Ensembles
 ColorNeuron=zeros(Ncells,3);            % RGB colors
@@ -77,7 +84,7 @@ for i=1:Ncells
         % StatesN=num2str( StatesN );
         % StatesofNeurons{i}=StatesN(StatesN~=' ');
     end
-    [~,NSin]=size(StatesofNeurons{i}); % N-States neuron is IN
+    NSin=numel(find(StatesofNeurons{i}~=',')); % N-States neuron is IN
     % Neuron Colors******************************
     %                                           Single-Ensemble Neurons
     if NSin==1              
@@ -98,6 +105,7 @@ for i=1:Ncells
     else
         CurretnEnsembles=[];
         % get N chars == ',' +1        
+        % Nchar=numel(StatesofNeurons{i}==',');
         Nchar=numel(StatesofNeurons{i}==',');
         ComasPos=[0,find(StatesofNeurons{i}==','),Nchar+1];
         for q=1:numel(ComasPos)-1
@@ -105,12 +113,23 @@ for i=1:Ncells
             poschar=ComasPos(q+1)-1;
             CurretnEnsembles=[CurretnEnsembles,str2double( StatesofNeurons{i}(prechar:poschar) )];
         end
-        % Choose the ensemble with less neurons:
-        [~,minEnsemble]=min(CountersStates(CurretnEnsembles));
-        PoorEnsemble=CurretnEnsembles(minEnsemble);
-        CountersStates(PoorEnsemble)=CountersStates(PoorEnsemble)+1;
-        % [i,PoorEnsemble]
-        ColorNeuron(Cluster_Indexing(i),:)=ColorState( PoorEnsemble,:); 
+        switch colormode
+            case 'compensate'
+                % OPTION A) Choose the ensemble with less neurons: COMPENSATE
+                [~,minEnsemble]=min(CountersStates(CurretnEnsembles));
+                PoorEnsemble=CurretnEnsembles(minEnsemble);
+                CountersStates(PoorEnsemble)=CountersStates(PoorEnsemble)+1;
+                % [i,PoorEnsemble]
+                ColorNeuron(Cluster_Indexing(i),:)=ColorState( PoorEnsemble,:); 
+            case 'mixer'
+                % OPTION B) Sum of Ensemble Colors: MIXER
+                colorbuff=uint8(zeros(1,3));
+                for q=1:numel(CurretnEnsembles);
+                    colorbuff=imadd(colorbuff,uint8(255*ColorState(CurretnEnsembles(q),:)),'uint8');
+                end
+                ColorNeuron(Cluster_Indexing(i),:)=double(colorbuff)/255;
+        end
+        
     end
     disp(['Neuron: ',num2str(Cluster_Indexing(i)),' @ Ensemble(s): ',num2str(StatesofNeurons{i})])
 end

@@ -524,10 +524,14 @@ function cellnavigation(CellNavigator,~)
         % Adjust Values
         disp('>>Adjusting Contrast ... ')
         
-        % DYE IMAGE (neuron marker) ###################################
+        % DYE IMAGE (neuron marker) #######################################
         AuxDye=rgb2ind(rgbAorigin,CM{RGBindexesA});
         [window_min,window_max]=get_limits(AuxDye(y_min:y_max,x_min:x_max));
         ImageAverageCopy=imadjust(AuxDye,[window_min,window_max]/255,[]);
+        % CA++ Indicator IMAGE ############################################
+        AuxFluo=rgb2ind(rgbBorigin,CM{RGBindexesB});
+        [window_min,window_max]=get_limits(AuxFluo(y_min:y_max,x_min:x_max));
+        meanFrameCopy=imadjust(AuxFluo,[window_min,window_max]/255,[]);
         
 %         ImageAverageCopy=imadjust(ImageAverageCopy,[window_min,window_max]/255,[]);
         % REPLOT
@@ -546,9 +550,7 @@ function cellnavigation(CellNavigator,~)
         % Calcium Fluorescence (calcium indicator)
         
         % [window_min,window_max]=get_limits(meanFrame(y_min:y_max,x_min:x_max));
-        AuxFluo=rgb2ind(rgbBorigin,CM{RGBindexesB});
-        [window_min,window_max]=get_limits(AuxFluo(y_min:y_max,x_min:x_max));
-        meanFrameCopy=imadjust(AuxFluo,[window_min,window_max]/255,[]);
+        
         % REPLOT
         RGBindexesB=rgbChooseCa.Value;
         rgbA=ind2rgb(ImageAverageCopy,CM{RGBindexesA});

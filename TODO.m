@@ -8,8 +8,8 @@
 % 
 %% Bugs & New Functions NOW
 
-% Ensemble_Sorting: to ALL Dyskinesia Data
-% Make Gphi Datasets of Features  Gephi
+% Raster Features Dyskinesia
+% Make Gephi Datasets of Features Gephi
 % Get_Total_Network
 
 % ANALYZE DYSKINESIA DATA AIMs: Statistics+Mafy's Data
@@ -28,9 +28,12 @@
 
 
 % delete >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
+% NN2Gephi.m; Raster2fNet.m
 
 % Make PCA of RASTER: 
 % denoise raster: get most variance PCs and rebuild raster
+
+%  Update to MATLAB 2009a !!!!! UNAM License
 
 % Test Mike's Clustering Algorithm 4 CoActivity (transposed matrix)and save as weel
 
@@ -93,8 +96,8 @@
 % >> Ensemble_Sorting
 
 % PLOT ENSEMBLES FAST *****************************************************
-% >> ImageEnsembles(R_ConditionNamej_Analysis); % without  Hebbian Sequences
-% >> ImageEnsembles(R_ConditionNamej_Analysis,1); % with Hebbian Sequences
+% >> ImageEnsembles(R_ConditionNamej_Analysis);     % without  Hebbian Sequences
+% >> ImageEnsembles(R_ConditionNamej_Analysis,1);   % with Hebbian Sequences
 
 % COLOCALIZATION OF MARKED CELLS ******************************************
 % % % Previously LOAD MAT FILE (?)
