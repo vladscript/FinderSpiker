@@ -1,23 +1,25 @@
 % Script to sort  and merge for Rasters for Several Analized Conditions
-% from get_bayes_ensembles and from NeuralNetworks by JP
+% from script get_bayes_ensembles and from GUI NeuralNetworks (by JP)
+% 
+% Requirement: load a .mat File from FinderSpiker
+% 
 % Input
-%  NC:  How many Conditions: Input Dialogue
-%  Raster_Analays Strucutre from NN: [ Frames x Cells ]
-%  Strucutre from NN:   input from workspace:
-%                       Raster
-%                       Significative Frames
-%                       Label of Ensembles
-%  RASTER_Selected_Clean: to get Total SELECTED Frames
-%  XY_Selected: Selected Active Coordinates
-%  fs
-%  Experiment ID
-% Output
-%  New_Order_Clustering:    Ensemble Sorting
-%  XY_cluster:              Ensembled-Sorted Indexes
-%  Neural Ensemble Features:
-%               Nensembles    
-%  Functional Network Features:                
-%               Gephi CSV files
+%   Raster_Analysis      Data Structure of Ensemble Anlysis
+%   From Worksapce:
+%       RASTER_Selected_Clean
+%       XY_Selected
+%       fs
+%       Experiment ID
+% Output @ .mat File
+%   New_Order_Clustering:    Sorting by Ensemble 
+%   XY_cluster:              Ensembled-Sorted Indexes
+%   Features_Ensemble
+%   Features_Condition
+%   ColorState
+% Output @ .csv File
+%   Neural General Ensemble Features:
+%   Neural Detailed Ensemble Features:
+%   Functional Network List of NODES & EDGES to import @ Gephi
 
 %% Setup
 Update_Directory;
@@ -26,7 +28,7 @@ Update_Directory;
 %          'Conditions', [1 50]);
 % NC= str2double(NC{:}); 
 NC=numel(R_Condition);
-TxtCnd{1,1}=['Experimental Conditions of ',num2str(Experiment),':']
+TxtCnd{1,1}=['Experimental Conditions of ',num2str(Experiment),':'];
 for n=1:NC
     TxtCnd{n+1,1}=Names_Conditions{n};
 end
@@ -53,9 +55,9 @@ for c=1:NC
 end
 
 %% Select Sort of Color for Gephi Visualization
-answer = questdlg('Mix colors for Gephi Visualization?', ...
+answer = questdlg('Make Node Colors for Gephi Visualization?', ...
 	'Mix Color Ensembles', ...
-	'YES','NO','NO');
+	'MIX','EVEN','EVEN');
 
 
 %% Get DATA from Analysis Variables and CONCATENATE
@@ -110,7 +112,8 @@ disp('>>Neurons Sorted.')
 XY_cluster=XY_selectedClean(New_Order_Clustering,:); % Re-SORTED COORDINATES OF ENSEMBLES
 % Indexes=sort(Indexes(New_Order_Clustering));    % useless
 %% COLORMAP ENSEMBLES
-ColorState=colormapensembles(TotalNG,NC,NGroups);
+% ColorState=colormapensembles(TotalNG,NC,NGroups);
+ColorState=colormyensembles(NGroups);
 % GUI to Choose Color SET
 % Necessary: add CBREWER third-party function
 % % % % % % % Nens=10;
@@ -220,9 +223,9 @@ for c=1:NCplot
         HebbSequence=Ensembles_Transitions(fs,labels,sigframes,ColorState,0); % ---> save
         % Save Network to Gephi**********************************
         switch answer
-            case 'YES'
+            case 'MIX'
                 fNet=Get_Gephi_Network(R,XY_selectedClean,Neurons_State_Cluster,OrderOneCondition,ColorState,labels,Experiment,1);
-            case 'NO'
+            case 'EVEN'
                 fNet=Get_Gephi_Network(R,XY_selectedClean,Neurons_State_Cluster,OrderOneCondition,ColorState,labels,Experiment);
             otherwise
                 fNet=Get_Gephi_Network(R,XY_selectedClean,Neurons_State_Cluster,OrderOneCondition,ColorState,labels,Experiment);

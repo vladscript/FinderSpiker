@@ -5,19 +5,20 @@
 % Old Version Manual Mode:
 %   Manual_Driver_Raster_Magic.m (becoming unnecessary)
 %% FIXED  READY TO GO @ GIT
-% 
+%  Colors Mixture for Ensembles & Gephi->
+% Color of Ensmebles and purple for white stuff->
+%  AltIndex & ReaIndex Modified->
 %% Bugs & New Functions NOW
 
-% Raster Features Dyskinesia
+% Recalculate Ensembles Features and Color
 % Make Gephi Datasets of Features Gephi
-% Get_Total_Network
-
-% ANALYZE DYSKINESIA DATA AIMs: Statistics+Mafy's Data
 
 % Adjust Contrast and Sliding Cells in Merge_Finder
 
+% ANALYZE DYSKINESIA DATA AIMs: Statistics+Mafy's Data
+% Dyskinesia Data: Get_Total_Network
+
 % Statistics: automate
-% Hamming Distance among active Neurons of Different Conditions
 
 % MAKE NETWORK highlight special neuron population
 
@@ -26,14 +27,15 @@
 % Re make clean video
 
 
-
 % delete >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
 % NN2Gephi.m; Raster2fNet.m
 
 % Make PCA of RASTER: 
 % denoise raster: get most variance PCs and rebuild raster
 
-%  Update to MATLAB 2009a !!!!! UNAM License
+% Add Colocalizer Filters: TdTomato, Yellow, Others
+
+%  Update to MATLAB 2019a !!!!! UNAM License
 
 % Test Mike's Clustering Algorithm 4 CoActivity (transposed matrix)and save as weel
 

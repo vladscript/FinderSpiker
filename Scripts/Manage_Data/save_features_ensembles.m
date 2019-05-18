@@ -194,18 +194,13 @@ for c=1:C
     % Save CSV
     if isdir([FileDirSave,NameDir])
         disp('>>Saving Neural Ensembles Details...')
-        writetable(TensemblesDetails,[FileDirSave,NameDir,Experiment,'_',Name,'_DET.csv'],...
-            'Delimiter',',','QuoteStrings',true);
-        disp(['Saved Ensemble Details: ',Experiment,'-',Names_Conditions{c}])
     else % Create Directory
-        disp('>>Directory >Ensemble Features< created')
-        disp('>>Saving...')
+        disp('>>Directory Created: \Ensemble Features')
         mkdir([FileDirSave,NameDir]);
-        writetable(Tensemblesfeatures,[FileDirSave,NameDir,Experiment,'_',Name,'_DET.csv'],...
-            'Delimiter',',','QuoteStrings',true);
-        disp('>>Ensemble Features Directory Created');
-        disp(['Saved Ensemble Details: ',Experiment,'-',Names_Conditions{c}])
     end
+    writetable(TensemblesDetails,[FileDirSave,NameDir,Experiment,'_',Name,'_byENS.csv'],...
+        'Delimiter',',','QuoteStrings',true);
+    disp(['Neural Ensemble Details Saved from ',Experiment,'-',Names_Conditions{c}])
 end
-disp('>> Data Exported at \Ensemble Features.')
+disp('>> Data Exported @ \Ensemble Features.')
 % disp('>>END.')

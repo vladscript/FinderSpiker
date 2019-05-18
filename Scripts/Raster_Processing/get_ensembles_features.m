@@ -129,16 +129,16 @@ for c=1:C
     Alternations=0;
     AltIndex(c)=0;
     ReaIndex(c)=0;
-    if numel(ET)>1
-        for e=1:numel(ET)-1
-             if ET(e)==ET(e+1)
+    if numel(Ensembles_Labels)>1
+        for e=1:numel(Ensembles_Labels)-1
+             if Ensembles_Labels(e)==Ensembles_Labels(e+1)
                  Reactivations=Reactivations+1;
              else
                  Alternations=Alternations+1;
              end
         end
-        AltIndex(c)=Alternations/(numel(ET)-1);
-        ReaIndex(c)=Reactivations/(numel(ET)-1);
+        AltIndex(c)=Alternations/(numel(Ensembles_Labels)-1);
+        ReaIndex(c)=Reactivations/(numel(Ensembles_Labels)-1);
     end
     
     % Euler Cycles of Ensembles [REVERBERATION] return 

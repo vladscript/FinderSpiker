@@ -58,6 +58,7 @@ StatesofNeurons=cell(Ncells,1);
 % NSeq=ceil(Ncells/(NG+1));
 CountersStates=zeros(1,max(EnsemblesList));
 SharedNeruons=0;
+PrplsCounter=1;
 % The first Ncells in Cluster_Indexing are the Neuron in Ensembles:
 for i=1:Ncells
     StatesN=[];
@@ -127,7 +128,15 @@ for i=1:Ncells
                 for q=1:numel(CurretnEnsembles);
                     colorbuff=imadd(colorbuff,uint8(255*ColorState(CurretnEnsembles(q),:)),'uint8');
                 end
+                % Make it Purple if it becomes WHITE (walker)
+                if sum(colorbuff)==765
+                    % Create Purple Map
+                    PurpleMap=cbrewer('seq','Purples',9+PrplsCounter,'lineal');
+                    colorbuff=uint8(255*PurpleMap(5+PrplsCounter,:));
+                    PrplsCounter=PrplsCounter+1;
+                end                
                 ColorNeuron(Cluster_Indexing(i),:)=double(colorbuff)/255;
+     
         end
         
     end
