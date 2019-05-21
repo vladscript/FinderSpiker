@@ -13,7 +13,7 @@ load(fullFileName);
 MoreFeats=true; % enter the loop
 
 %% 1. Chooose Feature from table: clustering, grade, etc, etc
-NetFeaturesNames=GEPHIDATA{1}.Properties.VariableNames(6:end)';
+NetFeaturesNames=GEPHIDATA{1}.Properties.VariableNames(3:end)';
 while MoreFeats    
     [index_var,index_CHECK] = listdlg('PromptString','Select a Network Feature:',...
                         'SelectionMode','single',...
@@ -25,15 +25,22 @@ while MoreFeats
     for e=1:NE
         for c=1:NC
             X=GEPHIDATA{e,c};
-            EXPID=X{1,2};
+            if ~isempty(X)
+                EXPID=X{1,2};
+                CurrentFeatures=X.Properties.VariableNames(6:end);
+            else
+                fprintf('>>Missing Experiment @ %s\n',Names_Conditions{c})
+                EXPID='no_exp';
+                CurrentFeatures={'empty'};
+            end
             EXPLIST{e,c}=EXPID;
-            CurrentFeatures=X.Properties.VariableNames(6:end);
+            
             ColumndIndx=strmatch(ActualFeature,CurrentFeatures);
             if ~isempty(ColumndIndx)
                 ExsitFeature(e,c)=1;
                 fprintf('*')
             else
-                fprintf('\n>>Missing Feature: %s @ EXP: %s\n',ActualFeature{1},EXPID);
+                fprintf('\n>>Missing Feature: %s @ EXP: %s\n',ActualFeature{1},EXPLIST{e,c});
             end
         end
         fprintf('\\')
@@ -81,9 +88,14 @@ while MoreFeats
                     ActualCondition=Names_Conditions{c};
                     RowIndx=IndexesExps(e,c);   % Index of the Experiment
                     X=GEPHIDATA{RowIndx,c};     % Table
-                    x=X{:,{ActualFeature{1}}};  % Vector
+                    x=X{:,{ActualFeature{1}}};  % Cell
+                    % Make it Vector: (yeahp, with a loop)
+                    xnum=zeros(numel(x),1);
+                    for nx=1:numel(x)
+                        xnum(nx)=str2double(x{nx});
+                    end
                     RowTable=table({ActualCondition},{ActualExp},...
-                        mean(x),mode(x),median(x),var(x),skewness(x),kurtosis(x));
+                        mean(xnum),mode(xnum),median(xnum),var(xnum),skewness(xnum),kurtosis(xnum));
                     %% 4. Make Statistics: mean, variance, mode, median, etc
                     TotalTable=[TotalTable;RowTable];
                     fprintf('*')

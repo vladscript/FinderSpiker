@@ -38,7 +38,7 @@ NameFeatures=Xraw.Properties.VariableNames(3:end);
 % Ignore Some Column Non-Features at Ensemble Features
 if  strcmp(CategoryFeature,'General_Ensembles')
     % Ignore: 15,16 & 17 -th Feature
-    ignftr=[13,14,15]; % Links/Neuron A->euron B Most Connected
+    ignftr=[15,16,17]; % Links/Neuron A->euron B Most Connected
     acceptcols=setdiff(1:numel(NameFeatures),ignftr);
     X=X(:,acceptcols);
     NameFeatures=NameFeatures(acceptcols);

@@ -59,19 +59,17 @@ while ~strcmp('Yes',okbutton)
         Raster_Selecter{c}=R;    
         % Show Selected Raster
         close(figure_raster);
-    %     Plot_Raster_V(R,fs);
-    %     figure_raster=gcf;
-    %     figure_raster.Name=['Raster ',Names_Conditions{c}];
         NVaux{c,1}='1'; % Number of "Videos" or Records
     end
     %% Ignore NonActive Coordinates in the Selection and Sort per Condition
-    %[New_Index,Raster_Condition_Sel,RASTER_WHOLE]=SortNeuronsCondition(NVaux,Raster_Selecter);
+    % Sort Neurons by Activation in Each Condition:
     [New_Index,Raster_Condition_Sel,RASTER_WHOLE]=SortNeuronsCondition(Raster_Selecter);
     % Plot Whole Sorted Raster:
     RASTER_Selected_Clean=RASTER_WHOLE(New_Index,:);
     XY_selected=XY(New_Index,:);
     % Clean Raster and Coordinates
-    ActiveNeurons=find(sum(RASTER_Selected_Clean,2)>0);                 % INDEX of SORTED Active NEURONS
+    % INDEX of SORTED Active NEURONS during the WHOLE experiment
+    ActiveNeurons=find(sum(RASTER_Selected_Clean,2)>0);                 
     New_Index(ActiveNeurons)
     RASTER_Selected_Clean=RASTER_Selected_Clean(ActiveNeurons,:);
     XY_selected=XY_selected(ActiveNeurons,:);                           % Clean Coordinates
@@ -80,21 +78,7 @@ while ~strcmp('Yes',okbutton)
     Label_Condition_Raster(Names_Conditions,Raster_Condition_Sel,fs);       % Labels
     % To Save active and Sorted:
     R_Condition={};
-    % XY_Condition={};
-    AN=[];
-    CummAc=[];
-    TotalN=length(ActiveNeurons);
-    %% Create FigureS to plot PDFs & Features
-%     PDFsFigure=figure;
-%     PDFsFigure.Name=['Descriptive Activity PDFs of: ',Experiment];
-%     PDFsFigure.Position=[-3 407 956 254];
-%     h1=subplot(1,3,1); % ITI pdf
-%     h2=subplot(1,3,2); % Length pdf
-%     h3=subplot(1,3,3); % CAG pdf
-%     title(h1,'InterTransient PDF','FontSize',7)
-%     title(h2,'Length Transient PDF','FontSize',7)
-%     title(h3,'CAG PDF','FontSize',7)
-%     hold(h1,'on'); hold(h2,'on'); hold(h3,'on');
+
     %% Feature Table Column Names
     HeadersFeatures={'RateNeurons','ActivityTimeFraction','ActiveRatioCAG','EffectiveActivity',...
         'ISImean','ISImode','ISImedian','ISIvar','ISIskew','ISIkurt',...
@@ -112,10 +96,8 @@ while ~strcmp('Yes',okbutton)
         R_Condition{c}=R(ActiveNeurons,:);
         % XY_Condition{c}=XY_selected;
         % Activity Indexes:*******************************************
-        % Feature of the Only Active Rows of the Raster
-        % [Descriptive,AI_1(c,1),AI_2(c,1)]=get_general_features(R_Condition{c});
-        % Feature of ALL Rows of the Raster (BETTER OFF!)
-        [Descriptive,AI_1(c,1),AI_2(c,1)]=get_general_features(R);
+        % Feature of ALL Rows of the SELECTED RASTER (BETTER OFF!)
+        [Descriptive,AI_1(c,1),AI_2(c,1)]=get_general_features(R_Condition{c});
         AN=Descriptive.AN;
         DurAc=Descriptive.DurAc; % Number of Active Frames
         CAG=Descriptive.CAG;

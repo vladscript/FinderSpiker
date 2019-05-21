@@ -1,10 +1,10 @@
-% Script TO merge Datasets of the Following Caterogry of Features:
-%   'Raster Activity';
-%   'General Ensembles';
-%   'Detailed Ensembles';
+% Script to MERGE Datasets of the Following Caterogry of Features:
+%   'Raster Activity':      Nerual Activity
+%   'General Ensembles':    Neural Ensembles Features
+%   'Detailed Ensembles':   Single Neural Ensembles Features
 %% Select Kind Of Features to Merge
 KindFeatures={'Raster Activity';'General Ensembles';...
-    'Detailed Ensembles'};
+    'Detailed Ensembles';'Network Features'};
 [index_var,index_CHECK] = listdlg('PromptString','Select Sort of Features:',...
             'SelectionMode','single',...
             'ListString',KindFeatures);
@@ -34,11 +34,13 @@ else
          'CAGauc','CoreSize','MaxSynLinks','MaxConn_A','MaxConn_B',...
          'SynWeigthMean','SynWeigthMode','SynWeightMedian','SynWeigthVar','SynWeigthSkew','SynWeigthKurt',...
          'AlternativeIndx','RecurrentIndx'};
-    else
+    elseif index_var<4
         HeadersFeatures={'Condition','EXP_ID','NeuronsRation','Time','Dominance','Rate',...
      'ensCAGauc','ensCAGmean','ensCAGmode','ensCAGmedian','ensCAGvar','ensCAGskew','ensCAGkurt'...
      'IEImean','IEImode','IEImedian','IEIvar','IEIskew','IEIkurt'...
      'EDmean','EDmode','EDmedian','EDvar','EDskew','EDkurt'};
+%     else
+%         HeadersFeatures to be READ
     end
 end
 CurrentPathOK=[Dirpwd(1:slashesindx(end)),FolderDefault]; 
@@ -59,6 +61,9 @@ while MoreFiles
     runs=runs+1;
     [FileName,PathName,MoreFiles] = uigetfile('*.csv',[SelectedCatergory,' Feature Database file'],...
     'MultiSelect', 'off',CurrentPathOK);
+end
+if index_var==4
+    HeadersFeatures=FeaturesSingle.Properties.VariableNames;
 end
 FeaturesSingle.Properties.VariableNames=HeadersFeatures;
 disp('>>end.')

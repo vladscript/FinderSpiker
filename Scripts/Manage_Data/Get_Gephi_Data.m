@@ -43,11 +43,20 @@ c=1; % naive initialization
     'MultiSelect', 'off',CurrentPathOK);
 %% Collect DATA
 GEPHIDATA={}; % Data set of Network Features of ALl Experiments
+deliminter=',';
 for c=1:NC
     fprintf('>>Loading Data from Ccndition %i of %i:\n',c,NC);
     auxc=1;
     while MoreFiles
-        X=readtable([PathName,FileName]);
+        % Get N Columns in the File:
+        fileID=fopen([PathName,FileName]);
+        tLines=fgets(fileID);
+        numCols = numel(strfind(tLines,deliminter)) + 1;
+        fclose(fileID);
+        FormatSpec=repmat('%q',1,numCols);
+        % GET TABLE:
+        X=readtable([PathName,FileName],'Format',FormatSpec);
+        % Table Intel:
         [Nnodes,NFeatures]=size(X);
         SpaceIndx=find(FileName==' ',1);
         EXPID=FileName(1:SpaceIndx-1);

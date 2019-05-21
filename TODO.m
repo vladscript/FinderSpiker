@@ -10,8 +10,7 @@
 %  AltIndex & ReaIndex Modified->
 %% Bugs & New Functions NOW
 
-% Recalculate Ensembles Features and Color
-% Make Gephi Datasets of Features Gephi
+% Make Check_Data_Dyskinesia a General Script to Merge ALL features
 
 % Adjust Contrast and Sliding Cells in Merge_Finder
 
@@ -129,22 +128,22 @@
 % These scripts save feature tables 
 % for Machine Learning or Statistical Analysis
 
-% RASTER FEATURES AND TABLES MAKER
+% RASTER/ENSEMBLE/NETWORK FEATURES AND TABLES MAKER
 % Choose All CSV files at once
 % >>Raster_Features_Display
 % ENSEMBLES GENERAL FEATURES 
 % >>Ensembles_Features_Display
 % ENSEMBLES DETAILED FEATURES 
 % >>Ensembles_Features_Detailed_Display
-% Script to Merged them and make a DATASET for Machine Learning:
-% >>Merge_Feature_Datasets
-
 % MAKE DATASETS FROM GEPHI NETWORK FEATURES
 % >>Get_Gephi_Data;
 % >>Make_Statistics_Gephi_Features;
+% >>Concatenate_NetFeats
+% Script to Merged them and make a DATASET for Machine Learning:
+% >>Merge_Feature_Datasets
 
 % MACHINE LEARNING: choose a Dataset:
-% >>Features_Datasets_NBC;
+% >>Features_Datasets_NBC; %NEED CHECKING ***
 
 % DATA EXPLORING
 % >>Feature_Explorer
