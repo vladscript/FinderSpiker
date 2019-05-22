@@ -8,16 +8,18 @@
 %  Colors Mixture for Ensembles & Gephi->
 % Color of Ensmebles and purple for white stuff->
 %  AltIndex & ReaIndex Modified->
+% Raster Features Updated->
 %% Bugs & New Functions NOW
 
-% Make Check_Data_Dyskinesia a General Script to Merge ALL features
+% Statistics: automate
 
 % Adjust Contrast and Sliding Cells in Merge_Finder
 
 % ANALYZE DYSKINESIA DATA AIMs: Statistics+Mafy's Data
+
 % Dyskinesia Data: Get_Total_Network
 
-% Statistics: automate
+
 
 % MAKE NETWORK highlight special neuron population
 
@@ -125,10 +127,9 @@
 % N-EXPERIMENTS RESULTS ###################################################
 
 % LOAD & GET FEATURES FOR A SET OF EXPERIMENTS*****************************
-% These scripts save feature tables 
-% for Machine Learning or Statistical Analysis
-
-% RASTER/ENSEMBLE/NETWORK FEATURES AND TABLES MAKER
+% These scripts save feature tables for ML & Statistical Analysis
+%
+% RASTER/ENSEMBLE/NETWORK FEATURES AND TABLES MAKER ***********************
 % Choose All CSV files at once
 % >>Raster_Features_Display
 % ENSEMBLES GENERAL FEATURES 
@@ -141,12 +142,16 @@
 % >>Concatenate_NetFeats
 % Script to Merged them and make a DATASET for Machine Learning:
 % >>Merge_Feature_Datasets
+%  Get ALL Features Dataset: Raster,Ensembles,Networks
+% >>Merge_Datasets
+% 
+
+% DATA EXPLORING
+% >>Feature_Explorer
 
 % MACHINE LEARNING: choose a Dataset:
 % >>Features_Datasets_NBC; %NEED CHECKING ***
 
-% DATA EXPLORING
-% >>Feature_Explorer
 
 % ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS ****************************
 % Choose One-by-One .mat Files-> Save .mat Files:

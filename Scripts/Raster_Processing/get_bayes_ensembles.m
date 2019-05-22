@@ -102,7 +102,7 @@ if Analyze
     % ClassRatio=zeros(numel(CAGwithAN),NensemblesTotal);
     ErrorClass=ones(numel(CAGwithAN),1);
     NensemblesOK=ones(numel(CAGwithAN),1);
-    %% MAIN LOOPS CAH THReSHOLDS **************************************
+    %% MAIN LOOPS CAG THReSHOLDS **************************************
     for CAGindex=1:numel(CAGwithAN)   
         fprintf('>>> Clustering for  %i Coactive Neurons\n',CAGwithAN(CAGindex));
         Rclust=Ractive(:,CAG>=CAGwithAN(CAGindex));

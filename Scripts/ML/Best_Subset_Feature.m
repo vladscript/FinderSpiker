@@ -51,7 +51,7 @@ end
 MinError=min(ErrorCV);
 BestSetFeatures=find(ErrorCV<=MinError);
 WorseSetFeatures=find(ErrorCV>MinError);
-if numel(BestSetFeatures)>(WorseSetFeatures)
+if numel(BestSetFeatures)>numel(WorseSetFeatures) 
     disp('>>Too Many Feature Combinations right!')
     RejecetFeat=[];
     for n=1:numel(WorseSetFeatures)
@@ -67,6 +67,7 @@ else
     RejecetFeat=makerowvector(unique(RejecetFeat))';
 end
 RejecetFeatpre=RejecetFeat;
+
 % Check that the SUBSET Acutally classifies as usin
 OKFeatures=setdiff(1:NFeatures,RejecetFeat);
 Mdl=fitcnb(X(:,OKFeatures),Y,'DistributionNames','kernel');
@@ -76,16 +77,18 @@ disp('>>Evaluating...')
 ErrorSelFeat=1-numel(find(Y==Yhat))/numel(Y);
 fprintf('Cross-Validated  Subset Classification Error: %3.1f %%\n',100*ErrorSelFeat);
 
+%% Removing More Features
 if ErrorSelFeat<=ECVall
-    %% Removing More Features
     aux=1;
     RejectSets={};
     TrialError=[];
     while ErrorSelFeat<=ECVall
         % ECVall=MinError;
         OKFeatures=setdiff(1:NFeatures,RejecetFeat);
-        Nokfeatures=numel(OKFeatures);
-        CO=nchoosek(OKFeatures,Nokfeatures-Nremove);
+        if isempty(RejecetFeat)
+            Nremove=Nremove+1;
+        end
+        CO=nchoosek(OKFeatures,NFeatures-Nremove);
         Ncombinations=size(CO,1);
         ErrorCV=ones(Ncombinations,1);
         for f=1:Ncombinations
@@ -104,9 +107,13 @@ if ErrorSelFeat<=ECVall
         MinError=min(ErrorCV);
         TrialError(aux)=MinError;
         BestSetFeatures=find(ErrorCV<=MinError);
-        % RejecetFeat=[];
-        for n=1:numel(BestSetFeatures)
-            RejecetFeat=[RejecetFeat;setdiff(1:NFeatures,CO(BestSetFeatures(n),:))'];
+        if numel(BestSetFeatures)==Nokfeatures
+            RejecetFeat=1;
+        else
+            % RejecetFeat=[];
+            for n=1:numel(BestSetFeatures)
+                RejecetFeat=[RejecetFeat;setdiff(1:NFeatures,CO(BestSetFeatures(n),:))'];
+            end
         end
         RejecetFeat=unique(RejecetFeat);
         RejectSets{aux}=RejecetFeat;

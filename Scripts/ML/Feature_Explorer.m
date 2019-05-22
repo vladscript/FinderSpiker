@@ -1,46 +1,104 @@
+%% Feature Explorer ********************************
+% Script to plot boxplots, pdfs and explore effects
+% 
 %% Load Tabel **************************************
 Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
 CurrentPathOK=[Dirpwd(1:slashesindx(end))]; % Finder Spiker Main Folder
 % Load File 
-[FileName,PathName,MoreFiles] = uigetfile({'*.csv';'*.xlsx'},' Dataset file of ALL Features',...
+[FileName,PathName,MoreFiles] = uigetfile({'*.csv'},' Dataset file of ALL Features',...
     'MultiSelect', 'off',CurrentPathOK);
+% Setup :
 Xraw=readtable([PathName,FileName]);                % Table
 Y=categorical(table2array( Xraw(:,1)) );            % Labels
 EXPIDs=table2array( Xraw(:,2));                     % Cell of Strings
 X=table2array( Xraw(:,3:end) );                     % Dataset
 FeatureNames=Xraw.Properties.VariableNames(3:end);  % Feature Names
-%% Feature Explorer ********************************
+Labels=unique(Y);                                   % Conditions Names
+Nconditions=numel(Labels);                          % N conditons
 
-%% Correlation among Features
-% FeaturesCorr=corr(X);
-% figure; imagesc(FeaturesCorr)
+%% Color Selector
+% Colors: #################################################################
+SetColorMap;
+CM=cbrewer(KindMap,ColorMapName,Ncolors);
+% figure
+figureCM=figure;
+figureCM.Name=[ColorMapName,' qualitative colormap from  CBREWER'];
+figureCM.Position=[612 515 560 118];
+imagesc([1:Ncolors]);
+figureCM.Colormap=CM;
+figureCM.Children.XTick=1:Ncolors;
+figureCM.Children.YTick=[];
+
+% Choose Colors
+for n=1:Nconditions
+    disp('>> Choose Color:') ;
+    ColorIndx{n}= inputdlg(['Set Color for Condition ',num2str(n),...
+        ' ',char(Labels(n))],...
+         'Select color for ', [1 70]);
+    waitfor(ColorIndx{n});
+    IndxColor(n)= str2num( cell2mat(  ColorIndx{n} ));
+    if ~ismember(IndxColor(n),1:Ncolors)
+        IndxColor(n)=n;
+        disp('>>ERROR in the index. Assigned Color :')
+        disp(n)
+    end
+end
+delete(figureCM);
 
 %% p-values: descriptive statistical tests
 Nfeat=numel(FeatureNames);
-Labels=unique(Y);
-Nconditions=numel(Labels);
-HypTest=zeros(Nfeat,Nconditions);
-for f=1:Nfeat
-    pMatrix=ones(Nconditions);
+
+% Set Statistical Tes
+if Nconditions<3
+    % Two Paired Groups: 
+    % Rank, Score, or Measurement (from Non- Gaussian Population)
+    Test2Do='Paired';
+else
+    % More than 2 Conditions
+    % Rank, Score, or Measurement (from Non- Gaussian Population)
+    Test2Do='Repeated';
+end
+
+%% FEATURE EXPLORER #######################################################
+% Save Results to Retrieve Them
+DataCell=cell(Nconditions,1);
+for f=1:Nfeat % Feature Loop ***************************************
+    figure;
+    labelsplot=[];
+    Dodge=0.3;
+    % Set Text, Retrieve & Plot Data
+    data=X(:,f);
+    fprintf('>> %s @ Conditions:\n',char(FeatureNames(f)));
     for c=1:Nconditions
-        elseCond=setdiff(1:Nconditions,c);
-        for e=1:numel(elseCond)
-            fprintf('>>Testing %s @ Conditions:\n   %s vs %s p=',FeatureNames{f},char(Labels(c)),char(Labels(elseCond(e))));
-            Aindx=find(Y==Labels(c));
-            Bindx=find(Y==Labels(elseCond(e)));
-            A=X(Aindx,f);
-            B=X(Bindx,f);
-            % [h,p]=ttest2(A,B);
-            [h,p]=kstest2(A,B);
-            if h
-                HypTest(f,[c,elseCond(e)])=1;
-            end
-            pMatrix(c,elseCond(e))=p;
-            %p=kruskalwallis([A;B],[Y(Aindx);Y(Bindx)])
-            fprintf('%3.2f\n',p);
+        if c<Nconditions
+            fprintf('  %s vs',char(Labels(c)))
+        else
+            fprintf('  %s',char(Labels(c)))
         end
+        DataCell{c}=data(Y==Labels(c));
+        hplot{c}=raincloud_plot(DataCell{c},'color',CM(IndxColor(c),:),'box_on',1,'alphaval',1,'box_dodge', 1, 'box_dodge_amount',Dodge, 'dot_dodge_amount', Dodge, 'box_col_match',0);
+        labelsplot=[labelsplot,hplot{c}{1}];
+        Dodge=Dodge*(c+1);
+        LabelName{c}=char(Labels(c));
     end
+    axis tight; grid on;
+    legend(labelsplot,LabelName);
+    title(char(FeatureNames(f)))
+    fprintf('\n')
+    
+    % Statistics Data
+    
+%     switch Test2Do
+%         case 'Paired'
+%             % 2 Conditions
+%             [p,h] = ranksum(A,B);
+%         case 'Repeated'
+%             % Make CODE!
+%             datastat=[];
+%             [p,h] = friedman(datastat);
+%     end
+    
     pause;
 end
 %% For paired Experiments: Delta Features
@@ -120,14 +178,14 @@ for c=1:numel(ReferenceCondition)
     TitleFig=Labels(RefIndex(c));
     DeltaNum=[]; ConditionLabel={}; % To Make Boxplots
     for r=1:numel(Labels)
-        if ~isempty(DeltaExps{RefIndex(c),r})
+        if ~isempty(DeltaExps{r,RefIndex(c)})
            % Gather All The Deltas 
            VersusCondition=Labels(r);
-           Nexps=size(DeltaExps{RefIndex(c),r},1);
+           Nexps=size(DeltaExps{r,RefIndex(c)},1);
            for e=1:Nexps
                 ConditionLabel=[ConditionLabel;['+ ',char(VersusCondition)]];
            end
-           DeltaNum=[DeltaNum;DeltaExps{RefIndex(c),r}];
+           DeltaNum=[DeltaNum;DeltaExps{r,RefIndex(c)}];
         end
     end
     figure;
