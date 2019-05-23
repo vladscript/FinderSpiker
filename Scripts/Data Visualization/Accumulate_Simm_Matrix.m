@@ -38,7 +38,7 @@ while MoreFiles
         auxd=1;
         Row=Nensembles(c);
         for d=1:NC
-            fprintf('Neural Ensembles Simmilarity: %s vs %s\n',Names_Conditions{c},Names_Conditions{d})
+            fprintf('>Neural Ensembles Simmilarity: %s vs %s\n',Names_Conditions{c},Names_Conditions{d})
             % Get Values
             Col=Nensembles(d);
             MatrixCut=TheMatrix([auxc:auxc+Row-1],[auxd:auxd+Col-1]);

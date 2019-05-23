@@ -80,15 +80,27 @@ while MoreFiles
 end
 disp('>>end.')
 %% Save Stuff to .mat File at Processed Data Folder
-plot_cdf_cell(RoE_ALL,Names_Conditions);
-plot_cdf_cell(IEnIs_ALL,Names_Conditions);
-plot_cdf_cell(EnD_ALL,Names_Conditions);
-plot_cdf_cell(NensCyc_ALL(1,:),Names_Conditions);
-plot_cdf_cell(NensCyc_ALL(2,:),Names_Conditions);
-plot_cdf_cell(NensCyc_ALL(3,:),Names_Conditions);
-plot_cdf_cell(LatencyCyc_ALL(1,:),Names_Conditions);
-plot_cdf_cell(LatencyCyc_ALL(2,:),Names_Conditions);
-plot_cdf_cell(LatencyCyc_ALL(3,:),Names_Conditions);
+%  Color Selector:
+[CM,ColorIndx]=Color_Selector(Names_Conditions);
+% All the plots
+plot_cdf_cell(RoE_ALL,Names_Conditions,CM(ColorIndx,:));
+xlabel('Rate of Ensembles [E/min]')
+plot_cdf_cell(IEnIs_ALL,Names_Conditions,CM(ColorIndx,:));
+xlabel('Inter Ensembles Interval [s]')
+plot_cdf_cell(EnD_ALL,Names_Conditions,CM(ColorIndx,:));
+xlabel('Ensembles Duration [s]')
+plot_cdf_cell(NensCyc_ALL(1,:),Names_Conditions,CM(ColorIndx,:));
+xlabel('Number of Ensmebles per Simple Cycle [Ensembles]')
+plot_cdf_cell(NensCyc_ALL(2,:),Names_Conditions,CM(ColorIndx,:));
+xlabel('Number of Ensmebles per Closed Cycle [Ensembles]')
+plot_cdf_cell(NensCyc_ALL(3,:),Names_Conditions,CM(ColorIndx,:));
+xlabel('Number of Ensmebles per Open Cycle [Ensembles]')
+plot_cdf_cell(LatencyCyc_ALL(1,:),Names_Conditions,CM(ColorIndx,:));
+xlabel('Latency of Simple Cycle Ensmbles [s]')
+plot_cdf_cell(LatencyCyc_ALL(2,:),Names_Conditions,CM(ColorIndx,:));
+xlabel('Latency of Closed Cycle Ensmbles [s]')
+plot_cdf_cell(LatencyCyc_ALL(3,:),Names_Conditions,CM(ColorIndx,:));
+xlabel('Latency of Open Cycle Ensmbles  [s]')
 okbutton = questdlg('Save data?');
 waitfor(okbutton); 
 if strcmp('Yes',okbutton)

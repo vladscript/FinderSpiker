@@ -16,38 +16,16 @@ X=table2array( Xraw(:,3:end) );                     % Dataset
 FeatureNames=Xraw.Properties.VariableNames(3:end);  % Feature Names
 Labels=unique(Y);                                   % Conditions Names
 Nconditions=numel(Labels);                          % N conditons
-
+% Set Names Coniditons:
+for c=1:Nconditions
+    NamesCond{c}=char(Labels(c));                   % Cell arrray of Strings
+end
+Nfeat=numel(FeatureNames);                          % N features
 %% Color Selector
 % Colors: #################################################################
-SetColorMap;
-CM=cbrewer(KindMap,ColorMapName,Ncolors);
-% figure
-figureCM=figure;
-figureCM.Name=[ColorMapName,' qualitative colormap from  CBREWER'];
-figureCM.Position=[612 515 560 118];
-imagesc([1:Ncolors]);
-figureCM.Colormap=CM;
-figureCM.Children.XTick=1:Ncolors;
-figureCM.Children.YTick=[];
-
-% Choose Colors
-for n=1:Nconditions
-    disp('>> Choose Color:') ;
-    ColorIndx{n}= inputdlg(['Set Color for Condition ',num2str(n),...
-        ' ',char(Labels(n))],...
-         'Select color for ', [1 70]);
-    waitfor(ColorIndx{n});
-    IndxColor(n)= str2num( cell2mat(  ColorIndx{n} ));
-    if ~ismember(IndxColor(n),1:Ncolors)
-        IndxColor(n)=n;
-        disp('>>ERROR in the index. Assigned Color :')
-        disp(n)
-    end
-end
-delete(figureCM);
+[CM,IndxColor]=Color_Selector(NamesCond);
 
 %% p-values: descriptive statistical tests
-Nfeat=numel(FeatureNames);
 
 % Set Statistical Tes
 if Nconditions<3
@@ -66,7 +44,8 @@ DataCell=cell(Nconditions,1);
 for f=1:Nfeat % Feature Loop ***************************************
     figure;
     labelsplot=[];
-    Dodge=0.3;
+    DodgeInit=0.3;
+    Dodge=DodgeInit;
     % Set Text, Retrieve & Plot Data
     data=X(:,f);
     fprintf('>> %s @ Conditions:\n',char(FeatureNames(f)));
@@ -79,7 +58,7 @@ for f=1:Nfeat % Feature Loop ***************************************
         DataCell{c}=data(Y==Labels(c));
         hplot{c}=raincloud_plot(DataCell{c},'color',CM(IndxColor(c),:),'box_on',1,'alphaval',1,'box_dodge', 1, 'box_dodge_amount',Dodge, 'dot_dodge_amount', Dodge, 'box_col_match',0);
         labelsplot=[labelsplot,hplot{c}{1}];
-        Dodge=Dodge*(c+1);
+        Dodge=DodgeInit*(c+1);
         LabelName{c}=char(Labels(c));
     end
     axis tight; grid on;
@@ -89,15 +68,18 @@ for f=1:Nfeat % Feature Loop ***************************************
     
     % Statistics Data
     
-%     switch Test2Do
-%         case 'Paired'
-%             % 2 Conditions
-%             [p,h] = ranksum(A,B);
-%         case 'Repeated'
-%             % Make CODE!
-%             datastat=[];
-%             [p,h] = friedman(datastat);
-%     end
+    switch Test2Do
+        case 'Paired'
+            % 2 Conditions
+            A=DataCell{1};
+            B=DataCell{2};
+            [p,h] = ranksum(A,B);
+        case 'Repeated'
+            % Make CODE!
+            datastat=reshape(cell2mat(DataCell),[size(DataCell{1},1),size(DataCell,1)]);
+            [p,tbl,stats] = friedman(datastat,size(DataCell,1));
+            c=multcompare(stats);
+    end
     
     pause;
 end

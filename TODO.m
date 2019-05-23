@@ -9,6 +9,9 @@
 % Color of Ensmebles and purple for white stuff->
 %  AltIndex & ReaIndex Modified->
 % Raster Features Updated->
+% Accumulate_Ensembles_RoEn_IEnI_EnD->
+% Color_Selector->Feature_Explorer, Accumulate Functions: Done.
+
 %% Bugs & New Functions NOW
 
 % Statistics: automate
@@ -19,25 +22,17 @@
 
 % Dyskinesia Data: Get_Total_Network
 
-
-
-% MAKE NETWORK highlight special neuron population
-
 % RETRIEVE SIGNALS & RECONSTRUCT VIDEO
 % retreive of Original Signals, coordinates, etc:
 % Re make clean video
-
 
 % delete >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
 % NN2Gephi.m; Raster2fNet.m
 
 % Make PCA of RASTER: 
 % denoise raster: get most variance PCs and rebuild raster
-
 % Add Colocalizer Filters: TdTomato, Yellow, Others
-
 %  Update to MATLAB 2019a !!!!! UNAM License
-
 % Test Mike's Clustering Algorithm 4 CoActivity (transposed matrix)and save as weel
 
 %%% MAKE ALGORITHMIA
@@ -48,6 +43,7 @@
 % Inspection for Each ROI...
 % Make RGB sum at Functional Network
 % driver ghost Issuee(?)
+% MAKE NETWORK highlight special neuron population
 
 %% FUTURE *****************************************************************
 % Driver Issues
@@ -146,7 +142,7 @@
 % >>Merge_Datasets
 % 
 
-% DATA EXPLORING
+% DATA FEATURE EXPLORING: After Merging Datasets or Single Type Datasets.
 % >>Feature_Explorer
 
 % MACHINE LEARNING: choose a Dataset:
@@ -155,9 +151,11 @@
 
 % ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS ****************************
 % Choose One-by-One .mat Files-> Save .mat Files:
+% >>Accumulate_Raster_Distances
 % >>Accumulate_RoA_IEI_ED
 % >>Accumulate_Ensembles_RoEn_IEnI_EnD
 % >>Accumulate_Simm_Matrix
+
 
 % Plot_Accumulate_CDF; % To plot Results
 %% END ####################################################################
