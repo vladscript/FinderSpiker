@@ -186,3 +186,18 @@ for c=1:NCplot
     end
 
 end
+
+% % RoA_A2a=RoA_ALL;
+% % ISIs_A2a=ISIs_ALL;
+% % TranLengths_A2a=TranLengths_ALL;
+% % RoT_A2a=RoT_ALL;
+% % EXPS_a2a=EXPS;
+% % load('C:\Users\Vladimir\Documents\Doctorado\Software\GetTransitum\Calcium Imaging Signal Processing\FinderSpiker\Processed Data\Adenosine\Parkinson\Prami + Istra\GCamp6f Syn + TdTomato\RoA_RoT_ISI_SD_ACC_20193271951.mat')
+% % c=1; RoA_A2a{c}=[RoA_A2a{c};RoA_POS{c}];
+% % c=2; RoA_A2a{c}=[RoA_A2a{c};RoA_POS{c}];
+% % c=3; RoA_A2a{c}=[RoA_A2a{c};RoA_POS{c}];
+% % 
+% % c=1; ISIs_A2a{c}=[ISIs_A2a{c};ISIs_POS{c}];
+% % c=2; ISIs_A2a{c}=[ISIs_A2a{c};ISIs_POS{c}];
+% % c=3; ISIs_A2a{c}=[ISIs_A2a{c};ISIs_POS{c}];
+% % c=1; TranLengths_A2a{c}=[TranLengths_A2a{c};TranLengths_POS{c}];

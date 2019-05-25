@@ -1,4 +1,5 @@
-%% Script to concatenate Network Features
+%% Script to concatenate Network Features: NetFeat Files
+% Makes a TABLE of Different and MULTIPLE Network Features
 %% Setup
 % Initial:
 clear; close all; clc;
@@ -8,9 +9,9 @@ FEATS={};            % List Of Features
 % Directory:
 Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
-CurrentPathOK=[Dirpwd(1:slashesindx(end))];
+CurrentPathOK=[Dirpwd(1:slashesindx(end)),'NetWorks-CSV'];
 % Load File 
-[FileName,PathName,MoreFiles] = uigetfile('*.csv',' Gephi Feature Dataset .csv file',...
+[FileName,PathName,MoreFiles] = uigetfile('*.csv',' Network Feature Dataset .csv file',...
     'MultiSelect', 'off',CurrentPathOK);
 %% COLLECT DATA #####################################################
 
@@ -38,7 +39,7 @@ while MoreFiles
     FEATS{runs,1}=FileName
     CurrentPathOK=PathName;
     runs=runs+1;
-    [FileName,PathName,MoreFiles] = uigetfile('*.csv',' Gephi Feature Dataset .csv file',...
+    [FileName,PathName,MoreFiles] = uigetfile('*.csv',' Network Feature Dataset .csv file',...
     'MultiSelect', 'off',CurrentPathOK);
     auxc=auxc+1;
 end
@@ -55,6 +56,7 @@ if strcmp('Yes',okbutton)
     TS=num2str(timesave(1:5));
     TS=TS(TS~=' ');
     SaveFile=['\NetFEATS_Dataset_',TS,'.csv'];
+    CurrentPathOK=[Dirpwd(1:slashesindx(end))];
     % Select Destiny
     PathSave=uigetdir(CurrentPathOK);
     writetable(Ytotal,[PathSave,SaveFile],...
@@ -64,4 +66,4 @@ else
     fprintf('>>Unsaved dataset.\n')
 end
 
-disp('>>Saved Network Features.')
+%% END ~~~~+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

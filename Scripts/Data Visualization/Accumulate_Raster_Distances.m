@@ -9,7 +9,7 @@
 %    Raster_Distance:       Distance Among Conditins
 %% Setup
 % Initial:
-clear; close all; clc;
+clear; clc;
 runs=1;             % Runs Counter
 EXPS={};            % List Of Experiments
 
@@ -31,18 +31,31 @@ while MoreFiles
     if NC>1
         % Matrix of Distances among Conditions
         MatDist=distance_rasters(R_Condition);
+        if exist('R_merged','var')
+            aremerged=true;    % Are there already colocated cells
+            MatDistM=distance_rasters(R_merged);
+            MatDistN=distance_rasters(R_nomerged);
+        else
+            aremerged=false;    % Are there already colocated cells
+        end
+        auxc=1;
         for c=1:NC-1
             for d=c+1:NC
-                Raster_Distance(runs,c) = MatDist(c,d);
+                Raster_Distance(runs,auxc) = MatDist(c,d);
+                if aremerged
+                    Raster_DistanceM(runs,auxc) = MatDistM(c,d);
+                    Raster_DistanceN(runs,auxc) = MatDistN(c,d);
+                end
                 S1=Names_Conditions{c};
                 S2=Names_Conditions{d};
                 S1=S1(isstrprop(S1,'alpha'));
                 S2=S2(isstrprop(S2,'alpha'));
-                Comparisson{1,c}=[S1,'_',S2];
+                Comparisson{1,auxc}=[S1,'_',S2];
+                auxc=auxc+1;
             end
         end
     else
-        disp('>>Not for Single Conditin Experiments')
+        disp('>>Not for Single Condition Experiments')
     end
     % Disp Experiments Selected:
     EXPS{runs,1}=Experiment
@@ -53,13 +66,20 @@ while MoreFiles
 end
 disp('>>end.')
 % Make Table:
-Tbuff=table(EXPS,Raster_Distance);
-for c=1:NC
+Tbuff=[table(EXPS),array2table(Raster_Distance)];
+NComb=nchoosek(NC,2);
+for c=1:NComb+1
     if c==1
         Tbuff.Properties.VariableNames{c}='Experiments';
     else
         Tbuff.Properties.VariableNames{c}=Comparisson{c-1};
     end
+end
+if aremerged
+    TbuffM=[table(EXPS),array2table(Raster_DistanceM)];
+    TbuffN=[table(EXPS),array2table(Raster_DistanceN)];
+    TbuffM.Properties.VariableNames=Tbuff.Properties.VariableNames;
+    TbuffN.Properties.VariableNames=Tbuff.Properties.VariableNames;
 end
 %% Save Stuff to .mat File at Processed Data Folder
 
@@ -71,6 +91,12 @@ if strcmp('Yes',okbutton)
     TS=num2str(timesave(1:5));
     TS=TS(TS~=' ');
     SaveFile=['\Raster_Distances_',TS,'.csv'];
+    if aremerged
+        SaveFileM=['\Raster_Distances_',TS,'_',...
+            MetaDataColocaliation.Cells{1},'POS.csv'];
+        SaveFileN=['\Raster_Distances_',TS,'_',...
+            MetaDataColocaliation.Cells{1},'NEG.csv'];
+    end
     % Select Destiny
     % Directory (default)
     CurrentPath=pwd;
@@ -81,7 +107,14 @@ if strcmp('Yes',okbutton)
     PathSave=uigetdir(CurrentPathOK);
     writetable(Tbuff,[PathSave,SaveFile],...
     'Delimiter',',','QuoteStrings',true);
-
+    
+    if aremerged
+        writetable(TbuffM,[PathSave,SaveFileM],...
+        'Delimiter',',','QuoteStrings',true);
+        writetable(TbuffN,[PathSave,SaveFileN],...
+        'Delimiter',',','QuoteStrings',true);
+    end
+    
     fprintf('>> Data saved @: %s\n',PathSave)
 else
     fprintf('>>Unsaved data.\n')

@@ -2,23 +2,20 @@
 % Manual Mode is divideed in two parts->
 % Necessary to know the statistical power of the Automatic Mode:
 % of the automatic method by dividing in -+ and -- (false+ & false-)
-% Old Version Manual Mode:
-%   Manual_Driver_Raster_Magic.m (becoming unnecessary)
+
 %% FIXED  READY TO GO @ GIT
-%  Colors Mixture for Ensembles & Gephi->
-% Color of Ensmebles and purple for white stuff->
-%  AltIndex & ReaIndex Modified->
-% Raster Features Updated->
-% Accumulate_Ensembles_RoEn_IEnI_EnD->
-% Color_Selector->Feature_Explorer, Accumulate Functions: Done.
+
+% >>Accumulate_Raster_Distances make ti to recognize Merge or NotMerged
+% Directories to save Network Stuff
 
 %% Bugs & New Functions NOW
 
-% Statistics: automate
+% Statistics: automate: OK
+
+% Features From Get_Total_Network?
+% Links Features Without->Merge THEM
 
 % Adjust Contrast and Sliding Cells in Merge_Finder
-
-% ANALYZE DYSKINESIA DATA AIMs: Statistics+Mafy's Data
 
 % Dyskinesia Data: Get_Total_Network
 
@@ -75,7 +72,7 @@
 % >>RasterDurations=get_raster_durations(Onsets,R_Condition,fs);
 
 % TOTAL NETWORK (without Ensembles) ***************************************
-% Save Links Features without Thresholding
+% Save Links Features Without neither Ensembling nor Thresholding
 % >>Get_Total_Network
 
 % RETRIEVE RASTER for ANALYSIS ********************************************
@@ -100,11 +97,15 @@
 
 % COLOCALIZATION OF MARKED CELLS ******************************************
 % % % Previously LOAD MAT FILE (?)
+% 
 % >>Merge_Finder_Magic
 %       It gets outputs: R_merged,R_nomerged,MetaDataColocaliation
-% Save CSV Raster-Features of Merged & NO-Merged Cells:
+% 
+% % % Save CSV Raster-Features of Merged & NO-Merged Cells:
+% 
 % >>Select_Raster_for_NN(fs,R_merged,XY,Names_Conditions,Experiment);
 % >>Select_Raster_for_NN(fs,R_nomerged,XY,Names_Conditions,Experiment);
+% 
 % Check Raster plots:
 % >>Plot_Merged_NotMerged
 
@@ -122,40 +123,36 @@
 
 % N-EXPERIMENTS RESULTS ###################################################
 
-% LOAD & GET FEATURES FOR A SET OF EXPERIMENTS*****************************
-% These scripts save feature tables for ML & Statistical Analysis
-%
-% RASTER/ENSEMBLE/NETWORK FEATURES AND TABLES MAKER ***********************
-% Choose All CSV files at once
-% >>Raster_Features_Display
-% ENSEMBLES GENERAL FEATURES 
-% >>Ensembles_Features_Display
-% ENSEMBLES DETAILED FEATURES 
-% >>Ensembles_Features_Detailed_Display
-% MAKE DATASETS FROM GEPHI NETWORK FEATURES
-% >>Get_Gephi_Data;
-% >>Make_Statistics_Gephi_Features;
-% >>Concatenate_NetFeats
-% Script to Merged them and make a DATASET for Machine Learning:
-% >>Merge_Feature_Datasets
-%  Get ALL Features Dataset: Raster,Ensembles,Networks
-% >>Merge_Datasets
-% 
-
-% DATA FEATURE EXPLORING: After Merging Datasets or Single Type Datasets.
-% >>Feature_Explorer
-
-% MACHINE LEARNING: choose a Dataset:
-% >>Features_Datasets_NBC; %NEED CHECKING ***
-
-
 % ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS ****************************
 % Choose One-by-One .mat Files-> Save .mat Files:
-% >>Accumulate_Raster_Distances
+% >>Accumulate_Raster_Distances; % Save at CSV Files
 % >>Accumulate_RoA_IEI_ED
 % >>Accumulate_Ensembles_RoEn_IEnI_EnD
 % >>Accumulate_Simm_Matrix
 
+% RASTER/ENSEMBLE/NETWORK FEATURES AND TABLES MAKER ***********************
+% RASTER FEATURES
+% >>Raster_Features_Display                 % make CSV table
+% ENSEMBLES GENERAL FEATURES
+% >>Ensembles_Features_Display              % make CSV table
+% ENSEMBLES DETAILED FEATURES 
+% >>Ensembles_Features_Detailed_Display     % make CSV table
+% MAKE DATASETS FROM GEPHI NETWORK FEATURES
+% >>Get_Gephi_Data;                 % Make .mat Dataset from Gephi Files
+% >>Make_Statistics_Gephi_Features; % Make csv table of SINGLE Feature
+% >>Concatenate_NetFeats            % Make table of MULTIPLE Features
+% 
+% Script to Merged them and make a DATASET for Machine Learning:
+% >>Merge_Feature_Datasets          % Make DATASET of ONE Kind
+%  Get ALL Features Dataset: Raster,Ensembles,Networks
+% >>Merge_Datasets                  % Make DATSET of the 3 Kinds
+% 
 
-% Plot_Accumulate_CDF; % To plot Results
+% DATA FEATURE EXPLORING: After Merging Datasets or Single Type Datasets.
+% >>Feature_Explorer         *UNDER CONSTRUCTION*
+
+% MACHINE LEARNING: choose a Dataset:
+% >>Features_Datasets_NBC; % *UNDER CONSTRUCTION*
+
+
 %% END ####################################################################

@@ -17,7 +17,7 @@
 %    RoA_NEG, ISI, Length & RoT: uncolocated cells
 %% Setup
 % Initial:
-clear; close all; clc;
+clear; clc;
 runs=1;             % Runs Counter
 EXPS={};            % List Of Experiments
 

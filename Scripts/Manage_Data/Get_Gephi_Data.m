@@ -36,10 +36,10 @@ Names_Conditions=inputdlg(Cond_Names,name,numlines,Names_default);
 % Directory:
 Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
-CurrentPathOK=[Dirpwd(1:slashesindx(end))];
+CurrentPathOK=[Dirpwd(1:slashesindx(end)),'NetWorks-CSV'];
 % Load File 
 c=1; % naive initialization
-[FileName,PathName,MoreFiles] = uigetfile('*.csv',['Condition: ',num2str(c),' Gephi Data .csv file'],...
+[FileName,PathName,MoreFiles] = uigetfile('*.csv',['Condition: ',num2str(c),' Network ___ Dataset.csv file'],...
     'MultiSelect', 'off',CurrentPathOK);
 %% Collect DATA
 GEPHIDATA={}; % Data set of Network Features of ALl Experiments
@@ -69,7 +69,7 @@ for c=1:NC
         CurrentPathOK=PathName;
         runs=runs+1;
         [FileName,PathName,MoreFiles] = uigetfile('*.csv',['Condition: ',num2str(c),...
-            ' : ',Names_Conditions{c},' Gephi Data .csv file| Press CANCEL to start the Following Condition'],...
+            ' : ',Names_Conditions{c},'  Network ___ Dataset.csv file | Press CANCEL to start the Following Condition'],...
         'MultiSelect', 'off',CurrentPathOK);
         auxc=auxc+1;
     end
@@ -77,7 +77,7 @@ for c=1:NC
     if c<NC
         MoreFiles=true;
         [FileName,PathName,MoreFiles] = uigetfile('*.csv',['Condition: ',num2str(c+1),...
-            ' : ',Names_Conditions{c+1},' Gephi Data .csv file'],...
+            ' : ',Names_Conditions{c+1},'  Network ___ Dataset.csv file '],...
         'MultiSelect', 'off',CurrentPathOK);
     end
 end
@@ -88,7 +88,7 @@ disp('>>Saving Gephi Data ...')
 % Input dialogue
 CurrentPathOK=[Dirpwd(1:slashesindx(end))];
 
-[file,path] = uiputfile('myNetwrokDataSet.mat','Save file name');
+[file,path] = uiputfile('myNetwrokDataSet.mat','Save DATASET file >>');
 if file ~=0
     fullFileName = fullfile(path, file);
     save(fullFileName,'GEPHIDATA','Names_Conditions');

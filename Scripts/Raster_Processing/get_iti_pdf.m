@@ -30,7 +30,7 @@ for c=1:Cells
     TranLengths=[TranLengths,TranLengthscell];
     % Transien Rate
     RoT(c)=numel(TranLengthscell)*fs/numel(r)*60; % Ca Transients per MINUTE
-    disp(c);
+    % disp(c);
 end
 %% GET PDFs
 if numel(ISIs(ISIs>0))>1

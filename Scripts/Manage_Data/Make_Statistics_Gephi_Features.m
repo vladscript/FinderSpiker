@@ -149,7 +149,7 @@ while MoreFeats
                 % Netwrok Directory
                 CurrentPath=pwd;
                 Slshes=find(CurrentPath=='\');
-                CurrentPathOK=[CurrentPath(1:Slshes(end)),'NetWorks-CSV'];
+                CurrentPathOK=[Dirpwd(1:slashesindx(end)),'NetWorks-CSV'];
                 % Set Save Name
                 timesave=clock;
                 TS=num2str(timesave(1:5));

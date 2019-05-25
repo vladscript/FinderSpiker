@@ -80,7 +80,7 @@ for f=1:Nfeat % Feature Loop ***************************************
             [p,tbl,stats] = friedman(datastat,size(DataCell,1));
             c=multcompare(stats);
     end
-    
+    fprintf('>>P-value: p=%f\n',p);
     pause;
 end
 %% For paired Experiments: Delta Features

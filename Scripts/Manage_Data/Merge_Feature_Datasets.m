@@ -39,7 +39,8 @@ else
      'ensCAGauc','ensCAGmean','ensCAGmode','ensCAGmedian','ensCAGvar','ensCAGskew','ensCAGkurt'...
      'IEImean','IEImode','IEImedian','IEIvar','IEIskew','IEIkurt'...
      'EDmean','EDmode','EDmedian','EDvar','EDskew','EDkurt'};
-%     else
+    else
+        FolderDefault=[];
 %         HeadersFeatures to be READ
     end
 end

@@ -12,6 +12,7 @@
 %    EnD:           Ensembles Duration
 %   Number of Ensembles per Cycle
 %% Setup
+clear; clc;
 % Initial:
 runs=1;             % Runs Counter
 EXPS={};            % List Of Experiments

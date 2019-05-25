@@ -75,7 +75,7 @@ for n=1:Ncells
     end
 end
 %% Make Networks ****************************************************
-NameDir='Ensemble Features\';
+NameDir='NetWorks-CSV\';
 FileDirSave=pwd;
 slashes=find(FileDirSave=='\');
 FileDirSave=FileDirSave(1:slashes(end));

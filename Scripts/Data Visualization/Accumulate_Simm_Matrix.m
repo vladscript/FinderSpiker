@@ -12,6 +12,7 @@
 %    EnD:           Ensembles Duration
 
 %% Setup
+clear; clc;
 % Initial:
 runs=1;             % Runs Counter
 EXPS={};            % List Of Experiments

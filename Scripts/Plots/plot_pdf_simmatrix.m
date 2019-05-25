@@ -18,10 +18,10 @@ labelsplot=[];
 for c=1:NC
     for d=c:NC
         if d==c
-            ActualColor=CM(c,:);
+            ActualColor=CM(ColorIndx(c),:);
         else
             % Mix Colors:
-            ActualColor=double(imadd(uint8(255*CM(c,:)),uint8(255*CM(d,:)),'uint8')/255);
+            ActualColor=double(imadd(uint8(255*CM(ColorIndx(c),:)),uint8(255*CM(ColorIndx(d),:)),'uint8'))/255;
         end
         hplot{c}=raincloud_plot(SIM_MATRIX{c,d},'color',ActualColor,'box_on',1,'alphaval',1,'box_dodge', 1, 'box_dodge_amount',Dodge, 'dot_dodge_amount', Dodge, 'box_col_match',0);
         labelsplot=[labelsplot,hplot{c}{1}];
