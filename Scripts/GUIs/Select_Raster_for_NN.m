@@ -74,7 +74,7 @@ while ~strcmp('Yes',okbutton)
     RASTER_Selected_Clean=RASTER_Selected_Clean(ActiveNeurons,:);
     XY_selected=XY_selected(ActiveNeurons,:);                           % Clean Coordinates
     Plot_Raster_Ensembles(RASTER_Selected_Clean,fs);                            % Clean Whole Raster
-    set(gcf,'Name',['ID: ',Experiment(2:end),' selected '],'NumberTitle','off')
+    set(gcf,'Name',['ID: ',Experiment,' selected '],'NumberTitle','off')
     Label_Condition_Raster(Names_Conditions,Raster_Condition_Sel,fs);       % Labels
     % To Save active and Sorted:
     R_Condition={};

@@ -472,8 +472,8 @@ for i=1:Ns
                             end
                         end
                         if sum(OkPeaks==0)==numel(FramPeaks)
-                            xdupdate=xdupdate-xdenoised;
-                            xdenoised(:)=0; % make it zeros...
+                            % xdupdate=xdupdate-xdenoised;
+                            % xdenoised(:)=0; % make it zeros...
                             disp('>> All the Small PEAKS without Ca++ Transients')
                         end
                     end
