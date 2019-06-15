@@ -5,21 +5,20 @@
 
 %% FIXED  READY TO GO @ GIT
 % Detrending Bug: One More
+% Features From Get_Total_Network, Links Features Without->Merge THEM
 
 %% Bugs & New Functions NOW
 
-% Statistics: automate: OK
+% Adjust lambda better for Detected Ones
 
-% Features From Get_Total_Network?-> MANUALLY ?
-% Links Features Without->Merge THEM
+% Way of Measure Transients:Spikes between Valley and Peak from Sparse
+% Signal
+
+% Statistics: automate: OK
 
 % Adjust Contrast and Sliding Cells in Merge_Finder
 
-% Adjust lambda better
-
-% Dyskinesia Data: Get_Total_Network
-
-%  Normalize Amplitude @ Detrended Signal
+% Normalize Amplitude @ Detrended Signal
 
 % RETRIEVE SIGNALS & RECONSTRUCT VIDEO
 % retreive of Original Signals, coordinates, etc:
@@ -77,6 +76,8 @@
 % TOTAL NETWORK (without Ensembles) ***************************************
 % Save Links Features Without neither Ensembling nor Thresholding
 % >>Get_Total_Network
+% Show Boxplots and Make Table of Features: ONLY TOTAL or POSITIVE(!)
+% >>Links_Features_Display
 
 % RETRIEVE RASTER for ANALYSIS ********************************************
 % >>R=RASTER_Selected_Clean'; % ALL CONDITIONS CONCATeNATED

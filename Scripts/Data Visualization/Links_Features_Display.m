@@ -100,6 +100,7 @@ if strcmp('Yes',okbutton)
     PathSave=uigetdir(CurrentPathOK);
     disp('>>Making CSV table...')
     TableFeatures=maketableraster(RASTER_NAMES,LINKS_FEATURES,Names_Conditions);
+    B = (TableFeatures.Var3)
     writetable(TableFeatures,[PathSave,SaveFile],...
                     'Delimiter',',','QuoteStrings',true);
     fprintf('>> Data saved @: %s\n',[PathSave,SaveFile])

@@ -104,7 +104,7 @@ FileDirSave=FileDirSave(1:slashes(end));
 FolderNamePD='\Processed Data';
 slashes=find(PathName=='\');
 Experiment=PathName(slashes(end-1)+1:slashes(end)-1); % Experiment ID
-Experiment(find(Experiment==' '))='_'; % REPLACE SpaceS with '_'
+Experiment(Experiment==' ')='_'; % REPLACE SpaceS with '_'
 if ~isdir([FileDirSave,FolderNamePD])
     disp('Folder [Processed Data] created')
     mkdir([FileDirSave,FolderNamePD]);
@@ -258,6 +258,9 @@ for i=1:NC
                         fprintf('%i,',ActiveNeurons(end));
                     end
                 end
+                % Reprocess to better fit for the Active Ones Only
+                [LAMBDASS,X_SPARSE,DRIVER]=fit_sparse(X_SPARSE,Xest,XDupdate,LAMBDASS,FR,DRIVER,ActiveNeurons);
+                
             else
                 AcceptedINDX=[];
                 RejectedINDX=setdiff(1:Ns,AcceptedINDX);
@@ -306,7 +309,7 @@ for i=1:NC
         isSIGNALS{j,i}=ActiveNeurons;   % DETECTTED Signals
         notSIGNALS{j,i}=InactiveNeurons;% UNDETECTED Signals
         RASTER{j,i}=Raster;             % Preliminar Raster
-                                        % Singal Noise Ration:
+                                        % Signal Noise Ration:
         SNRlambda{j,i}=10*log(var(XDupdate')./var(X_SPARSE')); 
         
         % Table Data For Processing Log Details ##########################

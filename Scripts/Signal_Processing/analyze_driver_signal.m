@@ -5,6 +5,7 @@
 %   D:              Original Set of Row Vector of Driver Signals
 %   FR:             Response Functions
 %   XDupdate:       Detrendend Signals
+%   Xest:           Denoised Signals
 %   SigmaNoise:     Standard Deviation of Noise
 % Output
 %   Dfix:           Fixed Set of Row Vector of Driver Signals
@@ -190,15 +191,18 @@ for c=1:C
     end
     % Just (+) Drivers
     d(d<0)=0;
-    Dfix(c,:)=d; % update and fix
+    
     if check==0
         Xestfix(c,:)=x_sparse;
     end
     % Spurious Drivers:
-    dbuffer=d;
-    d(:)=0;
-    dx_sparse=[diff(x_sparse);0];
-    d(sign(dbuffer).*sign(dx_sparse')>0)=dbuffer(sign(dbuffer).*sign(dx_sparse')>0);
+    % dbuffer=d;
+    % d(:)=0;
+    dx_sparse=diff(xe);
+    d( dx_sparse<0 )=0;
+    
+    Dfix(c,:)=d; % update and fix
+    %d(sign(dbuffer).*sign(dx_sparse)>0)=dbuffer(sign(dbuffer).*sign(dx_sparse)>0);
     %     %% CHECK STUFF
 %     plot(xd,'b'); hold on;
 %     plot(xe,'m'); hold on;
