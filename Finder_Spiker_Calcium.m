@@ -272,12 +272,10 @@ for i=1:NC
             end
             InactiveNeurons=setdiff(1:Ns,ActiveNeurons);
         end % END WHILE of IndexesFix
-        %% Checkin Lambdas
-        % if numel(ActiveNeurons)==Ns
-        %    smallacceptedlamb=LAMBDASS(ActiveNeurons)<1;
-        %    histogram(LAMBDASS(ActiveNeurons(smallacceptedlamb)),numel(find(smallacceptedlamb)))
-        %    smallrejectedlamb=LAMBDASS(ActiveNeurons)<1;
-        % end
+        %% Checkin Lambdas to FIT BEST
+        % % Reprocess to better fit for the Active Ones Only
+        [LAMBDASS,X_SPARSE,DRIVER]=fit_sparse(X_SPARSE,Xest,XDupdate,LAMBDASS,FR,DRIVER,ActiveNeurons);
+        
         %% GET RASTER *****************************************************
         % TotalCells=length(XY);
         switch RasterAlgorithm

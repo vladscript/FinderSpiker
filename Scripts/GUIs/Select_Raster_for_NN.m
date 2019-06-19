@@ -17,7 +17,7 @@
 %   R_Condition:            Cell of Raster for each COndition
 %   Onsets:                 Selected Starting Point
 %   New_indexes:            Sleected & Sorted Indexes of the Cells
-function [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets,New_Index]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment,varargin)
+function [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets,New_Index]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment,ESTSIGNALS,varargin)
 %% Setup
 if numel(varargin)==1
     checkname=0;
@@ -34,6 +34,8 @@ while ~strcmp('Yes',okbutton)
     [~,NC]=size(Raster_Condition);
     Raster_Selecter={};
     Onsets=cell(NC,1);
+    XdenoisedAll=[]; % Denoised Signals Buffer
+    XDEN=cell(NC,1); % Denoised Signals per Condition
     for c=1:NC
         R=Raster_Condition{c};
         [~,FramesSize]=size(R);
@@ -56,7 +58,12 @@ while ~strcmp('Yes',okbutton)
         end
         % Selection:
         R=R(:,Frame_A:Frame_B);
-        Raster_Selecter{c}=R;    
+        Raster_Selecter{c}=R; 
+        % Denoised Signal
+        for j=1:size(ESTSIGNALS,1)
+            XdenoisedAll=[XdenoisedAll,ESTSIGNALS{j,c}];
+        end
+        XDEN{c}=XdenoisedAll(:,Frame_A:Frame_B);
         % Show Selected Raster
         close(figure_raster);
         NVaux{c,1}='1'; % Number of "Videos" or Records
@@ -110,6 +117,11 @@ while ~strcmp('Yes',okbutton)
         % Inter Transients Interval pdf &
         % Transient Length pdf
         [~,~,~,~,StatsFeatures]=get_iti_pdf(R_Condition{c},fs);
+        RateofTransients=get_RoT(R_Condition{c},XDEN{c});
+        RasterDuration=size(R_Condition{c},2)/fs/60; % [MINUTES]
+        RoT=RateofTransients/RasterDuration; % Ca++Tranisetns per minute
+        % Stats...
+        RoTstats=[mean(RoT),mode(RoT),median(RoT),var(RoT),skewness(RoT),kurtosis(RoT)];
         % CoActivityGram Statistics & pdf: IMPORTANT!!!!
         if or(max(CAG)==0,min(CAG)==max(CAG))
             CAGbin=linspace(min(CAG),max(CAG),100);
@@ -129,7 +141,7 @@ while ~strcmp('Yes',okbutton)
             StatsFeatures(7),StatsFeatures(8),StatsFeatures(9),StatsFeatures(10),StatsFeatures(11),StatsFeatures(12),...
             CAGstats(1),CAGstats(2),CAGstats(3),CAGstats(4),CAGstats(5),CAGstats(6),...
             RoAstats(1),RoAstats(2),RoAstats(3),RoAstats(4),RoAstats(5),RoAstats(6),...
-            StatsFeatures(13),StatsFeatures(14),StatsFeatures(15),StatsFeatures(16),StatsFeatures(17),StatsFeatures(18),...
+            RoTstats(1),RoTstats(2),RoTstats(3),RoTstats(4),RoTstats(5),RoTstats(6),...
             'VariableNames',HeadersFeatures);
         disp('>>Raster Features Table: Done.');
         % Saving CSV - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -149,19 +161,7 @@ while ~strcmp('Yes',okbutton)
                 disp(['Saved Raster Features: ',Experiment,'-',Names_Conditions{c}])
             end
         end
-        % PLOTS *************************************
-        % PDFs
-%         plot(h1,ISIbin,ISIp,'LineWidth',2)
-%         plot(h2,Lengthbin,Lengthp,'LineWidth',2)
-%         plot(h3,CAGbin,CAGp,'LineWidth',2)
     end
-    %% Ending PLot
-%     xlabel(h1,'t[s]'); xlabel(h2,'t[s]'); xlabel(h3,'Coactive Neurons');
-%     axis(h1,'tight'), axis(h2,'tight'); axis(h3,'tight');
-%     grid(h1,'on'); grid(h2,'on'); grid(h3,'on');
-%     hold(h1,'off'); hold(h2,'off'); hold(h3,'off');
-%     legend(h1,Names_Conditions);
-%     set(h1, 'YScale', 'log'); set(h2, 'YScale', 'log');
     okbutton = questdlg('Selection Alright?');
     %% SAVE OUTPUT DATASET (.m file)
     %checkname=1; % USE AS INPUT

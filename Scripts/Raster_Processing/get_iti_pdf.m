@@ -29,7 +29,7 @@ for c=1:Cells
     ISIs=[ISIs,ISIcell];
     TranLengths=[TranLengths,TranLengthscell];
     % Transien Rate
-    RoT(c)=numel(TranLengthscell)*fs/numel(r)*60; % Ca Transients per MINUTE
+    % RoT(c)=numel(TranLengthscell)*fs/numel(r)*60; % Ca Transients per MINUTE
     % disp(c);
 end
 %% GET PDFs
@@ -49,5 +49,6 @@ end
 %% STATISTICS
 %   MEAN, MODE, MEDIAN, VARIANCE,SKEWNESS,KURTOSIS x ITI and Length pdfs
 StatsFeatures=[mean(ISIs/fs),mode(ISIs/fs),median(ISIs/fs),var(ISIs/fs),skewness(ISIs/fs),kurtosis(ISIs/fs),...
-mean(TranLengths/fs),mode(TranLengths/fs),median(TranLengths/fs),var(TranLengths/fs),skewness(TranLengths/fs),kurtosis(TranLengths/fs),...
-mean(RoT),mode(RoT),median(RoT),var(RoT),skewness(RoT),kurtosis(RoT)];
+mean(TranLengths/fs),mode(TranLengths/fs),median(TranLengths/fs),var(TranLengths/fs),skewness(TranLengths/fs),kurtosis(TranLengths/fs)];
+% ,...
+% mean(RoT),mode(RoT),median(RoT),var(RoT),skewness(RoT),kurtosis(RoT)];

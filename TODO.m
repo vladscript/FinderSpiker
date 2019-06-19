@@ -6,19 +6,12 @@
 %% FIXED  READY TO GO @ GIT
 % Detrending Bug: One More
 % Features From Get_Total_Network, Links Features Without->Merge THEM
-
-%% Bugs & New Functions NOW
-
 % Adjust lambda better for Detected Ones
-
-% Way of Measure Transients:Spikes between Valley and Peak from Sparse
-% Signal
+% Measure Transients:Spikes between Valley and Peak from Denoised Signal
+%% Bugs & New Functions NOW
+% Re-Get Raster Features: Transients Counting Update
 
 % Statistics: automate: OK
-
-% Adjust Contrast and Sliding Cells in Merge_Finder
-
-% Normalize Amplitude @ Detrended Signal
 
 % RETRIEVE SIGNALS & RECONSTRUCT VIDEO
 % retreive of Original Signals, coordinates, etc:
@@ -33,18 +26,17 @@
 %  Update to MATLAB 2019a !!!!! UNAM License
 % Test Mike's Clustering Algorithm 4 CoActivity (transposed matrix)and save as weel
 
+%% FUTURE *****************************************************************
 %%% MAKE ALGORITHMIA
-% To big lambdas-> decrease them a little more(!)
+% Adjust Contrast and Sliding Cells in Merge_Finder
+% Normalize Amplitude @ Detrended Signal
 % Add button to save Zoom image (MERGED MAGIC)
 % Save Selected Points SELECTED-> add to file .mat
 % Add Highlight Neuron Using Mouse at Plot_Raster
 % and other colors in the MERGE script : MAGENTA
 % Inspection for Each ROI...
-% Make RGB sum at Functional Network
 % driver ghost Issuee(?)
 % MAKE NETWORK highlight special neuron population
-
-%% FUTURE *****************************************************************
 % Driver Issues
 % Look at Line Equation: 0:N-1 or 1:N   [*]
 % Figure: reason whi mean(ROI) without distortion
