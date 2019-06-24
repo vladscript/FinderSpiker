@@ -33,38 +33,18 @@ while MoreFiles
     if runs==1
         SIM_MATRIX=cell(NC,NC);
     end
-    %%  Loop to Accummulate Data    
-    % Row Index
+    %%  Loop to Accummulate Data
+    
     auxc=1;
     for c=1:NC
-        % Column Index
-        if c>1
-            auxd=Nensembles(c-1)+1;
-        else
-            auxd=1;
-        end
-        % N Rows
+        auxd=1;
         Row=Nensembles(c);
-        Vector=[];
-        for d=c:NC
+        for d=1:NC
             fprintf('>Neural Ensembles Simmilarity: %s vs %s\n',Names_Conditions{c},Names_Conditions{d})
             % Get Values
             Col=Nensembles(d);
             MatrixCut=TheMatrix([auxc:auxc+Row-1],[auxd:auxd+Col-1]);
-            % Read Vector
-            if c==d
-                % Intra - Condition
-                % Read Upper Diagonal Elements Only
-                [Nec,Ned]=size(MatrixCut);
-                for kk=1:Nec
-                    for jj=kk+1:Ned
-                        Vector=[Vector;MatrixCut(kk,jj)];
-                    end
-                end            
-            else
-                % Inter - Condition
-                Vector=MatrixCut(:);
-            end
+            Vector=MatrixCut(:);
             SIM_MATRIX{c,d}=[SIM_MATRIX{c,d};Vector];
             % pause
             auxd=Col+1;

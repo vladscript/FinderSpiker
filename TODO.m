@@ -4,12 +4,14 @@
 % of the automatic method by dividing in -+ and -- (false+ & false-)
 
 %% FIXED  READY TO GO @ GIT
-% Detrending Bug: One More
-% Features From Get_Total_Network, Links Features Without->Merge THEM
-% Adjust lambda better for Detected Ones
-% Measure Transients:Spikes between Valley and Peak from Denoised Signal
+%  Bug @ Accumulate_Simm_Matrix, reading Simmilarity Matrix
+
 %% Bugs & New Functions NOW
-% Re-Get Raster Features: Transients Counting Update
+
+
+
+% Re-Get Raster Features: Transients Counting Update:
+% % DYSK: OK;
 
 % Statistics: automate: OK
 
