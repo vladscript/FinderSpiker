@@ -113,69 +113,69 @@ for lrow=1:numel(Labels)
     end
 end
 
-%% Calculate Deltas ******************************************************
-DeltaExps=cell(numel(Labels));
-ReferenceCondition={};
-for lrow=1:numel(Labels)
-    for lcol=lrow+1:numel(Labels)
-        if ~isempty(PairedExps{lrow,lcol})
-            EXPlist=PairedExps{lrow,lcol};
-            LabelsDelta={char(Labels(lcol));char(Labels(lrow))};
-            % Select Conditions in Order To Calculate Deltas
-            for c=1:2
-                [index_var(c),~] = listdlg('PromptString',...
-                    ['Set Condition in Order: ',num2str(c)],...
-                    'SelectionMode','single',...
-                    'ListString',LabelsDelta);
-            end
-            DeltaCondition=LabelsDelta(index_var);
-            % Save Reference Condition
-            ReferenceCondition=[ReferenceCondition;DeltaCondition(1)]
-            % For every Experiment:
-            DeltaAllFeature=[];
-            for e=1:numel(EXPlist)
-                IndxTable=find(ismember(EXPIDs,EXPlist{e}));
-                % Cond_A - Cond_B: COND_B/COND_A
-                RowA=IndxTable(Y(IndxTable)==DeltaCondition(1));
-                RowB=IndxTable(Y(IndxTable)==DeltaCondition(2));
-                % Relative Changes
-                DeltaFeature(X(RowB,:)~=0)=X(RowB,X(RowB,:)~=0)./X(RowA,X(RowB,:)~=0);
-                DeltaFeature(X(RowB,:)==0)=X(RowA,X(RowB,:)==0)-X(RowB,X(RowB,:)==0);
-                DeltaAllFeature=[DeltaAllFeature;100*DeltaFeature];
-            end
-            DeltaExps{lrow,lcol}=DeltaAllFeature;
-        else
-            disp('No Paired Conditions')
-        end
-    end
-end
-ReferenceCondition=unique(ReferenceCondition); % Condition as References
-%% Show Results
-RefIndex=[];
-for c=1:numel(ReferenceCondition)
-    RefIndex=[RefIndex;find(Labels==ReferenceCondition{c})];
-end
-
-for c=1:numel(ReferenceCondition)
-    TitleFig=Labels(RefIndex(c));
-    DeltaNum=[]; ConditionLabel={}; % To Make Boxplots
-    for r=1:numel(Labels)
-        if ~isempty(DeltaExps{r,RefIndex(c)})
-           % Gather All The Deltas 
-           VersusCondition=Labels(r);
-           Nexps=size(DeltaExps{r,RefIndex(c)},1);
-           for e=1:Nexps
-                ConditionLabel=[ConditionLabel;['+ ',char(VersusCondition)]];
-           end
-           DeltaNum=[DeltaNum;DeltaExps{r,RefIndex(c)}];
-        end
-    end
-    figure;
-    for IndexFeat=1:size(DeltaNum,2)
-        boxplot(DeltaNum(:,IndexFeat),ConditionLabel);
-        ylab=ylabel(['%\Delta',FeatureNames{IndexFeat}]);
-        ylab.Interpreter='tex';
-        title(['Reference: ',char(TitleFig)])
-        pause;
-    end
-end
+% % %% Calculate Deltas ******************************************************
+% % DeltaExps=cell(numel(Labels));
+% % ReferenceCondition={};
+% % for lrow=1:numel(Labels)
+% %     for lcol=lrow+1:numel(Labels)
+% %         if ~isempty(PairedExps{lrow,lcol})
+% %             EXPlist=PairedExps{lrow,lcol};
+% %             LabelsDelta={char(Labels(lcol));char(Labels(lrow))};
+% %             % Select Conditions in Order To Calculate Deltas
+% %             for c=1:2
+% %                 [index_var(c),~] = listdlg('PromptString',...
+% %                     ['Set Condition in Order: ',num2str(c)],...
+% %                     'SelectionMode','single',...
+% %                     'ListString',LabelsDelta);
+% %             end
+% %             DeltaCondition=LabelsDelta(index_var);
+% %             % Save Reference Condition
+% %             ReferenceCondition=[ReferenceCondition;DeltaCondition(1)]
+% %             % For every Experiment:
+% %             DeltaAllFeature=[];
+% %             for e=1:numel(EXPlist)
+% %                 IndxTable=find(ismember(EXPIDs,EXPlist{e}));
+% %                 % Cond_A - Cond_B: COND_B/COND_A
+% %                 RowA=IndxTable(Y(IndxTable)==DeltaCondition(1));
+% %                 RowB=IndxTable(Y(IndxTable)==DeltaCondition(2));
+% %                 % Relative Changes
+% %                 DeltaFeature(X(RowB,:)~=0)=X(RowB,X(RowB,:)~=0)./X(RowA,X(RowB,:)~=0);
+% %                 DeltaFeature(X(RowB,:)==0)=X(RowA,X(RowB,:)==0)-X(RowB,X(RowB,:)==0);
+% %                 DeltaAllFeature=[DeltaAllFeature;100*DeltaFeature];
+% %             end
+% %             DeltaExps{lrow,lcol}=DeltaAllFeature;
+% %         else
+% %             disp('No Paired Conditions')
+% %         end
+% %     end
+% % end
+% % ReferenceCondition=unique(ReferenceCondition); % Condition as References
+% % %% Show Results
+% % RefIndex=[];
+% % for c=1:numel(ReferenceCondition)
+% %     RefIndex=[RefIndex;find(Labels==ReferenceCondition{c})];
+% % end
+% % 
+% % for c=1:numel(ReferenceCondition)
+% %     TitleFig=Labels(RefIndex(c));
+% %     DeltaNum=[]; ConditionLabel={}; % To Make Boxplots
+% %     for r=1:numel(Labels)
+% %         if ~isempty(DeltaExps{r,RefIndex(c)})
+% %            % Gather All The Deltas 
+% %            VersusCondition=Labels(r);
+% %            Nexps=size(DeltaExps{r,RefIndex(c)},1);
+% %            for e=1:Nexps
+% %                 ConditionLabel=[ConditionLabel;['+ ',char(VersusCondition)]];
+% %            end
+% %            DeltaNum=[DeltaNum;DeltaExps{r,RefIndex(c)}];
+% %         end
+% %     end
+% %     figure;
+% %     for IndexFeat=1:size(DeltaNum,2)
+% %         boxplot(DeltaNum(:,IndexFeat),ConditionLabel);
+% %         ylab=ylabel(['%\Delta',FeatureNames{IndexFeat}]);
+% %         ylab.Interpreter='tex';
+% %         title(['Reference: ',char(TitleFig)])
+% %         pause;
+% %     end
+% % end

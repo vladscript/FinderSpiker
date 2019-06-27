@@ -157,17 +157,17 @@ for i=1:Ns
                         %[BigP,setPoint]=findpeaks(xdets,'Npeaks',1,'SortStr','descend');
                         if ~isempty(setPoint)
                             % If the Valley is beyond half signal's length
-                            disp('>> [Short Segment]: A peak in bewtwee.')
+                            disp('>> [Short Segment]: A peak in between.')
                             if setPoint>numel(xdets)/2
                                 mslope=(xxtr(setPoint)-xxtr(1))/setPoint;
-                                 xlinc=mslope*([0:numel(xxtr)-1])+xxtr(1);
+                                xlinc=mslope*([0:numel(xxtr)-1])+xxtr(1);
                             else
-                                mslope=(xdets(end)-xdets(setPoint))/(numel(xdets)-setPoint);
+                                mslope=(xxtr(end)-xxtr(setPoint))/(numel(xxtr)-setPoint);
                                 xlinc=mslope*([0:numel(xxtr)-1])+mslope*(-setPoint)+(xxtr(setPoint));
                             end
                             xdets=xxtr-xlinc;
                         end
-                        % Prevetn Negative Distortion:
+                        % Prevent of Negative Distortion:
                         if numel(xdets(xdets>=-std(noisex)))<numel(xdets(xdets<-std(noisex)))
                             disp('>> [Short Segment] Detrending by RLOESS')
                             xlinc=smooth(xxtr,numel(xxtr),'rloess')';

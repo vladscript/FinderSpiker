@@ -83,12 +83,16 @@ plotF0=plot(randn(1,10),'Parent',ax1);
 plotF0.Color='m';
 plotF0.LineStyle='-.';
 plotF0.LineWidth=2;
+% plotF0.Parent.XTick=[];
 hold(ax1,'off');
 ax2=subplot(3,2,3); % Detrended Data - - - - - - - - - - -
 set(ax2,'NextPlot','replacechildren');
 ax3=subplot(3,2,5); %  Driver - - - - - - - - - - - - - - - 
 plotdriver=bar(randn(1,10),'Parent',ax3);
 plotdriver.Parent.YLabel.String='Activity Driver';
+plotdriver.Parent.XLabel.String='[min]';
+plotdriver.Parent.XLabel.FontSize=9;
+plotdriver.Parent.YLabel.FontSize=9;
 plotdriver.Parent.TickLength=[0,0];
 set(plotdriver,'ButtonDownFcn',@remove_driver)
 ax4=subplot(3,2,[2,4]); % RASTER  - - - - - - - - - - - - - - - 
@@ -165,8 +169,16 @@ detectedneurons=[];
         okReview=find(preLAMBDAS{j,i}(isSIGNAL)==0); % Check wich ones haven't been processed
         if ~isempty(okReview)
             disp('Searching in Undetected Ca++ Transients');
-            hwait = figure('units','pixels','position',[500 500 200 150],'windowstyle','modal');
-            uicontrol('style','text','string','Processing...','units','pixels','position',[75 10 50 30]);
+            hwait = figure('units','pixels',...
+                'NumberTitle','off',...
+                'position',[400 400 400 150],...
+                'windowstyle','modal');
+            
+            uicontrol('style','text','string','>>Processing...',...
+                'FontSize',24,...
+                'BackgroundColor','black',...
+                'ForegroundColor','green',...
+                'units','pixels','position',[0 50 400 50]);
             drawnow;
             % Calculate Paramters:
             p=1; L=1; taus_0=[1,1,1];
@@ -263,6 +275,8 @@ detectedneurons=[];
         plot(ax2,[0,numel(xd)],-[std(xd-x_sparse),std(xd-x_sparse)],'-.r');
         hold(ax2,'off')
         axis(ax2,'tight');
+        ax2.XTick=0:30*fs:ceil(Frames/(60*fs))*60*fs;
+        ax2.XTickLabel=[];
         ylabel(ax2,'$\Delta F / F_0$','Interpreter','Latex')
         title(ax2,['SNR=',num2str(snrc),'[dB]'],...
               'FontSize',8,'FontWeight','normal');
@@ -281,13 +295,18 @@ detectedneurons=[];
         grid(plotdriver.Parent,'on');
         title(plotdriver.Parent,['\lambda=',num2str(lambda)],...
              'FontSize',8,'FontWeight','normal');
+        plotdriver.Parent.XTick=0:60*fs:ceil(Frames/(60*fs))*60*fs;
+        % Label Xticks:
+        for ilab=1:numel(plotdriver.Parent.XTick)
+            plotdriver.Parent.XTickLabel{ilab}=num2str(ilab-1);
+        end
         % RASTER  - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         Raux=R*2;
         if ~isempty(Raux(neuron,:)>0)
             Raux(neuron,Raux(neuron,:)>0)=1;
         end
         plotraster.CData=Raux;
-        plotraster.Parent.YLim=[0,Cells];
+        plotraster.Parent.YLim=[0,Cells+1];
         plotraster.Parent.XLim=[1,Frames];
         plotraster.Parent.XTick=[];
         plotraster.Parent.YTick=neuron;
@@ -301,6 +320,8 @@ detectedneurons=[];
         hold(ax5,'off')
         axis(ax5,'tight');
         ylabel(ax5,'CAG')
+        ax5.XTick=0:30*fs:ceil(Frames/(60*fs))*60*fs;
+        ax5.XTickLabel=[];
         drawnow;
     end
 
@@ -464,8 +485,7 @@ detectedneurons=[];
                     disp('                  <=Previus Video')
                 end
         end
-        checksignals.Name=[RubricTitle,Names_Conditions{i},' Video: ',num2str(j),...
-                            'Exp ID: ',Experiment];
+        checksignals.Name=[RubricTitle,'Exp ID: ',Experiment,' ',Names_Conditions{i},' Video: ',num2str(j)];
         indx_neuron=1; 
         isSIGNAL=indxSIGNALS{j,i};
         [Cells,Frames]=size(SIGNALS{j,i});
