@@ -5,14 +5,14 @@
 %   X:              Original Signals (cell)
 %   XY:             Original Set of Coordinates (Matrix)
 %   XY_selected:    Selected Coordinates (Matrix)
+% Such that:         XY_selected = XY(IndexSorted,:)
 % Output
 %   Indexes:    SELECTED Original Indexes
 %   Xsel:       Concatenated Selected Signals
 function [X_sel,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,X,XY_selected,XY)
 % Indexes of Original that were Selected
 [~,~,IndexSorted]=intersect(XY_selected,XY,'rows','stable');
-% Such that:
-% XY(1,:) ==  XY_selected(IndexSorted(1),:)
+
 [NV,NC]=size(X);
 X_sel=cell(1,NC);
 for n=1:NC

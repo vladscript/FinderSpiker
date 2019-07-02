@@ -10,6 +10,7 @@
 %   XY:                 Original Coordinates        NOT condition SORTED
 %   Names_Conditions:   Names of Conditions
 %   Experiment:         Name of the Experiment
+%   ESTSIGNAL:          Denoised Signals (transients counting)
 %   checkname           if it's specified->OMITS SAVING
 % Ouput
 %   RASTER_Selected_Clean   Matrix (ONLY ACTIVE cells)
@@ -19,8 +20,17 @@
 %   New_indexes:            Sleected & Sorted Indexes of the Cells
 function [RASTER_Selected_Clean,XY_selected,R_Condition,Onsets,New_Index]= Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment,ESTSIGNALS,varargin)
 %% Setup
+dontupdmat=false;
 if numel(varargin)==1
-    checkname=0;
+    if ismatrix(varargin{1})
+        checkname=1;
+        Onsets=varargin{1};
+        RasterDurations=get_raster_durations(Onsets,Raster_Condition,fs);
+        dontupdmat=true;
+    else
+        checkname=0;
+    end
+        
 else
     checkname=1;
 end
@@ -34,10 +44,10 @@ while ~strcmp('Yes',okbutton)
     [~,NC]=size(Raster_Condition);
     Raster_Selecter={};
     Onsets=cell(NC,1);
-    XdenoisedAll=[]; % Denoised Signals Buffer
     XDEN=cell(NC,1); % Denoised Signals per Condition
     for c=1:NC
         R=Raster_Condition{c};
+        XdenoisedAll=[]; % Denoised Signals Buffer
         [~,FramesSize]=size(R);
         Plot_Raster_Ensembles(R,fs);
         figure_raster=gcf;
@@ -62,6 +72,10 @@ while ~strcmp('Yes',okbutton)
         % Denoised Signal
         for j=1:size(ESTSIGNALS,1)
             XdenoisedAll=[XdenoisedAll,ESTSIGNALS{j,c}];
+        end
+        if size(Raster_Condition{c},2)~=size(XdenoisedAll,2)
+            Frame_A=round(RasterDurations(c,1)*60*fs+1);
+            Frame_B=round(RasterDurations(c,2)*60*fs);
         end
         XDEN{c}=XdenoisedAll(:,Frame_A:Frame_B);
         % Show Selected Raster
@@ -99,29 +113,29 @@ while ~strcmp('Yes',okbutton)
         R=Raster_Condition_Sel{c};
         % Raster (SORTED!!!)
         R=R(New_Index,:);
+        Xden=XDEN{c}(New_Index,:);
         % Raster (JUST ACTIVE!!!)
         R_Condition{c}=R(ActiveNeurons,:);
+        Xden=Xden(ActiveNeurons,:);
         % XY_Condition{c}=XY_selected;
         % Activity Indexes:*******************************************
         % Feature of ALL Rows of the SELECTED RASTER (BETTER OFF!)
         [Descriptive,AI_1(c,1),AI_2(c,1)]=get_general_features(R_Condition{c});
-        AN=Descriptive.AN;
+        AN=Descriptive.AN;       % Active Neurons
         DurAc=Descriptive.DurAc; % Number of Active Frames
-        CAG=Descriptive.CAG;
-        RoA=Descriptive.RoA;
-        RAN=Descriptive.RAN;
-        % Stats...
-        RoAstats=[mean(RoA),mode(RoA),median(RoA),var(RoA),skewness(RoA),kurtosis(RoA)];
-        CAGstats=[mean(CAG),mode(CAG),median(CAG),var(CAG),skewness(CAG),kurtosis(CAG)];
-        % Statistics from pdfs*******************************************
-        % Inter Transients Interval pdf &
-        % Transient Length pdf
-        [~,~,~,~,StatsFeatures]=get_iti_pdf(R_Condition{c},fs);
-        RateofTransients=get_RoT(R_Condition{c},XDEN{c});
-        RasterDuration=size(R_Condition{c},2)/fs/60; % [MINUTES]
-        RoT=RateofTransients/RasterDuration; % Ca++Tranisetns per minute
-        % Stats...
-        RoTstats=[mean(RoT),mode(RoT),median(RoT),var(RoT),skewness(RoT),kurtosis(RoT)];
+        CAG=Descriptive.CAG;     % Coactivity
+        RoA=Descriptive.RoA;     % Active Frames / Total Frames
+        RAN=Descriptive.RAN;     % Rate of Active Neurons
+        
+        % delete:__________________________________________________________
+        % [~,~,~,~,StatsFeatures]=get_iti_pdf(R_Condition{c},fs);
+        % _________________________________________________________________
+        % Temporal Measures According to Denoised Signal (wavelet analysis)
+        [NoT,ITI,LT]=get_RoT(R_Condition{c},Xden);
+        ITI=ITI/fs; LT=LT/fs;                                   % [SECONDS]
+        RasterDuration=size(R_Condition{c},2)/fs/60;            % [MINUTES]
+        RoT=NoT/RasterDuration; % Ca++Tranisetns per minute
+        % -----------------------------------------------------------------
         % CoActivityGram Statistics & pdf: IMPORTANT!!!!
         if or(max(CAG)==0,min(CAG)==max(CAG))
             CAGbin=linspace(min(CAG),max(CAG),100);
@@ -137,11 +151,11 @@ while ~strcmp('Yes',okbutton)
         % 'RoAmean','RoAmode','RoAmedian','RoAvar','RoAskew','RoAkurt',...
         % 'RoTmean','RoTmode','RoTmedian','RoTvar','RoTskew','RoTkurt']
         Trasterfeatures=table(RAN,DurAc,AI_1(c,1),AI_2(c,1),...
-            StatsFeatures(1),StatsFeatures(2),StatsFeatures(3),StatsFeatures(4),StatsFeatures(5),StatsFeatures(6),...
-            StatsFeatures(7),StatsFeatures(8),StatsFeatures(9),StatsFeatures(10),StatsFeatures(11),StatsFeatures(12),...
-            CAGstats(1),CAGstats(2),CAGstats(3),CAGstats(4),CAGstats(5),CAGstats(6),...
-            RoAstats(1),RoAstats(2),RoAstats(3),RoAstats(4),RoAstats(5),RoAstats(6),...
-            RoTstats(1),RoTstats(2),RoTstats(3),RoTstats(4),RoTstats(5),RoTstats(6),...
+            mean(ITI),mode(ITI),median(ITI),var(ITI),skewness(ITI),kurtosis(ITI),...
+            mean(LT), mode(LT), median(LT), var(LT), skewness(LT), kurtosis(LT),...
+            mean(CAG),mode(CAG),median(CAG),var(CAG),skewness(CAG),kurtosis(CAG),...
+            mean(RoA),mode(RoA),median(RoA),var(RoA),skewness(RoA),kurtosis(RoA),...
+            mean(RoT),mode(RoT),median(RoT),var(RoT),skewness(RoT),kurtosis(RoT),...
             'VariableNames',HeadersFeatures);
         disp('>>Raster Features Table: Done.');
         % Saving CSV - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -149,30 +163,31 @@ while ~strcmp('Yes',okbutton)
             NameDir='Raster Features\';
             Experiment=Experiment(Experiment~='\');
             if isdir([FileDirSave,'\Raster Features'])
-                writetable(Trasterfeatures,[FileDirSave,NameDir,Experiment,'_',Names_Conditions{c},'Raster_Features.csv'],...
-                    'Delimiter',',','QuoteStrings',true);
                 disp(['Saved Raster Features: ',Experiment,'-',Names_Conditions{c}])
             else % Create Directory
                 disp('Directory >Raster Features< created')
                 mkdir([FileDirSave,NameDir]);
-                writetable(Trasterfeatures,[FileDirSave,NameDir,Experiment,'_',Names_Conditions{c},'Raster_Features.csv'],...
-                    'Delimiter',',','QuoteStrings',true);
+                
                 disp('Resume Tables Directory Created');
                 disp(['Saved Raster Features: ',Experiment,'-',Names_Conditions{c}])
             end
+            writetable(Trasterfeatures,[FileDirSave,NameDir,Experiment,'_',Names_Conditions{c},'Raster_Features.csv'],...
+                    'Delimiter',',','QuoteStrings',true);
         end
     end
     okbutton = questdlg('Selection Alright?');
     %% SAVE OUTPUT DATASET (.m file)
     %checkname=1; % USE AS INPUT
-    while checkname==1
-        
+    while ~dontupdmat 
         DefaultPath=pwd; % Current Diretory of FinderSpiker
         slashes=find(DefaultPath=='\');
         DefaultPath=[DefaultPath(1:slashes(end)),'\Processed Data'];
         
         [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
             'MultiSelect', 'off',DefaultPath);
+        if FileName==0
+            dontupdmat=true;
+        end
         % dotindex=find(FileName=='.');
         if strcmp(FileName(1:end-4),Experiment)
             checkname=0;

@@ -1,6 +1,5 @@
 %% STEPS GUIDE ############################################################
-
-% SIGNAL PROCESSING: Detect Calcium Transients Events**********************
+% 1. SIGNAL PROCESSING: Detect Calcium Transients Events**********************
 % >>Finder_Spiker_Calcium
 % >>Detected_Visual_Inspection
 % >>Undetected_Visual_Inspection
@@ -8,54 +7,53 @@
 % REVIEW DATA:
 % >>Plot_Experiment
 
-% RASTER SELECTION*********************************************************
+% 2. RASTER SELECTION*********************************************************
 % ACTUAL MODE: @ Original Coordiantes Order
 % >>Select_Rasters
+% % % Save CSV Raster-Features of Merged & NO-Merged Cells:
+% 
+% >>Select_Raster_PositiveCells;
+% >>Select_Raster_for_NN(fs,R_nomerged,XY,Names_Conditions,Experiment);
 
-% CHECK RASTER's Selection DURATIONs: *************************************
+% 2.1 CHECK RASTER's Selection DURATIONs: *************************************
 % >>RasterDurations=get_raster_durations(Onsets,R_Condition,fs);
 
-% TOTAL NETWORK (without Ensembles) ***************************************
+% 2.2 TOTAL NETWORK (without Ensembles) ***************************************
 % Save Links Features Without neither Ensembling nor Thresholding
 % >>Get_Total_Network
 % Show Boxplots and Make Table of Features: ONLY TOTAL or POSITIVE(!)
 % >>Links_Features_Display
 
-% RETRIEVE RASTER for ANALYSIS ********************************************
+% 2.3 RETRIEVE RASTER for ANALYSIS ********************************************
 % >>R=RASTER_Selected_Clean'; % ALL CONDITIONS CONCATeNATED
 % >>R_CONDITION1=R_Condition{1}; % Cells x Frames (dim)
 % ...
 % >>R_CONDITIONi=R_Condition{i};
 
-% CLUSTERING NEURONAL ENSEMBLES *******************************************
+% 3. CLUSTERING NEURONAL ENSEMBLES *******************************************
 % AUTOMATIC
 % >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDTIONi);
 % MANUAL GUI (by JP): 
 % >>NeuralNetwork 
 
-% DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI) ************
+% 3.1 DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI) ************
 % Neural ensemble and Functional Network Features Extraction
 % >> Ensemble_Sorting
 
-% PLOT ENSEMBLES FAST *****************************************************
+% 3.2 PLOT ENSEMBLES FAST *****************************************************
 % >> ImageEnsembles(R_ConditionNamej_Analysis);     % without  Hebbian Sequences
 % >> ImageEnsembles(R_ConditionNamej_Analysis,1);   % with Hebbian Sequences
 
-% COLOCALIZATION OF MARKED CELLS ******************************************
+% 4. COLOCALIZATION OF MARKED CELLS ******************************************
 % % % Previously LOAD MAT FILE (?)
 % 
 % >>Merge_Finder_Magic
 %       It gets outputs: R_merged,R_nomerged,MetaDataColocaliation
 % 
-% % % Save CSV Raster-Features of Merged & NO-Merged Cells:
-% 
-% >>Select_Raster_for_NN(fs,R_merged,XY,Names_Conditions,Experiment);
-% >>Select_Raster_for_NN(fs,R_nomerged,XY,Names_Conditions,Experiment);
-% 
 % Check Raster plots:
 % >>Plot_Merged_NotMerged
 
-% RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION ************************
+% 5. RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION ************************
 % 0) Get Merged Coordinates (IF SO)
 % >> XY_merged=XY_selected(MetaDataColocaliation.PositiveCells,:);
 % 1) Plot Raster (*without sorting*) from:
@@ -69,14 +67,15 @@
 
 % N-EXPERIMENTS RESULTS ###################################################
 
-% ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS ****************************
+% 6. ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS ****************************
 % Choose One-by-One .mat Files-> Save .mat Files:
 % >>Accumulate_Raster_Distances; % Save at CSV Files
 % >>Accumulate_RoA_IEI_ED
 % >>Accumulate_Ensembles_RoEn_IEnI_EnD
 % >>Accumulate_Simm_Matrix
 
-% RASTER/ENSEMBLE/NETWORK FEATURES AND TABLES MAKER ***********************
+% 7. RASTER/ENSEMBLE/NETWORK FEATURES AND TABLES MAKER ***********************
+% 
 % RASTER FEATURES
 % >>Raster_Features_Display                 % make CSV table
 % ENSEMBLES GENERAL FEATURES
@@ -92,12 +91,12 @@
 % >>Merge_Feature_Datasets          % Make DATASET of ONE Kind MULTI EXPS
 %  Get ALL Features Dataset: Raster,Ensembles,Networks
 % >>Merge_Datasets                  % Make DATSET of the 3 Kinds
-% 
 
-% DATA FEATURE EXPLORING: After Merging Datasets or Single Type Datasets.
+
+% 8. DATA FEATURE EXPLORING: After Merging Datasets or Single Type Datasets.
 % >>Feature_Explorer         *UNDER CONSTRUCTION*
 
-% MACHINE LEARNING: choose a Dataset:
+% 9. MACHINE LEARNING: choose a Dataset:
 % >>Features_Datasets_NBC; % *UNDER CONSTRUCTION*
 
 

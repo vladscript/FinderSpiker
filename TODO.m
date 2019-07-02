@@ -9,8 +9,12 @@
 %  User Guide Separetely
 %% Bugs & New Functions NOW
 
+
+
+% Rate of Transients: ACCUMULATIVE and MERGED ISSUE
+
 % Re-Get Raster Features: Transients Counting Update:
-% % DYSK: OK;
+% % DYSK: 
 
 % Feature Table [Global]: DYSK ...
 
@@ -27,7 +31,7 @@
 % Re make clean video
 
 % delete >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
-% NN2Gephi.m; Raster2fNet.m
+% NN2Gephi.m; Raster2fNet.m; get_iti_pdf; interval_duration_events;
 
 % Make PCA of RASTER: 
 % denoise raster: get most variance PCs and rebuild raster
@@ -44,7 +48,7 @@
 % Add Highlight Neuron Using Mouse at Plot_Raster
 % and other colors in the MERGE script : MAGENTA
 % Inspection for Each ROI...
-% driver ghost Issuee(?)
+% driver ghost Issuee(?)->Response Size
 % MAKE NETWORK highlight special neuron population
 % 
 % Look at Line Equation: 0:N-1 or 1:N   [*]

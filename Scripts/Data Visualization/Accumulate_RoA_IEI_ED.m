@@ -55,13 +55,26 @@ while MoreFiles
         end
     end
     %%  Loop to Accummulate Data
+    RasterDurations=get_raster_durations(Onsets,R_Condition,fs);
     for c=1:NC
         fprintf('\nGetting Data from %s ',Names_Conditions{c})
         % Read Raster
         R_ALL=R_Condition{c};
+        % Read Denoised Signal:
+        [CleanSignals_ALL,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,ESTSIGNALS,XY_selected,XY);
+        
         if aremerged
+            % Raster of Positive Cells
             R_POS=R_merged{c};
+            % Get Coordinates
+            XY_merged=XY_selected(MetaDataColocaliation.PositiveCells,:);
+            % Indexes of the Original Denoised Signals and Vectors
+            [CleanSignals_POS,~]=Retrieve_Selected_Signal(Onsets,R_Condition,ESTSIGNALS,XY_merged,XY);
+            % Raster of Positive Cells
             R_NEG=R_nomerged{c};
+            XY_nomerged=XY_selected(MetaDataColocaliation.NegativeCells,:);
+            % Indexes of the Original Denoised Signals and Vectors
+            [CleanSignals_NEG,~]=Retrieve_Selected_Signal(Onsets,R_Condition,ESTSIGNALS,XY_nomerged,XY);
         end
         % Read Sizes
         [N_ALL,F_ALL]=size(R_ALL);
@@ -78,62 +91,43 @@ while MoreFiles
         AllActive=find(sum(R_ALL,2));
         fprintf('with %i of %i Active Neurons \n',numel(AllActive),numel(sum(R_ALL,2)));
         % ONLY ACTIVE
-        % RoA_ALL{c}=[RoA_ALL{c}();sum(R_ALL(AllActive,:),2)./F_ALL];
         % ALL NEURONS: (better off!) Inclueded [Zero-Rates]
+        % Rate of Activity ******************************************
         RoA_ALL{c}=[RoA_ALL{c}();sum(R_ALL,2)./F_ALL];
         if aremerged
             RoA_POS{c}=[RoA_POS{c};sum(R_merged{c},2)./F_POS];
             RoA_NEG{c}=[RoA_NEG{c};sum(R_nomerged{c},2)./F_NEG];        
         end
         % Inter Calcium Transient Interval & Calcium Transient Duration
-        ISIs=[];
-        TranLengths=[];
-        RoTs=[];
-        for i=1:N_ALL
-            r=R_ALL(i,:);
-            [ISIcell,TranLengthscell]=interval_duration_events(r);
-            % row vectors
-            ISIs=[ISIs,ISIcell]; 
-            TranLengths=[TranLengths,TranLengthscell];
-            RoT(i)=numel(TranLengthscell)*fs/numel(r)*60;
-            % RoTs=[RoTs,RoT];
-        end
-        ISIs_ALL{c}=[ISIs_ALL{c};ISIs'/fs];
-        TranLengths_ALL{c}=[TranLengths_ALL{c};TranLengths'/fs];
-        RoT_ALL{c}=[RoT_ALL{c};RoT'];
+        [NoT,ITI,LT]=get_RoT(R_ALL,CleanSignals_ALL{c});
+        ISIs=ITI/fs;                            % [seconds]
+        TranLengths=LT/fs;                      % [seconds]
+        RoTs=NoT/(size(R_Condition{c},2)/fs/60);  % [minutes]
+        % Accumulate
+        ISIs_ALL{c}=[ISIs_ALL{c};ISIs/fs];
+        TranLengths_ALL{c}=[TranLengths_ALL{c};TranLengths/fs];
+        RoT_ALL{c}=[RoT_ALL{c};RoTs];
         % + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
         % If there are merged colocated cells + + + + + + + + + + + + + 
         if aremerged
             % Positive Colocated
-            ISIsPOS=[];
-            TranLengthsPOS=[];
-            RoTPOS=[];
-            for i=1:N_POS
-                r=R_POS(i,:);
-                [ISIcell,TranLengthscell]=interval_duration_events(r);
-                % row vectors
-                ISIsPOS=[ISIsPOS,ISIcell]; 
-                TranLengthsPOS=[TranLengthsPOS,TranLengthscell];
-                RoTPOS(i)=numel(TranLengthscell)*fs/numel(r)*60;
-            end
-            ISIs_POS{c}=[ISIs_POS{c};ISIsPOS'/fs];
-            TranLengths_POS{c}=[TranLengths_POS{c};TranLengthsPOS'/fs];
-            RoT_POS{c}=[RoT_POS{c};RoTPOS'];
+            [NoT,ITI,LT]=get_RoT(R_merged{c},CleanSignals_POS{c});
+            ISIsPOS=ITI/fs;                         % [seconds]
+            TranLengthsPOS=LT/fs;                   % [seconds]
+            RoTPOS=NoT/(size(R_merged{c},2)/fs/60);   % [minutes]
+            % Accumulate
+            ISIs_POS{c}=[ISIs_POS{c};ISIsPOS/fs];
+            TranLengths_POS{c}=[TranLengths_POS{c};TranLengthsPOS/fs];
+            RoT_POS{c}=[RoT_POS{c};RoTPOS];
             % Negative
-            ISIsNEG=[];
-            TranLengthsNEG=[];
-            RoTNEG=[];
-            for i=1:N_NEG
-                r=R_NEG(i,:);
-                [ISIcell,TranLengthscell]=interval_duration_events(r);
-                % row vectors
-                ISIsNEG=[ISIsNEG,ISIcell]; 
-                TranLengthsNEG=[TranLengthsNEG,TranLengthscell];
-                RoTNEG(i)=numel(TranLengthscell)*fs/numel(r)*60;
-            end
-            ISIs_NEG{c}=[ISIs_NEG{c};ISIsNEG'/fs];
-            TranLengths_NEG{c}=[TranLengths_NEG{c};TranLengthsNEG'/fs];
-            RoT_NEG{c}=[RoT_NEG{c};RoTNEG'];
+            [NoT,ITI,LT]=get_RoT(R_nomerged{c},CleanSignals_NEG{c});
+            ISIsNEG=ITI/fs;                         % [seconds]
+            TranLengthsNEG=LT/fs;                   % [seconds]
+            RoTNEG=NoT/(size(R_nomerged{c},2)/fs/60); % [minutes]
+            % Accumulate
+            ISIs_NEG{c}=[ISIs_NEG{c};ISIsNEG/fs];
+            TranLengths_NEG{c}=[TranLengths_NEG{c};TranLengthsNEG/fs];
+            RoT_NEG{c}=[RoT_NEG{c};RoTNEG];
         end
     end
     % Disp Experiments Selected:
