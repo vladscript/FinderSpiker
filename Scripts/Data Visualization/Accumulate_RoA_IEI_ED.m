@@ -104,8 +104,8 @@ while MoreFiles
         TranLengths=LT/fs;                      % [seconds]
         RoTs=NoT/(size(R_Condition{c},2)/fs/60);  % [minutes]
         % Accumulate
-        ISIs_ALL{c}=[ISIs_ALL{c};ISIs/fs];
-        TranLengths_ALL{c}=[TranLengths_ALL{c};TranLengths/fs];
+        ISIs_ALL{c}=[ISIs_ALL{c};ISIs];
+        TranLengths_ALL{c}=[TranLengths_ALL{c};TranLengths];
         RoT_ALL{c}=[RoT_ALL{c};RoTs];
         % + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
         % If there are merged colocated cells + + + + + + + + + + + + + 
@@ -115,9 +115,9 @@ while MoreFiles
             ISIsPOS=ITI/fs;                         % [seconds]
             TranLengthsPOS=LT/fs;                   % [seconds]
             RoTPOS=NoT/(size(R_merged{c},2)/fs/60);   % [minutes]
-            % Accumulate
-            ISIs_POS{c}=[ISIs_POS{c};ISIsPOS/fs];
-            TranLengths_POS{c}=[TranLengths_POS{c};TranLengthsPOS/fs];
+            % Accumulate Postitive
+            ISIs_POS{c}=[ISIs_POS{c};ISIsPOS];
+            TranLengths_POS{c}=[TranLengths_POS{c};TranLengthsPOS];
             RoT_POS{c}=[RoT_POS{c};RoTPOS];
             % Negative
             [NoT,ITI,LT]=get_RoT(R_nomerged{c},CleanSignals_NEG{c});
@@ -125,8 +125,8 @@ while MoreFiles
             TranLengthsNEG=LT/fs;                   % [seconds]
             RoTNEG=NoT/(size(R_nomerged{c},2)/fs/60); % [minutes]
             % Accumulate
-            ISIs_NEG{c}=[ISIs_NEG{c};ISIsNEG/fs];
-            TranLengths_NEG{c}=[TranLengths_NEG{c};TranLengthsNEG/fs];
+            ISIs_NEG{c}=[ISIs_NEG{c};ISIsNEG];
+            TranLengths_NEG{c}=[TranLengths_NEG{c};TranLengthsNEG];
             RoT_NEG{c}=[RoT_NEG{c};RoTNEG];
         end
     end

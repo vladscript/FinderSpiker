@@ -7,11 +7,9 @@
 %  Bug @ Accumulate_Simm_Matrix, reading Simmilarity Matrix
 %  Updates for the Calcium_Magic GUI (Raster Cleaning)
 %  User Guide Separetely
+%   Acc RoT,RoA -> Update
+%   Rate of Transients: ACCUMULATIVE and MERGED ISSUE
 %% Bugs & New Functions NOW
-
-
-
-% Rate of Transients: ACCUMULATIVE and MERGED ISSUE
 
 % Re-Get Raster Features: Transients Counting Update:
 % % DYSK: 

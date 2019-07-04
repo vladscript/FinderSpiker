@@ -178,16 +178,12 @@ while ~strcmp('Yes',okbutton)
     okbutton = questdlg('Selection Alright?');
     %% SAVE OUTPUT DATASET (.m file)
     %checkname=1; % USE AS INPUT
-    while ~dontupdmat 
+    while ~dontupdmat && strcmp('Yes',okbutton)
         DefaultPath=pwd; % Current Diretory of FinderSpiker
         slashes=find(DefaultPath=='\');
-        DefaultPath=[DefaultPath(1:slashes(end)),'\Processed Data'];
-        
+        DefaultPath=[DefaultPath(1:slashes(end)),'\Processed Data'];        
         [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
             'MultiSelect', 'off',DefaultPath);
-        if FileName==0
-            dontupdmat=true;
-        end
         % dotindex=find(FileName=='.');
         if strcmp(FileName(1:end-4),Experiment)
             checkname=0;
@@ -195,12 +191,14 @@ while ~strcmp('Yes',okbutton)
             save([PathName,FileName],'RASTER_Selected_Clean','XY_selected',...
                 'R_Condition','New_Index','Onsets','-append');
             disp([Experiment,'   -> UPDATED (Selected Data)'])
+            dontupdmat=true;
         elseif FileName==0
-            checkname=0;
+            checkname=0; dontupdmat=true;
             disp('*************DISCARDED************')
         else
             disp('Not the same Experiment!')
             disp('Try again!')
+            okbutton='No';
         end
     end    
 end
