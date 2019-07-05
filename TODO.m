@@ -2,25 +2,25 @@
 % Manual Mode is divideed in two parts->
 % Necessary to know the statistical power of the Automatic Mode:
 % of the automatic method by dividing in -+ and -- (false+ & false-)
-
+% Transients are calculated from denoised signal (wavelet analysis)
 %% FIXED  READY TO GO @ GIT
-%  Bug @ Accumulate_Simm_Matrix, reading Simmilarity Matrix
-%  Updates for the Calcium_Magic GUI (Raster Cleaning)
-%  User Guide Separetely
-%   Acc RoT,RoA -> Update
-%   Rate of Transients: ACCUMULATIVE and MERGED ISSUE
+%   Accumulate RoA, RoT, etc
+%   User Guide 
 %% Bugs & New Functions NOW
 
 % Re-Get Raster Features: Transients Counting Update:
-% % DYSK: 
+% % DYSK:   OK
+% % A2A:    OK
+% % CULTIVO:    
 
-% Feature Table [Global]: DYSK ...
+% Merge_Datasets: skip if missing
+
+% Feature Table [Global]: 
+% % A2A...Raster
 
 % Statistics: automate: OK
 
-% Detrending ISSUESx4
-
-% CAG threshold (Mike's - MonteCarlo)
+% CAG threshold (Mike's Script - MonteCarlo)
 
 % Recover Coordinates of Ensembles and Display as scatter plots
 
@@ -59,3 +59,4 @@
 % Setup Script: deconvolution parameters
 % Check at Signals with Huge Valley (synaptic like)
 
+%% ########################################################################

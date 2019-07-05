@@ -41,7 +41,7 @@ else
      'EDmean','EDmode','EDmedian','EDvar','EDskew','EDkurt'};
     else
         FolderDefault=[];
-%         HeadersFeatures to be READ
+        % HeadersFeatures to be READ
     end
 end
 CurrentPathOK=[Dirpwd(1:slashesindx(end)),FolderDefault]; 

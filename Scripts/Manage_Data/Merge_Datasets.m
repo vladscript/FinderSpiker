@@ -4,7 +4,7 @@ Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
 CurrentPathOK=[Dirpwd(1:slashesindx(end))]; % FinderSpiker Root Folder
 
-% Raster Activity Minimal Constraint:
+%% Raster Activity Minimal Constraint:
 [FileName,PathName] = uigetfile('*.csv','Raster Activity Dataset',...
     'MultiSelect', 'off',CurrentPathOK);
 CurrentPathOK=PathName;
@@ -13,21 +13,31 @@ Yraster=categorical(table2array( Xraster(:,1)) );   % Labels
 EXPIDraster=table2array( Xraster(:,2));             % EXPIDs Cell of Strings
 FeaturesRaster=Xraster.Properties.VariableNames;    % Feature Names
 
-% Ensembles General Minimal Constraint:
+%% Ensembles General Minimal Constraint:
 [FileName,PathName] = uigetfile('*.csv','General Ensembles Dataset',...
     'MultiSelect', 'off',CurrentPathOK);
-Xensemble=readtable([PathName,FileName]);
-Yensemble=categorical(table2array( Xensemble(:,1)) );   % Categorical ARRAYS
-EXPIDensemble=table2array( Xensemble(:,2));             % EXPIDs Cell of Strings
-FeaturesEnsemble=Xensemble.Properties.VariableNames;    % Feature Names
+if FileName==PathName
+    Xensemble=table;        % empty table
+    FeaturesEnsemble={};    % empty cell
+    EXPIDensemble={};       % empty cell
+    Yensemble=[];           % empty vector
+    disp('>>No Ensemble Features');
+else
+    disp('>>Reading Ensemble Features');
+    Xensemble=readtable([PathName,FileName]);
+    Yensemble=categorical(table2array( Xensemble(:,1)) );   % Categorical ARRAYS
+    EXPIDensemble=table2array( Xensemble(:,2));             % EXPIDs Cell of Strings
+    FeaturesEnsemble=Xensemble.Properties.VariableNames;    % Feature Names
+    ignftr=[15,16,17]; % Links/Neuron A->euron B Most Connected
+    acceptcols=setdiff(1:numel(FeaturesEnsemble),ignftr);
+    Xensemble=Xensemble(:,acceptcols);
+    FeaturesEnsemble=FeaturesEnsemble(acceptcols);
+    disp('>>Done.');
+end
 
-ignftr=[15,16,17]; % Links/Neuron A->euron B Most Connected
 
-acceptcols=setdiff(1:numel(FeaturesEnsemble),ignftr);
-Xensemble=Xensemble(:,acceptcols);
-FeaturesEnsemble=FeaturesEnsemble(acceptcols);
 
-% Load NETWORK csv
+%% Load NETWORK csv
 [FileName,PathName,MoreFiles] = uigetfile('*.csv','Network Dataset file',...
     'MultiSelect', 'off',CurrentPathOK);
 Xnet=readtable([PathName,FileName]);

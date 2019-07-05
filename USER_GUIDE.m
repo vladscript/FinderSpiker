@@ -1,56 +1,61 @@
-%% STEPS GUIDE ############################################################
-% 1. SIGNAL PROCESSING: Detect Calcium Transients Events**********************
+%%#########################################################################
+% ######################### *STEPS GUIDE* #################################
+% #########################################################################
+% 
+%% 1. SIGNAL PROCESSING: Detect Calcium Transients Events******************
+% Getting Activation Matrix (raster) from Calium Imaging Data for each Cell
+% DATA:                 VIDEOS, Sampling Frequency & Set of Coordinates
 % >>Finder_Spiker_Calcium
 % >>Detected_Visual_Inspection
 % >>Undetected_Visual_Inspection
 % >>Save_and_Plot
 % REVIEW DATA:
 % >>Plot_Experiment
-
-% 2. RASTER SELECTION*********************************************************
+% 
+%% 2. RASTER SELECTION*****************************************************
 % ACTUAL MODE: @ Original Coordiantes Order
 % >>Select_Rasters
-% % Save CSV Raster-Features of Merged & NO-Merged Cells:
+% % Save CSV Raster-Features of Merged & NO-Merged Cells (Step 4):
 % >>Select_Raster_PositiveCells;
 % >>Select_Raster_NegativeCells
 % 
-% 2.1 CHECK RASTER's Selection DURATIONs: *************************************
+% 2.1 CHECK RASTER's Selection DURATIONs: *********************************
 % >>RasterDurations=get_raster_durations(Onsets,R_Condition,fs);
 % 
-% 2.2 TOTAL NETWORK (without Ensembles) ***************************************
+% 2.2 TOTAL NETWORK (without Step 3) **************************************
 % Save Links Features Without neither Ensembling nor Thresholding
 % >>Get_Total_Network
 % Show Boxplots and Make Table of Features: ONLY TOTAL or POSITIVE(!)
 % >>Links_Features_Display
 % 
-% 2.3 RETRIEVE RASTER for ANALYSIS ********************************************
+% 2.3 RETRIEVE RASTER for ANALYSIS ****************************************
 % >>R=RASTER_Selected_Clean'; % ALL CONDITIONS CONCATeNATED
 % >>R_CONDITION1=R_Condition{1}; % Cells x Frames (dim)
 % ...
 % >>R_CONDITIONi=R_Condition{i};
-
-% 3. CLUSTERING NEURONAL ENSEMBLES *******************************************
+% 
+%% 3. CLUSTERING NEURONAL ENSEMBLES ***************************************
 % AUTOMATICAL MAGIC
 % >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDTIONi);
 % HANDCRAFTED GUI (by JP): 
 % >>NeuralNetwork 
-
-% 3.1 DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI) ************
+% 
+% 3.1 DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI) ********
 % Neural ensemble and Functional Network Features Extraction
 % >> Ensemble_Sorting
-
-% 3.2 PLOT ENSEMBLES FAST *****************************************************
-% >> ImageEnsembles(R_ConditionNamej_Analysis);     % without  Hebbian Sequences
-% >> ImageEnsembles(R_ConditionNamej_Analysis,1);   % with Hebbian Sequences
-
-% 4. COLOCALIZATION OF MARKED CELLS ******************************************
+% 
+% 3.2 PLOT ENSEMBLES FAST *************************************************
+% >> ImageEnsembles(R_ConditionNamej_Analysis,1);   %with Hebbian Sequences
+% >> ImageEnsembles(R_ConditionNamej_Analysis);     %without  
+% 
+%% 4. COLOCALIZATION OF MARKED CELLS **************************************
 % % Previously LOAD MAT FILE (?)
 % >>Merge_Finder_Magic
 %       It gets outputs: R_merged,R_nomerged,MetaDataColocaliation
 % % Check Raster plots:
 % >>Plot_Merged_NotMerged
-
-% 5. RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION ************************
+% 
+%% 5. RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION *********************
 % 0) Get Merged Coordinates (IF SO)
 % >> XY_merged=XY_selected(MetaDataColocaliation.PositiveCells,:);
 % 1) Plot Raster (*without sorting*) from:
@@ -61,40 +66,63 @@
 % 2) Find Cell Signal of Interest: Ci
 % >>[XS,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,SIGNALSclean,XY_subset,XY);
 % >>figure; plot(XS{c}(Ci,:))
-
-% N-EXPERIMENTS RESULTS ###################################################
-
-% 6. ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS ****************************
-% Choose One-by-One .mat Files-> Save .mat Files:
+% 
+%% N-EXPERIMENTS RESULTS ##################################################
+% 6. ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS *************************
+%   Choose One-by-One .mat Files-> Save .mat Files:
 % >>Accumulate_Raster_Distances; % Save at CSV Files
 % >>Accumulate_RoA_IEI_ED
 % >>Accumulate_Ensembles_RoEn_IEnI_EnD
 % >>Accumulate_Simm_Matrix
-
-% 7. RASTER/ENSEMBLE/NETWORK FEATURES AND TABLES MAKER ***********************
 % 
-% RASTER FEATURES
+%% 7. RASTER/ENSEMBLE/NETWORK FEATURES AND DATASETS MAKER *****************
+% Make Tables for SINGLE EXPERIMENTS
+% 7.1 RASTER FEATURES
 % >>Raster_Features_Display                 % make CSV table
-% ENSEMBLES GENERAL FEATURES
+%                                           % Make Special Directories
+% 7.2 ENSEMBLES GENERAL FEATURES
 % >>Ensembles_Features_Display              % make CSV table
-% ENSEMBLES DETAILED FEATURES 
+%                                           % Make Special Directories
+% 7.3 ENSEMBLES DETAILED FEATURES 
 % >>Ensembles_Features_Detailed_Display     % make CSV table
-% MAKE DATASETS FROM GEPHI NETWORK FEATURES
-% >>Get_Gephi_Data;                 % Make .mat Dataset from Gephi Files
-% >>Make_Statistics_Gephi_Features; % Make csv table of SINGLE Feature
-% >>Concatenate_NetFeats            % Make table of MULTIPLE Features
+%                                           % Make Special Directories
 % 
-% Script to Merged them and make a DATASET for Machine Learning:
-% >>Merge_Feature_Datasets          % Make DATASET of ONE Kind MULTI EXPS
-%  Get ALL Features Dataset: Raster,Ensembles,Networks
-% >>Merge_Datasets                  % Make DATSET of the 3 Kinds
-
-
-% 8. DATA FEATURE EXPLORING: After Merging Datasets or Single Type Datasets.
+%% 8 MAKE DATASETS FROM GEPHI NETWORK FEATURES
+% 7.9  Export 'Workspaces' from Gephi     Data could be in  '\NetWorks-CSV'
+%                                         Using Gephi 0.9.1
+% 8.1  Make Network Features Dataset
+% >>Get_Gephi_Data;      % Make .mat Dataset from CSV Gephi Workspaces
+%                        Save .mat File @ FinderSpiker/DatabaseFolder
+% 
+% >>Make_Statistics_Gephi_Features; 
+%                        Read .mat File @ FinderSpiker/DatabaseFolder
+%                        Show RAINPLOT for each Feature     
+%                        Create Network_FEATURE_Dataset
+% 
+% >>Concatenate_NetFeats            
+%                       Read Network_FEATURE_Dataset
+%                       Concatenate table of MULTIPLE Features in one
+%                       Create NetFEATS_Dataset @FinderSpiker/DatabaseFolder
+% 
+%% 9  Script to Stack Divers Experiment DATASETS
+% >>Merge_Feature_Datasets          % Make DATASET for:
+%   -Raster Activity:       Stack Several Tables from Divers Experiments
+%   -General Ensembles:     Stack Several Tables from Divers Experiments
+%   -Detailed Ensembles:    Stack Several Tables from Divers Experiments
+%   -Network Features:      Stack Several NetFEATS from Divers Experiments
+% 
+% DIVERS Experiments,i.e, CTRL, PARKINSON, DYSKINESIA set of experiments
+% 
+%% 10 DATA FEATURE EXPLORER: Merging Feature Datasets 
+% 
+% 10.1  Get ALL Features Dataset: Raster,Ensembles,Networks
+% >>Merge_Datasets           % Make DATASET of the 3 Kinds in 1 file
+%                           (not needed for Step 10.2)
+% 10.2  Dysplay All Features RAINPLOTS & Statistics
 % >>Feature_Explorer         *UNDER CONSTRUCTION*
-
-% 9. MACHINE LEARNING: choose a Dataset:
+% 
+%% 11 MACHINE LEARNING: choose a Dataset:
 % >>Features_Datasets_NBC; % *UNDER CONSTRUCTION*
-
+% 
 
 %% END ####################################################################

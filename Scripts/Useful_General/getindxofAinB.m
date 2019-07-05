@@ -11,14 +11,23 @@ function [C,indxA,indxB]=getindxofAinB(A,B)
 indxA=[];
 indxB=[];
 C=[];
-if size(A,1)==size(B,1) && size(A,2)==size(B,2)
+if isempty(A)
+    disp('>>One Empty Table')
+    C=B;
+    indxB=1:numel(B);
+elseif isempty(B)
+    disp('>>One Empty Table')
+    C=A;
+    indxA=1:numel(A);
+elseif size(A,1)==size(B,1) && size(A,2)==size(B,2)
     disp('>>Vector Sizes: allright!')
     [C,indxA,indxB] = intersect(A,B,'rows');
     % Check Sorted Intersection:
     if size(A,1)==size(C,1) && size(A,2)==size(C,2)
         disp('>>Vector Sorting: allright!')
     else
-        disp('>>Vector Sorting: ERROR: check missing or repeated experiments!')
+        disp('>>Vector Sorting: ERROR: check missing, repeated experiments!')
+        disp('>>Vector Sorting: ERROR: and Labeling!')
         indxA=[];
         indxB=[];
         C=[];

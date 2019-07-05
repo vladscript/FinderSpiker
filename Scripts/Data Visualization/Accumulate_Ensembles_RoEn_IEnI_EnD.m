@@ -1,4 +1,4 @@
-% Script to accumulate Rate of Ensmbles(RoE)
+% Script to accumulate Rate of Ensembles(RoE)
 % of each Ensmble For each Experiment of the same
 % experimental setup, i.e., same experimental conditions
 
