@@ -56,6 +56,7 @@
 % >>Plot_Merged_NotMerged
 % 
 %% 5. RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION *********************
+% 5.1 Display Signals:
 % 0) Get Merged Coordinates (IF SO)
 % >> XY_merged=XY_selected(MetaDataColocaliation.PositiveCells,:);
 % 1) Plot Raster (*without sorting*) from:
@@ -66,6 +67,9 @@
 % 2) Find Cell Signal of Interest: Ci
 % >>[XS,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,SIGNALSclean,XY_subset,XY);
 % >>figure; plot(XS{c}(Ci,:))
+% 
+% 5.2 Clean Video Outpu:
+% Video_Cleaner; % Edit at Script
 % 
 %% N-EXPERIMENTS RESULTS ##################################################
 % 6. ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS *************************
@@ -86,6 +90,9 @@
 % 7.3 ENSEMBLES DETAILED FEATURES 
 % >>Ensembles_Features_Detailed_Display     % make CSV table
 %                                           % Make Special Directories
+% 7.4 LINKS FEATURES
+% >>Links_Features_Display                  % ?
+%                                           % ?
 % 
 %% 8 MAKE DATASETS FROM GEPHI NETWORK FEATURES
 % 7.9  Export 'Workspaces' from Gephi     Data could be in  '\NetWorks-CSV'

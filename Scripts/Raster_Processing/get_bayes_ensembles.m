@@ -66,9 +66,10 @@ if Analyze
     disp('> Analysis Initialized ...')
     %% GLOBAL ANALYSIS SETUP
     tic;
-    % GET Possible CAG Thresholds:
+    % GET Possible CAG Thresholds##########################################
     ActiveNeuronsRatio=0.75;    % INPUT
     ActiveTime=0.5;             % INPUT
+    %     
     CAGwithAN=[];
     for CAGindex=1:MaxCAG
         Rclust=Ractive(:,CAG>=CAGindex);

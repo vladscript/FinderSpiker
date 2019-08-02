@@ -1,5 +1,5 @@
-function CAG_TH_MK=get_CAG_threshold(raster)
+function Ci=get_CAG_threshold(raster,pval)
 rasterAct=raster(find(sum(raster,2)),:);
 matriz_adyacente=corrcoef(rasterAct');
 [Ci]=clusterModularity(matriz_adyacente,1000);
-[significativeThModule]=testCoactivityGroup(rasterAct,Ci,0.9);
+[CAG_TH_MK]=testCoactivityGroup(rasterAct,Ci,pval);

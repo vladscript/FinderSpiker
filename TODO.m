@@ -8,34 +8,31 @@
 %   User Guide 
 %% Bugs & New Functions NOW
 
-% Re-Get Raster Features: Transients Counting Update:
-% % DYSK:   OK
-% % A2A:    OK
-% % CULTIVO:    
+% Check ensembleing algorithm... revisit 20161005-1
 
-% Merge_Datasets: skip if missing
-
-% Feature Table [Global]: 
-% % A2A...Raster
-
-% Statistics: automate: OK
+% Statistics: automate
 
 % CAG threshold (Mike's Script - MonteCarlo)
 
 % Recover Coordinates of Ensembles and Display as scatter plots
 
+% Toy example for clustering: time correlaition vs coactivity:
+%  to seen syn fires is irrelevante
+% coactivity: measurebale (Published) features
+% correlation: to publish....
+
 % RETRIEVE SIGNALS & RECONSTRUCT VIDEO
 % retreive of Original Signals, coordinates, etc:
 % Re make clean video
-
-% delete >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
-% NN2Gephi.m; Raster2fNet.m; get_iti_pdf; interval_duration_events;
 
 % Make PCA of RASTER: 
 % denoise raster: get most variance PCs and rebuild raster
 % Add Colocalizer Filters: TdTomato, Yellow, Others
 % Update to MATLAB 2019a !!!!! UNAM License
 % Test Mike's Clustering Algorithm 4 CoActivity (transposed matrix)and save as weel
+
+% delete >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
+% NN2Gephi.m; Raster2fNet.m; get_iti_pdf; interval_duration_events;
 
 %% FUTURE *****************************************************************
 %%% MAKE ALGORITHMIA
@@ -58,5 +55,6 @@
 % Setup Intel/Info .mat File-> Default User Directory to save info
 % Setup Script: deconvolution parameters
 % Check at Signals with Huge Valley (synaptic like)
-
+% 
+% Merge tables-> if conditions ain't the same
 %% ########################################################################

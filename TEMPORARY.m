@@ -1,3 +1,4 @@
+%% RE ANALYZE ENSEMBLES SHORTLY*****************
 %% Setup
 Update_Directory;
 NC=numel(R_Condition);
@@ -186,7 +187,8 @@ for c=1:NCplot
     end
 
 end
-
+%% EXPERIMNTES WITH TOMATO ************************************************
+% 
 % % RoA_A2a=RoA_ALL;
 % % ISIs_A2a=ISIs_ALL;
 % % TranLengths_A2a=TranLengths_ALL;
