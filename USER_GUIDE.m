@@ -68,8 +68,10 @@
 % >>[XS,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,SIGNALSclean,XY_subset,XY);
 % >>figure; plot(XS{c}(Ci,:))
 % 
-% 5.2 Clean Video Outpu:
-% Video_Cleaner; % Edit at Script
+% 5.2 Clean Video Output:
+% Video_Cleaner;    % Edit @ Script
+% 5.3 Signal Processing Output 
+% Signals_Cleaner;  % Edit @ Script
 % 
 %% N-EXPERIMENTS RESULTS ##################################################
 % 6. ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS *************************

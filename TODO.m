@@ -4,16 +4,15 @@
 % of the automatic method by dividing in -+ and -- (false+ & false-)
 % Transients are calculated from denoised signal (wavelet analysis)
 %% FIXED  READY TO GO @ GIT
-%   Accumulate RoA, RoT, etc
-%   User Guide 
+%   
 %% Bugs & New Functions NOW
+
+% Simultaneous Raster and Signals: detrendedn clean and driver
 
 % Check ensembleing algorithm... revisit 20161005-1
 
 % Statistics: automate
-
 % CAG threshold (Mike's Script - MonteCarlo)
-
 % Recover Coordinates of Ensembles and Display as scatter plots
 
 % Toy example for clustering: time correlaition vs coactivity:
