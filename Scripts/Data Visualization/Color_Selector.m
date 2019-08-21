@@ -1,4 +1,4 @@
-% Functino that creates a Color Map for the ExperimentalConditons
+% Function that creates a Color Map for the ExperimentalConditons
 % Input
 %   Starts a GUI to set the colors
 % Ouput

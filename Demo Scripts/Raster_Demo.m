@@ -12,21 +12,21 @@
 clc; clear;
 disp('>>Building Raster...')
 % Ensmebles
-Nensambles=3;       % N ensembles
-Nneurons=[4,5,4];   % Neurons at each ensembles
+Nensambles=5;       % N ensembles
+Nneurons=[3,6,7,2,5];   % Neurons at each ensembles
 
 % Hebbian Sequence 
-HebbianSeq=[1,2,3,1,2,3,1,2,3,2,1];
+HebbianSeq=[1,2,3,4,5,1,2,3,4,5,5,4,3,2,1];
 
 % Noisy frames
 Frames=numel(HebbianSeq);
-LevelRandFrame=0.25; % [0,1]
+LevelRandFrame=0.05; % [0,1]
 
 % Random Neurons
-LevelRandNeu=0.25;   % [0,1]
+LevelRandNeu=0.05;   % [0,1]
 
 % Ratio of random activity
-LevelNoise=0.4; % % Active Neurons or Frames at random Activity
+LevelNoise=0.1; % % Active Neurons or Frames at random Activity
 
 
 % Shared Neurons Among Ensembles (Random)
@@ -128,4 +128,4 @@ disp('>> Press any key To Analyze');
 pause;
 RasterRandom_Analysis=get_bayes_ensembles(RasterRandom);
 %% END
-fprintf('\n               In the Algortihm We Trust\n\n')
+fprintf('\n               In the Algorithm We Trust\n\n')

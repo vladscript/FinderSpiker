@@ -1,5 +1,6 @@
 % Function to Indentify Ensembles in Neural Activity
 % by Clustering (hierarchichally) Neural *Coactivity* 
+% 2 or more cells in experiment
 % Applies to the Raster after Selection 
 % ***   OUTPUT has to be named with the sufix: _Analysis *****
 % Neither need of tangled abstract stuff nor Monte Carlos Simulations
@@ -10,8 +11,8 @@
 %       Data.Data=R;  % Frames x Cells (compatibility wit JP's NN)
 %       Peaks.Threshold=CAG_TH;
 %       Clustering.TotalStates=Nensembles;
-%       Clustering.Tree=Tree;
-%       Clustering.Linkage=LinkageMethod;
+%       Clustering.Tree=Tree;   Hierarchichal Clustering
+%       Clustering.Linkage=LinkageMethod;   Linkage
 %       Peaks.Index=zeros(1,numel(CAG));
 %       Peaks.Index(CAG>=CAG_TH)=1;
 %       Clustering.VectorStateIndex=frame_ensembles;  % Sequence of Ensembles: frame_ensembles
@@ -21,7 +22,7 @@ function R_Analysis = get_bayes_ensembles(R)
 %% Setup 
 % Threholds
 SimmEnsTH=0.8;          % Ensemble simmilarity 
-TimeDommEns=55;         % % Portion of presence of one ensemble
+TimeDommEns=55;         % Portion of presence of one ensemble
 parseq=3/4;             % Portion in a ensemble is activated
 RatioHebb=10;           % Minimum % Of the Hebbian Ratio
 % About the Raster
@@ -71,7 +72,7 @@ if Analyze
     ActiveTime=0.5;             % INPUT
     %     
     CAGwithAN=[];
-    for CAGindex=1:MaxCAG
+    for CAGindex=2:MaxCAG
         Rclust=Ractive(:,CAG>=CAGindex);
         ActiveCellsClust=find(sum(Rclust,2));
         PercAN(CAGindex)=numel(ActiveCellsClust)/numel(ActiveCells);
@@ -129,7 +130,7 @@ if Analyze
     [ActiveCells,~]=find(sum(Rclust,2));
     % Get the Clustered Frames
     % [frame_ensembles]=cluster_analyze(Rclust,SimMethod);
-    frame_ensembles=SAVE_FRAMES{CAGwithAN(minErrIndx)}; % saving time!!!!
+    frame_ensembles=SAVE_FRAMES{minErrIndx}; % saving time!!!!
     
     %% WORK AROUND ********************************************************
     % Excesive Dominant Ensemble ##########################################
@@ -179,31 +180,8 @@ if Analyze
     
     % Joint Simmilar Clusters
     NensOK=numel(unique(frame_ensembles));
-    %% Cross Simmilar Neural Ensembles Are 
-% Features of the Ensembles:
-    % Nensembles=numel(unique(frame_ensembles));
-%     NeuroVectors=zeros(numel(ActiveCells),NensOK);
-%     EnsembledNeurons={};
-%     MeanVarIntraDist=[];
-%     for nn=1:NensOK
-%         EnsembledNeurons{nn}=find(sum(Rclust(:,relabel_frame_ensembles==nn),2));
-%         NeuroVectors(EnsembledNeurons{nn},nn)=1;
-%         VectorEnsemble=Rclust(:,relabel_frame_ensembles==nn);
-%         DhammVectors=pdist(VectorEnsemble',SimMethod);
-%         MeanVarIntraDist(nn,:)=[mean(DhammVectors),var(DhammVectors)];
-%     end
-%     DhammEns=1-squareform( pdist(NeuroVectors',SimMethod) );
-    % Get Simmilar Paris
-%     Pairs={}; aux=1; EnsAcc=[];
-%     for d=1:NensOK-1
-%         SimEns=find(DhammEns(d,:)>SimmEnsTH);
-%         if ~isempty(SimEns(SimEns>d))
-%             Pairs{aux}=[d,SimEns(SimEns>d)];
-%             aux=aux+1;
-%         end
-%     end
-    
-    % HebbSequence=Ensembles_Transitions(1,frame_ensembles,framesCAG,[],0) ;
+    %% Final Steps
+
     hebbtbl=tabulate(frame_ensembles);
     frame_ensembles_copy=frame_ensembles;
     smallens=find(hebbtbl(:,3)<RatioHebb);

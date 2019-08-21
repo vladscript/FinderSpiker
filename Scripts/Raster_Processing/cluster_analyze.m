@@ -112,13 +112,18 @@ function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
             
             % Redundant Ensembles
             EnsemblesIndx=isinensemble(NeuroVectors);
+            % All-Cells Ensemble:
+            AllCellEns=find(sum(NeuroVectors)==size(Rclustens,1));
             if ~isempty(EnsemblesIndx)
                 disp('>>Redundant Ensemble(s) Found!!!')
                 [NRepEns,~]=size(EnsemblesIndx);
                 for nE=1:NRepEns
                     fprintf('\nEnsemble: %i is in Ensemble %i\n',EnsemblesIndx(nE,1),EnsemblesIndx(nE,2));
                 end
-                EnsambleOK=false;
+                if isempty(AllCellEns)
+                    % Stop Only if there is no all-cell ensembles
+                    EnsambleOK=false;
+                end
             end
             disp('>>Done.')
 
@@ -130,6 +135,7 @@ function [frame_ensembles]=cluster_analyze(Rclust,SimMethod)
 
             % Increased Error Classification
             if preECVens-ECVens<0
+                disp('Worsening Classification');
                 EnsambleOK=false;
             end
             preECVens=ECVens;

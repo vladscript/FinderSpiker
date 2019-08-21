@@ -1,5 +1,5 @@
 # FinderSpiker
 Calclium Imaging Signal Processing Toolbox
 
-See User Guide  /html/USER_GUIDE.html
+See Quick User Guide  /html/USER_GUIDE.html
 

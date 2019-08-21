@@ -4,12 +4,9 @@
 % of the automatic method by dividing in -+ and -- (false+ & false-)
 % Transients are calculated from denoised signal (wavelet analysis)
 %% FIXED  READY TO GO @ GIT
+%   Ensembles Analysis Revisited
 %   
 %% Bugs & New Functions NOW
-
-% Simultaneous Raster and Signals: detrendedn clean and driver
-
-% Check ensembleing algorithm... revisit 20161005-1
 
 % Statistics: automate
 % CAG threshold (Mike's Script - MonteCarlo)
@@ -20,14 +17,10 @@
 % coactivity: measurebale (Published) features
 % correlation: to publish....
 
-% RETRIEVE SIGNALS & RECONSTRUCT VIDEO
-% retreive of Original Signals, coordinates, etc:
-% Re make clean video
-
 % Make PCA of RASTER: 
 % denoise raster: get most variance PCs and rebuild raster
 % Add Colocalizer Filters: TdTomato, Yellow, Others
-% Update to MATLAB 2019a !!!!! UNAM License
+% Update to MATLAB 2019a ! UNAM License[other versions can be downloaded]
 % Test Mike's Clustering Algorithm 4 CoActivity (transposed matrix)and save as weel
 
 % delete >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
