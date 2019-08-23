@@ -28,10 +28,13 @@ CurrentPathOK=[Dirpwd(1:slashesindx(end)),'Processed Data'];
 % Load File 
 [FileName,PathName,MoreFiles] = uigetfile('*.mat',['Experiment .mat file'],...
     'MultiSelect', 'off',CurrentPathOK);
+% Table Active Cells: TOTAL/ACTIVE/POSITIVE/NEGATIVE
+Trow=zeros(1,4);
+TableActive=[];
 %% Loop to keep loading files
 while MoreFiles
     load([PathName,FileName]);
-    if exist('MetaDataColocaliation')
+    if exist('MetaDataColocaliation','var')
         aremerged=true;    % Are there already colocated cells
     else
         aremerged=false;    % Are there already colocated cells
@@ -85,10 +88,15 @@ while MoreFiles
             AllActive=[MetaDataColocaliation.PositiveCells;MetaDataColocaliation.NegativeCells];
             PosActive=MetaDataColocaliation.PositiveCells;
             NegActive=MetaDataColocaliation.NegativeCells;
+        else
+            AllActive=find(sum(R_ALL,2));
+            PosActive=[];
+            NegActive=[];
         end
         % Cummulate Stuff *************************************************
         % Rate of Activity: CaTransients frames / Total Frames
-        AllActive=find(sum(R_ALL,2));
+        Trow=[numel(sum(R_ALL,2)),numel(AllActive),numel(PosActive),numel(PosActive)];
+        TableActive=[TableActive;Trow];
         fprintf('with %i of %i Active Neurons \n',numel(AllActive),numel(sum(R_ALL,2)));
         % ONLY ACTIVE
         % ALL NEURONS: (better off!) Inclueded [Zero-Rates]
@@ -138,6 +146,52 @@ while MoreFiles
     'MultiSelect', 'off',CurrentPathOK);
 end
 disp('>>end.')
+%% Make table of Active Neurons
+expID=cell(numel(EXPS)*numel(Names_Conditions),1);
+aux=1;
+for n=1:numel(EXPS)
+    for c=1:numel(Names_Conditions)
+        expname=EXPS{n}(EXPS{n}~='\');
+        condname=Names_Conditions{c}(isstrprop(Names_Conditions{c},'alphanum'));
+        namerow=[expname,'-',condname];
+        expID{aux}=namerow;
+        aux=aux+1;
+    end
+end
+Total=TableActive(:,1);
+Active=TableActive(:,2);
+Positive=TableActive(:,3);
+Negative=TableActive(:,4);
+TblAN=table(expID,Total,Active,Positive,Negative)
+
+%% Save Stuff to .mat File at Processed Data Folder
+
+okbutton = questdlg('Save data @ CSV File?');
+waitfor(okbutton); 
+if strcmp('Yes',okbutton)
+    % Set Save Name
+    timesave=clock;
+    TS=num2str(timesave(1:5));
+    TS=TS(TS~=' ');
+    SaveFile=['\Active_Cells',TS,'.csv'];
+    % Select Destiny
+    % Directory (default)
+    CurrentPath=pwd;
+    Slshes=find(CurrentPath=='\');
+    % [CurrentPath(1:Slshes(end)),'Raster Features']
+    CurrentPathOK=[CurrentPath(1:Slshes(end)),'Raster Features'];
+    
+    PathSave=uigetdir(CurrentPathOK);
+    writetable(TblAN,[PathSave,SaveFile],...
+    'Delimiter',',','QuoteStrings',true);
+    
+    
+    fprintf('>> Data saved @: %s\n',PathSave)
+else
+    fprintf('>>Unsaved data.\n')
+end
+fprintf('Active Neurons Insights: done\n')
+
 %% Save Stuff to .mat File at Processed Data Folder
 Plot_Accumulate_CDF;
 okbutton = questdlg('Save data?');
