@@ -48,6 +48,11 @@ for c=1:C
     %% DATA
     R=R_Condition{c};               % RASTER
     [AN,Frames]=size(R);            % Total Active Neurons [selected]
+    if AN>Frames
+        R=R';
+        [AN,Frames]=size(R);            % Total Active Neurons [selected]
+        fprintf('.\n');
+    end 
     RasterDuration=Frames/fs/60;    % MINUTES
     CAG=sum(R);                     % Co-Activity-Graphy
     %% CAG Statistics

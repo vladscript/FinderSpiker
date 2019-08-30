@@ -44,14 +44,19 @@ Condition_Names={};         % Condition Names
 Filterby='_Analysis'; % Sufix for Analysis Variables
 [index_var,WorkspaceVariables]=get_var_index(WorkspaceVariables,Filterby,NC);
 % DATA ANALYSIS AND NAMES CONDITIONS
+auxc=1;
 for c=1:NC
-    % Get Structure Data Clustering Results
-    VarNames{c}=WorkspaceVariables{index_var(c)}; % USED TO SAVE ANALYSIS VAR
-    NN_data_Read{c}=evalin('base',WorkspaceVariables{index_var(c)}); % Data from WORKSPACE
-    % Get Conditon Names from Variables
-    AuxName=WorkspaceVariables{index_var(c)};              % Get Conditon: R_'Xcondition'
-    indexes_name=find(AuxName=='_');
-    Condition_Names{c}=AuxName(indexes_name(1)+1:indexes_name(end)-1);
+    if ~isempty(index_var{c})
+        % Get Structure Data Clustering Results
+        VarNames{auxc}=WorkspaceVariables{index_var{c}}; % USED TO SAVE ANALYSIS VAR
+        NN_data_Read{auxc}=evalin('base',WorkspaceVariables{index_var{c}}); % Data from WORKSPACE
+        % Get Conditon Names from Variables
+        AuxName=WorkspaceVariables{index_var{c}};              % Get Conditon: R_'Xcondition'
+        indexes_name=find(AuxName=='_');
+        Condition_Names{auxc}=AuxName(indexes_name(1)+1:indexes_name(end)-1);
+        auxc=auxc+1;
+    else
+    end
 end
 
 %% Select Sort of Color for Gephi Visualization
@@ -66,7 +71,7 @@ answer = questdlg('Make Node Colors for Gephi Visualization?', ...
  ExperimentRaster,signif_frames,labels_frames,CummFrames,CummGroups,...
  TotalNG]=get_ensemble_intel(NN_data_Read);
 clear NN_data_Read;
-
+NC=numel(Rasters);
 %% Check if it was Analyzed the Complete Experiment
 TotalFrames=size(RASTER_Selected_Clean,2); % INPUT
 IndexesActive = find(sum(ExperimentRaster));    % Active Neurons
@@ -228,7 +233,7 @@ for c=1:NCplot
             case 'EVEN'
                 fNet=Get_Gephi_Network(R,XY_selectedClean,Neurons_State_Cluster,OrderOneCondition,ColorState,labels,Experiment);
             otherwise
-                fNet=Get_Gephi_Network(R,XY_selectedClean,Neurons_State_Cluster,OrderOneCondition,ColorState,labels,Experiment);
+                fNet=Get_Gephi_Network(R,XY_selectedClean,Neurons_State_Cluster,OneCondition,ColorState,labels,Experiment);
         end
         %  Color Mode: Compensate:
         % fNet=Get_Gephi_Network(R,XY_selectedClean,Neurons_State_Cluster,OrderOneCondition,ColorState,labels,Experiment);
@@ -258,11 +263,11 @@ for c=1:NCplot
 
 end
 %% GET & SAVE NEURAL ENSEMBLE FEATURES
-[Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs);
+[Features_Ensemble,Features_Condition]=get_ensembles_features(Rasters,Ensemble_Threshold,Ensembled_Labels,fs);
 Features_Condition.CoreNeurons=ShNeuron;
 % Network Features
 Features_Condition.Network=NetworkCondition;
-save_features_ensembles(Experiment,Names_Conditions,Features_Ensemble,Features_Condition);
+save_features_ensembles(Experiment,Condition_Names,Features_Ensemble,Features_Condition);
 
 %% Save SORTING,COORDINATES and COLOR ENSEMBLES
 % Save this Only if it was Analyzed the whole enchilada

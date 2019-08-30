@@ -150,7 +150,7 @@ if Analyze
             RclustDom=Ractive(:,samples);
             [re_frame_ensembles]=cluster_analyze_lite(RclustDom,SimMethod);
             
-            HebbSequence=Ensembles_Transitions(1,re_frame_ensembles,samples,[],0) ;
+            HebbSequence=Ensembles_Transitions(1,re_frame_ensembles,samples,[],0);
             hebbtbl=tabulate(HebbSequence);
             smallens=find(hebbtbl(:,3)<RatioHebb);
             for k=1:numel(smallens)
@@ -195,7 +195,9 @@ if Analyze
         frame_ensembles(frame_ensembles_copy==Ensd(k))=k;
     end
             
-    % RE-LABEL Ensembles
+    % RE-LABEL Ensembles-> it' got at Ensemble_Sorting Step
+%     HebbSequence=Ensembles_Transitions(1,frame_ensembles,samples,[],0) ;
+%     relabel_frame_ensembles=relabel_ensembles(labelsENS,HebbSequence,'2-freq');
     AppearSequence=unique(frame_ensembles,'stable');
     relabel_frame_ensembles=zeros(size(frame_ensembles));
     NensOK=numel(unique(frame_ensembles));

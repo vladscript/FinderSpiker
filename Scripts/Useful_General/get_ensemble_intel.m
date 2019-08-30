@@ -28,8 +28,14 @@ for c=1:NC
     % Get ENSEMBLES data from Structure
     if ismember('Clustering',NamesFields)   % Ensembles Activity
         NGroups{c}=NN_data.Clustering.TotalStates;          % Number of Groups
-        SIG_FRAMES{c}=find(NN_data.Peaks.Index);            % Frames with CAG above Threshold
-        LABELS{c}=NN_data.Clustering.VectorStateIndex+CummGroups;      % Ensemble Labels
+        sigframes=find(NN_data.Peaks.Index);            % Frames with CAG above Threshold
+        labelsENS=NN_data.Clustering.VectorStateIndex;  % Labels on Neural Ensembles
+        SIG_FRAMES{c}=sigframes;
+        % Hebbian Sequence to resort labels
+        HebbSequence=Ensembles_Transitions(1,labelsENS,sigframes,[],0);
+        % %%% re-sort ensembles %%%%
+        relabels=relabel_ensembles(labelsENS,HebbSequence,'2-freq');
+        LABELS{c}=relabels+CummGroups;      % Ensemble Labels
         THR{c,1}=NN_data.Peaks.Threshold;                   % CAG Threshold
         fprintf('>> Ensembles in Condition %i \n',c)
         tabulate(LABELS{c});

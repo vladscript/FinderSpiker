@@ -4,9 +4,12 @@
 % of the automatic method by dividing in -+ and -- (false+ & false-)
 % Transients are calculated from denoised signal (wavelet analysis)
 %% FIXED  READY TO GO @ GIT
-%   Ensembles Analysis Revisited
-%   
+%   Accumulate RoA and Active Cells update
+%   Re-label by Repetitions of States: [RGB] colors
+%   Ensembles Visualization for single Conditions: OK
 %% Bugs & New Functions NOW
+
+
 
 % Statistics: automate
 % CAG threshold (Mike's Script - MonteCarlo)

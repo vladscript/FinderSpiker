@@ -179,9 +179,9 @@ if strcmp('Yes',okbutton)
     CurrentPath=pwd;
     Slshes=find(CurrentPath=='\');
     % [CurrentPath(1:Slshes(end)),'Raster Features']
-    CurrentPathOK=[CurrentPath(1:Slshes(end)),'Raster Features'];
+    CurrentPathOKac=[CurrentPath(1:Slshes(end)),'Raster Features'];
     
-    PathSave=uigetdir(CurrentPathOK);
+    PathSave=uigetdir(CurrentPathOKac);
     writetable(TblAN,[PathSave,SaveFile],...
     'Delimiter',',','QuoteStrings',true);
     

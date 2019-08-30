@@ -150,8 +150,9 @@ else
 end
 
 h{2} = scatter(X, drops_pos);
-h{2}.SizeData = 10;
+h{2}.SizeData = 30;
 h{2}.MarkerFaceColor = color;
+% h{2}.MarkerFaceColor = [0,0,0];
 h{2}.MarkerEdgeColor = 'none';
 
 if box_on
