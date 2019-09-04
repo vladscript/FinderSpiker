@@ -1,7 +1,7 @@
 % Function to accumulate Rate of Activity (RoA)
 % of each Cell For each Experiment of the same
 % experimental setup, i.e., same experimental conditions
-
+% --------------------------------------------------------------------
 % Input
 %   Load experiment manually from different folder: one by one
 %   R_Condition:  Selected rasters of the Experiment
@@ -32,14 +32,16 @@ CurrentPathOK=[Dirpwd(1:slashesindx(end)),'Processed Data'];
 Trow=zeros(1,4);
 TableActive=[];
 %% Loop to keep loading files
+Nconditions=[];
 while MoreFiles
     load([PathName,FileName]);
     if exist('MetaDataColocaliation','var')
-        aremerged=true;    % Are there already colocated cells
+        aremerged=true;         % Are there already colocated cells
     else
-        aremerged=false;    % Are there already colocated cells
+        aremerged=false;    	% Are there already colocated cells
     end
-    [~,NC]=size(R_Condition); % N Conditions
+    [~,NC]=size(R_Condition);   % N Conditions
+    Nconditions(runs)=NC;       % Nconditions per Experiment
     % Start as empty
     if runs==1
         RoA_ALL=cell(1,NC);
@@ -59,8 +61,10 @@ while MoreFiles
     end
     %%  Loop to Accummulate Data
     RasterDurations=get_raster_durations(Onsets,R_Condition,fs);
+    preActive=[];
     for c=1:NC
         fprintf('\nGetting Data from %s ',Names_Conditions{c})
+        AllNamesCond{runs}=Names_Conditions;
         % Read Raster
         R_ALL=R_Condition{c};
         % Read Denoised Signal:
@@ -101,13 +105,17 @@ while MoreFiles
         % ONLY ACTIVE
         % ALL NEURONS: (better off!) Inclueded [Zero-Rates]
         % Rate of Activity ******************************************
-        RoA_ALL{c}=[RoA_ALL{c}();sum(R_ALL,2)./F_ALL];
+        % Only Actual And Previous
+        ActualActive=find(sum(R_ALL,2)./F_ALL);     % read
+        OKindex=union(preActive,ActualActive);      % join
+        preActive=OKindex;                          % update
+        RoA_ALL{c}=[RoA_ALL{c}();sum(R_ALL(OKindex,:),2)./F_ALL];
         if aremerged
             RoA_POS{c}=[RoA_POS{c};sum(R_merged{c},2)./F_POS];
             RoA_NEG{c}=[RoA_NEG{c};sum(R_nomerged{c},2)./F_NEG];        
         end
         % Inter Calcium Transient Interval & Calcium Transient Duration
-        [NoT,ITI,LT]=get_RoT(R_ALL,CleanSignals_ALL{c});
+        [NoT,ITI,LT]=get_RoT(R_ALL(OKindex,:),CleanSignals_ALL{c});
         ISIs=ITI/fs;                            % [seconds]
         TranLengths=LT/fs;                      % [seconds]
         RoTs=NoT/(size(R_Condition{c},2)/fs/60);  % [minutes]
@@ -147,14 +155,16 @@ while MoreFiles
 end
 disp('>>end.')
 %% Make table of Active Neurons
-expID=cell(numel(EXPS)*numel(Names_Conditions),1);
+% expID=cell(numel(EXPS)*numel(Names_Conditions),1);
+% AllNamesCond
 aux=1;
 for n=1:numel(EXPS)
+    Names_Conditions=AllNamesCond{n};
     for c=1:numel(Names_Conditions)
         expname=EXPS{n}(EXPS{n}~='\');
         condname=Names_Conditions{c}(isstrprop(Names_Conditions{c},'alphanum'));
         namerow=[expname,'-',condname];
-        expID{aux}=namerow;
+        expID{aux,1}=namerow;
         aux=aux+1;
     end
 end
@@ -198,6 +208,7 @@ okbutton = questdlg('Save data?');
 waitfor(okbutton); 
 if strcmp('Yes',okbutton)
     % Set Save Name
+    disp('>>Saving .mat data...')
     timesave=clock;
     TS=num2str(timesave(1:5));
     TS=TS(TS~=' ');
@@ -205,11 +216,9 @@ if strcmp('Yes',okbutton)
     % Select Destiny
     PathSave=uigetdir(CurrentPathOK);
     if ~aremerged
-        disp('>>saving data...')
         save([PathSave,SaveFile],'EXPS','Names_Conditions','RoA_ALL',...
             'ISIs_ALL','TranLengths_ALL','RoT_ALL');
     else
-        disp('>>saving data...')
         save([PathSave,SaveFile],'EXPS','Names_Conditions','RoA_ALL',...
             'ISIs_ALL','TranLengths_ALL','RoT_ALL',...
             'RoA_POS','ISIs_POS','TranLengths_POS','RoT_POS',...
