@@ -19,6 +19,11 @@ Update_Directory;
 % Raster fFeatures: denoised o sparse signal ?-> DENOISED
 % Sparse Signal got a lot of peaks and false transients
 Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment,ESTSIGNALS);
+ActualDir=pwd;
+Slashes=find(ActualDir=='\');
+RasterFeatsDir=[ActualDir(1:Slashes(end)),'Raster Features'];
+fprintf('\n\n Move to a proper directory the CSV files of Raster features from:\n')
+fprintf('%s\n\n',RasterFeatsDir);
 
 
 

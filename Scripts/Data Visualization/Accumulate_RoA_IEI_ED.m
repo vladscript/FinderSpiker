@@ -26,7 +26,7 @@ Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
 CurrentPathOK=[Dirpwd(1:slashesindx(end)),'Processed Data'];
 % Load File 
-[FileName,PathName,MoreFiles] = uigetfile('*.mat',['Experiment .mat file'],...
+[FileName,PathName,MoreFiles] = uigetfile('*.mat',['Select .mat file, ONE by ONE'],...
     'MultiSelect', 'off',CurrentPathOK);
 % Table Active Cells: TOTAL/ACTIVE/POSITIVE/NEGATIVE
 Trow=zeros(1,4);
@@ -150,7 +150,7 @@ while MoreFiles
     EXPS{runs,1}=Experiment
     CurrentPathOK=PathName;
     runs=runs+1;
-    [FileName,PathName,MoreFiles] = uigetfile('*.mat',['Experiment .mat file'],...
+    [FileName,PathName,MoreFiles] = uigetfile('*.mat',['Select .mat file, ONE by ONE'],...
     'MultiSelect', 'off',CurrentPathOK);
 end
 disp('>>end.')

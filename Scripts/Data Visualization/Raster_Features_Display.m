@@ -34,7 +34,7 @@ CurrentPathOK=[CurrentPath(1:Slshes(end)),'Raster Features'];
 RASTER_FEATURES={};
 for i=1:NC
     % Read Names
-    [FileName,PathName] = uigetfile('*.csv',['CSV files for: ',Names_Conditions{i}],...
+    [FileName,PathName] = uigetfile('*.csv',['Select MULTIPLE CSV files for: ',Names_Conditions{i}],...
     'MultiSelect', 'on',CurrentPathOK);
     % Loop to Features from read csv
     if iscell(FileName)

@@ -2,6 +2,8 @@
 %   'Raster Activity':      Nerual Activity
 %   'General Ensembles':    Neural Ensembles Features
 %   'Detailed Ensembles':   Single Neural Ensembles Features
+%% Intro
+fprintf('Get CSV Tables from Analsysis Features.')
 %% Select Kind Of Features to Merge
 KindFeatures={'Raster Activity';'General Ensembles';...
     'Detailed Ensembles';'Network Features'};
@@ -46,7 +48,7 @@ else
 end
 CurrentPathOK=[Dirpwd(1:slashesindx(end)),FolderDefault]; 
 % Load File 
-[FileName,PathName,MoreFiles] = uigetfile('*.csv',[SelectedCatergory,' Feature Database file'],...
+[FileName,PathName,MoreFiles] = uigetfile('*.csv',[SelectedCatergory,' Feature Table CSV file ONE:by:ONE'],...
     'MultiSelect', 'off',CurrentPathOK);
 %% Loop to keep loading files
 FeaturesSingle=table;
@@ -60,7 +62,7 @@ while MoreFiles
     EXPS{runs,1}=FileName
     CurrentPathOK=PathName;
     runs=runs+1;
-    [FileName,PathName,MoreFiles] = uigetfile('*.csv',[SelectedCatergory,' Feature Database file'],...
+    [FileName,PathName,MoreFiles] = uigetfile('*.csv',[SelectedCatergory,' Feature Table CSV file ONE:by:ONE'],...
     'MultiSelect', 'off',CurrentPathOK);
 end
 if index_var==4
@@ -79,7 +81,7 @@ if strcmp('Yes',okbutton)
     SelectedCatergory(SelectedCatergory==' ')='_';
     SaveFile=[SelectedCatergory,'_Dataset_',TS,'.csv'];
     % Select Destiny
-    PathSave=uigetdir(CurrentPathOK,['Set Directory to save Dataset of :',SelectedCatergory]);
+    PathSave=uigetdir(CurrentPathOK,['Set Directory to save Dataset of: ',SelectedCatergory]);
     disp('>>Making CSV table...')
     writetable(FeaturesSingle,[PathSave,'\',SaveFile],...
                     'Delimiter',',','QuoteStrings',true);

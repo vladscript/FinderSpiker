@@ -175,8 +175,8 @@
 % 10.1  Get ALL Features Dataset: Raster,Ensembles,Networks
 % 
 % * >>Merge_Datasets           % Make DATASET of the 3 Kinds in 1 file
+%                               (not needed for Step 10.2)
 % 
-%                           (not needed for Step 10.2)
 % 10.2  Dysplay All Features RAINPLOTS & Statistics
 % 
 % * >>Feature_Explorer         *UNDER CONSTRUCTION*

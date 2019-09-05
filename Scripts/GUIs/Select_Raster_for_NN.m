@@ -108,19 +108,24 @@ while ~strcmp('Yes',okbutton)
         'RoAmean','RoAmode','RoAmedian','RoAvar','RoAskew','RoAkurt',...
         'RoTmean','RoTmode','RoTmedian','RoTvar','RoTskew','RoTkurt'};
     %% FEATURES EXTRACTION and plot
+    preActive=[];
     for c=1:NC
         % Read Original Raster (UNSORTED!!!)
         R=Raster_Condition_Sel{c};
         % Raster (SORTED!!!)
         R=R(New_Index,:);
         Xden=XDEN{c}(New_Index,:);
-        % Raster (JUST ACTIVE!!!)
+        % Raster (JUST ACTIVE of the WHOLE EXPERIMENT!!!)
         R_Condition{c}=R(ActiveNeurons,:);
         Xden=Xden(ActiveNeurons,:);
         % XY_Condition{c}=XY_selected;
+        % Only Actual And Previous
+        ActualActive=find(sum(R_Condition{c},2)./size(R_Condition{c},2));     % read
+        OKindex=union(preActive,ActualActive);      % join
+        preActive=OKindex;                          % update
         % Activity Indexes:*******************************************
         % Feature of ALL Rows of the SELECTED RASTER (BETTER OFF!)
-        [Descriptive,AI_1(c,1),AI_2(c,1)]=get_general_features(R_Condition{c});
+        [Descriptive,AI_1(c,1),AI_2(c,1)]=get_general_features(R_Condition{c}(OKindex,:));
         AN=Descriptive.AN;       % Active Neurons
         DurAc=Descriptive.DurAc; % Number of Active Frames
         CAG=Descriptive.CAG;     % Coactivity
@@ -131,18 +136,18 @@ while ~strcmp('Yes',okbutton)
         % [~,~,~,~,StatsFeatures]=get_iti_pdf(R_Condition{c},fs);
         % _________________________________________________________________
         % Temporal Measures According to Denoised Signal (wavelet analysis)
-        [NoT,ITI,LT]=get_RoT(R_Condition{c},Xden);
+        [NoT,ITI,LT]=get_RoT(R_Condition{c}(OKindex,:),Xden);
         ITI=ITI/fs; LT=LT/fs;                                   % [SECONDS]
         RasterDuration=size(R_Condition{c},2)/fs/60;            % [MINUTES]
         RoT=NoT/RasterDuration; % Ca++Tranisetns per minute
         % -----------------------------------------------------------------
         % CoActivityGram Statistics & pdf: IMPORTANT!!!!
-        if or(max(CAG)==0,min(CAG)==max(CAG))
-            CAGbin=linspace(min(CAG),max(CAG),100);
-            CAGp=zeros(size(CAGbin));
-        else
-            [~,~]=ksdensity(CAG,linspace(min(CAG),max(CAG),100));
-        end
+%         if or(max(CAG)==0,min(CAG)==max(CAG))
+%             CAGbin=linspace(min(CAG),max(CAG),100);
+%             CAGp=zeros(size(CAGbin));
+%         else
+%             [~,~]=ksdensity(CAG,linspace(min(CAG),max(CAG),100));
+%         end
         % Feature Table *******************************************
         % 'RateofNeurons','ActivityDuration','MeanActivity','EffectiveActivity',...
         % 'ISImean','ISImode','ISImedian','ISIvar','ISIskew','ISIkurt',...
@@ -198,7 +203,7 @@ while ~strcmp('Yes',okbutton)
         else
             disp('Not the same Experiment!')
             disp('Try again!')
-            okbutton='No';
+            % okbutton='No';
         end
     end    
 end

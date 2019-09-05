@@ -1,15 +1,14 @@
 %% PERMANENT NOTES # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-% Manual Mode is divideed in two parts->
-% Necessary to know the statistical power of the Automatic Mode:
-% of the automatic method by dividing in -+ and -- (false+ & false-)
+% Manual Mode is divided in two parts->Automatic and Standard:
+% [ Necessary to know the statistical power of the Automatic Mode,
+% Getting insohgts about -+ and -- (false+ & false-)]
 % Transients are calculated from denoised signal (wavelet analysis)
+% Rate of Activity is from Actual and Previous conditions only
 %% FIXED  READY TO GO @ GIT
-%   Accumulate RoA and Active N Conditons Update
-%   
-%   
+%   RoA method in Select_Raster script
+%   User Interface Texts Updated:AccRoA,SelectRaster,
+%   Bug @ Selec_Raster
 %% Bugs & New Functions NOW
-
-% Set reference for RoA
 
 % Statistics: automate
 % CAG threshold (Mike's Script - MonteCarlo)
