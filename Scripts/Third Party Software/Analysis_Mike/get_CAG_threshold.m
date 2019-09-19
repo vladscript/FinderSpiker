@@ -1,5 +1,11 @@
-function Ci=get_CAG_threshold(raster,pval)
-rasterAct=raster(find(sum(raster,2)),:);
-matriz_adyacente=corrcoef(rasterAct');
-[Ci]=clusterModularity(matriz_adyacente,1000);
-[CAG_TH_MK]=testCoactivityGroup(rasterAct,Ci,pval);
+% Input
+%   raster: frames x cells (heritage from JP)
+%   pval
+% Output
+%   Ci
+% Example
+function th=get_CAG_threshold(raster,alphaC)
+% All in Same
+Ncells=size(raster,1);
+cluster_index=ones(Ncells,1);
+th=testCoactivityGroup(raster,cluster_index,alphaC);

@@ -53,9 +53,11 @@
 % * >>R_CONDITIONi=R_Condition{i};
 % 
 %% 3. CLUSTERING NEURONAL ENSEMBLES
-% AUTOMATICAL MAGIC
+% AUTOMATICAL & MANUAL MAGIC
 % 
 % * >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDTIONi);
+% 
+% * >>R_CONDITIONi_Analysis=get_ensembles(R_CONDTIONi,CAGthreshold,Nensambles);
 % 
 % HANDCRAFTED GUI (by JP): 
 % 

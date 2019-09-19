@@ -85,7 +85,18 @@ for c=1:C
     CAGauc=Features_Condition.CAGstats(c,1);            % CAG AutoCorrelation Coefficient
     CoreSize=Features_Condition.CoreNeurons(c);         % Ratio of neurons in all Ensembles
     % Max Links Between Neurons
-    MaxSynLinks=Features_Condition.Network{c}.MaxSynLinks;
+    if ~isempty(Features_Condition.Network{c})
+        MaxSynLinks=Features_Condition.Network{c}.MaxSynLinks;
+    else
+        Features_Condition.Network{c}.MaxSynLinks=0;
+        MaxSynLinks=Features_Condition.Network{c}.MaxSynLinks;
+        Features_Condition.Network{c}.SynStrengthStats(1)=0;  % mean
+        Features_Condition.Network{c}.SynStrengthStats(2)=0;  % mode
+        Features_Condition.Network{c}.SynStrengthStats(3)=0;  % median
+        Features_Condition.Network{c}.SynStrengthStats(4)=0;  % variance
+        Features_Condition.Network{c}.SynStrengthStats(5)=0;  % skewness
+        Features_Condition.Network{c}.SynStrengthStats(6)=0;  % kurtosis
+    end
     % Max Links Between Neurons
     if MaxSynLinks>0
         MaxConnA=Features_Condition.Network{c}.MaxCoupledPair(1); % Neuron A

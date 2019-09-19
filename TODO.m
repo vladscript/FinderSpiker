@@ -4,10 +4,14 @@
 % Getting insohgts about -+ and -- (false+ & false-)]
 % Transients are calculated from denoised signal (wavelet analysis)
 % Rate of Activity is from Actual and Previous conditions only
+% Hebbian sequence holds if CAG level stands still
 %% FIXED  READY TO GO @ GIT
 %   RoA method in Select_Raster script
 %   User Interface Texts Updated:AccRoA,SelectRaster,
 %   Bug @ Selec_Raster
+%   IMPORTANT:  
+%   Get_Ensembles: UPDATE    !!!!!
+%   Hebbian Sequence: UPDATE !!!!!
 %% Bugs & New Functions NOW
 
 % Statistics: automate
@@ -25,9 +29,9 @@
 % Update to MATLAB 2019a ! UNAM License[other versions can be downloaded]
 % Test Mike's Clustering Algorithm 4 CoActivity (transposed matrix)and save as weel
 
-% delete >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
+% DELETE >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
 % NN2Gephi.m; Raster2fNet.m; get_iti_pdf; interval_duration_events;
-% Plot_Calcium_Transients.m
+% Plot_Calcium_Transients.m; get_ensembles_manual.m
 
 %% FUTURE *****************************************************************
 %%% MAKE ALGORITHMIA

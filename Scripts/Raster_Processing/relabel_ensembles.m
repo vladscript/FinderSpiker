@@ -1,4 +1,4 @@
-% Funtion to re-label hebbian sequence
+% Function to re-label hebbian sequence
 % Input
 %   labels:     vector sequence of neural ensemble instances
 %   mode: 'sequence','2-freq'
@@ -21,9 +21,11 @@ switch modesort
         TableEns=tabulate(HebbSequence);
         [~,OKsorting]=sort(TableEns(:,3),'descend');
         DommEns=OKsorting(1);
-        DommEnsMinus=OKsorting(2);
-        OKsorting(1)=DommEnsMinus;
-        OKsorting(2)=DommEns;
+        if numel(OKsorting)>1
+            DommEnsMinus=OKsorting(2);
+            OKsorting(1)=DommEnsMinus;
+            OKsorting(2)=DommEns;
+        end
 end
 for n=1:NensOK
     relabel(labelsEns==OKsorting(n))=n;

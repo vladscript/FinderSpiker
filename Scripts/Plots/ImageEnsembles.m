@@ -57,5 +57,7 @@ colormap(axcag,ColorEnsembles)
 axraster.YDir='normal';
 axcag.YDir='normal';
 % figure; % Hebbian Ensembles
-Ensembles_Transitions(1/60,label_Cluster,active_Frames,ColorEnsembles(3:end,:),plothebb); % ---> save
+if ~isempty(label_Cluster)
+    Ensembles_Transitions(1/60,label_Cluster,active_Frames,[],ColorEnsembles(3:end,:),plothebb,[]); % ---> save
+end
 linkaxes([axraster,axcag],'x');

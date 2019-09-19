@@ -19,38 +19,21 @@
 %       Clustering.VectorStateIndex=frame_ensembles;  % Sequence of Ensembles: frame_ensembles
 %       Classifier.Model=Model;             % Naive Bayes Classifier
 %       Classifier.ValidationError=ECV;      % Validation Error
-function R_Analysis = get_bayes_ensembles(R)
+function R_Analysis = get_ensembles(R,ThCAG,Nensambles)
 %% Setup 
 Load_Default_Clustering;
-% Threholds
-% % SimmEnsTH=0.8;          % Ensemble simmilarity 
-% TimeDommEns=55;         % Portion of presence of one ensemble
-% parseq=3/4;             % Portion in a ensemble is activated
-% RatioHebb=10;           % Minimum % Of the Hebbian Ratio
-% ActiveNeuronsRatio=0.75;% Ratio of Active Neurons
-% ActiveTime=0.15;         % Active Time (CAG>0)
-% Setup
-% alphavalCAG=0.85;       % For CAG  Threshold
-% SimMethod='hamming';    % From Binary Codes used in Communications
-% ThCAG=get_CAG_threshold(R,alphavalCAG);
+
 % About the Raster
 disp('> Getting data ...')
-
 [~,Frames]=size(R); % Always More Frames than Cells
-% if Cells>Frames
-%     R=R';
-%     [Cells,Frames]=size(R);
-%     disp('>>Raster Transposed.')
-% end
 ActiveCells=find(sum(R,2));
-% GET ONLY ACTIVE CELLS!
 Ractive=R(ActiveCells,:);
 CAG=sum(Ractive);
 MaxCAG=max(CAG);
-%% AS IF ITS EMPTY *****??????
+%% ASK IF ITS EMPTY *****??????
 % Initialize Output
-if MaxCAG==0
-    fprintf('\n>> Raster with Zero Activity\n\n');
+if MaxCAG==0 || MaxCAG<ThCAG
+    fprintf('\n>> Raster with Zero or Low Activity\n\n');
     R_Analysis.Data.Data=R; % Frames x Cells (compatibility wit JP's NN)
     fprintf('>> Finishing script...');
     Analyze=false;
@@ -67,7 +50,7 @@ else
 end
 %% START ANALYSIS
 if Analyze
-    fprintf('> Maximum Coactive Neurons   %i  \n',MaxCAG);
+    fprintf('> Maximum Coactive Neurons   %i  \n',MaxCAG,Nensambles);
     % CAGThresholdValues=1:MaxCAG;
     % This will increase as ensembles ain't a complete subset from another:
     disp('> Analysis Initialized ...')
@@ -108,6 +91,8 @@ if Analyze
 %     CAGwithAN=CAGwithAN(CAGwithAN>=ThCAG);
     ErrorClass=ones(numel(CAGwithAN),1);
     NensemblesOK=ones(numel(CAGwithAN),1);
+    % CAGwithAN=CAGwithAN(CAGwithAN>=ThCAG);
+    CAGwithAN=ThCAG;
     %% MAIN LOOPS CAG THReSHOLDS **************************************
     % ModelS=cell(numel(CAGwithAN),1);
     for CAGindex=1:numel(CAGwithAN)
@@ -116,7 +101,13 @@ if Analyze
         Rclust=Ractive(:,OrgigiFrames{CAGindex});
         [~,ActiveFrames]=size(Rclust);
         if ActiveFrames>1
-            [frame_ensembles]=cluster_analyze(Rclust);
+            
+            Distance=squareform(pdist(Rclust',SimMethod));
+            Sim=1-Distance;
+            LinkageMethod=HBestTree_JPplus(Sim);    % Output
+            Tree=linkage(squareform(Distance,'tovector'),LinkageMethod);
+            frame_ensembles=cluster(Tree,'maxclust',Nensambles); % START
+            
             % [~,MaxDistanceIV]=nonsimilarframes(Rclust,SimMethod,0.5);
             % Check Ignored:
             signif_frames=1:size(Rclust(:,frame_ensembles>0),2);
@@ -136,8 +127,7 @@ if Analyze
         % MIstFrames(CAGindex)=round(size(Rclust,2)*mean(ECV));
     end
     DelayTime=toc;
-    % ErrorEnseRation=ErrorClass.*NensemblesOK;
-    ErrorEnseRation=ErrorClass./NensemblesOK./ActTime(CAGwithAN)'
+    ErrorEnseRation=ErrorClass./NensemblesOK;
     % If Zero->Overffitting or Few Data
     ErrorEnseRation(ErrorEnseRation==0)=1;
     % When 2 ensembles->Missclustering Probably
@@ -184,21 +174,40 @@ if Analyze
     R_Analysis.Peaks.Index(CAG>=CAGwithAN(minErrIndx))=1;
     R_Analysis.Clustering.VectorStateIndex=frame_ensembles;  % Sequence of Ensembles: frame_ensembles
     R_Analysis.Classifier.Model=Model;             % Naive Bayes Classifier
-    R_Analysis.Classifier.ValidationError=ECV;   
+    R_Analysis.Classifier.ValidationError=ECV;
+else
+    % OUTPUT
+    R_Analysis.Data.Data=R';  % Frames x Cells (compatibility wit JP's NN)
+    R_Analysis.Peaks.Threshold=0;
+    R_Analysis.Clustering.TotalStates=0;
+%     R_Analysis.Clustering.Tree=Tree;
+%     R_Analysis.Clustering.Linkage=LinkageMethod;
+    R_Analysis.Peaks.Index=[];
+    R_Analysis.Clustering.VectorStateIndex=[];  % Sequence of Ensembles: frame_ensembles
+    R_Analysis.Classifier.Model=[];             % Naive Bayes Classifier
+    R_Analysis.Classifier.ValidationError=[];
+    CAGwithAN=[];
 end
 % fprintf('>> Clustering with %i Ensembles \n& for %i Coactive Neurons\n',Nensembles,CAG_TH)
 % fprintf('\n>>Algorithm has found Neural Ensembles.\n')
 %% FAST PLOTTING *******************************************************
-fprintf('\n>>Plotting Ensembles:\n')
+fprintf('\n>>Plotting Ensembles:')
 ImageEnsembles(R_Analysis,1);
-signif_frames=find(CAG>=CAGwithAN(minErrIndx));
-[New_Order_Clustering,~]=OrderClusters(frame_ensembles(frame_ensembles>0),...
-    signif_frames(frame_ensembles>0),R',NensOK);
-R_Sorted_Analysis=R_Analysis;
-R_Sorted_Analysis.Data.Data=R(New_Order_Clustering,:)';
-ImageEnsembles(R_Sorted_Analysis,0);
-% Set Indexes at sorted Ensembles
-figHandles = findobj('Type', 'figure');
-figHandles(3).Children(2).YTick=1:max(New_Order_Clustering);
-figHandles(3).Children(2).YTickLabel=New_Order_Clustering;
+if ~isempty(CAGwithAN)
+    signif_frames=find(CAG>=CAGwithAN(minErrIndx));
+    [New_Order_Clustering,~]=OrderClusters(frame_ensembles(frame_ensembles>0),...
+        signif_frames(frame_ensembles>0),R',NensOK);
+    R_Sorted_Analysis=R_Analysis;
+    R_Sorted_Analysis.Data.Data=R(New_Order_Clustering,:)';
+    ImageEnsembles(R_Sorted_Analysis,0);
+    % Set Indexes at sorted Ensembles
+    figHandles = findobj('Type', 'figure');
+    figHandles(3).Children(2).YTick=1:max(New_Order_Clustering);
+    figHandles(3).Children(2).YTickLabel=New_Order_Clustering;
+    fprintf(' ready!\n')
+else
+    
+    fprintf('empty\n')
+end
+
 fprintf('\n>>Ensembles Done\n')

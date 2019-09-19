@@ -68,10 +68,30 @@ answer = questdlg('Make Node Colors for Gephi Visualization?', ...
 %% Get DATA from Analysis Variables and CONCATENATE
 % RASTERS ARE: [FRAMES x CELLS] -----------
 [Rasters,LENGHTRASTER,NGroups,SIG_FRAMES,LABELS,THR,...
- ExperimentRaster,signif_frames,labels_frames,CummFrames,CummGroups,...
+ ExperimentRaster,signif_frames,~,CummFrames,CummGroups,...
  TotalNG]=get_ensemble_intel(NN_data_Read);
 clear NN_data_Read;
 NC=numel(Rasters);
+
+%% RE-SORT Ensembles labels
+labels_frames=[];
+for c=1:NC
+    sigfr=SIG_FRAMES{c};
+    lbfr=LABELS{c};
+    CAGc=sum(Rasters{c},2)';
+    if ~isempty(lbfr)
+        minEns=min(unique(lbfr))-1;
+        HB=Ensembles_Transitions(1,lbfr-minEns,sigfr,CAGc,[],0,LENGHTRASTER{c});
+        relbls=relabel_ensembles(lbfr-minEns,HB,'2-freq')+minEns;
+    else
+        minEns=0;
+        HB=[];
+        relbls=[];
+    end
+    LABELS{c}=relbls;
+    labels_frames=[labels_frames;relbls];
+end
+
 %% Check if it was Analyzed the Complete Experiment
 TotalFrames=size(RASTER_Selected_Clean,2); % INPUT
 IndexesActive = find(sum(ExperimentRaster));    % Active Neurons
@@ -90,6 +110,7 @@ end
 Indexes=1:length(XY_selectedClean); % Indexes for Active Neurons
 Index_Ensemble=Indexes;
 CAG=sum(ExperimentRasterClean,2);   % CAG :Co-Activity-Graphy
+
 %% Sorting Clustering
 disp('>>Sorting Neurons')
 if TotalNG<6
@@ -99,7 +120,7 @@ else
     Nens=cell2mat(NGroups); n=1; oksort=true;
     re_sort=false;
     while oksort
-        if Nens(n)<6
+        if Nens(n)<=6
             oksort=false;
             fprintf('>>Re-sorting according to %s Ensembles\n',Names_Conditions{n});
             [New_Order_Clustering,~]=OrderClusters(labels_frames,signif_frames,ExperimentRasterClean,Nens(n));
@@ -137,6 +158,8 @@ disp('Coloring Ensembles Done.')
 plot_CAG_threshold(THR,LENGHTRASTER,fs)
 if CummFrames==TotalFrames
     Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
+else
+    Label_Condition_Raster(Condition_Names,Rasters,fs);   % Labels
 end
 Figg=gcf; Figg.Name=['Neural Ensembles of ',Experiment];
 %   Sorted *******************************************
@@ -149,12 +172,14 @@ if re_sort
     plot_CAG_threshold(THR,LENGHTRASTER,fs)
     if CummFrames==TotalFrames
         Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
+    else
+        Label_Condition_Raster(Condition_Names,Rasters,fs);   % Labels
     end
     Figg=gcf; Figg.Name=['Neural Ensembles (resorted) of ',Experiment];
 end
 
-% Ensemble Transitions HEBBIAN SEQUENCE **************
-Ensembles_Transitions(fs,labels_frames,signif_frames,ColorState,1);
+% Ensemble Transitions HEBBIAN SEQUENCE ************** ALL-frame Details
+Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,1,LENGHTRASTER);
 
 %% IF ALL EXPERIMENT in ONE Analysis
 NCplot=NC;
@@ -165,7 +190,10 @@ if CummFrames==TotalFrames && NC==1 && numel(Names_Conditions)>1
     disp('>>>>>>>>>>>>>>>>   Whole Experiment   <<<<<<<<<<<<<<<<<<<<<<<<<')
     disp('---------------------------------------------------------------')
     NCplot=length(Names_Conditions);
-    THR=repmat(THR,NCplot,1);
+    THRvector=repmat(THR,NCplot,1); % make it cell:
+    for nth=1:numel(THRvector)
+        THR{nth}=THRvector(nth);
+    end
     UniRMutiE=true;
     NCupdate=length(Names_Conditions);
     cummFrames=1;
@@ -205,7 +233,7 @@ for c=1:NCplot
     % Get raw data **************************************************
     R=Rasters{c}(:,IndexesActive);  % frames x cells
     ActNeu=find(sum(R,1)>0);        % Active Neurons in each Raster: ENS & NON ENS
-    CAG=sum(R,2);                   % CAG in each Condition
+    % CAG=sum(R,2);                   % CAG in each Condition
     % Get labels 
     if UniRMutiE         % IF ALL EXPERIMETN in ONE Analysis
         labels=labelsUPD{c};            % Clustering Labels
@@ -225,7 +253,7 @@ for c=1:NCplot
         % SORTING CONDITION
         Index_Ensemble=Indexes(OrderOneCondition);          % Neurons Label Raster
         % Hebbian Sequences 
-        HebbSequence=Ensembles_Transitions(fs,labels,sigframes,ColorState,0); % ---> save
+        % HebbSequence=Ensembles_Transitions(fs,labels,sigframes,CAG,ColorState,0); % ---> save
         % Save Network to Gephi**********************************
         switch answer
             case 'MIX'
@@ -263,7 +291,7 @@ for c=1:NCplot
 
 end
 %% GET & SAVE NEURAL ENSEMBLE FEATURES
-[Features_Ensemble,Features_Condition]=get_ensembles_features(Rasters,Ensemble_Threshold,Ensembled_Labels,fs);
+[Features_Ensemble,Features_Condition]=get_ensembles_features(Rasters,Ensemble_Threshold,Ensembled_Labels,fs,LENGHTRASTER);
 Features_Condition.CoreNeurons=ShNeuron;
 % Network Features
 Features_Condition.Network=NetworkCondition;

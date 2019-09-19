@@ -23,6 +23,7 @@ for c=1:NC
     NN_data=NN_data_Read{c};
     % Get RASTER data from Structure
     Rasters{c}=NN_data.Data.Data;                       % Raster: Frames x Cells
+    % CAG=sum(Rasters{c}');
     LENGHTRASTER{c}=length(NN_data.Data.Data);          % Raster's Lengths
     NamesFields=fieldnames(NN_data);
     % Get ENSEMBLES data from Structure
@@ -30,12 +31,12 @@ for c=1:NC
         NGroups{c}=NN_data.Clustering.TotalStates;          % Number of Groups
         sigframes=find(NN_data.Peaks.Index);            % Frames with CAG above Threshold
         labelsENS=NN_data.Clustering.VectorStateIndex;  % Labels on Neural Ensembles
-        SIG_FRAMES{c}=sigframes;
+        SIG_FRAMES{c}=sigframes(labelsENS>0);
         % Hebbian Sequence to resort labels
-        HebbSequence=Ensembles_Transitions(1,labelsENS,sigframes,[],0);
+        % HebbSequence=Ensembles_Transitions(1,labelsENS(labelsENS>0),sigframes(labelsENS>0),CAG,[],0);
         % %%% re-sort ensembles %%%%
-        relabels=relabel_ensembles(labelsENS,HebbSequence,'2-freq');
-        LABELS{c}=relabels+CummGroups;      % Ensemble Labels
+        % relabels=relabel_ensembles(labelsENS(labelsENS>0),HebbSequence,'2-freq');
+        LABELS{c}=labelsENS+CummGroups;      % Ensemble Labels
         THR{c,1}=NN_data.Peaks.Threshold;                   % CAG Threshold
         fprintf('>> Ensembles in Condition %i \n',c)
         tabulate(LABELS{c});

@@ -1,4 +1,5 @@
 %% Script that re-generate Video, Signasl & Raster animation:
+% Load .mat File
 % Set Video, Condition and Coordinates
 %% Get Video Intel: 
 % It require to load Experiment 
@@ -12,15 +13,13 @@ VideoObj = VideoReader([PathName FileName]);
 W = VideoObj.Width;                       % Weight
 H = VideoObj.Height;                      % Height
 
-% Select #Video and Condition Video of Experiment
-
+%% Select #Video and Condition Video of Experiment
 i=1;    % Condition
 j=1;    % # Video
-
 % Indexes if the Coordinates ( ALL - XY see @fSIENN)
-Indexes=[1,2];
+Indexes=[1,2,3];
 
-% READ DATA
+%% READ DATA
 R=RASTER{j,i};          % Driver
 XS=SIGNALSclean{i,j};   % Denoised Sparse Signal
 % isSIGNAL=isSIGNALS{i,j};% Signals with Activity

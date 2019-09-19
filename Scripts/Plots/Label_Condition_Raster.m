@@ -7,6 +7,7 @@
 % Output
 %    Annotation to Current Figure in Minutes
 function Label_Condition_Raster(Names_Conditions,Raster_Condition,fs)
+fprintf('>>Labeling Conditions: ')
 [NVs,NC]=size(Raster_Condition);
 
 % Read & Get Proportion of Raster Lengths
@@ -15,7 +16,11 @@ FramesCondition=zeros(NC,1);
 for i=1:NC
     FramVids=0;
     for j=1:NVs
-        FramVids=FramVids+size(Raster_Condition{j,i},2);    
+        if size(Raster_Condition{j,i},2)<size(Raster_Condition{j,i},1)
+            FramVids=FramVids+size(Raster_Condition{j,i},1);    
+        else
+            FramVids=FramVids+size(Raster_Condition{j,i},2);    
+        end
     end
     FramesCondition(i)=FramVids;
     FramesTotal=FramesTotal+FramesCondition(i);
@@ -61,3 +66,4 @@ for i=1:NC
         'LineWidth',2,...
         'LineStyle',':');
 end
+fprintf('done.\n');

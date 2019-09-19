@@ -9,7 +9,7 @@
 % OUTPUT
 %   Ensembled_Neurons
 %   Ensmeble_Features
-function [Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs)
+function [Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs,LENGHTRASTER)
 %% Setup
 SimMethod='hamming';
 % Get Number Of Conditions
@@ -63,7 +63,13 @@ for c=1:C
     Ensembles_Labels=Ensembled_Labels{c};   % Labels each frame
     E=unique(Ensembled_Labels{c});          % Ensembles per condition
     %% Classification Error
-    [Model_Cond{c},ECV_Cond(c)]=Nbayes_Ensembles(R(:,signif_frames),Ensembles_Labels);
+    if ~isempty(Ensembles_Labels)
+        [Model_Cond{c},ECV_Cond(c)]=Nbayes_Ensembles(R(:,signif_frames),Ensembles_Labels);
+    else
+        Model_Cond{c}={};
+        ECV_Cond(c)=NaN;
+    end
+    
     %% EACH ENSEMBLE
     MaxIntraVec=zeros(1,numel(E));
     for e=1:numel(E)
@@ -115,17 +121,25 @@ for c=1:C
     else
         DunnIndex(c)=0; % min distance among ensembles divided by maximum length of ensembles
     end
-    MIV(c)=max(MaxIntraVec);
-    
-    % Hebbian Sequence
-    DifEns=diff(Ensembles_Labels);
-    IndxDifEns=find(DifEns)+1;
-    IndxDifEns=[1;IndxDifEns];
-    HS=Ensembles_Labels(IndxDifEns);
-    % RETRIEVE TIMES OF THE HS (!!!)
-    EnsembleTimes=signif_frames(IndxDifEns)';
-    % Transitions: Ensmbles Change deactivate and activate [ALTERNANCE]
-    ET= HS(diff([HS;0])~=0);
+    if isempty(MaxIntraVec)
+        MIV(c)=NaN;
+        HebbSequence=[];
+        EnsembleTimes=[];
+    else
+        MIV(c)=max(MaxIntraVec);
+        % Hebbian Sequence
+        % DifEns=diff(Ensembles_Labels);
+        % IndxDifEns=find(DifEns)+1;
+        % IndxDifEns=[1;IndxDifEns];
+        % HS=Ensembles_Labels(IndxDifEns);
+        % RETRIEVE TIMES OF THE HS (!!!)
+        % EnsembleTimes=signif_frames(IndxDifEns)';
+        % Transitions: Ensembles Change deactivate and activate [ALTERNANCE]
+        % ET= HS(diff([HS;0])~=0);
+        [HebbSequence,EnsembleTimes]=Ensembles_Transitions(1,Ensembles_Labels,signif_frames,CAG,[],0,LENGHTRASTER{c});
+    end
+    %ET= HebbSequence(diff([HebbSequence';0])~=0)'; 
+    ET=HebbSequence;
     Transitions{c}=ET;
     Ntransitions(c)=numel(ET)-1;
     Rate_Transitions(c)=(numel(ET)-1)/RasterDuration; % Transitions per MINUTE
@@ -134,16 +148,16 @@ for c=1:C
     Alternations=0;
     AltIndex(c)=0;
     ReaIndex(c)=0;
-    if numel(Ensembles_Labels)>1
-        for e=1:numel(Ensembles_Labels)-1
-             if Ensembles_Labels(e)==Ensembles_Labels(e+1)
+    if numel(HebbSequence)>1
+        for e=1:numel(HebbSequence)-1
+             if HebbSequence(e)==HebbSequence(e+1)
                  Reactivations=Reactivations+1;
              else
                  Alternations=Alternations+1;
              end
         end
-        AltIndex(c)=Alternations/(numel(Ensembles_Labels)-1);
-        ReaIndex(c)=Reactivations/(numel(Ensembles_Labels)-1);
+        AltIndex(c)=Alternations/(numel(HebbSequence)-1);
+        ReaIndex(c)=Reactivations/(numel(HebbSequence)-1);
     end
     
     % Euler Cycles of Ensembles [REVERBERATION] return 

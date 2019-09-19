@@ -23,7 +23,8 @@ function recommended = HBestTree_JPplus(Sim)
 % method={'average','centroid','complete','median','single','ward','weighted'};
 % 'complete' caused MATLAB crashings
 % method={'average','ward','weighted'};
-method={'average','centroid','median','single','ward','weighted'};
+% method={'average','centroid','median','single','ward','weighted'};
+method={'average','single','weighted'};
 
 for i=1:numel(method)
     fprintf('> Method Consistency for %s Linkage is:',method{i});
