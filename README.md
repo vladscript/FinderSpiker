@@ -12,7 +12,7 @@
 # See [**Quick User Guide**](http://htmlpreview.github.io/?https://github.com/vladscript/FinderSpiker/blob/master/html/USER_GUIDE.html)
 
 ### Brief Description
-Optimized for Acquired Data in [ImPatch](http://impatch.ifc.unam.mx/)
+Optimized for Acquired Data in [ImPatch](http://impatch.ifc.unam.mx/) and MATLAB R2015a
 * **Input**
   - List of videos (e.g. CTRL01,.., CTRLN,DRUGA01,...,DRUGA0N,...)
   - List of ROIs Coordianates (CSV file from ImPatch)
