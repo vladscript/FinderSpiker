@@ -11,7 +11,8 @@
 %   Ensmeble_Features
 function [Features_Ensemble,Features_Condition]=get_ensembles_features(R_Condition,Ensemble_Threshold,Ensembled_Labels,fs,LENGHTRASTER)
 %% Setup
-SimMethod='hamming';
+%SimMethod='hamming';
+Load_Default_Clustering;
 % Get Number Of Conditions
 C=numel(R_Condition); % Number of Conditions
 % Get Number of Different Ensmebles
@@ -47,16 +48,16 @@ MIV=zeros(C,1);
 for c=1:C
     %% DATA
     R=R_Condition{c};               % RASTER
-    [AN,Frames]=size(R);            % Total Active Neurons [selected]
+    [AN,Frames]=size(R);            % Total Neurons [selected]
     if AN>Frames
         R=R';
         [AN,Frames]=size(R);            % Total Active Neurons [selected]
-        fprintf('.\n');
+        fprintf('Transposed Matrix\n');
     end 
     RasterDuration=Frames/fs/60;    % MINUTES
     CAG=sum(R);                     % Co-Activity-Graphy
     %% CAG Statistics
-    AUC=autocorr(CAG,1); % CAG Autocorrelation Coefficient
+    AUC=autocorr(CAG,1);                % CAG Autocorrelation Coefficient
     CAGstats(c,:)=AUC(2);
     Th=Ensemble_Threshold(c);               % CAG Threshold
     signif_frames=find(CAG>=Th);            % Significant Frames
@@ -69,19 +70,25 @@ for c=1:C
         Model_Cond{c}={};
         ECV_Cond(c)=NaN;
     end
-    
-    %% EACH ENSEMBLE
+    %% HEBBIAN PATHWAY
+    if isempty(signif_frames)
+        HebbSequence=[];
+        EnsembleTimes=[];
+    else
+        [HebbSequence,EnsembleTimes,EnsembleIntervals]=Ensembles_Transitions(fs,Ensembles_Labels,signif_frames,CAG,[],0,LENGHTRASTER{c});
+    end
+    %% EACH ENSEMBLE FEATURES
     MaxIntraVec=zeros(1,numel(E));
     for e=1:numel(E)
         fprintf('>> Condition %i, Ensemble %i of %i \n',c,e,numel(E));
         frames_ensemble=signif_frames(Ensembles_Labels==E(e));
         TimeOccupancy(c,e)=numel(frames_ensemble)/numel(signif_frames);
-        EnsembleActivations=numel(find(diff(frames_ensemble)>1));
+        EnsembleActivations=numel(HebbSequence(HebbSequence==E(e)));
         % Ouput Measure Features by ENSEMBLE
         Ensembles_Rate(c,e)=EnsembleActivations/RasterDuration; %[act/min]
         Ensembled_Neurons{c,e}=find(sum(R(:,frames_ensemble),2));
-        % Output Indexes
-        NeuronsOccupancy(c,e)=numel(Ensembled_Neurons{c,e})/AN;
+        % Neurons@Ensemble / Active Neurons @ Condition
+        NeuronsOccupancy(c,e)=numel(Ensembled_Neurons{c,e})/sum(sum(R,2)>0); 
         % MORE FEATURES
         Rcluster=R(:,frames_ensemble); % Cells x Frames
         CAGcluster=sum(Rcluster);
@@ -94,15 +101,28 @@ for c=1:C
             MaxIntraVec(c)=0;
         
         end
-        % Inter-Eensemble-Interval & Ensemble Duration
-        r=zeros(size(CAG));
-        r(frames_ensemble)=1;
-        [IEIs,EDs]=interval_duration_events(r);
+        
+        % Inter-Eensemble-Interval & Ensemble Duration*********************
+        % FROM HEBBIAN PATH 
+        EDs=diff(EnsembleIntervals')+1;
+        if size(EnsembleIntervals,1)>1
+            for i=2:size(EnsembleIntervals,1)
+                IEIs(1,i)=EnsembleIntervals(i,1)-EnsembleIntervals(i-1,2);
+            end
+        else
+            IEIs=[];
+        end
+        
         IEIsExp{c,e}=IEIs/fs;   % [SECONDS]
         EDsExp{c,e}=EDs/fs;     % [SECONDS]
         IEIstats{c,e}=[mean(IEIs),mode(IEIs),median(IEIs),var(IEIs),skewness(IEIs),kurtosis(IEIs)];
         EDstats{c,e}=[mean(EDs),mode(EDs),median(EDs),var(EDs),skewness(EDs),kurtosis(EDs)];
         %disp('butt')
+    end
+    if isempty(MaxIntraVec)
+        MIV(c)=NaN;
+    else
+        MIV(c)=max(MaxIntraVec);
     end
     %% ENSEMBLES SETs FEATURES
     % CONDITION FEATURES ********************************
@@ -121,24 +141,8 @@ for c=1:C
     else
         DunnIndex(c)=0; % min distance among ensembles divided by maximum length of ensembles
     end
-    if isempty(MaxIntraVec)
-        MIV(c)=NaN;
-        HebbSequence=[];
-        EnsembleTimes=[];
-    else
-        MIV(c)=max(MaxIntraVec);
-        % Hebbian Sequence
-        % DifEns=diff(Ensembles_Labels);
-        % IndxDifEns=find(DifEns)+1;
-        % IndxDifEns=[1;IndxDifEns];
-        % HS=Ensembles_Labels(IndxDifEns);
-        % RETRIEVE TIMES OF THE HS (!!!)
-        % EnsembleTimes=signif_frames(IndxDifEns)';
-        % Transitions: Ensembles Change deactivate and activate [ALTERNANCE]
-        % ET= HS(diff([HS;0])~=0);
-        [HebbSequence,EnsembleTimes]=Ensembles_Transitions(1,Ensembles_Labels,signif_frames,CAG,[],0,LENGHTRASTER{c});
-    end
-    %ET= HebbSequence(diff([HebbSequence';0])~=0)'; 
+    
+    %% TRANSITIONS AND CYCLES
     ET=HebbSequence;
     Transitions{c}=ET;
     Ntransitions(c)=numel(ET)-1;

@@ -3,20 +3,22 @@
 % [ Necessary to know the statistical power of the Automatic Mode,
 % Getting insohgts about -+ and -- (false+ & false-)]
 % Transients are calculated from denoised signal (wavelet analysis)
-% Rate of Activity is from Actual and Previous conditions only
+% Rate of Activity is from Actual and Previou(s) conditions only
 % Hebbian sequence holds if CAG level stands still
+%           TypeCycles(1)->Simple
+%           TypeCycles(2)->Closed
+%           TypeCycles(3)->Open
 %% FIXED  READY TO GO @ GIT
-%   RoA method in Select_Raster script
-%   User Interface Texts Updated:AccRoA,SelectRaster,
-%   Bug @ Selec_Raster
-%   IMPORTANT:  
-%   Get_Ensembles: UPDATE    !!!!!
-%   Hebbian Sequence: UPDATE !!!!!
+%   Ensemble COlors and Hebbian Sequence
+%   Neural Ensemble Intervals recalcullated
+
 %% Bugs & New Functions NOW
 
 % Statistics: automate
 % CAG threshold (Mike's Script - MonteCarlo)
 % Recover Coordinates of Ensembles and Display as scatter plots
+
+% INDEX of USEFUL FUNCTIONS
 
 % Toy example for clustering: time correlaition vs coactivity:
 %  to seen syn fires is irrelevante

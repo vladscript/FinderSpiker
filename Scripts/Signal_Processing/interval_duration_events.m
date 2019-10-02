@@ -27,7 +27,7 @@ if ~isempty(r(r>0))
             if numel(StartsIntervasl)>1
                 IEI=[IEI,StartsIntervasl(2:end)-EndsIntervasl(1:end-1)+1];
             end
-            ED=[ED, EndsIntervasl-StartsIntervasl+1];
+            ED=[ED, EndsIntervasl-StartsIntervasl];
         else
             disp('WTF?');
         end

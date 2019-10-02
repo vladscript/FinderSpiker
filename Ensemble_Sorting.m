@@ -81,7 +81,7 @@ for c=1:NC
     CAGc=sum(Rasters{c},2)';
     if ~isempty(lbfr)
         minEns=min(unique(lbfr))-1;
-        HB=Ensembles_Transitions(1,lbfr-minEns,sigfr,CAGc,[],0,LENGHTRASTER{c});
+        HB=Ensembles_Transitions(fs,lbfr-minEns,sigfr,CAGc,[],0,LENGHTRASTER{c});
         relbls=relabel_ensembles(lbfr-minEns,HB,'2-freq')+minEns;
     else
         minEns=0;
@@ -148,21 +148,25 @@ ColorState=colormyensembles(NGroups);
 % % % % % % % colormap(CT)
 %% Plot Ensembles of Whole Raster ---------------------------------------------------------------------
 Experiment=Experiment(Experiment~='\');     % NAMES PATCH
-%   Original ****************************************
+% Original **************************************** *********************
 OriginalExperiment=ExperimentRasterClean;
-Plot_Raster_Ensembles(OriginalExperiment',fs,5,Indexes);    % Disorted Raster
+Plot_Raster_Ensembles(OriginalExperiment',fs,5,Indexes);  % Disorted Raster
 disp('Coloring Ensembles...')
 Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CAG,Indexes);
 disp('Coloring Ensembles Done.')
 % plot_CAG_threshold(THR,R_Condition,fs)
 plot_CAG_threshold(THR,LENGHTRASTER,fs)
+% Labels
 if CummFrames==TotalFrames
-    Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
+    Label_Condition_Raster(Names_Conditions,R_Condition,fs);   
 else
-    Label_Condition_Raster(Condition_Names,Rasters,fs);   % Labels
+    Label_Condition_Raster(Condition_Names,Rasters,fs);
 end
 Figg=gcf; Figg.Name=['Neural Ensembles of ',Experiment];
-%   Sorted *******************************************
+%% Ensemble Transitions HEBBIAN SEQUENCE ************** ALL-frame Details
+Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,1,LENGHTRASTER);
+close(gcf); % Justo to color CAG  @ raster figure
+% Sorted ******************************************* **********************
 if re_sort
     Plot_Raster_Ensembles(OriginalExperiment',fs,1,Indexes(New_Order_Clustering));   % Sorted Raster
     % Plot_State_Colors;
@@ -178,7 +182,7 @@ if re_sort
     Figg=gcf; Figg.Name=['Neural Ensembles (resorted) of ',Experiment];
 end
 
-% Ensemble Transitions HEBBIAN SEQUENCE ************** ALL-frame Details
+%% Ensemble Transitions HEBBIAN SEQUENCE ************** ALL-frame Details
 Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,1,LENGHTRASTER);
 
 %% IF ALL EXPERIMENT in ONE Analysis
@@ -221,6 +225,7 @@ end
 NG=0;
 AuxC=0;
 NetworkCondition=cell(NCplot,1);
+Ensemble_Threshold=zeros(NCplot,1);
 % Input: ColorState, from Clustering Analysis
 for c=1:NCplot
     % Initialize Output

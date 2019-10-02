@@ -7,10 +7,13 @@
 %   If ifplot=1 plot; else do nothing
 % Output
 %   ensemble_index: Sequence of Ensembles                
-function [EnsembleInstances,EnsembleInstancesTimes]=Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,ifplot,varargin)
+function [EnsembleInstances,EnsembleInstancesTimes,EnsembleIntervals]=Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,ifplot,varargin)
 %% Setup
 % Ignore 0-ensembled frames
+Load_Default_Clustering;
 EnsembleInstances=[];
+EnsembleIntervals=[];
+% EnsemblesAllIntervals=[];
 labfram=labels_frames(labels_frames>0);
 framsig=signif_frames(labels_frames>0);
 frames_ensembles=[];
@@ -74,7 +77,7 @@ else
         
         if numel(StartsIntervasl)==numel(EndsIntervasl)
             for f=1:numel(StartsIntervasl)
-                if EndsIntervasl(f)-StartsIntervasl(f)>fs
+                if EndsIntervasl(f)-StartsIntervasl(f)>fs*CAGDeepValleys
                     ZeroCAG=[ZeroCAG,StartsIntervasl(f)+1:EndsIntervasl(f)];
                 end
             end
@@ -283,6 +286,7 @@ else
                     if isempty(NNindx)
                         TimesEnsembles=[TimesEnsembles;round(median(BufferTimes))];
                         InstancesEnsembles=[InstancesEnsembles;preEns];
+                        % EnsemblesAllIntervals=[EnsemblesAllIntervals;BufferTimes(end)-BufferTimes(1)+1];
                     else
                         
                         if NNindx{end}(end)<numel(BufferTimes)
@@ -291,11 +295,13 @@ else
                         for nn=1:numel(NNindx)
                             TimesEnsembles=[TimesEnsembles;round(median(BufferTimes(NNindx{nn})))];
                             InstancesEnsembles=[InstancesEnsembles;preEns];
+                            % EnsemblesAllIntervals=[EnsemblesAllIntervals;BufferTimes(end)-BufferTimes(1)+1];
                         end
                     end
                 else
                     TimesEnsembles=[TimesEnsembles;round(median(BufferTimes))];
                     InstancesEnsembles=[InstancesEnsembles;preEns];
+                    % EnsemblesAllIntervals=[EnsemblesAllIntervals;BufferTimes(end)-BufferTimes(1)+1];
                 end
                 % Different Ensemble
                 preEns=EnsembleInstances(n);
@@ -307,7 +313,10 @@ else
         fprintf('>>Low Neural Ensemble Activity')
     end
     %% UPDATE OUTPUT
-    EnsembleInstancesTimes=TimesEnsembles;
+    % EnsembleInstancesTimes=TimesEnsembles;
+    % EnsembleInstances=InstancesEnsembles;
+    EnsembleIntervals=get_ensemble_intervals(TimesEnsembles,InstancesEnsembles,signif_frames,labels_frames);
+    EnsembleInstancesTimes=round(median(EnsembleIntervals,2));
     EnsembleInstances=InstancesEnsembles;
 end
 
@@ -317,11 +326,31 @@ if ifplot
     %% Plot in Minutes
     % Always plot after a Raster Analysis to get the axis right
     Axis_details=gca;
+    
+    
+    % PLTO INTERVALS AND COLORS
+    
+    xtime=Axis_details.Children(end).XData; % [MINUtES]
+    yCAG=Axis_details.Children(end).YData;
+    
+    
     fig_Ensembles_Transitions=figure('Position', [415 172 560 122],...
         'Name','Hebbian Pathways');
     plot(EnsembleInstancesTimes/fs/60,EnsembleInstances,'k','LineWidth',2); hold on
     Ntran=length(EnsembleInstances);
     for i=1:Ntran
+        
+        % PLOT @ CAG
+        if diff([EnsembleIntervals(i,1),EnsembleIntervals(i,2)])~=0
+            plot(Axis_details,xtime(EnsembleIntervals(i,1):EnsembleIntervals(i,2)),...
+            yCAG(EnsembleIntervals(i,1):EnsembleIntervals(i,2)),...
+            'Color',ColorState(EnsembleInstances(i),:) );
+        else
+            plot(Axis_details,xtime(EnsembleIntervals(i,1)-1:EnsembleIntervals(i,2)+1),...
+            yCAG(EnsembleIntervals(i,1)-1:EnsembleIntervals(i,2)+1),...
+            'Color',ColorState(EnsembleInstances(i),:) );
+        end
+        % PLOT @ HEBBIAN SEQUENCE
         plot(EnsembleInstancesTimes(i)/fs/60,EnsembleInstances(i),'o',...
             'MarkerEdgeColor','k',...
             'MarkerFaceColor',ColorState(EnsembleInstances(i),:),...
@@ -329,4 +358,6 @@ if ifplot
     end
     hold off;
     axis([Axis_details.XLim,0.5,max(EnsembleInstances)+0.5])
+    EnsmbleAxis=gca;
+    linkaxes([Axis_details,EnsmbleAxis],'x')
 end

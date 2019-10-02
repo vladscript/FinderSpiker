@@ -10,4 +10,8 @@ ActiveTime=0.10;         % Active Time (CAG>0)
 % alphavalCAG=0.85;       % For CAG  Threshold
 SimMethod='hamming';  
 
-% CAGvalleys=4;           % To define Valleys Inter Ensemble
+CAGDeepValleys=3;           % Seconds of Conituous Zero-CAG
+% From Features_Condition:
+% TypeCycles(1)->Simple
+% TypeCycles(2)->Closed
+% TypeCycles(3)->Open
