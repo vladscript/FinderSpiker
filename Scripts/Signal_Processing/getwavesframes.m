@@ -9,7 +9,8 @@
 function [LOWwavesFrames,ZeroCrosses] = getwavesframes(xdenoised,noisex)
     Frames=numel(xdenoised);
     %% DETRENDING FIXING #############################################
-    [ValleAMP,ValleN]=findpeaks(-xdenoised);    % Get Valleys of Denoised Signal
+    % [ValleAMP,ValleN]=findpeaks(-xdenoised);    % Get Valleys of Denoised Signal
+    [~,ValleN,~,ValleAMP]=findpeaks(-xdenoised);    % Get Valleys of Denoised Signal
     if ~isempty(ValleAMP)
         ValleAMPabs=abs(ValleAMP);
         ValleAMPflip=-ValleAMP;              % actual values

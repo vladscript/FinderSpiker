@@ -28,7 +28,10 @@ for i=1:Ns
     % SNR by Wavelet Processing and Autocorrelation Diminishment
     [xdenoised,noisex]=mini_denoise(xd);
     %% de-OFFSET
-    [~,Valleys]=findpeaks(-xdenoised,'NPeaks',1,'SortStr','descend');
+    % [~,Valleys]=findpeaks(-xdenoised,'NPeaks',1,'SortStr','descend');
+    [~,AllValleys,~,P]=findpeaks(-xdenoised);
+    [~,sortP]=sort(P);
+    Valleys=AllValleys(sortP(end));
     if isempty(Valleys)
         offset_xd=min(xdenoised)+std(noisex);
     else
