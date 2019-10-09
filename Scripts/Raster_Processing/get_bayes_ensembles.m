@@ -8,10 +8,10 @@
 % Input
 %   R:          Raster of Neural Activity (Matrix Cells x Frames)
 % Output
-%   R_Analysis: Raster Structur with Fields:
-%       Data.Data=R;  % Frames x Cells (compatibility wit JP's NN)
+%   R_Analysis: Raster Structur with Fields:'s NN)
 %       Peaks.Threshold=CAG_TH;
 %       Clustering.TotalStates=Nensembles;
+%       Data.Data=R;  % Frames x Cells (compatibility wit JP
 %       Clustering.Tree=Tree;   Hierarchichal Clustering
 %       Clustering.Linkage=LinkageMethod;   Linkage
 %       Peaks.Index=zeros(1,numel(CAG));
@@ -46,6 +46,7 @@ ActiveCells=find(sum(R,2));
 % GET ONLY ACTIVE CELLS!
 Ractive=R(ActiveCells,:);
 CAG=sum(Ractive);
+CAGvals=unique(CAG);
 MaxCAG=max(CAG);
 %% AS IF ITS EMPTY *****??????
 % Initialize Output
@@ -75,13 +76,15 @@ if Analyze
     tic;
     %     
     CAGwithAN=[];
-    for CAGindex=2:MaxCAG
+    for CAGi=1:numel(CAGvals)
+        CAGindex=CAGvals(CAGi);
         Rclust=Ractive(:,CAG>=CAGindex);
         ActiveCellsClust=find(sum(Rclust,2));
         PercAN(CAGindex)=numel(ActiveCellsClust)/numel(ActiveCells);
         ActTime(CAGindex)=sum((sum(Rclust)>0))/size(Ractive,2);
         fprintf('For %i CA Neurons-> %3.1f%% Active Neurons %3.1f%% of the Time\n',CAGindex,100*PercAN(CAGindex),100*ActTime(CAGindex));
-        if PercAN(CAGindex)>=ActiveNeuronsRatio && ActTime(CAGindex)>=ActiveTime
+        if and(PercAN(CAGindex)>=ActiveNeuronsRatio && ActTime(CAGindex)>=ActiveTime,...
+                CAGindex>1)
             CAGwithAN=[CAGwithAN,CAGindex];
         end
     end
@@ -137,7 +140,7 @@ if Analyze
     end
     DelayTime=toc;
     % ErrorEnseRation=ErrorClass.*NensemblesOK;
-    ErrorEnseRation=ErrorClass./NensemblesOK./ActTime(CAGwithAN)'
+    ErrorEnseRation=ErrorClass./NensemblesOK./ActTime(CAGwithAN)';
     % If Zero->Overffitting or Few Data
     ErrorEnseRation(ErrorEnseRation==0)=1;
     % When 2 ensembles->Missclustering Probably

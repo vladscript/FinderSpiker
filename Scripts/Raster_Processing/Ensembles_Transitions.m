@@ -49,6 +49,7 @@ end
 if isempty(CAG)
     EnsembleInstancesTimes=time_ensemble;
     EnsembleInstances=ensemble_index;
+    % EnsembleIntervals=[time_ensemble-1,time_ensemble+1];
     % Every ball is an ensmble of continous frames
 else
     % Smoothed Version of CAG: Ensmble above CAG Threshold
@@ -339,16 +340,17 @@ if ifplot
     plot(EnsembleInstancesTimes/fs/60,EnsembleInstances,'k','LineWidth',2); hold on
     Ntran=length(EnsembleInstances);
     for i=1:Ntran
-        
-        % PLOT @ CAG
-        if diff([EnsembleIntervals(i,1),EnsembleIntervals(i,2)])~=0
-            plot(Axis_details,xtime(EnsembleIntervals(i,1):EnsembleIntervals(i,2)),...
-            yCAG(EnsembleIntervals(i,1):EnsembleIntervals(i,2)),...
-            'Color',ColorState(EnsembleInstances(i),:) );
-        else
-            plot(Axis_details,xtime(EnsembleIntervals(i,1)-1:EnsembleIntervals(i,2)+1),...
-            yCAG(EnsembleIntervals(i,1)-1:EnsembleIntervals(i,2)+1),...
-            'Color',ColorState(EnsembleInstances(i),:) );
+        if ~isempty(CAG)
+            % PLOT @ CAG
+            if diff([EnsembleIntervals(i,1),EnsembleIntervals(i,2)])~=0
+                plot(Axis_details,xtime(EnsembleIntervals(i,1):EnsembleIntervals(i,2)),...
+                yCAG(EnsembleIntervals(i,1):EnsembleIntervals(i,2)),...
+                'Color',ColorState(EnsembleInstances(i),:) );
+            else
+                plot(Axis_details,xtime(EnsembleIntervals(i,1)-1:EnsembleIntervals(i,2)+1),...
+                yCAG(EnsembleIntervals(i,1)-1:EnsembleIntervals(i,2)+1),...
+                'Color',ColorState(EnsembleInstances(i),:) );
+            end
         end
         % PLOT @ HEBBIAN SEQUENCE
         plot(EnsembleInstancesTimes(i)/fs/60,EnsembleInstances(i),'o',...

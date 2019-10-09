@@ -35,8 +35,8 @@ LineTime=line([0,0],[0,offsetplot]);
 LineTime.Color='k';
 
 signalswindow.Children.YTick=[];
-plot(XD','color',[0.8,0.8,0.8],'LineWidth',1); 
-plot(X_SPARSE','color','b','LineWidth',1)
+plot(XD','color',[0.4,0.4,0.4],'LineWidth',2); 
+plot(X_SPARSE','color',[0,0.5,0],'LineWidth',1)
 signalswindow.Children.XLim=[-SlideWin,0];
 signalswindow.Children.YLim=[floor(min(XD(:))),ceil(max(XD(:)))];
 
@@ -52,7 +52,7 @@ for f=1:Frames
     for c=1:Ns
         if Raster(c,f)>0
             % Plot Line
-            line([f,f],[CellOffset(c),CellOffset(c)+0.2],'Color','k')
+            line([f,f],[CellOffset(c)-0.1,CellOffset(c)+0.1],'Color','k')
             % Plot Rectangle
         end
         % offsetplot=offsetplot+1;

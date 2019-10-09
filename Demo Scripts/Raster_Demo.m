@@ -12,11 +12,11 @@
 clc; clear;
 disp('>>Building Raster...')
 % Ensmebles
-Nensambles=5;       % N ensembles
-Nneurons=[3,6,7,2,5];   % Neurons at each ensembles
+Nensambles=4;       % N ensembles
+Nneurons=[14,10,11,13];   % Neurons at each ensembles
 
 % Hebbian Sequence 
-HebbianSeq=[1,2,3,4,5,1,2,3,4,5,5,4,3,2,1];
+HebbianSeq=[1,2,3,4,1,2,3,4,4,1,2,3];
 
 % Noisy frames
 Frames=numel(HebbianSeq);

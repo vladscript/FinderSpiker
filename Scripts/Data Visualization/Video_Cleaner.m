@@ -17,8 +17,12 @@ H = VideoObj.Height;                      % Height
 i=1;    % Condition
 j=1;    % # Video
 % Indexes if the Coordinates ( ALL - XY see @fSIENN)
-Indexes=[1,2,3];
+Indexes=[1,3,5];
 
+
+%% SLIDING WINDOW SIZE: + + + + + + + + + + 
+NSECONDS=60;
+%   + + + + + + + + + + +  + + + + + + + + 
 %% READ DATA
 R=RASTER{j,i};          % Driver
 XS=SIGNALSclean{i,j};   % Denoised Sparse Signal
@@ -56,10 +60,6 @@ for n=1:numel(Indexes)
         IndexesText=[IndexesText,'_'];
     end
 end
-
-% SLIDING WINDOW SIZE: + + + + + + + + + + 
-NSECONDS=60;
-%   + + + + + + + + + + +  + + + + + + + + 
 
 % SIGNALS
 WINDOW_SLIDE=fs*NSECONDS;

@@ -9,12 +9,13 @@
 function [LOWwavesFrames,ZeroCrosses] = getwavesframes(xdenoised,noisex)
     Frames=numel(xdenoised);
     %% DETRENDING FIXING #############################################
-    % [ValleAMP,ValleN]=findpeaks(-xdenoised);    % Get Valleys of Denoised Signal
-    [~,ValleN,~,ValleAMP]=findpeaks(-xdenoised);    % Get Valleys of Denoised Signal
+    [ValleAMP,ValleN]=findpeaks(-xdenoised);    % Get Valleys of Denoised Signal
+%     [~,ValleN,~,ValleAMP]=findpeaks(-xdenoised);    % Get Valleys of Denoised Signal
     if ~isempty(ValleAMP)
         ValleAMPabs=abs(ValleAMP);
         ValleAMPflip=-ValleAMP;              % actual values
-        [pV,binV]=ksdensity(xdenoised(ValleN));    % pdf of Valley Amplitudes
+        % [pV,binV]=ksdensity(xdenoised(ValleN));    % pdf of Valley Amplitudes
+        [pV,binV]=ksdensity(ValleAMP);    % pdf of Prominence Peaks
         [Vp,Vbin,Vwidth]=findpeaks(pV,binV); % modes of pdf valleys
         if numel(Vp)>0
             % Take only small amplitudes

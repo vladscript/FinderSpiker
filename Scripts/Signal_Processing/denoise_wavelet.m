@@ -85,35 +85,36 @@ for i=1:Ns
         % Get Peaks below noise and waves above noise 
         % Frames would be inflection points to detrend
         [LOWwavesFrames,ZeroCrosses]=getwavesframes(xdenoised,noisex);
-        % preLOWwavesFrames=LOWwavesFrames;
-        % IGNORE VALLEYS WITH HIGH PROMINENCE!!!
-        [~,Framy,~,Promy]=findpeaks(-xdenoised);
-        % BigPromyIndx=find(Promy>std(noisex));
-        BigValleys=intersect(Framy(Promy>std(noisex)),LOWwavesFrames);
-        for nv=1:numel(BigValleys)
-            if ismember(BigValleys(nv),LOWwavesFrames)
-                Ndel=find(LOWwavesFrames==BigValleys(nv));
-                if Ndel>2 && Ndel+1<=numel(LOWwavesFrames)
-                    NvecDel=[Ndel-1,Ndel,Ndel+1];
-                elseif Ndel-1<2
-                    NvecDel=[2,Ndel,Ndel+1];
-                elseif Ndel+1>numel(LOWwavesFrames)
-                    NvecDel=[1,Ndel,numel(LOWwavesFrames)];
-                end
-                if NvecDel(end)==numel(LOWwavesFrames)
-                    NvecDel=NvecDel(1:2);
-                end
-                LOWwavesFrames=LOWwavesFrames(setdiff(1:numel(LOWwavesFrames),NvecDel));
-            end
-        end
-        if numel(LOWwavesFrames)==1
-            disp('>>Fix of Waves missDetection>>')
-            LOWwavesFrames=[LOWwavesFrames(1),numel(xd)];
-        elseif numel(LOWwavesFrames)>2
-            LOWwavesFrames=[LOWwavesFrames(1:2),LOWwavesFrames(end)];
-        end
-        
-        % LOWwavesFrames=[1,numel(xd)];
+%         % preLOWwavesFrames=LOWwavesFrames;
+%         % IGNORE VALLEYS WITH HIGH PROMINENCE!!!
+%         [~,Framy,~,Promy]=findpeaks(-xdenoised);
+%         % BigPromyIndx=find(Promy>std(noisex));
+%         BigValleys=intersect(Framy(Promy>std(noisex)),LOWwavesFrames);
+%         for nv=1:numel(BigValleys)
+%             if ismember(BigValleys(nv),LOWwavesFrames)
+%                 Ndel=find(LOWwavesFrames==BigValleys(nv));
+%                 if Ndel>2 && Ndel+1<=numel(LOWwavesFrames)
+%                     NvecDel=[Ndel-1,Ndel,Ndel+1];
+%                 elseif Ndel-1<2
+%                     NvecDel=[2,Ndel,Ndel+1];
+%                 elseif Ndel+1>numel(LOWwavesFrames)
+%                     NvecDel=[1,Ndel,numel(LOWwavesFrames)];
+%                 end
+%                 if NvecDel(end)==numel(LOWwavesFrames)
+%                     NvecDel=NvecDel(1:2);
+%                 end
+%                 LOWwavesFrames=LOWwavesFrames(setdiff(1:numel(LOWwavesFrames),NvecDel));
+%             end
+%         end
+%         if numel(LOWwavesFrames)==1
+%             disp('>>Fix of Waves missDetection>>')
+%             LOWwavesFrames=[LOWwavesFrames(1),numel(xd)];
+%         elseif numel(LOWwavesFrames)>2
+%             LOWwavesFrames=[LOWwavesFrames(1:2),LOWwavesFrames(end)];
+%         end
+        % [~,minFra]=min(abs(xd));
+        % LOWwavesFrames=[1,minFra,numel(xd)+1];
+        LOWwavesFrames=[1,numel(xd)+1];
         % LOWwavesFrames=setdiff(LOWwavesFrames,Framy(Promy>std(noisex)));
         
         %% Plot Results 2/3 *************************************
@@ -147,40 +148,47 @@ for i=1:Ns
                 
 
                 %% DEFINE XLINC (detrendig by parts)
-                if numel(xxtr)<numel(xd)/3
-                    % For the SHORT segments
-                    disp('>> [Short Segment]: Detrending Linearly ...')
-                    mslope=(xxtr(end)-xxtr(1))/numel(xxtr);
-                    xlinc=mslope*([1:numel(xxtr)]-1)+xxtr(1);
-                    xdets=xxtr-xlinc;
-                    if numel(xdets)>3
-                        % Biggest Valley:
-                        [~,setPoint]=findpeaks(-xdets,'Npeaks',1,'SortStr','descend');
-                        % Biggest Peak:
-                        %[BigP,setPoint]=findpeaks(xdets,'Npeaks',1,'SortStr','descend');
-                        if ~isempty(setPoint)
-                            % If the Valley is beyond half signal's length
-                            disp('>> [Short Segment]: A peak in between.')
-                            if setPoint>numel(xdets)/2
-                                mslope=(xxtr(setPoint)-xxtr(1))/setPoint;
-                                xlinc=mslope*([0:numel(xxtr)-1])+xxtr(1);
-                            else
-                                mslope=(xxtr(end)-xxtr(setPoint))/(numel(xxtr)-setPoint);
-                                xlinc=mslope*([0:numel(xxtr)-1])+mslope*(-setPoint)+(xxtr(setPoint));
-                            end
-                            xdets=xxtr-xlinc;
-                        end
-                        % Prevent of Negative Distortion:
-                        if numel(xdets(xdets>=-std(noisex)))<numel(xdets(xdets<-std(noisex)))
-                            disp('>> [Short Segment] Detrending by RLOESS')
-                            xlinc=smooth(xxtr,numel(xxtr),'rloess')';
-                            %xdets=xxtr-xlinc;
-                        end
-                    end
-                else
-                    disp('>>Detrending by RLOESS [Whole segment]...')
-                    xlinc=smooth(xxtr,numel(xxtr),'rloess')';
-                end
+%                 if numel(xxtr)<numel(xd)/3
+%                     % For the SHORT segments
+%                     disp('>> [Short Segment]: Detrending Linearly ...')
+%                     mslope=(xxtr(end)-xxtr(1))/numel(xxtr);
+%                     xlinc=mslope*([1:numel(xxtr)]-1)+xxtr(1);
+%                     xdets=xxtr-xlinc;
+%                     if numel(xdets)>3
+%                         % Biggest Valley:
+%                         [~,setPoint]=findpeaks(-xdets,'Npeaks',1,'SortStr','descend');
+%                         % Biggest Peak:
+%                         %[BigP,setPoint]=findpeaks(xdets,'Npeaks',1,'SortStr','descend');
+%                         if ~isempty(setPoint)
+%                             % If the Valley is beyond half signal's length
+%                             disp('>> [Short Segment]: A peak in between.')
+%                             if setPoint>numel(xdets)/2
+%                                 mslope=(xxtr(setPoint)-xxtr(1))/setPoint;
+%                                 xlinc=mslope*([0:numel(xxtr)-1])+xxtr(1);
+%                             else
+%                                 mslope=(xxtr(end)-xxtr(setPoint))/(numel(xxtr)-setPoint);
+%                                 xlinc=mslope*([0:numel(xxtr)-1])+mslope*(-setPoint)+(xxtr(setPoint));
+%                             end
+%                             xdets=xxtr-xlinc;
+%                         end
+%                         % Prevent of Negative Distortion:
+%                         if numel(xdets(xdets>=-std(noisex)))<numel(xdets(xdets<-std(noisex)))
+%                             disp('>> [Short Segment] Detrending by RLOESS')
+%                             xlinc=smooth(xxtr,numel(xxtr),'rloess')';
+%                             %xdets=xxtr-xlinc;
+%                         end
+%                     end
+%                 else
+%                     disp('>>Detrending by RLOESS [Whole segment]...')
+%                     xlinc=smooth(xxtr,numel(xxtr),'rloess')';
+%                 end
+                
+                xlinc=smooth(xxtr,numel(xxtr),'rloess')';
+%                 [~,OffsetXXXindx]=find(xlinc-xxtr>0);
+%                 xdifff=xlinc-xxtr;
+%                 OffsetXXX=max(xdifff(OffsetXXXindx))-std(noisex);
+%                 xlinc=xlinc-OffsetXXX;
+                
                 if numel(xxtr)>3
                     [pA,binA]=ksdensity(xxtr,linspace(min(xxtr),max(xxtr),100));
                     [pB,binB]=ksdensity(xlinc,linspace(min(xlinc),max(xlinc),100));
