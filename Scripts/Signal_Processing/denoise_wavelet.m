@@ -30,11 +30,11 @@ for i=1:Ns
     %% de-OFFSET
     % [~,Valleys]=findpeaks(-xdenoised,'NPeaks',1,'SortStr','descend');
     [~,AllValleys,~,P]=findpeaks(-xdenoised);
-    [~,sortP]=sort(P);
-    Valleys=AllValleys(sortP(end));
-    if isempty(Valleys)
+    if isempty(P)
         offset_xd=min(xdenoised)+std(noisex);
     else
+        [~,sortP]=sort(P);
+        Valleys=AllValleys(sortP(end));
         offset_xd=xdenoised(Valleys)+std(noisex);
     end
 %     [pxd,binxd]=ksdensity(xd,linspace(min(xd),max(xd),100));

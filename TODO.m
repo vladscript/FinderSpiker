@@ -9,11 +9,12 @@
 %           TypeCycles(2)->Closed
 %           TypeCycles(3)->Open
 %% FIXED  READY TO GO @ GIT
-%   Ensemble COlors and Hebbian Sequence
-%   Neural Ensemble Intervals recalcullated
+%   
+%   
 
 %% Bugs & New Functions NOW
 
+% Test d^3 alg:detrendeing-denoissing-deconvolution
 % Statistics: automate
 % CAG threshold (Mike's Script - MonteCarlo)
 % Recover Coordinates of Ensembles and Display as scatter plots
