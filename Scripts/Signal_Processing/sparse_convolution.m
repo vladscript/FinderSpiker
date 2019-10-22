@@ -9,7 +9,7 @@ d=makerowvector(d)';
 r=makerowvector(r)';
 L=numel(r);
 Np=numel(d);
-% To avoid probles with the size of the response
+% To avoid problems with the size of the response
 if L>Np
     r=r(1:Np);
     L=numel(r);    

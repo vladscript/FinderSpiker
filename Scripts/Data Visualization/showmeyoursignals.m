@@ -20,11 +20,12 @@ deltaoffset=0.2;
 for i=1:Ns
     % Get Clean Signals & Normalize
     CellOffset(i)=offsetplot;
-    xs=X_SPARSE(i,:);
+    CMax=max(X_SPARSE(i,:));
+    xs=X_SPARSE(i,:)/CMax;
     xs(xs<0)=0;
     % Detrended Signal
     X_SPARSE(i,:)=xs;
-    xd=XD(i,:);
+    xd=XD(i,:)/CMax;
     % Update
     XD(i,:)=xd+offsetplot;
     X_SPARSE(i,:)=xs+offsetplot;
@@ -35,7 +36,7 @@ LineTime=line([0,0],[0,offsetplot]);
 LineTime.Color='k';
 
 signalswindow.Children.YTick=[];
-plot(XD','color',[0.4,0.4,0.4],'LineWidth',2); 
+plot(XD','color',[0.45,0.45,0.45],'LineWidth',3); 
 plot(X_SPARSE','color',[0,0.5,0],'LineWidth',1)
 signalswindow.Children.XLim=[-SlideWin,0];
 signalswindow.Children.YLim=[floor(min(XD(:))),ceil(max(XD(:)))];

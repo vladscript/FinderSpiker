@@ -1,4 +1,10 @@
-% Default Values for Signal Processing
+% Default Values for Signal Processing ***************************
 L=60;              % seconds  of the Fluorophore Response
-taus_0= [.75,2,1]; % starting values
+
+% AutoRegressive Process Estimated by 'lpc' function *************
 p=3;               % AR(p) initial AR order   
+
+% Using fminsearch algorithm to fit AR  **************************
+% process impulse response to biexponential Function *************
+taus_0= [.75,2,1]; % starting values
+

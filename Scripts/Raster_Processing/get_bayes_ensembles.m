@@ -46,7 +46,7 @@ ActiveCells=find(sum(R,2));
 % GET ONLY ACTIVE CELLS!
 Ractive=R(ActiveCells,:);
 CAG=sum(Ractive);
-CAGvals=unique(CAG);
+CAGvals=unique(CAG(CAG>0));
 MaxCAG=max(CAG);
 %% AS IF ITS EMPTY *****??????
 % Initialize Output

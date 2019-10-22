@@ -32,13 +32,13 @@ for n=1:Nensins
     
     if AntEns==PosEns
         if n<Nensins
-        % Finde where interval is maximum
+        % Find where interval is maximum
         [~,nmax]=max(diff(InBWTN));
         else
             nmax=numel(InBWTN);
         end
     else
-        % FInd where it is differnt ensemble
+        % Find where it is diffrent ensemble
         nmax=find(diff(Ensembles_Labels(preIndex(Axx)))~=0,1);
         if isempty(nmax)
             nmax=numel(InBWTN);
@@ -47,10 +47,14 @@ for n=1:Nensins
     
     nA=find(posFrames>max(sort(EnsembleInterva(:))),1);
     Ap=posFrames(nA);
-
-    Bp=InBWTN(nmax);
+    if ~isempty(InBWTN)
+        Bp=InBWTN(nmax);
+    else
+        Bp=Ap; % rare
+    end
     if Ensembles_Labels(signif_frames==Bp)~=AntEns
         LabeInBwtn=[];
+        FrameLab=[];
         auxj=1;
         for j=Ap:InBWTN(end)
             if ~isempty(Ensembles_Labels(signif_frames==j));
@@ -61,7 +65,11 @@ for n=1:Nensins
             
         end
         oklabelindx=find(LabeInBwtn==AntEns);
-        Bp=FrameLab(oklabelindx(end));
+        if ~isempty(oklabelindx)
+            Bp=FrameLab(oklabelindx(end));
+        else
+            Bp=FrameLab(end);
+        end
     end
     
     EnsembleInterva(n,1)=Ap;

@@ -240,18 +240,10 @@ else
         end
         % OUTPUT: Get Ensemble Time & Ensemble
         for s=1:Nseq
-            % TimHebbian=[TimHebbian;round(median(EnsInt{s}))];
+            TimHebbian=[TimHebbian;round(median(EnsInt{s}))];
+            if ismember(round(median(EnsInt{s})),TimHebbian)
+                numel()
             % Prevent from repeated Ensemble Onsets
-            if ~ismember(round(median(EnsInt{s})),TimHebbian)
-                TimHebbian=[TimHebbian;round(median(EnsInt{s}))];
-            else
-                if numel(EnsInt{s}(end))>1
-                    TimHebbian=[TimHebbian;round(EnsInt{s}(end))];
-                else
-                    TimHebbian=[TimHebbian;round(EnsInt{s}(end)+1)];
-                end
-            end
-            
             EnsHebbian=[EnsHebbian;EnsList(n)];
         end
         fprintf('\n')

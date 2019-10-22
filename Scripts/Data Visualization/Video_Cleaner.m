@@ -17,7 +17,7 @@ H = VideoObj.Height;                      % Height
 i=1;    % Condition
 j=1;    % # Video
 % Indexes if the Coordinates ( ALL - XY see @fSIENN)
-Indexes=[1,3,5];
+Indexes=[1,2,4];
 
 
 %% SLIDING WINDOW SIZE: + + + + + + + + + + 
@@ -64,10 +64,10 @@ end
 % SIGNALS
 WINDOW_SLIDE=fs*NSECONDS;
 % Write Video at Experiment Folder
-NameOutSignals=[NameOut,'_Sx_',IndexesText];
+NameOutSignals=[NameOut,'_Sxx_',IndexesText];
 showmeyoursignals(XS(Indexes,:),XD(Indexes,:),R(Indexes,:),WINDOW_SLIDE,NameOutSignals)
 
 % RASTER
-NameOutRaster=[NameOut,'_Raster'];
+NameOutRaster=[NameOut,'_RasterC'];
 showmeyourraster(R,Indexes,fs,NSECONDS,NameOutRaster)
 %% END ********************************************************************
