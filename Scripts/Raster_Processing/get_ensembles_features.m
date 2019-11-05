@@ -77,6 +77,22 @@ for c=1:C
     else
         [HebbSequence,EnsembleTimes,EnsembleIntervals]=Ensembles_Transitions(fs,Ensembles_Labels,signif_frames,CAG,[],0,LENGHTRASTER{c});
     end
+    %% Ensembles DUration & Inter Ensemble Interval
+    % Inter-Eensemble-Interval & Ensemble Duration*********************
+    % FROM HEBBIAN PATH 
+    EDs=(diff(EnsembleIntervals')+1)/fs; % [SAMPLES]
+    if size(EnsembleIntervals,1)>1
+%         for i=2:size(EnsembleIntervals,1)
+%             IEIs(1,i-1)=(EnsembleIntervals(i,1)-EnsembleIntervals(i-1,2))/fs;
+%         end
+        IEIs=diff(EnsembleTimes)/fs;
+    else
+        IEIs=[];
+    end
+    % INTER (ALL) ENSEMBLES INTERVAL
+    allIEIsExp{c}=IEIs;   % [SECONDS]
+    % (ALL) ENSEMBLES DURATION
+    allEDsExp{c}=EDs;     % [SECONDS]
     %% EACH ENSEMBLE FEATURES
     MaxIntraVec=zeros(1,numel(E));
     for e=1:numel(E)
@@ -101,23 +117,15 @@ for c=1:C
             MaxIntraVec(c)=0;
         
         end
+        eEDs=EDs(HebbSequence==E(e)); % [seconds]
+        eIEIs=diff(EnsembleTimes(HebbSequence==E(e)))/fs; % [samples/fs=seconds]
+        % Interval (same) Ensemble Inter
+        IEIstats{c,e}=[mean(eIEIs),mode(eIEIs),median(eIEIs),var(eIEIs),skewness(eIEIs),kurtosis(eIEIs)];
+        % Ensemble Duration
+        EDstats{c,e}=[mean(eEDs),mode(eEDs),median(eEDs),var(eEDs),skewness(eEDs),kurtosis(eEDs)];
+        IEIsExp{c}=eIEIs;   % [SECONDS]
+        EDsExp{c}=eEDs;     % [SECONDS]
         
-        % Inter-Eensemble-Interval & Ensemble Duration*********************
-        % FROM HEBBIAN PATH 
-        EDs=diff(EnsembleIntervals')+1;
-        if size(EnsembleIntervals,1)>1
-            for i=2:size(EnsembleIntervals,1)
-                IEIs(1,i)=EnsembleIntervals(i,1)-EnsembleIntervals(i-1,2);
-            end
-        else
-            IEIs=[];
-        end
-        
-        IEIsExp{c,e}=IEIs/fs;   % [SECONDS]
-        EDsExp{c,e}=EDs/fs;     % [SECONDS]
-        IEIstats{c,e}=[mean(IEIs),mode(IEIs),median(IEIs),var(IEIs),skewness(IEIs),kurtosis(IEIs)];
-        EDstats{c,e}=[mean(EDs),mode(EDs),median(EDs),var(EDs),skewness(EDs),kurtosis(EDs)];
-        %disp('butt')
     end
     if isempty(MaxIntraVec)
         MIV(c)=NaN;
@@ -221,8 +229,11 @@ Features_Condition.Threshold=Ensemble_Threshold;
 Features_Condition.Dunn=DunnIndex;
 Features_Condition.MIV=MIV;
 Features_Condition.ECV_Cond=ECV_Cond;
-% ABOUT the ALTERNANCE & REVERBERATION
+% HEBBIAN SEQUENCE
 Features_Condition.HebbianSeq=Transitions;
+Features_Condition.HebbianDurations=allEDsExp; % *
+Features_Condition.HebbianInterval=allIEIsExp; % *
+% ABOUT the ALTERNANCE & REVERBERATION
 Features_Condition.RateTrans=Rate_Transitions;
 Features_Condition.RateCycles=Ratecycles;
 Features_Condition.CyclesType=CyclesTypes;
@@ -246,8 +257,9 @@ Features_Ensemble.NeuronsOccupancy=NeuronsOccupancy;
 Features_Ensemble.TimeOccupancy=TimeOccupancy;
 Features_Ensemble.Dominance=Dominance_Ensemble;
 Features_Ensemble.Rate=Ensembles_Rate;
-% Ensemble-CAG features
+% Ensemble CAG features
 Features_Ensemble.EnsCAGstats=EnsCAGstats;
+% Ensemble Time features
 Features_Ensemble.IEIstats=IEIstats; % [seconds]
 Features_Ensemble.EDstats=EDstats;   % [seconds]
 

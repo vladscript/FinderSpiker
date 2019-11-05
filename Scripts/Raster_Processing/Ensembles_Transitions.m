@@ -1,12 +1,16 @@
 % Ensembles Transitions: Hebbian Pathway
 % Input
 %   fs:             sampling frequency (4 plot only)
-%   signif_frames:  Frames with Significative CoACtivity
 %   labels_frames:  Ensemble Lalbel
-%   ColorState:     Ensemble Color
-%   If ifplot=1 plot; else do nothing
+%   signif_frames:  Frames with Significative CoACtivity
+%   CAG:            Coactivitygraphy
+%   ColorState:     Ensemble Color      [Nensembles,3]
+%   If              ifplot=1 plot; else do nothing
+%   Limist of COnditions      [frames] NC>1
 % Output
-%   ensemble_index: Sequence of Ensembles                
+%   EnsembleInstances:      Hebbian Sequence
+%   EnsembleInstancesTimes: Hebbian Onsets [samples]
+%   EnsembleIntervals:      Hebbian Duration [samples]
 function [EnsembleInstances,EnsembleInstancesTimes,EnsembleIntervals]=Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,ifplot,varargin)
 %% Setup
 % Ignore 0-ensembled frames
@@ -330,6 +334,11 @@ else
     EnsembleIntervals=get_ensemble_intervals(TimesEnsembles,InstancesEnsembles,signif_frames,labels_frames);
     EnsembleInstancesTimes=round(median(EnsembleIntervals,2));
     EnsembleInstances=InstancesEnsembles;
+    % Get Only Ensemables that last at least 1/2-second
+    OKensInsta=find(EnsembleIntervals(:,2)-EnsembleIntervals(:,1)>round(fs/2));
+    EnsembleIntervals=EnsembleIntervals(OKensInsta,:);
+    EnsembleInstancesTimes=EnsembleInstancesTimes(OKensInsta);
+    EnsembleInstances=EnsembleInstances(OKensInsta);
 end
 
 %% FIGURE *****************************************************************

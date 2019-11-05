@@ -157,45 +157,6 @@ ColorState=colormyensembles(NGroups);
 % % % % % % % CT=cbrewer('qual','Set1',Nens);
 % % % % % % % imagesc([1:Nens])
 % % % % % % % colormap(CT)
-%% Plot Ensembles of Whole Raster ---------------------------------------------------------------------
-Experiment=Experiment(Experiment~='\');     % NAMES PATCH
-% Original **************************************** *********************
-OriginalExperiment=ExperimentRasterClean;
-Plot_Raster_Ensembles(OriginalExperiment',fs,5,Indexes);  % Disorted Raster
-disp('Coloring Ensembles...')
-Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CAG,Indexes);
-disp('Coloring Ensembles Done.')
-% plot_CAG_threshold(THR,R_Condition,fs)
-plot_CAG_threshold(THR,LENGHTRASTER,fs)
-% Labels
-if CummFrames==TotalFrames
-    Label_Condition_Raster(Names_Conditions,R_Condition,fs);   
-else
-    Label_Condition_Raster(Condition_Names,Rasters,fs);
-end
-Figg=gcf; Figg.Name=['Neural Ensembles of ',Experiment];
-%% Ensemble Transitions HEBBIAN SEQUENCE ************** ALL-frame Details
-Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,1,LENGHTRASTER);
-close(gcf); % Justo to color CAG  @ raster figure
-% Sorted ******************************************************************
-if re_sort
-    Plot_Raster_Ensembles(OriginalExperiment',fs,1,Indexes(New_Order_Clustering));   % Sorted Raster
-    % Plot_State_Colors;
-    disp('Coloring Ensembles...')
-    Plot_State_Colors(labels_frames,signif_frames,ColorState,OriginalExperiment,fs,CAG,Indexes(New_Order_Clustering));
-    disp('Coloring Ensembles Done.')
-    plot_CAG_threshold(THR,LENGHTRASTER,fs)
-    if CummFrames==TotalFrames
-        Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
-    else
-        Label_Condition_Raster(Condition_Names,Rasters,fs);   % Labels
-    end
-    Figg=gcf; Figg.Name=['Neural Ensembles (resorted) of ',Experiment];
-end
-
-%% Ensemble Transitions HEBBIAN SEQUENCE ************** ALL-frame Details
-Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,1,LENGHTRASTER);
-
 %% IF ALL EXPERIMENT in ONE Analysis
 NCplot=NC;
 UniRMutiE=false; % Checker if all conditons are in one single analyzed raster
@@ -232,7 +193,9 @@ if CummFrames==TotalFrames && NC==1 && numel(Names_Conditions)>1
 else
     NameCond=Names_Conditions;
 end
+
 %% Exporting to GEPHI and Ensemble Data per Condition
+answer='MIX'
 NG=0;
 AuxC=0;
 NetworkCondition=cell(NCplot,1);
@@ -306,6 +269,7 @@ for c=1:NCplot
     end
 
 end
+
 %% GET & SAVE NEURAL ENSEMBLE FEATURES
 [Features_Ensemble,Features_Condition]=get_ensembles_features(Rasters,Ensemble_Threshold,Ensembled_Labels,fs,LENGHTRASTER);
 Features_Condition.CoreNeurons=ShNeuron;

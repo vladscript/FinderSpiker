@@ -4,23 +4,28 @@
 % Getting insohgts about -+ and -- (false+ & false-)]
 % Transients are calculated from denoised signal (wavelet analysis)
 % Rate of Activity is from Actual and Previou(s) conditions only
+% Get Only Ensembles that last at least 1/2 second
 % Hebbian sequence holds if CAG level stands still
 %           TypeCycles(1)->Simple
 %           TypeCycles(2)->Closed
 %           TypeCycles(3)->Open
 %% FIXED  READY TO GO @ GIT
-%  Documentation stuff, Bug @ensembles
-%  Rate of Activity Plots and Sorting: DONE
+%  Documentation stuff
+
 
 %% Bugs & New Functions NOW
 
+% Ensembles Intervals:
+%   Plot @ raster
+%   Save as Features
 
 % Statistics: automate
-
 % CAG threshold (Mike's Script - MonteCarlo)
 % Recover Coordinates of Ensembles and Display as scatter plots
 
 % INDEX of USEFUL FUNCTIONS
+
+% Update to MATLAB 2019a ! UNAM License[other versions can be downloaded]
 
 % Toy example for clustering: time correlaition vs coactivity:
 %  to seen syn fires is irrelevante
@@ -29,9 +34,8 @@
 
 % Make PCA of RASTER: 
 % denoise raster: get most variance PCs and rebuild raster
-% Add Colocalizer Filters: TdTomato, Yellow, Others
-% Update to MATLAB 2019a ! UNAM License[other versions can be downloaded]
-% Test Mike's Clustering Algorithm 4 CoActivity (transposed matrix)and save as weel
+
+
 
 % DELETE >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
 % NN2Gephi.m; Raster2fNet.m; get_iti_pdf; interval_duration_events;
@@ -60,4 +64,5 @@
 % Check at Signals with Huge Valley (synaptic like)
 % 
 % Merge tables-> if conditions ain't the same
+% Add Colocalizer Filters: TdTomato, Yellow, Others
 %% ########################################################################

@@ -1,12 +1,18 @@
+%% SOURCE
+% $FinderSpiker$
+% <https://github.com/vladscript/FinderSpiker.git>
+% 
 %%#########################################################################
 % ######################### *STEPS GUIDE* #################################
 % #########################################################################
 % 
+
 %% 0. SETTTINGS
 % 
-% * Colors: >>edit SetColorMap.m
-% * Experiment Folders Setup: >>
-% * Deconvolution Parameters: >>edit Load_Default_Values_SP
+% * Deconvolution Parameters:   >>edit Load_Default_Values_SP
+% * Clustering Parameters:      >>edit Load_Default_Clustering
+% * Colors:                     >>edit SetColorMap.m
+% 
 % 
 %% 1. SIGNAL PROCESSING: Detect Calcium Transients Events
 % Getting Activation Matrix (raster) from Calium Imaging Data for each Cell
@@ -51,6 +57,9 @@
 % * >>R_CONDITION1=R_Condition{1}; % Cells x Frames (dim)
 % ...
 % * >>R_CONDITIONi=R_Condition{i};
+% 2.4 Plot Sorted by Rate of Activiyt
+% 
+% * >>[IndexSorteActivity]=plot_activityrate(R_Condition,Names_Conditions,fs);
 % 
 %% 3. CLUSTERING NEURONAL ENSEMBLES
 % AUTOMATICAL & MANUAL MAGIC
@@ -107,7 +116,8 @@
 % * >>Video_Cleaner;    % Edit @ Script
 % 
 %% N-EXPERIMENTS RESULTS 
-% 6. ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS *************************
+% 
+%% 6. ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS
 % 
 %   Choose One-by-One .mat Files-> Save .mat Files:
 % 
@@ -116,7 +126,7 @@
 % * >>Accumulate_Ensembles_RoEn_IEnI_EnD
 % * >>Accumulate_Simm_Matrix
 % 
-%% 7. RASTER/ENSEMBLE/NETWORK FEATURES AND DATASETS MAKER 
+%% 7. DATASETS MAKER 
 % 
 % Make Tables for SINGLE EXPERIMENTS
 % 
@@ -140,6 +150,7 @@
 % * >>Links_Features_Display                  % ?
 % 
 %% 8 MAKE DATASETS FROM GEPHI NETWORK FEATURES
+% 
 % 7.9  Export 'Workspaces' from Gephi     Data could be in  '\NetWorks-CSV'
 % 
 %                                         Using Gephi 0.9.1
@@ -161,16 +172,18 @@
 %                       Concatenate table of MULTIPLE Features in one
 %                       Create NetFEATS_Dataset @FinderSpiker/DatabaseFolder
 % 
-%% 9  Script to Stack Divers Experiment DATASETS
+%% 9  STACK DIVERS DATASETS
 % 
-% * >>Merge_Feature_Datasets          % Make DATASET for:
+% % Make DATASET for Stack Several tables from Divers Experiments:
 % 
-%   -Raster Activity:       Stack Several Tables from Divers Experiments
-%   -General Ensembles:     Stack Several Tables from Divers Experiments
-%   -Detailed Ensembles:    Stack Several Tables from Divers Experiments
-%   -Network Features:      Stack Several NetFEATS from Divers Experiments
+% * >>Merge_Feature_Datasets          
 % 
-% E.G. DIVERS Experiments,i.e, CTRL, PARKINSON, DYSKINESIA set of experiments
+%   -Raster Activity:       Table
+%   -General Ensembles:     Tables 
+%   -Detailed Ensembles:    Tables 
+%   -Network Features:      NetFEATS 
+% 
+% E.G. DIVERS set of Experiments,i.e, CTRL, PARKINSON, DYSKINESIA, ...
 % 
 %% 10 DATA FEATURE EXPLORER: Merging Feature Datasets 
 % 

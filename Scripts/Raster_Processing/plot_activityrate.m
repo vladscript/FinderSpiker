@@ -21,7 +21,7 @@ Ncells=size(R,1);
 Plot_Raster_Ensembles(R_Total,fs);
 Label_Condition_Raster(Condition_Names,R_Condition,fs);   % Labels
 RasterFig=gcf;
-RasterFig.Children(end)
+RasterFig.Children(end);
 ARfig=figure;
 ARfig.Position=[403 246 200 420];
 ax1=subplot(3,1,[1,2]);

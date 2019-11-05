@@ -6,8 +6,10 @@
 % 'MaxIV','ErrorClass','CoreRatio',...              [1]
 % 'CAGauc','Transitions Rate','Cycles Rate',...     [2]
 % 'Simple Cycles','Closed Cycles','Open Cycles',    [2]
-% 'SynWeight_mean','SynWeight_var',...              [3]
-% 'SynWeight_skew','SynWeight_kurt'                 [3]
+%  Statistics of Ensemble Duration                   [3]
+%  Statistics of Ensemble Intervals                  [3]
+% 'SynWeight_mean','SynWeight_var',...              [4]
+% 'SynWeight_skew','SynWeight_kurt'                 [4]
 %% Read CSV Files
 NC = inputdlg('Number of Conditions: ',...
              'General Ensemble Features', [1 75]);
@@ -103,36 +105,77 @@ g6=subplot(2,3,6);  % Proportion Open Cycles
 plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,10,g6)
 title(g6,'Open Cycles')
 
+%% Time Ensemble related Features
+FeaturesE=figure;
+FeaturesE.Name='Neural Ensembles Time Features';
+m1=subplot(2,6,1);  % mean ED
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,16,m1)
+title(m1,'Mean Ensemble Duration')
+m2=subplot(2,6,2);  % mode ED
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,17,m2)
+title(m2,'Mode Ensemble Duration')
+m3=subplot(2,6,3);  % median ED
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,18,m3)
+title(m3,'Median Ensemble Duration')
+m4=subplot(2,6,4);  % Variance ED
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,19,m4)
+title(m4,'Mode Ensemble Duration')
+m5=subplot(2,6,5);  % mode ED
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,20,m5)
+title(m5,'Mode Ensemble Duration')
+m6=subplot(2,6,6);  % mode ED
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,21,m6)
+title(m6,'Mode Ensemble Inter Ensemble Interval')
+m7=subplot(2,6,7);  % mean IEI
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,22,m7)
+title(m7,'Mean Ensemble Inter Ensemble Interval')
+m8=subplot(2,6,8);  % mode IEI
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,23,m8)
+title(m8,'Mode Ensemble Inter Ensemble Interval')
+m9=subplot(2,6,9);  % median IEI
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,24,m9)
+title(m9,'Median Ensemble Inter Ensemble Interval')
+m10=subplot(2,6,10);  % Variance IEI
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,25,m10)
+title(m10,'Mode Ensemble Inter Ensemble Interval')
+m11=subplot(2,6,11);  % mode IEI
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,26,m11)
+title(m11,'Mode Ensemble Inter Ensemble Interval')
+m12=subplot(2,6,12);  % mode IEI
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,27,m12)
+title(m12,'Mode Ensemble Duration')
+
+
 %% Network related Features
 FeaturesC=figure;
 FeaturesC.Name='Functional Connectivity Weight Statistics';
 k1=subplot(2,3,1);  % Mean Links Weight
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,16,k1)
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,28,k1)
 title(k1,'mean Links Weight')
 k2=subplot(2,3,2);  % Mode Links Weight
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,17,k2)
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,29,k2)
 title(k2,'mode Links Weight')
 k3=subplot(2,3,3);  % Median Links Weight
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,18,k3)
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,30,k3)
 title(k3,'medianLinks Weight')
 k4=subplot(2,3,4);  % Variance Links Weight
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,19,k4)
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,31,k4)
 title(k4,'var Links Weight')
 k5=subplot(2,3,5);  % Skewness Links Weight
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,20,k5)
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,32,k5)
 title(k5,'skew Links Weight')
 k6=subplot(2,3,6);  % Kurtosis Links Weight
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,21,k6)
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,33,k6)
 title(k6,'kurt Links Weight')
 
 %% Network related Features
 FeaturesD=figure;
 FeaturesD.Name='Alternative & Reactivation Ensemble Index';
 l1=subplot(2,1,1);  % Alternance Index
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,22,l1)
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,34,l1)
 title(l1,'Alternative Ensemble Index')
 l2=subplot(2,1,2);  % Reactivation Index
-plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,23,l2)
+plot_box(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions,35,l2)
 title(l2,'Reactivation Ensemble Index')
 %% Make and Save Table
 okbutton = questdlg('Make CSV Table?');
