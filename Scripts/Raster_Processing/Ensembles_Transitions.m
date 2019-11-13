@@ -11,7 +11,7 @@
 %   EnsembleInstances:      Hebbian Sequence
 %   EnsembleInstancesTimes: Hebbian Onsets [samples]
 %   EnsembleIntervals:      Hebbian Duration [samples]
-function [EnsembleInstances,EnsembleInstancesTimes,EnsembleIntervals]=Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,ifplot,varargin)
+function [EnsembleInstances,EnsembleInstancesTimes,EnsembleIntervals]=Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,ifplot,R,varargin)
 %% Setup
 % Ignore 0-ensembled frames
 Load_Default_Clustering;
@@ -28,7 +28,13 @@ HebbianSequence=[];
 TimesHebb=[];
 labfram=[labfram;-1000];
 framsig=[makerowvector(framsig),1000];
-
+% Neurons Ratio Proportion
+if ~isempty(R)
+    EnsemblesIndex=unique(labels_frames);
+    for ne=1:numel(EnsemblesIndex)
+        CellatEns(ne)= numel(find(sum(R(:,signif_frames( labels_frames==EnsemblesIndex(ne) )),2)))/size(R,1);
+    end
+end
 %% Read Continuous Ensembled-Frames
 for i=1:numel(framsig)-1;
     % Find Consecutive Frames
@@ -348,16 +354,14 @@ if ifplot
     % Always plot after a Raster Analysis to get the axis right
     Axis_details=gca;
     
-    
-    % PLTO INTERVALS AND COLORS
+    % PLOT INTERVALS AND COLORS
     
     xtime=Axis_details.Children(end).XData; % [MINUtES]
     yCAG=Axis_details.Children(end).YData;
     
-    
     fig_Ensembles_Transitions=figure('Position', [415 172 560 122],...
         'Name','Hebbian Pathways');
-    plot(EnsembleInstancesTimes/fs/60,EnsembleInstances,'k','LineWidth',2); hold on
+    plot(EnsembleInstancesTimes/fs/60,EnsembleInstances,'k','LineWidth',0.5); hold on
     Ntran=length(EnsembleInstances);
     for i=1:Ntran
         if ~isempty(CAG)
@@ -372,11 +376,67 @@ if ifplot
                 'Color',ColorState(EnsembleInstances(i),:) );
             end
         end
+        
+        % Get SLOPES
+        tlin=[EnsembleIntervals(i,1):EnsembleIntervals(i,2)]/fs/60;
+        if i==1
+            % PRE SLOPE
+            y2pre=EnsembleInstances(i+1);
+            y1pre=EnsembleInstances(i);
+            x2pre=EnsembleInstancesTimes(i+1)/fs/60;
+            x1pre=EnsembleInstancesTimes(i)/fs/60;
+            % POST SLOPE
+            y2pos=y2pre;
+            y1pos=y1pre;
+            x2pos=x2pre;
+            x1pos=x1pre;
+        elseif i==Ntran
+            % PRE SLOPE
+            y2pre=EnsembleInstances(i);
+            y1pre=EnsembleInstances(i-1);
+            x2pre=EnsembleInstancesTimes(i)/fs/60;
+            x1pre=EnsembleInstancesTimes(i-1)/fs/60;
+            % POST SLOPE
+            y2pos=y2pre;
+            y1pos=y1pre;
+            x2pos=x2pre;
+            x1pos=x1pre;
+        else
+            % PRE-SLOPE
+            y2pre=EnsembleInstances(i);
+            y1pre=EnsembleInstances(i-1);
+            x2pre=EnsembleInstancesTimes(i)/fs/60;
+            x1pre=EnsembleInstancesTimes(i-1)/fs/60;
+            % POST-SLOPE
+            y2pos=EnsembleInstances(i+1);
+            y1pos=EnsembleInstances(i);
+            x2pos=EnsembleInstancesTimes(i+1)/fs/60;
+            x1pos=EnsembleInstancesTimes(i)/fs/60;
+        end
+        % SLOPES
+        pre_m=(y2pre-y1pre)/(x2pre-x1pre);
+        pos_m=(y2pos-y1pos)/(x2pos-x1pos);
+        % Y- INTERCEPT
+        ytest=EnsembleInstances(i);
+        xtest=EnsembleInstancesTimes(i)/fs/60;
+        pre_b=ytest-pre_m*xtest;
+        pos_b=ytest-pos_m*xtest;
+        % LINE
+        ypre=pre_m*tlin(tlin<=xtest)+pre_b;
+        ypos=pos_m*tlin(tlin>xtest)+pos_b;
+        % Plot Intervals
+        plot(tlin(tlin<=xtest),ypre,'Color',ColorState(EnsembleInstances(i),:),'LineWidth',2)
+        plot(tlin(tlin>xtest),ypos,'Color',ColorState(EnsembleInstances(i),:),'LineWidth',2)
         % PLOT @ HEBBIAN SEQUENCE
         plot(EnsembleInstancesTimes(i)/fs/60,EnsembleInstances(i),'o',...
             'MarkerEdgeColor','k',...
             'MarkerFaceColor',ColorState(EnsembleInstances(i),:),...
-            'MarkerSize',10); 
+            'MarkerSize',round(10*CellatEns(EnsembleInstances(i))+5));
+        
+%         disp('ok')
+        
+        
+        %
     end
     hold off;
     axis([Axis_details.XLim,0.5,max(EnsembleInstances)+0.5])

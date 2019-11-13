@@ -75,7 +75,7 @@ for c=1:C
         HebbSequence=[];
         EnsembleTimes=[];
     else
-        [HebbSequence,EnsembleTimes,EnsembleIntervals]=Ensembles_Transitions(fs,Ensembles_Labels,signif_frames,CAG,[],0,LENGHTRASTER{c});
+        [HebbSequence,EnsembleTimes,EnsembleIntervals]=Ensembles_Transitions(fs,Ensembles_Labels,signif_frames,CAG,[],0,[],LENGHTRASTER{c});
     end
     %% Ensembles DUration & Inter Ensemble Interval
     % Inter-Eensemble-Interval & Ensemble Duration*********************

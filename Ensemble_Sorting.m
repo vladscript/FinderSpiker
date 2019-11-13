@@ -85,7 +85,7 @@ for c=1:NC
     CAGc=sum(Rasters{c},2)';
     if ~isempty(lbfr)
         minEns=min(unique(lbfr))-1;
-        [HB,HBtimes,HBinter]=Ensembles_Transitions(fs,lbfr-minEns,sigfr,CAGc,[],0,LENGHTRASTER{c});
+        [HB,HBtimes,HBinter]=Ensembles_Transitions(fs,lbfr-minEns,sigfr,CAGc,[],0,[],LENGHTRASTER{c});
         relbls=relabel_ensembles(lbfr-minEns,HB,'2-freq')+minEns;
     else
         minEns=0;
@@ -175,7 +175,7 @@ else
 end
 Figg=gcf; Figg.Name=['Neural Ensembles of ',Experiment];
 %% Ensemble Transitions HEBBIAN SEQUENCE ************** ALL-frame Details
-Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,1,LENGHTRASTER);
+Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,1,OriginalExperiment',LENGHTRASTER);
 close(gcf); % Justo to color CAG  @ raster figure
 % Sorted ******************************************************************
 if re_sort
@@ -194,7 +194,7 @@ if re_sort
 end
 
 %% Ensemble Transitions HEBBIAN SEQUENCE ************** ALL-frame Details
-Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,1,LENGHTRASTER);
+Ensembles_Transitions(fs,labels_frames,signif_frames,CAG,ColorState,1,OriginalExperiment',LENGHTRASTER);
 
 %% IF ALL EXPERIMENT in ONE Analysis
 NCplot=NC;

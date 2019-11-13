@@ -10,14 +10,15 @@
 %           TypeCycles(2)->Closed
 %           TypeCycles(3)->Open
 %% FIXED  READY TO GO @ GIT
-%  Documentation stuff
+% Ensembles Intervals:
+%   Plot @ Hebbian Sequence
+%   Diameter of the "balls"  
 
 
 %% Bugs & New Functions NOW
 
-% Ensembles Intervals:
-%   Plot @ raster
-%   Save as Features
+
+
 
 % Statistics: automate
 % CAG threshold (Mike's Script - MonteCarlo)
