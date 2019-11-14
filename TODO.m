@@ -13,12 +13,11 @@
 % Ensembles Intervals:
 %   Plot @ Hebbian Sequence
 %   Diameter of the "balls"  
-
+%   RoA bug
 
 %% Bugs & New Functions NOW
 
-
-
+% Plot_Experiment : add Ensmble Colors if possible
 
 % Statistics: automate
 % CAG threshold (Mike's Script - MonteCarlo)

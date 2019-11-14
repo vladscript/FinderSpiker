@@ -19,6 +19,7 @@
 % Initial:
 clear; clc;
 runs=1;             % Runs Counter
+auxc=1;             % Auxiliar Conditions
 EXPS={};            % List Of Experiments
 
 % Directory:
@@ -42,6 +43,7 @@ while MoreFiles
     end
     [~,NC]=size(R_Condition);   % N Conditions
     Nconditions(runs)=NC;       % Nconditions per Experiment
+    
     % Start as empty
     if runs==1
         RoA_ALL=cell(1,NC);
@@ -57,6 +59,25 @@ while MoreFiles
             ISIs_NEG=cell(1,NC);
             TranLengths_NEG=cell(1,NC);
             RoT_NEG=cell(1,NC);
+        end
+    else
+        % If Number of Conditoines Changes
+        if numel(unique(Nconditions))>numel(RoA_ALL)
+            auxc=auxc+1;
+            RoA_ALL{auxc}=[];
+            ISIs_ALL{auxc}=[];
+            TranLengths_ALL{auxc}=[];
+            RoT_ALL{auxc}=[];
+            if aremerged
+                RoA_POS{auxc}=[];
+                ISIs_POS{auxc}=[];
+                TranLengths_POS{auxc}=[];
+                RoT_POS{auxc}=[];
+                RoA_NEG{auxc}=[];
+                ISIs_NEG{auxc}=[];
+                TranLengths_NEG{auxc}=[];
+                RoT_NEG{auxc}=[];
+            end
         end
     end
     %%  Loop to Accummulate Data
