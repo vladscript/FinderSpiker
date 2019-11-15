@@ -130,7 +130,7 @@ if TotalNG<6
 else
     Nens=cell2mat(NGroups); n=1; oksort=true;
     re_sort=false;
-    while oksort
+    while oksort && n<=numel(Nens)
         if Nens(n)<=6
             oksort=false;
             fprintf('>>Re-sorting according to %s Ensembles\n',Names_Conditions{n});
@@ -315,7 +315,7 @@ save_features_ensembles(Experiment,Condition_Names,Features_Ensemble,Features_Co
 
 %% Save SORTING,COORDINATES and COLOR ENSEMBLES
 % Save this Only if it was Analyzed the whole enchilada
-if CummFrames==TotalFrames
+% if CummFrames==TotalFrames
     checkname=1;
     while checkname==1
         ActualDir=pwd;
@@ -353,6 +353,6 @@ if CummFrames==TotalFrames
             disp('Try again!')
         end
     end
-end
+% end
 disp('>>END.')
 %% END OF THE WORLD

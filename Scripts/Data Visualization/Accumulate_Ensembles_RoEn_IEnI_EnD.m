@@ -45,8 +45,8 @@ while MoreFiles
         for e=1:Nensembles(c)
             fprintf('Getting Data from %s Ensemble %i\n',Names_Conditions{c},e)
             RateEnsembles=[RateEnsembles;Features_Ensemble.Rate(c,e)];
-            IEnI=[IEnI;Features_Ensemble.IEIsExp{c,e}'];
-            EnD=[EnD;Features_Ensemble.EDsExp{c,e}'];
+            IEnI=[IEnI;makerowvector(Features_Ensemble.IEIsExp{c,e})'];
+            EnD=[EnD;makerowvector(Features_Ensemble.EDsExp{c,e})'];
         end
         RoE_ALL{c}=[RoE_ALL{c};RateEnsembles];
         IEnIs_ALL{c}=[IEnIs_ALL{c};IEnI];

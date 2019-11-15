@@ -11,9 +11,8 @@
 %           TypeCycles(3)->Open
 %% FIXED  READY TO GO @ GIT
 % Ensembles Intervals:
-%   Plot @ Hebbian Sequence
-%   Diameter of the "balls"  
-%   RoA bug
+%   Bug at cluster: Zero-Ensemble
+%   Accumulative Ensemble Features Bug
 
 %% Bugs & New Functions NOW
 

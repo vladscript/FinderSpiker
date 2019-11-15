@@ -58,6 +58,6 @@ axraster.YDir='normal';
 axcag.YDir='normal';
 % figure; % Hebbian Ensembles
 if ~isempty(label_Cluster)
-    Ensembles_Transitions(1/60,label_Cluster,active_Frames,[],ColorEnsembles(3:end,:),plothebb,[]); % ---> save
+    Ensembles_Transitions(1/60,label_Cluster,active_Frames,[],ColorEnsembles(3:end,:),plothebb,[],[]); % ---> save
 end
 linkaxes([axraster,axcag],'x');
