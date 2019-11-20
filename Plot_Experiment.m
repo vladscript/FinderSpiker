@@ -28,4 +28,18 @@ else
     CurrentFig.NumberTitle='off';
     Label_Condition_Raster(Names_Conditions,RASTER,fs);   % Labels
     disp('>>Next Step: Inspect Signals: Detected & Undetected.')
+    fprintf('Execute: \n')
+    fprintf('>>Detected_Visual_Inspection\n>>Undetected_Visual_Inspection\n')
+    
+end
+% In case there are Neural Ensemble Analysis
+if exist('Features_Condition','var')
+    disp('>>Neural Ensembles Ready.')
+    okbutton = questdlg('Plot Neural Ensmebles & Hebbian Sequence?');
+    waitfor(okbutton); 
+    if strcmp('Yes',okbutton)
+        % Plot Ensembles **************************************************
+        Plot_Neural_Ensembles;
+        % *****************************************************************
+    end
 end

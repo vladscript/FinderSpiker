@@ -13,10 +13,11 @@
 % Ensembles Intervals:
 %   Bug at cluster: Zero-Ensemble
 %   Accumulative Ensemble Features Bug
+%   Plot_Experiment : add Ensmble Colors if possible
 
 %% Bugs & New Functions NOW
 
-% Plot_Experiment : add Ensmble Colors if possible
+% Bug @ Ensemble Duration: See Reb3280818- Prami
 
 % Statistics: automate
 % CAG threshold (Mike's Script - MonteCarlo)
@@ -37,8 +38,9 @@
 
 
 % DELETE >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
-% NN2Gephi.m; Raster2fNet.m; get_iti_pdf; interval_duration_events;
+% NN2Gephi.m; Raster2fNet.m; get_iti_pdf?; interval_duration_events?;
 % Plot_Calcium_Transients.m; get_ensembles_manual.m
+% Plot_Raster_Results
 
 %% FUTURE *****************************************************************
 %%% MAKE ALGORITHMIA

@@ -1,7 +1,7 @@
 % function to plot Cummulative Distribution Function
 % of the data at input cell 
 function plot_cdf_cell(RoA_All,Names_Conditions,ColMap)
-NC=numel(Names_Conditions);
+NC=numel(RoA_All);
 CDFfig=figure;
 CDFfig.Name='Cummulative Function Distribution';
 ax1=subplot(1,1,1);
@@ -24,4 +24,4 @@ end
 hold(ax1,'off');
 axis(ax1,'tight');
 grid(ax1,'on');
-legend(Names_Conditions)
+legend(Names_Conditions(1:NC))
