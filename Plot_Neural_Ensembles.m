@@ -40,7 +40,7 @@ end
 [Rasters,LENGHTRASTER,NGroups,SIG_FRAMES,LABELS,THR,...
  ExperimentRaster,signif_frames,~,CummFrames,CummGroups,...
  TotalNG]=get_ensemble_intel(NN_data_Read);
-clear NN_data_Read;
+clear('NN_data_Read','labels_frames');
 NC=numel(Rasters);
 
 %% RE-SORT Ensembles labels

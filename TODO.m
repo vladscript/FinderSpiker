@@ -10,14 +10,14 @@
 %           TypeCycles(2)->Closed
 %           TypeCycles(3)->Open
 %% FIXED  READY TO GO @ GIT
-% Ensembles Intervals:
-%   Bug at cluster: Zero-Ensemble
-%   Accumulative Ensemble Features Bug
-%   Plot_Experiment : add Ensmble Colors if possible
+%   
 
 %% Bugs & New Functions NOW
 
 % Bug @ Ensemble Duration: See Reb3280818- Prami
+
+% Dissapeared Ensembles by labeling Sequence: see 20190930-1 
+% R_DAdepleted_Analysis=get_ensembles(R_DAdepleted',10,3);
 
 % Statistics: automate
 % CAG threshold (Mike's Script - MonteCarlo)
@@ -36,11 +36,11 @@
 % denoise raster: get most variance PCs and rebuild raster
 
 
-
+% BEFORE TO RELEASE *******************************************************
 % DELETE >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
-% NN2Gephi.m; Raster2fNet.m; get_iti_pdf?; interval_duration_events?;
+% NN2Gephi.m; Raster2fNet.m; get_iti_pdf(?); interval_duration_events(?);
 % Plot_Calcium_Transients.m; get_ensembles_manual.m
-% Plot_Raster_Results
+% Plot_Raster_Results; get_ensemble_intervals;
 
 %% FUTURE *****************************************************************
 %%% MAKE ALGORITHMIA

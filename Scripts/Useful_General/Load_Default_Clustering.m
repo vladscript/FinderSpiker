@@ -10,7 +10,10 @@ ActiveTime=0.10;         % Active Time (CAG>0)
 % alphavalCAG=0.85;       % For CAG  Threshold
 SimMethod='hamming';  
 
-CAGDeepValleys=3;           % Seconds of Conituous Zero-CAG
+% Smoothing CAG for Neural Ensemble Intervals: 
+% CONSECUTIVE & INTERLEAVED instances
+SmoothWin=fs*30; %            half minute smoothing
+
 % From Features_Condition:
 % TypeCycles(1)->Simple
 % TypeCycles(2)->Closed

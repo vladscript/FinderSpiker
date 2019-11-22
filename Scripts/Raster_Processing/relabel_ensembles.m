@@ -1,6 +1,7 @@
 % Function to re-label hebbian sequence
 % Input
-%   labels:     vector sequence of neural ensemble instances
+%   labels:         Vector sequence of neural ensemble instances
+%   HebbSequence    Vector of Ensembles Sequence
 %   mode: 'sequence','2-freq'
 % Output
 %   relabels    resorted sequence of neural ensemble instances
@@ -28,6 +29,9 @@ switch modesort
         end
 end
 for n=1:NensOK
-    relabel(labelsEns==OKsorting(n))=n;
+    % Dissapeared Ensembles by labeling Sequence
+    if n<=numel(OKsorting)
+        relabel(labelsEns==OKsorting(n))=n;
+    end
 end
 fprintf('done.\n')
