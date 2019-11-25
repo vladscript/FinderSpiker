@@ -44,10 +44,9 @@ for c=1:NCplot
         plot_CAG_threshold(THR,LENGHTRASTER,fs);
         % Cycles Reverberation Analysis: in waiting
         drawnow;
-        
     else            % Non-Ensembles
         
-        Plot_Raster_V(R,fs);
+        Plot_Raster_Ensembles(R,fs);
         EnsembleFig=gcf; EnsembleFig.Name=EnsembleName{c};
         drawnow;
     end

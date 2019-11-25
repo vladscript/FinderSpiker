@@ -27,6 +27,7 @@ for i=1:length(labels_frames)
                 'FaceColor',ColorState(labels_frames(i),:));
         fprintf('>>coloring cell %i ',AC(j))
     end
+%     drawnow; (slows stuff)
     fprintf('\n')
 end
 %% CAG  *******************************************************

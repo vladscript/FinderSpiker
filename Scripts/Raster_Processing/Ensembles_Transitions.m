@@ -15,6 +15,7 @@ function [EnsembleInstances,EnsembleInstancesTimes,EnsembleIntervals]=Ensembles_
 %% Setup
 % Ignore 0-ensembled frames
 Load_Default_Clustering; % See Details.
+SmoothWin=SmoothWinSec*fs;
 EnsembleIntervals=[];
 labfram=labels_frames(labels_frames>0);
 framsig=signif_frames(labels_frames>0);
@@ -51,13 +52,10 @@ for i=1:numel(framsig)-1;
     end 
 end
 
-% Smooth Hebbian Sequence:
-% Th=min(CAG(time_ensemble));
 %% IF CAG intel::
 if isempty(CAG)
     EnsembleInstancesTimes=time_ensemble;
-    EnsembleInstances=ensemble_index;
-    % EnsembleIntervals=[time_ensemble-1,time_ensemble+1];
+    EnsembleInstances=ensemble_index;    
     % Every ball is an ensmble of continous frames
 else
     % Smoothed Version of CAG: Ensmble above CAG Threshold
@@ -97,7 +95,23 @@ else
 
     %% Get Temporal Features of Neural Ensembles Activations---------------
     [EnsembleIntervals,EnsembleInstancesTimes,EnsembleInstances]=Neural_Intervals(ensemble_index,time_ensemble,ensemble_inter,CAGsmooth);
-    
+    % Filtering - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    fprintf('>>Filtering Ensembles Time Features: ')
+    DurEn=EnsembleIntervals(:,2)-EnsembleIntervals(:,1);
+    IgnoreInstances=[];
+    for n=2:numel(EnsembleInstances)
+        % If interfere consecutive & too short
+        if and(EnsembleIntervals(n,1)-EnsembleIntervals(n-1,2)<0,...
+                DurEn(n)<fs)
+            IgnoreInstances=[IgnoreInstances;n];
+        end
+    end
+    OKinstances=setdiff(1:numel(EnsembleInstances),IgnoreInstances);
+    % UPDATE INTEL
+    EnsembleIntervals=EnsembleIntervals(OKinstances,:);
+    EnsembleInstancesTimes=EnsembleInstancesTimes(OKinstances);
+    EnsembleInstances=EnsembleInstances(OKinstances);
+    fprintf('ok\n')
 end
 
 %% FIGURE *****************************************************************
@@ -106,96 +120,56 @@ if ifplot
     %% Plot in Minutes
     % Always plot after a Raster Analysis to get the axis right
     Axis_details=gca;
-    
-    % PLOT INTERVALS AND COLORS
-    
+    % PLOT INTERVALS AND COLORS    
     xtime=Axis_details.Children(end).XData; % [MINUtES]
     yCAG=Axis_details.Children(end).YData;
-    
-    fig_Ensembles_Transitions=figure('Position', [415 172 560 122],...
-        'Name','Hebbian Pathways');
-    plot(EnsembleInstancesTimes/fs/60,EnsembleInstances,'k','LineWidth',0.5); hold on
-    Ntran=length(EnsembleInstances);
+    % Smoothed CAG
+    plot(Axis_details,xtime,CAGsmooth,'Color',[0.9,0.9,0.9],'LineWidth',2);
+    % Figure Object for the Hebbian Sequence
+    fig_Ensembles_Transitions=figure('Position', [403 172 560 122],...
+        'NumberTitle','off',...
+        'Name','Hebbian Sequence & Neuronal Ensmble Intervals');
+    % plot(EnsembleInstancesTimes/fs/60,EnsembleInstances,'k','LineWidth',0.5); 
+    [xseq,yseq]=makelineseq(EnsembleInstancesTimes,EnsembleInstances,EnsembleIntervals);
+    % Line Between Neuronal
+    plot(xtime(xseq),yseq,'k','LineWidth',0.5);
+%     plot([EnsembleIntervals(1):numel(yseq)+EnsembleIntervals(1)-1]/fs/60,...
+%         yseq,'k','LineWidth',0.5); % @ [min]
+    hold on
+    Ntran=numel(EnsembleInstances);
+    fprintf('>>Hebbian Sequence:')
     for i=1:Ntran
+        fprintf('Instance %i - Ensemble %i - Duration %3.1f s\n',i,...
+            EnsembleInstances(i),(1+EnsembleIntervals(i,2)-EnsembleIntervals(i,1))/fs);
         if ~isempty(CAG)
-            % PLOT @ CAG
+            % PLOT @ CAG [RASTER FIGURE]
             if diff([EnsembleIntervals(i,1),EnsembleIntervals(i,2)])~=0
                 plot(Axis_details,xtime(EnsembleIntervals(i,1):EnsembleIntervals(i,2)),...
                 yCAG(EnsembleIntervals(i,1):EnsembleIntervals(i,2)),...
-                'Color',ColorState(EnsembleInstances(i),:) );
+                'Color',ColorState(EnsembleInstances(i),:),'LineWidth',1);
             else
                 plot(Axis_details,xtime(EnsembleIntervals(i,1)-1:EnsembleIntervals(i,2)+1),...
                 yCAG(EnsembleIntervals(i,1)-1:EnsembleIntervals(i,2)+1),...
-                'Color',ColorState(EnsembleInstances(i),:) );
+                'Color',ColorState(EnsembleInstances(i),:),'LineWidth',1);
             end
         end
-        if ~isempty(EnsembleIntervals)
-            % Get SLOPES
-            tlin=[EnsembleIntervals(i,1):EnsembleIntervals(i,2)]/fs/60;
-            if i==1
-                % PRE SLOPE
-                y2pre=EnsembleInstances(i+1);
-                y1pre=EnsembleInstances(i);
-                x2pre=EnsembleInstancesTimes(i+1)/fs/60;
-                x1pre=EnsembleInstancesTimes(i)/fs/60;
-                % POST SLOPE
-                y2pos=y2pre;
-                y1pos=y1pre;
-                x2pos=x2pre;
-                x1pos=x1pre;
-            elseif i==Ntran
-                % PRE SLOPE
-                y2pre=EnsembleInstances(i);
-                y1pre=EnsembleInstances(i-1);
-                x2pre=EnsembleInstancesTimes(i)/fs/60;
-                x1pre=EnsembleInstancesTimes(i-1)/fs/60;
-                % POST SLOPE
-                y2pos=y2pre;
-                y1pos=y1pre;
-                x2pos=x2pre;
-                x1pos=x1pre;
-            else
-                % PRE-SLOPE
-                y2pre=EnsembleInstances(i);
-                y1pre=EnsembleInstances(i-1);
-                x2pre=EnsembleInstancesTimes(i)/fs/60;
-                x1pre=EnsembleInstancesTimes(i-1)/fs/60;
-                % POST-SLOPE
-                y2pos=EnsembleInstances(i+1);
-                y1pos=EnsembleInstances(i);
-                x2pos=EnsembleInstancesTimes(i+1)/fs/60;
-                x1pos=EnsembleInstancesTimes(i)/fs/60;
-            end
-            % SLOPES
-            pre_m=(y2pre-y1pre)/(x2pre-x1pre);
-            pos_m=(y2pos-y1pos)/(x2pos-x1pos);
-            % Y- INTERCEPT
-            ytest=EnsembleInstances(i);
-            xtest=EnsembleInstancesTimes(i)/fs/60;
-            pre_b=ytest-pre_m*xtest;
-            pos_b=ytest-pos_m*xtest;
-            % LINE
-            ypre=pre_m*tlin(tlin<=xtest)+pre_b;
-            ypos=pos_m*tlin(tlin>xtest)+pos_b;
-            % Plot Intervals
-            plot(tlin(tlin<=xtest),ypre,'Color',ColorState(EnsembleInstances(i),:),'LineWidth',2)
-            plot(tlin(tlin>xtest),ypos,'Color',ColorState(EnsembleInstances(i),:),'LineWidth',2)
-            % PLOT @ HEBBIAN SEQUENCE
-            plot(EnsembleInstancesTimes(i)/fs/60,EnsembleInstances(i),'o',...
-                'MarkerEdgeColor','k',...
-                'MarkerFaceColor',ColorState(EnsembleInstances(i),:),...
-                'MarkerSize',round(10*CellatEns(EnsembleInstances(i))+5));
-        else
-            % PLOT @ HEBBIAN SEQUENCE
-            plot(EnsembleInstancesTimes(i)/fs/60,EnsembleInstances(i),'o',...
-                'MarkerEdgeColor','k',...
-                'MarkerFaceColor',ColorState(EnsembleInstances(i),:),...
-                'MarkerSize',5);
-        end
-        %
+        % Plot LINE Intervals @ HEBBIAN SEQUENCE (TROUBLE!)
+        [~,IndxDixk]=intersect(xseq,EnsembleIntervals(i,1):EnsembleIntervals(i,2));
+        plot(xtime(EnsembleIntervals(i,1):EnsembleIntervals(i,2)),...
+            yseq(IndxDixk),...
+            'Color',ColorState(EnsembleInstances(i),:),'LineWidth',4)
+    end
+
+    for i=1:Ntran
+        % PLOT BALLS @ HEBBIAN SEQUENCE
+        plot(EnsembleInstancesTimes(i)/fs/60,EnsembleInstances(i),'o',...
+            'MarkerEdgeColor','k',...
+            'MarkerFaceColor',ColorState(EnsembleInstances(i),:),...
+            'MarkerSize',round(10*CellatEns(EnsembleInstances(i))+5));
+        drawnow;
     end
     hold off;
-    axis([Axis_details.XLim,0.5,max(EnsembleInstances)+0.5])
+    axis([Axis_details.XLim,0,max(EnsembleInstances)+1])
     EnsmbleAxis=gca;
     linkaxes([Axis_details,EnsmbleAxis],'x')
 end

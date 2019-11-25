@@ -12,7 +12,7 @@ SimMethod='hamming';
 
 % Smoothing CAG for Neural Ensemble Intervals: 
 % CONSECUTIVE & INTERLEAVED instances
-SmoothWin=fs*30; %            half minute smoothing
+SmoothWinSec=30; %            half minute smoothing
 
 % From Features_Condition:
 % TypeCycles(1)->Simple
