@@ -26,11 +26,13 @@ ensemble_index=[];
 labfram=[labfram;-1000];
 framsig=[makerowvector(framsig),1000];
 % Neurons Ratio Proportion
+EnsemblesIndex=unique(labels_frames);
 if ~isempty(R)
-    EnsemblesIndex=unique(labels_frames);
     for ne=1:numel(EnsemblesIndex)
         CellatEns(ne)= numel(find(sum(R(:,signif_frames( labels_frames==EnsemblesIndex(ne) )),2)))/size(R,1);
     end
+else
+    CellatEns(1:numel(EnsemblesIndex))=1;
 end
 %% Read Continuous Ensembled-Frames
 for i=1:numel(framsig)-1;
@@ -51,7 +53,9 @@ for i=1:numel(framsig)-1;
         frames_ensembles=[];
     end 
 end
-
+if isempty(time_ensemble)
+    ensemble_inter=[];
+end
 %% IF CAG intel::
 if isempty(CAG)
     EnsembleInstancesTimes=time_ensemble;
@@ -96,22 +100,25 @@ else
     %% Get Temporal Features of Neural Ensembles Activations---------------
     [EnsembleIntervals,EnsembleInstancesTimes,EnsembleInstances]=Neural_Intervals(ensemble_index,time_ensemble,ensemble_inter,CAGsmooth);
     % Filtering - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    fprintf('>>Filtering Ensembles Time Features: ')
-    DurEn=EnsembleIntervals(:,2)-EnsembleIntervals(:,1);
-    IgnoreInstances=[];
-    for n=2:numel(EnsembleInstances)
-        % If interfere consecutive & too short
-        if and(EnsembleIntervals(n,1)-EnsembleIntervals(n-1,2)<0,...
-                DurEn(n)<fs)
-            IgnoreInstances=[IgnoreInstances;n];
+    if ~isempty(EnsembleInstances)
+        fprintf('>>Filtering Ensembles Time Features: ')
+        DurEn=EnsembleIntervals(:,2)-EnsembleIntervals(:,1);
+        IgnoreInstances=[];
+        for n=2:numel(EnsembleInstances)
+            % If interfere consecutive & too short
+            if and(EnsembleIntervals(n,1)-EnsembleIntervals(n-1,2)<0,...
+                    DurEn(n)<fs)
+                IgnoreInstances=[IgnoreInstances;n];
+                fprintf('o')
+            end
         end
+        OKinstances=setdiff(1:numel(EnsembleInstances),IgnoreInstances);
+        % UPDATE INTEL
+        EnsembleIntervals=EnsembleIntervals(OKinstances,:);
+        EnsembleInstancesTimes=EnsembleInstancesTimes(OKinstances);
+        EnsembleInstances=EnsembleInstances(OKinstances);
+        fprintf('ok\n')
     end
-    OKinstances=setdiff(1:numel(EnsembleInstances),IgnoreInstances);
-    % UPDATE INTEL
-    EnsembleIntervals=EnsembleIntervals(OKinstances,:);
-    EnsembleInstancesTimes=EnsembleInstancesTimes(OKinstances);
-    EnsembleInstances=EnsembleInstances(OKinstances);
-    fprintf('ok\n')
 end
 
 %% FIGURE *****************************************************************
@@ -123,25 +130,28 @@ if ifplot
     % PLOT INTERVALS AND COLORS    
     xtime=Axis_details.Children(end).XData; % [MINUtES]
     yCAG=Axis_details.Children(end).YData;
-    % Smoothed CAG
-    plot(Axis_details,xtime,CAGsmooth,'Color',[0.9,0.9,0.9],'LineWidth',2);
-    % Figure Object for the Hebbian Sequence
+     % Figure Object for the Hebbian Sequence
     fig_Ensembles_Transitions=figure('Position', [403 172 560 122],...
         'NumberTitle','off',...
         'Name','Hebbian Sequence & Neuronal Ensmble Intervals');
-    % plot(EnsembleInstancesTimes/fs/60,EnsembleInstances,'k','LineWidth',0.5); 
-    [xseq,yseq]=makelineseq(EnsembleInstancesTimes,EnsembleInstances,EnsembleIntervals);
-    % Line Between Neuronal
-    plot(xtime(xseq),yseq,'k','LineWidth',0.5);
-%     plot([EnsembleIntervals(1):numel(yseq)+EnsembleIntervals(1)-1]/fs/60,...
-%         yseq,'k','LineWidth',0.5); % @ [min]
+    axis; HebbSeq=gca;
+    if ~isempty(CAG)
+        % Smoothed CAG
+        plot(Axis_details,xtime,CAGsmooth,'Color',[0.9,0.9,0.9],'LineWidth',2);
+        % plot(EnsembleInstancesTimes/fs/60,EnsembleInstances,'k','LineWidth',0.5); 
+        [xseq,yseq]=makelineseq(EnsembleInstancesTimes,EnsembleInstances,EnsembleIntervals);
+        % Line Between Neuronal
+        plot(HebbSeq,xtime(xseq),yseq,'k','LineWidth',0.5);
+    end
+   
     hold on
     Ntran=numel(EnsembleInstances);
-    fprintf('>>Hebbian Sequence:')
-    for i=1:Ntran
-        fprintf('Instance %i - Ensemble %i - Duration %3.1f s\n',i,...
+    fprintf('>>Hebbian Sequence:\n')
+    if ~isempty(CAG)
+        for i=1:Ntran
+            fprintf('Instance %i - Ensemble %i - Duration %3.1f s\n',i,...
             EnsembleInstances(i),(1+EnsembleIntervals(i,2)-EnsembleIntervals(i,1))/fs);
-        if ~isempty(CAG)
+
             % PLOT @ CAG [RASTER FIGURE]
             if diff([EnsembleIntervals(i,1),EnsembleIntervals(i,2)])~=0
                 plot(Axis_details,xtime(EnsembleIntervals(i,1):EnsembleIntervals(i,2)),...
@@ -152,12 +162,12 @@ if ifplot
                 yCAG(EnsembleIntervals(i,1)-1:EnsembleIntervals(i,2)+1),...
                 'Color',ColorState(EnsembleInstances(i),:),'LineWidth',1);
             end
-        end
-        % Plot LINE Intervals @ HEBBIAN SEQUENCE (TROUBLE!)
+        % Plot LINE Intervals @ HEBBIAN SEQUENCE
         [~,IndxDixk]=intersect(xseq,EnsembleIntervals(i,1):EnsembleIntervals(i,2));
         plot(xtime(EnsembleIntervals(i,1):EnsembleIntervals(i,2)),...
             yseq(IndxDixk),...
-            'Color',ColorState(EnsembleInstances(i),:),'LineWidth',4)
+            'Color',ColorState(EnsembleInstances(i),:),'LineWidth',4);
+        end
     end
 
     for i=1:Ntran

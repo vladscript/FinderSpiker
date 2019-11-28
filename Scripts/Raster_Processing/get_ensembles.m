@@ -107,7 +107,11 @@ if Analyze
             LinkageMethod=HBestTree_JPplus(Sim);    % Output
             Tree=linkage(squareform(Distance,'tovector'),LinkageMethod);
             frame_ensembles=cluster(Tree,'maxclust',Nensambles); % START
-            
+            if ismember(0,unique(frame_ensembles))
+                disp('>>Cluster Zero<<')
+                frame_ensembles=frame_ensembles+1;
+                Nensambles=numel(unique(frame_ensembles));
+            end
             % [~,MaxDistanceIV]=nonsimilarframes(Rclust,SimMethod,0.5);
             % Check Ignored:
             signif_frames=1:size(Rclust(:,frame_ensembles>0),2);
@@ -157,8 +161,8 @@ if Analyze
     % HebbSequence=Ensembles_Transitions(1,frame_ensembles,signif_frames,CAG,[],0);
     % relabel_frame_ensembles=relabel_ensembles(frame_ensembles(frame_ensembles>0),HebbSequence,'2-freq');
     % frame_ensembles(frame_ensembles>0)=relabel_frame_ensembles;
-    [Model,ECV]=Nbayes_Ensembles(R(:,signif_frames(frame_ensembles>0)),frame_ensembles);
-    NensOK=numel(unique(frame_ensembles));
+    [Model,ECV]=Nbayes_Ensembles(R(:,signif_frames(frame_ensembles>0)),frame_ensembles(frame_ensembles>0));
+    NensOK=numel(unique(frame_ensembles(frame_ensembles>0)));
     
     % NensOK;
     fprintf('>> Analysis lasted %3.1f seconds  \n',DelayTime);

@@ -48,11 +48,20 @@ for i=1:NC
     FeaturesSingle=[];
     Ensemble_Names=cell(NR,1);
     for r=1:NR
+        fprintf('>>Reading %s\n',FileName{r})
         LowLine=find(FileName{r}=='_');
         Ensemble_Names{r}=FileName{r}(1:LowLine(1)-1);
-        rowFeatures=csvread([PathName,FileName{r}],1,0);
-        FeaturesSingle=[FeaturesSingle;rowFeatures]; 
-        NensemblesExp(r)=size(rowFeatures,1);
+        TableChek=readtable([PathName,FileName{r}]);
+        [Nr,Nc]=size(TableChek);
+        if Nr>0
+            rowFeatures=csvread([PathName,FileName{r}],1,0);
+            FeaturesSingle=[FeaturesSingle;rowFeatures]; 
+            NensemblesExp(r)=size(rowFeatures,1);
+        else
+            % rowFeatures=zeros(1,Nc);
+            % FeaturesSingle=[FeaturesSingle;rowFeatures]; 
+            NensemblesExp(r)=0;
+        end
     end
     NensemblesCondition{i}=NensemblesExp;
     ENSEMBLE_FEATURES{i}=FeaturesSingle;

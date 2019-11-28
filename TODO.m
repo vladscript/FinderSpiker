@@ -10,7 +10,7 @@
 %           TypeCycles(2)->Closed
 %           TypeCycles(3)->Open
 %% FIXED  READY TO GO @ GIT
-%   
+%   Ensemble Intervals Fix
 
 %% Bugs & New Functions NOW
 
