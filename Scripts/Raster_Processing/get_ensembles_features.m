@@ -153,9 +153,14 @@ for c=1:C
     %% TRANSITIONS AND CYCLES
     ET=HebbSequence;
     Transitions{c}=ET;
-    Ntransitions(c)=numel(ET)-1;
-    Rate_Transitions(c)=(numel(ET)-1)/RasterDuration; % Transitions per MINUTE
-    % Alternate or Reactivate Proportion of the Sequence
+    if numel(ET)>0
+        Ntransitions(c)=numel(ET)-1;
+        Rate_Transitions(c)=(numel(ET)-1)/RasterDuration; % Transitions per MINUTE
+    else
+        Rate_Transitions(c)=0;
+        Ntransitions(c)=0;
+    end
+    % Alternate or Reactivate Proportion of the Sequence *****************
     Reactivations=0;
     Alternations=0;
     AltIndex(c)=0;
@@ -172,7 +177,7 @@ for c=1:C
         ReaIndex(c)=Reactivations/(numel(HebbSequence)-1);
     end
     
-    % Euler Cycles of Ensembles [REVERBERATION] return 
+    % Euler Cycles of Ensembles [REVERBERATION] return  ******************
     % to any given ensemble 
     % (after activate all ensembles)
     [TableCycles,TypeCycles]=eulercycles_hebbseq(ET,E);

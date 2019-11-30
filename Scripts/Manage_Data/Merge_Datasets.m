@@ -69,6 +69,7 @@ if size(YlabelsA,1)==size(C,1) && size(YlabelsA,2)==size(C,2)
     waitfor(okbutton); 
     if strcmp('Yes',okbutton)
         % Set Save Name
+        CurrentPathOK=pwd;
         timesave=clock;
         TS=num2str(timesave(1:5));
         TS=TS(TS~=' ');

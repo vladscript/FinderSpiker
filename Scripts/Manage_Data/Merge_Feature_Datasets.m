@@ -3,7 +3,7 @@
 %   'General Ensembles':    Neural Ensembles Features
 %   'Detailed Ensembles':   Single Neural Ensembles Features
 %% Intro
-fprintf('Get CSV Tables from Analsysis Features.')
+fprintf('\n\nGet CSV Tables from Analsysis Features.\n\n')
 %% Select Kind Of Features to Merge
 KindFeatures={'Raster Activity';'General Ensembles';...
     'Detailed Ensembles';'Network Features'};

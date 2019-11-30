@@ -14,7 +14,9 @@
 
 %% Bugs & New Functions NOW
 
-% Bug @ Ensemble Duration: See Reb3280818- Prami
+% Make Experimental Datasets Folder for 'Merge_Feature_Datasets'
+
+% Zero-Cluster issue at 'get_ensembles'
 
 % Dissapeared Ensembles by labeling Sequence: see 20190930-1 
 % R_DAdepleted_Analysis=get_ensembles(R_DAdepleted',10,3);
