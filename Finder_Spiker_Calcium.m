@@ -113,10 +113,7 @@ save([FileDirSave,FolderNamePD,'\',Experiment,'.mat'],'Experiment','SIGNALS',...
     'Names_Conditions','NumberofVideos','XY','fs','r');
     disp('SAVED RAW DATA')
 %% SETUP PROCESSING PARAMTERS ******************************
-% Setup for Auto Regressive Process Estimation
-% L=30;              % seconds  of the Fluorophore Response
-% p=3;               % AR(p) initial AR order        
-% taus_0= [.75,2,1]; % starting values for taus
+
 Load_Default_Values_SP;
 
 %% DETRENDING AND SPARSE DECONVOLVE [AUTOMATIC] DETECTION

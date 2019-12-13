@@ -14,8 +14,10 @@
 %   FN{}: Structure with the names of the videos
 %   PathName: Directory of the videos
 %   XY: Coordinates of Active Cells
-%   r: Radious of Coordinates
-
+% If ImPatch ROI setlist
+%       r: Radious of Coordinates  
+% If ImageJ ROI setlist
+%       r: Cell Array of Coordinates in ROI
 function [Names_Conditions,NumberofVideos,FN,PathName,XY,r]=Read_Videos(DefaultPath)
 %% Ask how many conditions and how many videos *********************
 % 1st Input DIalogue
@@ -55,7 +57,18 @@ for i=1:NC
     CurrentPath=PathName;
 end
 % Read coordinates
-[XYName,XYPathName] = uigetfile('*.csv',['All Coordinates (XY) ',Names_Conditions{i}],CurrentPath);
+[XYName,XYPathName] = uigetfile({'*.csv';'*.zip'},['All Coordinates (XY) ',Names_Conditions{i}],CurrentPath);
 XYFN = char(XYName);
-[x,y,r,~]=textread([XYPathName,XYFN],'%d %d %d %s','delimiter',',','headerlines',4);
-XY = [x,y];
+switch XYName(end-2:end)
+    case 'zip'
+        fprintf('>>Reading Coordinates from ImageJ:')
+        sROI=ReadImageJROI([XYPathName,XYFN]);
+        [XY,r]=getpixelsatROI(sROI);
+        % r is a cell array
+    case 'csv'
+        fprintf('>>Reading Coordinates from ImPatch: ')
+        [x,y,r,~]=textread([XYPathName,XYFN],'%d %d %d %s','delimiter',',','headerlines',4);
+        % r is a vector
+        XY = [x,y];
+end
+fprintf('done.\n')

@@ -119,7 +119,11 @@ XY_cluster=XY_selectedClean(New_Order_Clustering,:); % Re-SORTED COORDINATES OF 
 % Indexes=sort(Indexes(New_Order_Clustering));    % useless
 %% COLORMAP ENSEMBLES
 % ColorState=colormapensembles(TotalNG,NC,NGroups);
-ColorState=colormyensembles(NGroups);
+if ~exist('ColorState','var')
+    ColorState=colormyensembles(NGroups);
+else
+    fprintf('\n\n>>Already Colored Neuronal Ensembles\n\n')
+end
 % GUI to Choose Color SET
 % Necessary: add CBREWER third-party function
 % % % % % % % Nens=10;
