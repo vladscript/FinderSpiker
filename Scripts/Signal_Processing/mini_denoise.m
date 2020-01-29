@@ -14,7 +14,6 @@ function [xdenoised,noisex]=mini_denoise(xd)
     while ~or(gradacf>=0,dbw>9)
         disp(['DENOISING by wavelet level . . . . . ',num2str(dbw)])
         %         [xdenoised,~,~,~,~] = cmddenoise(xd,ondeleta,dbw);
-        %          xdenoised=smooth(xd,SWS,'rloess'); ALTERNATIVE
         xdenoised=waveletdenoise(xd,ondeleta,dbw);
         noise=xd-xdenoised;
         acf=autocorr(noise,1);

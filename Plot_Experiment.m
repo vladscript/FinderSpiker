@@ -9,9 +9,16 @@ if exist('RASTER_Selected_Clean','var')
     CurrentFig=gcf;
     CurrentFig.Name=['ID: ',Experiment,' Selected to Analyze'];
     CurrentFig.NumberTitle='off';
-    
     Label_Condition_Raster(Names_Conditions,R_Condition,fs);   % Labels
     disp('>>Raster Ready to Analyze.')
+    % Aski if plots Rate of Activity (RoA)
+    okbutton = questdlg('Plot Rate of Activity ?');
+    waitfor(okbutton); 
+    if strcmp('Yes',okbutton)
+        % Plot RoA ********************************************************
+        plot_activityrate(R_Condition,Names_Conditions,fs);
+        % *****************************************************************
+    end
 elseif exist('RASTER_CONCAT','var')
     disp('>>Plotting Clean Raster: ')
     Plot_Raster_Ensembles(RASTER_CONCAT,fs);

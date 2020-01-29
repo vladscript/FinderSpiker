@@ -9,12 +9,15 @@
 %           TypeCycles(1)->Simple
 %           TypeCycles(2)->Closed
 %           TypeCycles(3)->Open
+% Network Link Weight Threshold: Minimum RoA of Neuron to Belong any ensemble
 %% FIXED  READY TO GO @ GIT
 %   Ensemble Intervals Fix
+% READ ROIs from ImageJ -----------------
 
 %% Bugs & New Functions NOW
 
-% READ ROIs from ImageJ -----------------
+
+% MAKE Plot_Simm_Matrix.m from labeled_frames vector
 
 % Make Experimental Datasets Folder for 'Merge_Feature_Datasets'
 
@@ -48,6 +51,7 @@
 
 %% FUTURE *****************************************************************
 %%% MAKE ALGORITHMIA
+% Export Rasters @ CSV format
 % Adjust Contrast and Sliding Cells in Merge_Finder
 % Normalize Amplitude @ Detrended Signal
 % Add button to save Zoom image (MERGED MAGIC)

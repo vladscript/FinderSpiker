@@ -26,5 +26,5 @@ for f=1:length(ActiveFrames)% Frames loop
 end
 % Set Zero to the DIAGONAL:
 AdjacencyMatrix=AdjacencyMatrix.*~eye(size(AdjacencyMatrix));
-MaxSynLinks=max(AdjacencyMatrix(:));
+% MaxSynLinks=max(AdjacencyMatrix(:));
 AdjacencyMatrix=AdjacencyMatrix./frames; % NORMALIZED

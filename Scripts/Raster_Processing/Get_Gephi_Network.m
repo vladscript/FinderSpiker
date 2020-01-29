@@ -1,7 +1,6 @@
 %% Function To save CSV files from Network to Gephi Format
 % Functional Network of Neural Ensambles
-% Only Significant Activity (!)
-% RUN AFTER: Ensemble_Sorting.m
+% RUN IN: Ensemble_Sorting.m
 
 % AÑADIR NODOS DE REFERENCIA ESPACIAL: ESQUINAS DE NEGRO
 % AÑADIR NODOS SIN CONEXION PARA AMPLIAR LA DIFERENCIA ENTRE GRUPOS
@@ -38,6 +37,7 @@ ActiveNeurons=unique(ActiveNeurons);
 XY_ensambles=XY_selected;
 % Raster to build functional Network
 Raster_ensambles=Raster(:,ActiveNeurons);
+Frames=size(Raster,1);
 [~,C]=size(Raster_ensambles); % N Active Cells 
 % Number of Neurons in Ensembles
 Ncells=C;
@@ -45,7 +45,7 @@ Ncells=C;
 NG=NStates;
 % Color Mode
 if isempty(varargin)
-    disp('>>Color Mode: COMPENSATE')
+    disp('>>Color Mode: BALANCE')
     colormode='compensate';
 else
     disp('>>Color Mode: MIXER')
@@ -165,17 +165,21 @@ end
 % AS in Get_Total_Network
 % This counts how many frames a Pair of Neurons Fired Together
 % Be Cell i-th and Cell j-th
-% AdjacencyMatrix(i,j)=Number of join firing;
+% AdjacencyMatrix(i,j)=Number of simultaneous firing frames;
 AdjacencyMatrix=GetAdjacencyMatrix(Raster_ensambles);
-MaxSynLinks=max(AdjacencyMatrix(:));
+MaxSynLinks=max(AdjacencyMatrix(:)); % [%] of Time Neurons are Linked
+%% Set Threhold
+% Neurons linked Above Mean Rate of Activity of Ensembled Neurons
+ThNet=min(sum(Raster_ensambles)/Frames);
 % AdjacencyMatrix=AdjacencyMatrix./MaxSynLinks; % NORMALIZED
 % Get Source, Target and Weigth for each link UNSORTED
 SOURCE=[];
 TARGET=[];
 WEIGHT=[];
+% Ncells are the cells in the ensembles
 for i=1:Ncells-1
     for j=i+1:Ncells
-        if AdjacencyMatrix(i,j)>0
+        if AdjacencyMatrix(i,j)>=ThNet
             SOURCE=[SOURCE;ActiveNeurons(i)];
             TARGET=[TARGET;ActiveNeurons(j)];
             WEIGHT=[WEIGHT;AdjacencyMatrix(i,j)];
@@ -187,6 +191,14 @@ if isempty(SOURCE)
     TARGET=0;
     WEIGHT=0;
     disp('>>NO NETWORK FOUND')
+end
+% Inactive Nodes
+InactiveIndx=setdiff(1:numel(XY_selected(:,1)),ActiveNeurons);
+EmptyNodesStates={};
+EmptyNodesColors={};
+for i=1:numel(InactiveIndx)
+    EmptyNodesStates{i,1}='0';
+    EmptyNodesColors{i,1}=['0,0,0'];
 end
 %% NETWORK OUTPUTS ******************************************************
 % N Cells that participate in all Ensembles
@@ -226,7 +238,18 @@ if ~isempty(FileNameExp)
     end
     SaveasName=[CarpetName,'\',Experiment,'_',FileNameExp,'_NODES.csv'];
     HeadersNodes={'ID','Label','Latitude','Longitude','Color'};
-    Tnodes=table(Cluster_Indexing(1:Ncells)',StatesofNeurons,XY_ensambles(Cluster_Indexing(1:Ncells),2),XY_ensambles(Cluster_Indexing(1:Ncells),1),ColorNeuronCell,...
+%     % ONLY ACTIVE AT ENSEMBLES: ###########################################
+%     Tnodes=table(Cluster_Indexing(1:Ncells)',...
+%         StatesofNeurons,XY_ensambles(Cluster_Indexing(1:Ncells),2),...
+%         XY_ensambles(Cluster_Indexing(1:Ncells),1),...
+%         ColorNeuronCell,...
+%             'VariableNames',HeadersNodes);
+    % ALL CELLS: ##########################################################
+    Tnodes=table(Cluster_Indexing',...
+        [StatesofNeurons;EmptyNodesStates],...
+        XY_ensambles(Cluster_Indexing,2),...
+        XY_ensambles(Cluster_Indexing,1),...
+        [ColorNeuronCell;EmptyNodesColors],...
             'VariableNames',HeadersNodes);
     writetable(Tnodes,[DirSave(1:poslash(end)-1),SaveasName],'Delimiter',',','QuoteStrings',true);
 

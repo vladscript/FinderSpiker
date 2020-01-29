@@ -19,10 +19,15 @@
 % Output @ .csv File
 %   Neural General Ensemble Features:
 %   Neural Detailed Ensemble Features:
-%   Functional Network List of NODES & EDGES to import @ Gephi
+%   Functional Network List of NODES & EDGES to import to Gephi
 
-%% Setup
+%% Setup *****************************************************************
+
 Update_Directory;
+prepare_ensembles_data;
+
+%% MAKE PLOTS ###########################################################
+
 Plot_Neural_Ensembles;
  
 %% IF ALL EXPERIMENT in ONE Analysis

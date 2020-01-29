@@ -1,18 +1,21 @@
 % Funtion to denoise Fluorescence Signals
 % By Wavelet Analysis under asumption: noise is iid
-% argmin_dbw  { AUC(noise) }
-% & VChS-A: Valley-Checking Segmented Algorithm
+%   Wavelet denoiseing @script
+%   VChS-A: Valley-Checking Segmentation @in code
+%   Smooth by rloess
 % Input
 %   XD:         Raw Signal
 % Output
 %   Xest:       Estimated Denoised Signals
 %   SNRbyWT:    SNR by wavelet denoising
 %   SkewSignal: Skewness of Denoised Signal
-%   ABratio:    Max Peak-Valley Amplitude Ratio in Dneoised Signal
+%   ABratio:    Max Peak-Valley Amplitude Ratio in Denoised Signal
 %   SkewNoise:  Skewness of Noise
+%   XDupdate:   Corrected Distorted Input
 function [Xest,SNRbyWT,SkewSignal,ABratio,SkewNoise,XDupdate]=denoise_wavelet(XD)
 %% Setup ****************************
-SpuriousTh=1.75;        % Threshold for Peaks
+% SpuriousTh=1.75;        % Threshold for Peaks
+Load_Default_Values_SP; % Parameters for Signal Processing
 [Ns,Frames]=size(XD);
 Xest=zeros(Ns,Frames);
 SkewSignal=zeros(Ns,1);
@@ -78,7 +81,7 @@ for i=1:Ns
         xdenoised(:)=0; % make it zeros...
         XDupdate(i,:)=xd;
         % xdenoised(:)=zeros(size())
-        % may be ain't happenning ever, man!
+        % maybe this ain't happenning ever, man!
     else
         % disp('>> THERE MIGHT BE TRANSIENTS')
         %% DETRENDING FIXING #############################################
@@ -266,24 +269,6 @@ for i=1:Ns
                 
                 disp('>>...OK')
                 
-                % CHECK iF it symetric pdf around a mode and ***********
-                % and many distributed valleys below zero and noise level
-                % Absolute values of Valley are similar o bigger than Peaks
-%                 if numel(xdets)>3
-%                     Peaks=findpeaks(xdets);
-%                     Valles=findpeaks(-xdets);
-%                     if and(~isempty(Peaks),~isempty(Valles))
-%                         AreAmpsDiff=ttest2(abs(Valles),abs(Peaks));
-%                         if isnan(AreAmpsDiff)
-%                             AreAmpsDiff=1;
-%                         end
-%                         if ~AreAmpsDiff
-%                             % xdets=xdets-min(-Valles);
-%                             xdets=xdets+mean(abs(Valles));
-%                         end
-%                     end
-%                 end
-                % ******************************************************
                 
                 %% Check Peak'sAMplitude between Valleys of Detrended Segment
                 if numel(xdets)>2

@@ -8,3 +8,5 @@ p=3;               % AR(p) initial AR order
 % process impulse response to biexponential Function *************
 taus_0= [.75,2,1]; % starting values
 
+% Theshold for VChS Algorithm
+SpuriousTh=1.75;        % Threshold for Peaks
