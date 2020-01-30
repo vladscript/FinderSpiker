@@ -3,7 +3,7 @@
 % [ Necessary to know the statistical power of the Automatic Mode,
 % Getting insohgts about -+ and -- (false+ & false-)]
 % Transients are calculated from denoised signal (wavelet analysis)
-% Rate of Activity is from Actual and Previou(s) conditions only
+% Rate of Activity Network Features is from Actual and Previou(s) conditions only
 % Get Only Ensembles that last at least 1/2 second
 % Hebbian sequence holds if CAG level stands still
 %           TypeCycles(1)->Simple

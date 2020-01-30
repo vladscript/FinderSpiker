@@ -84,18 +84,32 @@ while MoreFeats
             fprintf('>>Loading: \n')
             for e=1:NE
                 ActualExp=EXPLIST{e,1};
+                preActive=[];
                 for c=1:NC
                     ActualCondition=Names_Conditions{c};
                     RowIndx=IndexesExps(e,c);   % Index of the Experiment
                     X=GEPHIDATA{RowIndx,c};     % Table
+                    
                     x=X{:,{ActualFeature{1}}};  % Cell
+                    
+                    % Only Previus and Actual Nodes #######################
+                    y=X{:,'label'};     % labels bleongin to ensemble
                     % Make it Vector: (yeahp, with a loop)
                     xnum=zeros(numel(x),1);
+                    ActualActive=[];
                     for nx=1:numel(x)
                         xnum(nx)=str2double(x{nx});
+                        if y{nx}~='0'
+                            ActualActive=[ActualActive;nx];
+                        end
                     end
+                    OKindex=union(preActive,ActualActive);      % join
+                    preActive=OKindex;                          % update
+                    
                     RowTable=table({ActualCondition},{ActualExp},...
-                        mean(xnum),mode(xnum),median(xnum),var(xnum),skewness(xnum),kurtosis(xnum));
+                        mean(xnum(OKindex)),mode(xnum(OKindex)),...
+                        median(xnum(OKindex)),var(xnum(OKindex)),...
+                        skewness(xnum(OKindex)),kurtosis(xnum(OKindex)));
                     %% 4. Make Statistics: mean, variance, mode, median, etc
                     TotalTable=[TotalTable;RowTable];
                     fprintf('*')
