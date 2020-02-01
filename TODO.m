@@ -16,18 +16,19 @@
 
 %% Bugs & New Functions NOW
 
+% MAKE Plot_Hebbisn_Stairs ***
 
 % MAKE Plot_Simm_Matrix.m from labeled_frames vector
 
 % Make Experimental Datasets Folder for 'Merge_Feature_Datasets'
 
-% Zero-Cluster issue at 'get_ensembles'
+% Zero-Cluster issue at 'get_ensembles' (?)
 
 % Dissapeared Ensembles by labeling Sequence: see 20190930-1 
 % R_DAdepleted_Analysis=get_ensembles(R_DAdepleted',10,3);
 
 % Statistics: automate
-% CAG threshold (Mike's Script - MonteCarlo)
+
 % Recover Coordinates of Ensembles and Display as scatter plots
 
 % INDEX of USEFUL FUNCTIONS

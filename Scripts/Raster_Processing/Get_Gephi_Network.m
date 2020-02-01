@@ -166,7 +166,12 @@ end
 % This counts how many frames a Pair of Neurons Fired Together
 % Be Cell i-th and Cell j-th
 % AdjacencyMatrix(i,j)=Number of simultaneous firing frames;
+% By Simultaneuos % Time 
 AdjacencyMatrix=GetAdjacencyMatrix(Raster_ensambles);
+
+% By Correlation:
+% AMcorr=abs(corr(Raster_ensambles));
+
 MaxSynLinks=max(AdjacencyMatrix(:)); % [%] of Time Neurons are Linked
 %% Set Threhold
 % Neurons linked Above Mean Rate of Activity of Ensembled Neurons
