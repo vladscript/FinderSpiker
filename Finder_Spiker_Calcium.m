@@ -153,7 +153,7 @@ for i=1:NC
         aux=0;              % Loop COunter 
         while and(~isempty(IndexesFix),aux<2)
             aux=aux+1;
-            if ~isempty(FixedSignals);
+            if ~isempty(FixedSignals)
                 SkewSignal(FixedSignals)=Features(:,1);
                 SkewNoise(FixedSignals)=Features(:,2);
                 SNRbyWT(FixedSignals)=Features(:,3);

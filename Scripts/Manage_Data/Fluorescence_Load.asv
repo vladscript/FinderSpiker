@@ -49,16 +49,15 @@ for n=1:NS      % for every coordinate
         % Ellipse's Area Pixels ***************************************
         Mesh_XY=r{n};
         % X-Coordinates in Width
-        xokindex=find(Mesh_XY(:,2)<=W);
+        xokindex=find(Mesh_XY(:,1)<=H);
         % Y-Coordinates in Height
-        yokindex=find(Mesh_XY(:,1)<=H);
+        yokindex=find(Mesh_XY(:,2)<=W);
         OKindx=intersect(xokindex,yokindex);
-        Mesh_XY=[Mesh_XY(OKindx,2),Mesh_XY(OKindx,1)];
+        Mesh_XY=Mesh_XY(OKindx,:);
     end
     % Fluorescence ***********************************************
     FluorSignal=zeros(1,F);
     for f=1:F   % for every frame
-        % Frame Size: H x W: [rows x columns]
         Fdata=mov(f).cdata(Mesh_XY(:,2),Mesh_XY(:,1));
         FluorSignal(f)=mean(Fdata(:));
     end

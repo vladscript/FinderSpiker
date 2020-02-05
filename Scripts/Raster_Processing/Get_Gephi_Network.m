@@ -37,7 +37,7 @@ ActiveNeurons=unique(ActiveNeurons);
 XY_ensambles=XY_selected;
 % Raster to build functional Network
 Raster_ensambles=Raster(:,ActiveNeurons);
-Frames=size(Raster,1);
+Frames=size(Raster,1); % Total Frames of Experimental Condition
 [~,C]=size(Raster_ensambles); % N Active Cells 
 % Number of Neurons in Ensembles
 Ncells=C;
@@ -101,7 +101,7 @@ for i=1:Ncells
 %     elseif NSin==NG && CountersStates(1)>NSeq
             ColorNeuron(Cluster_Indexing(i),:)=ColorState(end,:); % deep purple
             SharedNeruons=SharedNeruons+1;
-            disp('Potential Hub Detected --->')
+            disp(' * Potential Hub Detected *')
     %                                           2 or more-ensemble Neurons
     else
         CurretnEnsembles=[];
@@ -168,12 +168,12 @@ end
 % AdjacencyMatrix(i,j)=Number of simultaneous firing frames;
 % By Simultaneuos % Time 
 AdjacencyMatrix=GetAdjacencyMatrix(Raster_ensambles);
-
+% NORMALIZED by Experimental Condition Time
+AdjacencyMatrix=AdjacencyMatrix./Frames; 
 % By Correlation:
 % AMcorr=abs(corr(Raster_ensambles));
-
 MaxSynLinks=max(AdjacencyMatrix(:)); % [%] of Time Neurons are Linked
-%% Set Threhold
+% Set Threhold
 % Neurons linked Above Mean Rate of Activity of Ensembled Neurons
 ThNet=min(sum(Raster_ensambles)/Frames);
 % AdjacencyMatrix=AdjacencyMatrix./MaxSynLinks; % NORMALIZED

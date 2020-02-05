@@ -24,7 +24,7 @@ for n=1:Nconditions
     disp('>> Choose Color:') ;
     ColorIndx{n}= inputdlg(['Set Color for ',...
         NamesCond{n},' Condition'],...
-         'Select color for ', [1 70]);
+         'Select color for ', [1 35]);
     waitfor(ColorIndx{n});
     IndxColor(n)= str2num( cell2mat(  ColorIndx{n} ));
     if ~ismember(IndxColor(n),1:Ncolors)
