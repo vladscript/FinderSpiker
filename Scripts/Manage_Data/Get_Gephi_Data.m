@@ -88,7 +88,7 @@ disp('>>Saving Gephi Data ...')
 % Input dialogue
 CurrentPathOK=[Dirpwd(1:slashesindx(end))];
 
-[file,path] = uiputfile('myNetwrokDataSet.mat','Save DATASET file >>');
+[file,path] = uiputfile('myNetworkDataSet.mat','Save DATASET file >>');
 if file ~=0
     fullFileName = fullfile(path, file);
     save(fullFileName,'GEPHIDATA','Names_Conditions');

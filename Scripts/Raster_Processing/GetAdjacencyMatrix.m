@@ -7,7 +7,7 @@
 %   A: Adjacency Matrix dim: Cells x Cells where:
 %       a_ij: percentage of time that the i-th & j-rh fired together
 function AdjacencyMatrix=GetAdjacencyMatrix(Raster)
-% [C,frames]=size(Raster);
+[C,frames]=size(Raster);
 % It is supossed to have more frames than cells ALWAYS!
 if frames<C
     Raster=Raster';     % Tranpose Raster

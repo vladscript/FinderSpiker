@@ -150,26 +150,31 @@
 % 
 %% 8 MAKE DATASETS FROM GEPHI NETWORK FEATURES
 % 
-% 7.9  Export 'Workspaces' from Gephi     Data could be in  '\NetWorks-CSV'
+% 7.9  Export 'FEATURES' from Gephi     Data could be in  '\NetWorks-CSV'
 % 
 %                                         Using Gephi 0.9.1
 % 8.1  Make Network Features Dataset
 % 
-% * >>Get_Gephi_Data;      % Make .mat Dataset from CSV Gephi Workspaces
+% * >>Get_Gephi_Data;      % Make File MyNetworkDataSet.mat Dataset 
+%                          % from CSV Gephi Workspaces (per Experiment)
+% 
+%   READ CSV files one by one->use [cancel] button to set next condition
 % 
 %                        Save .mat File @ FinderSpiker/DatabaseFolder
 % 
 % * >>Make_Statistics_Gephi_Features; 
 % 
-%                        Read .mat File @ FinderSpiker/DatabaseFolder
-%                        Show RAINPLOT for each Feature     
-%                        Create Network_FEATURE_Dataset
+%                        Read MyNetworkDataSet.mat Files from @../DatabaseFolder
+%                        Show RAINPLOT for each Feature 
+%                        & Create Network_FEATURE_Dataset in CSV files:
+%                        'Network_FEATURE_Dataset_YYYYMMDDHHMM.csv'
 % 
-% * >>Concatenate_NetFeats            
+% * >>Concatenate_NetFeats 
 % 
-%                       Read Network_FEATURE_Dataset
+%                       Read Multiple Network_FEATURE_Datasets (same
+%                       Experiment)
 %                       Concatenate table of MULTIPLE Features in one
-%                       Create NetFEATS_Dataset @FinderSpiker/DatabaseFolder
+%                       Create NetFEATS_Dataset.csv @FinderSpiker/DatabaseFolder
 % 
 %% 9  STACK DIVERS DATASETS
 % 

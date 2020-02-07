@@ -42,7 +42,7 @@ end
 %% FEATURE EXPLORER #######################################################
 % Save Results to Retrieve Them
 DataCell=cell(Nconditions,1);
-for f=1:Nfeat % Feature Loop ***************************************
+for f=1:Nfeat % Feature Loop **********************************************
     figure;
     labelsplot=[];
     DodgeInit=0.3;

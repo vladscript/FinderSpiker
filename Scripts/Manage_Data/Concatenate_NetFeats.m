@@ -53,7 +53,7 @@ waitfor(okbutton);
 if strcmp('Yes',okbutton)
     % Set Save Name
     timesave=clock;
-    TS=num2str(timesave(1:5));
+    TS=num2str([timesave(1:5),round(timesave(6))]);
     TS=TS(TS~=' ');
     SaveFile=['\NetFEATS_Dataset_',TS,'.csv'];
     CurrentPathOK=[Dirpwd(1:slashesindx(end))];

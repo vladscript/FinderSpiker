@@ -5,13 +5,15 @@
 % Merge Same Condition/Different Experiments
 
 Y(Y=='DyskinesiaA')='Dyskinesia';
-Y(Y=='DyskinesiaC')='Dyskinesia';
+Y(Y=='DyskineisiaC')='Dyskinesia';
 
-% maybe an interface to merge conditions ... (but how?)
+% maybe an interface to merge conditions ...
 
 Y = removecats(Y); % removes empty categories
 labelconditions=unique(Y);
+condition_labels={};
 for i=1:numel(labelconditions)
+    fprintf('+')
     condition_labels{i}=char(labelconditions(i));
 end
 [CM,ColorIndx]=Color_Selector(condition_labels);
@@ -61,7 +63,7 @@ for k=2:3
             % Save results
             PCAandACC=[PCAandACC;i,j,validationAccuracy];
             fprintf(repmat('*',20,1));
-            fprintf('\n>>Model %i,kernel %s, PCA components: %i vs %i\n',aux,kernels2test{k},i,j);
+            fprintf('\n>>Model %i,kernel %s, PCA components: %i vs %i -> %3.2f\n',aux,kernels2test{k},i,j,validationAccuracy);
             fprintf(repmat('*',20,1));
             aux=aux+1;
         end
@@ -85,7 +87,7 @@ end
 ONEpca=PCAandACC(nModel(1),1);
 TWOpca=PCAandACC(nModel(1),2);
 Mdl = fitcecoc(Xpca([ONEpca,TWOpca],:)',Y, 'Learners', template, 'Coding',...
-        'onevsone', 'PredictorNames', {'Var1_1' 'Var1_9'}, ...
+        'onevsone', 'PredictorNames', {['PCA_',num2str(ONEpca)],['PCA_',num2str(TWOpca)]}, ...
         'ResponseName', 'Y','FitPosterior',1, ...
         'ClassNames', labelconditions);
 % Estimation of the labels:    
@@ -95,7 +97,7 @@ Mdl = fitcecoc(Xpca([ONEpca,TWOpca],:)',Y, 'Learners', template, 'Coding',...
 %Set binary targets
 Targetss=zeros(Nobser,numel(unique(Y)));
 Outputss=zeros(Nobser,numel(unique(Y)));
-Yconditions=unique(Y,'legacy');
+Yconditions=labelconditions;
 for i=1:Nobser
     Targetss(i,Yconditions==Y(i))=1;
     Outputss(i,Yconditions==Yhat(i))=1;
@@ -104,17 +106,17 @@ end
 figure; plotroc(Targetss',Outputss');
 ROCaxis=gca;
 auxl=1;
-for l=1:numel(classNames)
-    ROCaxis.Children(auxl).Color=CM(l,:);
-    ROCaxis.Children(auxl).DisplayName=classNames{l};
+for l=1:numel(condition_labels)
+    ROCaxis.Children(auxl).Color=CM(ColorIndx(numel(condition_labels)-l+1),:);
+    ROCaxis.Children(auxl).DisplayName=condition_labels{numel(condition_labels)-l+1};
     auxl=auxl+2;
 end
 % PLOT CONFUSION MATRIX
 figure; plotconfusion(Targetss',Outputss')
 CMaxis=gca;
-for l=1:numel(classNames)
-    CMaxis.YTickLabel{l}=classNames{l};
-    CMaxis.XTickLabel{l}=classNames{l};
+for l=1:numel(condition_labels)
+    CMaxis.YTickLabel{l}=condition_labels{l};
+    CMaxis.XTickLabel{l}=condition_labels{l};
 end
 
 %% POSTERIOR PROBABILITIES
@@ -135,11 +137,11 @@ h.YLabel.String = 'Maximum posterior';
 h.YLabel.FontSize = 15;
 hold on
 gh = gscatter(Xpca(ONEpca,:),Xpca(TWOpca,:)',Y,'krb','*xd',8);
-gh(1).Color=CM(2,:);
+gh(1).Color=CM(ColorIndx(2),:);
 gh(1).LineWidth=2;
-gh(2).Color=CM(3,:);
+gh(2).Color=CM(ColorIndx(3),:);
 gh(2).LineWidth=2;
-gh(3).Color=CM(1,:);
+gh(3).Color=CM(ColorIndx(1),:);
 gh(3).LineWidth=2;
 
 title(['SCV kernel ',kernels2test{kernelindx},' pC=',num2str(round(1000*AccuracySVM)/10),'% & Maximum Posterior']);
@@ -158,15 +160,15 @@ hold off
 % legend('Location','Northwest'); 
 % axis tight
 
-classNames = {'Amantadine';'Clozapine';'Dyskinesia'};
-numClasses = size(classNames,1);
+% classNames = {'Amantadine';'Clozapine';'Dyskinesia'};
+numClasses = numel(condition_labels);
 inds = cell(3,1); % Preallocation
 SVMModel = cell(3,1);
 
 % rng(1); % For reproducibility
 for j = 1:numClasses
     Ybin= false(Nobser,1);
-    Ybin(Y==classNames{j})=true;  % OVA classification
+    Ybin(Y==condition_labels{j})=true;  % OVA classification
     SVMModel{j} = fitcsvm(Xpca([ONEpca,TWOpca],:)',Ybin,'ClassNames',[false true],...
         'Standardize',true,'KernelFunction','rbf','KernelScale','auto');
 end
@@ -191,8 +193,8 @@ for j = 1:numClasses
     subplot(2,2,j)
     contourf(x1Grid,x2Grid,reshape(posterior{j}(:,2),size(x1Grid,1),size(x1Grid,2)));
     hold on
-    h(1:numClasses) = gscatter(Xpca(ONEpca,:),Xpca(TWOpca,:),Y,CM([2,3,1],:),'dso',10);
-    title(sprintf('Posteriors for %s Class',classNames{j}));
+    h(1:numClasses) = gscatter(Xpca(ONEpca,:),Xpca(TWOpca,:),Y,CM(ColorIndx,:),'dso',10);
+    title(sprintf('Posteriors for %s Class',condition_labels{j}));
     xlabel([num2str(ONEpca),' th PCA component']);
     ylabel([num2str(TWOpca),' th PCA component']);
     legend off

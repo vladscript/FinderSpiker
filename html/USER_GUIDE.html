@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title></title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-11-19"><meta name="DC.source" content="USER_GUIDE.m"><style type="text/css">
+      --><title></title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-02-06"><meta name="DC.source" content="USER_GUIDE.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -71,12 +71,15 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><div><ul><li>&gt;&gt;Accumulate_Raster_Distances; % Save at CSV Files</li><li>&gt;&gt;Accumulate_RoA_IEI_ED</li><li>&gt;&gt;Accumulate_Ensembles_RoEn_IEnI_EnD</li><li>&gt;&gt;Accumulate_Simm_Matrix</li></ul></div><h2>7. DATASETS MAKER<a name="9"></a></h2><p>Make Tables for SINGLE EXPERIMENTS</p><p>7.1 RASTER FEATURES</p><div><ul><li>&gt;&gt;Raster_Features_Display                 % make CSV table</li></ul></div><pre>                                         % Make Special Directories
 7.2 ENSEMBLES GENERAL FEATURES</pre><div><ul><li>&gt;&gt;Ensembles_Features_Display              % make CSV table</li></ul></div><pre>                                         % Make Special Directories
 7.3 ENSEMBLES DETAILED FEATURES</pre><div><ul><li>&gt;&gt;Ensembles_Features_Detailed_Display     % make CSV table</li></ul></div><pre>                                         % Make Special Directories
-7.4 LINKS FEATURES</pre><div><ul><li>&gt;&gt;Links_Features_Display                  % ?</li></ul></div><h2>8 MAKE DATASETS FROM GEPHI NETWORK FEATURES<a name="10"></a></h2><p>7.9  Export 'Workspaces' from Gephi     Data could be in  '\NetWorks-CSV'</p><pre>                                       Using Gephi 0.9.1
-8.1  Make Network Features Dataset</pre><div><ul><li>&gt;&gt;Get_Gephi_Data;      % Make .mat Dataset from CSV Gephi Workspaces</li></ul></div><pre>                      Save .mat File @ FinderSpiker/DatabaseFolder</pre><div><ul><li>&gt;&gt;Make_Statistics_Gephi_Features;</li></ul></div><pre>                      Read .mat File @ FinderSpiker/DatabaseFolder
+7.4 LINKS FEATURES</pre><div><ul><li>&gt;&gt;Links_Features_Display                  % ?</li></ul></div><h2>8 MAKE DATASETS FROM GEPHI NETWORK FEATURES<a name="10"></a></h2><p>7.9  Export 'FEATURES' from Gephi     Data could be in  '\NetWorks-CSV'</p><pre>                                       Using Gephi 0.9.1
+8.1  Make Network Features Dataset</pre><div><ul><li>&gt;&gt;Get_Gephi_Data;      % Make File MyNetworkDataSet.mat Dataset                          % from CSV Gephi Workspaces (per Experiment)</li></ul></div><pre class="language-matlab">READ <span class="string">CSV</span> <span class="string">files</span> <span class="string">one</span> <span class="string">by</span> <span class="string">one-&gt;use</span> <span class="string">[cancel]</span> <span class="string">button</span> <span class="string">to</span> <span class="string">set</span> <span class="string">next</span> <span class="string">condition</span>
+</pre><pre>                      Save .mat File @ FinderSpiker/DatabaseFolder</pre><div><ul><li>&gt;&gt;Make_Statistics_Gephi_Features;</li></ul></div><pre>                      Read MyNetworkDataSet.mat Files from @../DatabaseFolder
                       Show RAINPLOT for each Feature
-                      Create Network_FEATURE_Dataset</pre><div><ul><li>&gt;&gt;Concatenate_NetFeats</li></ul></div><pre>                     Read Network_FEATURE_Dataset
+                      &amp; Create Network_FEATURE_Dataset in CSV files:
+                      'Network_FEATURE_Dataset_YYYYMMDDHHMM.csv'</pre><div><ul><li>&gt;&gt;Concatenate_NetFeats</li></ul></div><pre>                     Read Multiple Network_FEATURE_Datasets (same
+                     Experiment)
                      Concatenate table of MULTIPLE Features in one
-                     Create NetFEATS_Dataset @FinderSpiker/DatabaseFolder</pre><h2>9  STACK DIVERS DATASETS<a name="11"></a></h2><p>% Make DATASET for Stack Several tables from Divers Experiments:</p><div><ul><li>&gt;&gt;Merge_Feature_Datasets</li></ul></div><pre class="language-matlab">-Raster Activity:       Table
+                     Create NetFEATS_Dataset.csv @FinderSpiker/DatabaseFolder</pre><h2>9  STACK DIVERS DATASETS<a name="11"></a></h2><p>% Make DATASET for Stack Several tables from Divers Experiments:</p><div><ul><li>&gt;&gt;Merge_Feature_Datasets</li></ul></div><pre class="language-matlab">-Raster Activity:       Table
 -General Ensembles:     Tables
 -Detailed Ensembles:    Tables
 -Network Features:      NetFEATS
@@ -234,26 +237,31 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 % 
 %% 8 MAKE DATASETS FROM GEPHI NETWORK FEATURES
 % 
-% 7.9  Export 'Workspaces' from Gephi     Data could be in  '\NetWorks-CSV'
+% 7.9  Export 'FEATURES' from Gephi     Data could be in  '\NetWorks-CSV'
 % 
 %                                         Using Gephi 0.9.1
 % 8.1  Make Network Features Dataset
 % 
-% * >>Get_Gephi_Data;      % Make .mat Dataset from CSV Gephi Workspaces
+% * >>Get_Gephi_Data;      % Make File MyNetworkDataSet.mat Dataset 
+%                          % from CSV Gephi Workspaces (per Experiment)
+% 
+%   READ CSV files one by one->use [cancel] button to set next condition
 % 
 %                        Save .mat File @ FinderSpiker/DatabaseFolder
 % 
 % * >>Make_Statistics_Gephi_Features; 
 % 
-%                        Read .mat File @ FinderSpiker/DatabaseFolder
-%                        Show RAINPLOT for each Feature     
-%                        Create Network_FEATURE_Dataset
+%                        Read MyNetworkDataSet.mat Files from @../DatabaseFolder
+%                        Show RAINPLOT for each Feature 
+%                        & Create Network_FEATURE_Dataset in CSV files:
+%                        'Network_FEATURE_Dataset_YYYYMMDDHHMM.csv'
 % 
-% * >>Concatenate_NetFeats            
+% * >>Concatenate_NetFeats 
 % 
-%                       Read Network_FEATURE_Dataset
+%                       Read Multiple Network_FEATURE_Datasets (same
+%                       Experiment)
 %                       Concatenate table of MULTIPLE Features in one
-%                       Create NetFEATS_Dataset @FinderSpiker/DatabaseFolder
+%                       Create NetFEATS_Dataset.csv @FinderSpiker/DatabaseFolder
 % 
 %% 9  STACK DIVERS DATASETS
 % 
