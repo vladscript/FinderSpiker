@@ -1,11 +1,12 @@
 %% Get Data ##############################################################
-
+% Read Table and Select
 % X=copy data from ALLDATA.xlsx or Feature Tables [in progress--]
 
-% Merge Same Condition/Different Experiments
+[Nobser,Nfeatures]=size(X);
 
+% Merge Same Condition/Different Experiments
 Y(Y=='DyskinesiaA')='Dyskinesia';
-Y(Y=='DyskineisiaC')='Dyskinesia';
+Y(Y=='DyskinesiaC')='Dyskinesia';
 
 % maybe an interface to merge conditions ...
 
@@ -19,23 +20,53 @@ end
 [CM,ColorIndx]=Color_Selector(condition_labels);
 
 %% PCA ###################################################################
-% function Xpca=pca_features(X,varLevel)
-fprintf('>>PCA :')
-[coefs,score,latent] = pca(X,'algorithm','als');
+% Each principal component is a linear combination of the original variables.
+% All the principal components are orthogonal to each other, so there is no redundant information.
+% But it is commonplace for the sum of the variances of the first few principal components to exceed 80% of the total variance of the original data.
+% Input data for which to compute the principal components, 
+% specified as an n-by-p matrix. 
+% SVD: Single Value Decomposition
+% Rows of X correspond to observations and columns to variables.
+% The variable weights are the inverse of sample variance.
+% 
+% score, contains the coordinates of the original data in the new coordinate system defined by the principal components
+% wcoefs, contains the coefficients of the principal components
+
+fprintf('>>PCA : ... ')
+[wcoefs,score,latent,~,explained] = pca(X,'algorithm','svd',...
+                        'Centered','off',...
+                        'VariableWeights','variance');
+fprintf('done.\n')
+% Orthoganility:
+fprintf('>>Checking Orthonormality: ... ')
+coefforth = inv(diag(std(X)))*wcoefs;
+c3 = coefforth(:,1:3);
+I = c3'*c3
+fprintf('done.\n')
+% Display 2 PCA components scatter plot:
+figure
+gscatter(score(:,1),score(:,4),Y,CM(ColorIndx,:),'dso',10);
+xlabel('1st Principal Component')
+ylabel('2nd Principal Component')
 % Rows of score correspond to observations, 
 % and columns to components.
+ThrehsolVariance=0.95; % *100=% of variance explained by PCA
 VarExplained=cumsum(latent)./sum(latent);
-% Npcs=find(VarExplained>=0.95,1);
-Xpca=coefs*score'; % Features c observations
-[Nfeatures,Nobser]=size(Xpca);
+Npcs=find(VarExplained>=ThrehsolVariance,1);
+% Only the first 95% of the cumulative distribution is displayed
+figure; 
+pareto(explained); hold on
+xlabel('Principal Component')
+ylabel('Variance Explained (%)')
+% plot([Npcs,Npcs],[0,100],'r');
 
-fprintf('done\n')
+Xpca=score(:,1:Npcs);
 
 %% Multiclass Classification #############################################
 % Test 3 function kernels: linear, parabolic and gaussian
 kernels2test={'linear';'gaussian';'polynomial'};
 ALLPCAs=[];
-for k=2:3
+for k=1:numel(kernels2test)
     % generate SVM template
     fprintf('>>Making SVM Template with kernel: %s ',kernels2test{k})
     if k<3
@@ -49,17 +80,21 @@ for k=2:3
     fprintf('\n')
     % SVM Classificator using 2 PCAs: all combinations
     aux=0; PCAandACC=[];
-    for i=1:Nfeatures-1
-        for j=i+1:Nfeatures
+    for i=1:Npcs-1
+        for j=i+1:Npcs
             % SVM
-            Mdl = fitcecoc(Xpca([i,j],:)',Y, 'Learners', template, 'Coding',...
-            'onevsone', 'PredictorNames', {'Var1_1' 'Var1_9'}, ...
+            Mdl = fitcecoc(Xpca(:,[i,j]),Y, 'Learners', template, 'Coding',...
+            'onevsone', 'PredictorNames', {['PCA_',num2str(i)],['PCA_',num2str(j)]}, ...
             'ResponseName', 'Y','FitPosterior',1, ...
             'ClassNames', labelconditions);
             %[Yhat,~,~,pPosterior]=resubPredict(Mdl);
-            % Evlauate 
-            partitionedModel = crossval(Mdl, 'KFold', 5);
-            validationAccuracy = 1 - kfoldLoss(partitionedModel, 'LossFun', 'ClassifError');
+            % Evlauate MODEL: Cross Validation Methods
+            % partitionedModel = crossval(Mdl, 'KFold', 5); % not good
+            % partitionedModel = crossval(Mdl,'leaveout','on'); % low number of observations
+            % validationAccuracy = 1 - kfoldLoss(partitionedModel, 'LossFun', 'ClassifError');
+            % BEST mean ROC curve
+            [Yhat,~,~,~]=resubPredict(Mdl);
+            validationAccuracy=sum(Y==Yhat)/numel(Y);
             % Save results
             PCAandACC=[PCAandACC;i,j,validationAccuracy];
             fprintf(repmat('*',20,1));
@@ -86,14 +121,15 @@ end
 [~,nModel]=max(PCAandACC(:,3));
 ONEpca=PCAandACC(nModel(1),1);
 TWOpca=PCAandACC(nModel(1),2);
-Mdl = fitcecoc(Xpca([ONEpca,TWOpca],:)',Y, 'Learners', template, 'Coding',...
+Mdl = fitcecoc(Xpca(:,[ONEpca,TWOpca]),Y, 'Learners', template, 'Coding',...
         'onevsone', 'PredictorNames', {['PCA_',num2str(ONEpca)],['PCA_',num2str(TWOpca)]}, ...
         'ResponseName', 'Y','FitPosterior',1, ...
         'ClassNames', labelconditions);
 % Estimation of the labels:    
+fprintf('>>Predicting: ')
 [Yhat,~,~,pPosterior]=resubPredict(Mdl);
-
-%% PLots For the Best;(ROC COnfision MAtrix, etc)
+fprintf('done.\n')
+%% Plots ROC & Confision MAtrix ##########################################
 %Set binary targets
 Targetss=zeros(Nobser,numel(unique(Y)));
 Outputss=zeros(Nobser,numel(unique(Y)));
@@ -120,15 +156,15 @@ for l=1:numel(condition_labels)
 end
 
 %% POSTERIOR PROBABILITIES
-xMax = max(Xpca([ONEpca,TWOpca],:)');
-xMin = min(Xpca([ONEpca,TWOpca],:)');
+xMax = max(Xpca(:,[ONEpca,TWOpca]));
+xMin = min(Xpca(:,[ONEpca,TWOpca]));
 
 x1Pts = linspace(xMin(1),xMax(1));
 x2Pts = linspace(xMin(2),xMax(2));
 [x1Grid,x2Grid] = meshgrid(x1Pts,x2Pts);
-
+fprintf('>>Predicting Regions: ... ')
 [~,~,~,PosteriorRegion] = predict(Mdl,[x1Grid(:),x2Grid(:)]);
-
+fprintf('>>Done.\n')
 figure;
 contourf(x1Grid,x2Grid,...
         reshape(max(PosteriorRegion,[],2),size(x1Grid,1),size(x1Grid,2)));
@@ -136,13 +172,11 @@ h = colorbar;
 h.YLabel.String = 'Maximum posterior';
 h.YLabel.FontSize = 15;
 hold on
-gh = gscatter(Xpca(ONEpca,:),Xpca(TWOpca,:)',Y,'krb','*xd',8);
-gh(1).Color=CM(ColorIndx(2),:);
-gh(1).LineWidth=2;
-gh(2).Color=CM(ColorIndx(3),:);
-gh(2).LineWidth=2;
-gh(3).Color=CM(ColorIndx(1),:);
-gh(3).LineWidth=2;
+gh = gscatter(Xpca(:,ONEpca),Xpca(:,TWOpca),Y,'krb','*xd',8);
+for n=1:numel(ColorIndx)
+    gh(n).Color=CM(ColorIndx(n),:);
+    gh(n).LineWidth=2;
+end
 
 title(['SCV kernel ',kernels2test{kernelindx},' pC=',num2str(round(1000*AccuracySVM)/10),'% & Maximum Posterior']);
 xlabel([num2str(ONEpca),'th PCA component']);
@@ -152,105 +186,67 @@ legend(gh,'Location','NorthWest')
 hold off
 %% GSCATTERS per CONDITION one-versus-all (OVA) ################
 
-% figure
-% gscatter(Xpca(ONEpca,:),Xpca(TWOpca,:),Y,CM([2,3,1],:),'dso',10);
-% title('{\bf Best calssifyng PCA components}');
-% xlabel([num2str(ONEpca),' th PCA component']);
-% ylabel([num2str(TWOpca),' th PCA component']);
-% legend('Location','Northwest'); 
-% axis tight
-
-% classNames = {'Amantadine';'Clozapine';'Dyskinesia'};
 numClasses = numel(condition_labels);
-inds = cell(3,1); % Preallocation
-SVMModel = cell(3,1);
+inds = cell(numClasses,1);      % Preallocation
+SVMModel = cell(numClasses,1);
 
 % rng(1); % For reproducibility
+fprintf('>>Making Binary Models: ')
 for j = 1:numClasses
     Ybin= false(Nobser,1);
     Ybin(Y==condition_labels{j})=true;  % OVA classification
-    SVMModel{j} = fitcsvm(Xpca([ONEpca,TWOpca],:)',Ybin,'ClassNames',[false true],...
+    SVMModel{j} = fitcsvm(Xpca(:,[ONEpca,TWOpca]),Ybin,'ClassNames',[false true],...
         'Standardize',true,'KernelFunction','rbf','KernelScale','auto');
+    fprintf('%i,',j)
 end
+fprintf('\n')
 
+fprintf('>>Calssifying Model: ')
 for j = 1:numClasses
-    SVMModel{j} = fitPosterior(SVMModel{j});
+    %SVMModel{j} = fitPosterior(SVMModel{j});
+    SVMModel{j} = fitSVMPosterior(SVMModel{j});
+    fprintf('%i,',j)
 end
+fprintf('\n')
 
-d = 0.002;
-[x1Grid,x2Grid] = meshgrid(min(Xpca(ONEpca,:)):d:max(Xpca(ONEpca,:)),...
-    min(Xpca(TWOpca,:)):d:max(Xpca(TWOpca,:)));
+fprintf('>>Making Posterior Probability Regions: ')
+
+d = 0.02;
+[x1Grid,x2Grid] = meshgrid(min(Xpca(:,ONEpca)):d:max(Xpca(:,ONEpca)),...
+    min(Xpca(:,TWOpca)):d:max(Xpca(:,TWOpca)));
 xGrid = [x1Grid(:),x2Grid(:)];
 
 posterior = cell(3,1); 
 for j = 1:numClasses
     [~,posterior{j}] = predict(SVMModel{j},xGrid);
+    fprintf('%i,',j)
 end
+fprintf('\n')
 
+fprintf('>>Making Plot: ...\n')
 figure
 h = zeros(numClasses + 1,1); % Preallocation for graphics handles
 for j = 1:numClasses
+    fprintf('>>Surface of Model %i: ...',j)
     subplot(2,2,j)
     contourf(x1Grid,x2Grid,reshape(posterior{j}(:,2),size(x1Grid,1),size(x1Grid,2)));
     hold on
-    h(1:numClasses) = gscatter(Xpca(ONEpca,:),Xpca(TWOpca,:),Y,CM(ColorIndx,:),'dso',10);
+    h(1:numClasses) = gscatter(Xpca(:,ONEpca),Xpca(:,TWOpca),Y,CM(ColorIndx,:),'*xd',10);
     title(sprintf('Posteriors for %s Class',condition_labels{j}));
     xlabel([num2str(ONEpca),' th PCA component']);
     ylabel([num2str(TWOpca),' th PCA component']);
     legend off
     axis tight
     hold off
+    fprintf('done.\n')
 end
 h(numClasses + 1) = colorbar('Location','EastOutside',...
     'Position',[[0.8,0.1,0.05,0.4]]);
 set(get(h(numClasses + 1),'YLabel'),'String','Posterior','FontSize',16);
 legend(h(1:numClasses),'Location',[0.6,0.2,0.1,0.1]);
-
-%% END OF THE WORLD
-
-% %% RAINCLOUDS of THE BEST PCAs
-% pcaAMAN=Xpca(ONEpca,Y=='Amantadine');
-% pcaCLZ=Xpca(ONEpca,Y=='Clozapine');
-% pcaDYSK=Xpca(ONEpca,Y=='Dyskinesia');
-% 
-% figure
-% raincloud_plot(pcaAMAN,'color',CM(ColorIndx(2),:),'box_on',1,...
-%     'alphaval',5,'box_dodge',1,...
-%     'box_dodge_amount',0.4, 'dot_dodge_amount', 0.4,...
-%     'box_col_match',0,'box_dodge_amount',.25, 'dot_dodge_amount', 0.25,...
-%     'line_width',3,'lwr_bnd',2);
-% 
-% raincloud_plot(pcaCLZ,'color',CM(ColorIndx(3),:),'box_on',1,...
-%     'alphaval',5,'box_dodge',1,...
-%     'box_dodge_amount',0.8, 'dot_dodge_amount', 0.8,...
-%     'box_col_match',0,'box_dodge_amount',.5, 'dot_dodge_amount', 0.5,...
-%     'line_width',3,'lwr_bnd',2);
-% 
-% raincloud_plot(pcaDYSK,'color',CM(ColorIndx(1),:),'box_on',1,...
-%     'alphaval',5,'box_dodge',1,...
-%     'box_dodge_amount',0.8, 'dot_dodge_amount', 0.8,...
-%     'box_col_match',0,'box_dodge_amount',.75, 'dot_dodge_amount', 0.75,...
-%     'line_width',3,'lwr_bnd',2);
-% 
-% pcaAMAN=Xpca(TWOpca,Y=='Amantadine');
-% pcaCLZ=Xpca(TWOpca,Y=='Clozapine');
-% pcaDYSK=Xpca(TWOpca,Y=='Dyskinesia');
-% 
-% figure
-% raincloud_plot(pcaAMAN,'color',CM(ColorIndx(2),:),'box_on',1,...
-%     'alphaval',5,'box_dodge',1,...
-%     'box_dodge_amount',0.4, 'dot_dodge_amount', 0.4,...
-%     'box_col_match',0,'box_dodge_amount',.25, 'dot_dodge_amount', 0.25,...
-%     'line_width',3,'lwr_bnd',2);
-% 
-% raincloud_plot(pcaCLZ,'color',CM(ColorIndx(3),:),'box_on',1,...
-%     'alphaval',5,'box_dodge',1,...
-%     'box_dodge_amount',0.8, 'dot_dodge_amount', 0.8,...
-%     'box_col_match',0,'box_dodge_amount',.5, 'dot_dodge_amount', 0.5,...
-%     'line_width',3,'lwr_bnd',2);
-% 
-% raincloud_plot(pcaDYSK,'color',CM(ColorIndx(1),:),'box_on',1,...
-%     'alphaval',5,'box_dodge',1,...
-%     'box_dodge_amount',0.8, 'dot_dodge_amount', 0.8,...
-%     'box_col_match',0,'box_dodge_amount',.75, 'dot_dodge_amount', 0.75,...
-%     'line_width',3,'lwr_bnd',2);
+fprintf('\n\n>>[PCA->SVM to Neuronal Features]: Ready.\n\n')
+%% Save Results:
+% Data:     X,Y
+% Models:   Finest Multiclass SVM and SVM models
+% Plots:    PCA,MC,ROC,MultiClassRegions,OnevsAllRegions
+%% END OF THE WORLD *******************************************************

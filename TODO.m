@@ -16,9 +16,12 @@
 
 %% Bugs & New Functions NOW
 
-% MAKE Plot_Hebbisn_Stairs ***
-
+% MAKE Plot_Hebbian_Stairs ***
+% Update of the Visual Inspection->Declarar Variables
 % MAKE Plot_Simm_Matrix.m from labeled_frames vector
+
+% Change: Update_Directory; to Import_FinderSpiker
+% Imprive & Change: pca_features.m to Neural_Data_PCA_SVM or cooler
 
 % Make Experimental Datasets Folder for 'Merge_Feature_Datasets'
 

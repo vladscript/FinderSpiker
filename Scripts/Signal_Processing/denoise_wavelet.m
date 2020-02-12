@@ -1,7 +1,7 @@
 % Funtion to denoise Fluorescence Signals
 % By Wavelet Analysis under asumption: noise is iid
 %   Wavelet denoiseing @script
-%   VChS-A: Valley-Checking Segmentation @in code
+%   VChS-A: Valley-Checking Segmentation Algorithm @in code
 %   Smooth by rloess
 % Input
 %   XD:         Raw Signal
@@ -121,7 +121,7 @@ for i=1:Ns
         % LOWwavesFrames=setdiff(LOWwavesFrames,Framy(Promy>std(noisex)));
         
         %% Plot Results 2/3 *************************************
-        % WAVES POINTS;
+%         % WAVES POINTS;
 %         hold on;
 %         plot(LOWwavesFrames(2:end-1),xdenoised((LOWwavesFrames(2:end-1))),'*k');
 %         hold off
@@ -484,7 +484,7 @@ for i=1:Ns
     %% FEATURE EXTRACTION ############################################
     [SkewSignal(i),SkewNoise(i),SNRbyWT(i),ABratio(i)]=feature_extraction(xdenoised,noisex);
     Xest(i,:)=xdenoised; % SAVE DENOISED  * * * * ** $ $ $ $        OUTPUT
- %%   CHECK RESULTS 3/3
+%  %%   CHECK RESULTS 3/3
 %     h2=subplot(212);
 %     plot(XDupdate(i,:)); 
 %     hold on;
