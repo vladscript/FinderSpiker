@@ -15,7 +15,7 @@
 %   New_Index_Sel
 % Features @ CSV File in ../Raster Features
 %% DO THE STUFF
-Update_Directory;
+Import_FinderSpiker;
 % Raster fFeatures: denoised o sparse signal ?-> DENOISED
 % Sparse Signal got a lot of peaks and false transients
 Select_Raster_for_NN(fs,Raster_Condition,XY,Names_Conditions,Experiment,ESTSIGNALS);

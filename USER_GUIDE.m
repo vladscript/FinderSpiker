@@ -11,7 +11,7 @@
 % * Deconvolution Parameters:   >>edit Load_Default_Values_SP
 % * Clustering Parameters:      >>edit Load_Default_Clustering
 % * Colors:                     >>edit SetColorMap.m
-% 
+% * Import ALL functions        >>Import_FinderSPiker
 % 
 %% 1. SIGNAL PROCESSING: Detect Calcium Transients Events
 % Getting Activation Matrix (raster) from Calium Imaging Data for each Cell
@@ -75,7 +75,10 @@
 % Neural ensemble and Functional Network Features Extraction
 % 
 % * >> Ensemble_Sorting
-
+% 
+% 3.2 DISPLAY STAIRS of the ENSEMBLES  ********
+% Sequnce of Ensembles of the Experiment
+% 
 % * >> Plot_Hebbian_Stairs
 % 
 % 3.2 PLOT ENSEMBLES FAST *************************************************

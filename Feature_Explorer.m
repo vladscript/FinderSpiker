@@ -2,7 +2,7 @@
 % Script to plot boxplots, pdfs and explore effects
 % 
 %% Load Tabel **************************************
-Update_Directory;
+Import_FinderSpiker;
 Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
 CurrentPathOK=[Dirpwd(1:slashesindx(end))]; % Finder Spiker Main Folder

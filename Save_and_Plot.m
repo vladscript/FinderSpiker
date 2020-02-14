@@ -1,4 +1,4 @@
-Update_Directory;
+Import_FinderSpiker;
 OddsMatrix=getoddmatrix(isSIGNALS,notSIGNALS);
 Experiment=Experiment(Experiment~='\');     % NAMES PATCH
 

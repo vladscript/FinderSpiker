@@ -36,7 +36,7 @@ global RasterAlgorithm;
 % global isSIGNALS;
 % global notSIGNALS;
 %% ADDING ALLSCRIPTS
-Update_Directory
+Import_FinderSpiker;
 
 %% Set Default Directory of Experiments
 DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Experimentos\'; % Load from DEFAULT

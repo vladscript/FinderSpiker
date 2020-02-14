@@ -1,5 +1,5 @@
 %% Setup
-Update_Directory;
+Import_FinderSpiker;
 %% # Check False Positive 
 % Accepted and processed Data
 global indxSIGNALSOK;

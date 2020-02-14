@@ -1,5 +1,5 @@
 %% Setup
-Update_Directory;
+Import_FinderSpiker;
 Experiment=Experiment(Experiment~='\');     % NAMES PATCH
 
 %% Script that plots the raster of the Selected OR the Whole Clean raster

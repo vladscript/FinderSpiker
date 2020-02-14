@@ -23,7 +23,7 @@
 
 %% Setup *****************************************************************
 
-Update_Directory;
+Import_FinderSpiker;
 prepare_ensembles_data;
 
 %% MAKE PLOTS ###########################################################

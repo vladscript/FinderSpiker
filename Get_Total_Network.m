@@ -9,7 +9,7 @@
 % Update .mat File
 %%***************************************************************
 % Initial Setup 
-Update_Directory;
+Import_FinderSpiker;
 Experiment=Experiment(Experiment~='\');
 Ncells=size(R_Condition{1},1);
 StatesofNeurons=ones(Ncells,1);
