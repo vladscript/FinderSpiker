@@ -11,16 +11,12 @@
 %           TypeCycles(3)->Open
 % Network Link Weight Threshold: Minimum RoA of Neuron to Belong any ensemble
 %% FIXED  READY TO GO @ GIT
-%   Ensemble Intervals Fix
-% READ ROIs from ImageJ -----------------
+%%
 
 %% Bugs & New Functions NOW
 
-% MAKE Plot_Hebbian_Stairs ***
-% Update of the Visual Inspection->Declarar Variables
 % MAKE Plot_Simm_Matrix.m from labeled_frames vector
 
-% Change: Update_Directory; to Import_FinderSpiker
 % Imprive & Change: pca_features.m to Neural_Data_PCA_SVM or cooler
 
 % Make Experimental Datasets Folder for 'Merge_Feature_Datasets'
@@ -52,9 +48,10 @@
 % NN2Gephi.m; Raster2fNet.m; get_iti_pdf(?); interval_duration_events(?);
 % Plot_Calcium_Transients.m; get_ensembles_manual.m
 % Plot_Raster_Results; get_ensemble_intervals; Plot_Ensembles;
+% Update_Directory;
 
 %% FUTURE *****************************************************************
-%%% MAKE ALGORITHMIA
+%%% MAKE ALGORITHMIA: ALMOST DONE
 % Export Rasters @ CSV format
 % Adjust Contrast and Sliding Cells in Merge_Finder
 % Normalize Amplitude @ Detrended Signal

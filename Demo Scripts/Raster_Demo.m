@@ -12,18 +12,19 @@
 clc; clear;
 disp('>>Building Raster...')
 % Ensmebles
-Nensambles=4;       % N ensembles
-Nneurons=[4,4,4,4];   % Neurons at each ensembles
+% Nensambles=4;       
+Nneurons=[7,10,9,12,5];   % Neurons at each ensembles
+Nensambles=numel(Nneurons); % N ensembles
 
 % Hebbian Sequence 
-HebbianSeq=[1,2,3,4,1,2,3,4,4,1,2,3];
+HebbianSeq=[1,2,3,4,5,1,2,3,4,5,4,1,3,5,5,3,1,2,4,4,3,1,5,2,4,3,3,4];
 
 % Noisy frames
 Frames=numel(HebbianSeq);
-LevelRandFrame=0.05; % [0,1]
+LevelRandFrame=0.1; % [0,1]
 
 % Random Neurons
-LevelRandNeu=0.05;   % [0,1]
+LevelRandNeu=0.00;   % [0,1]
 
 % Ratio of random activity
 LevelNoise=0.1; % % Active Neurons or Frames at random Activity

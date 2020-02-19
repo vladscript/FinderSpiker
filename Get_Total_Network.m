@@ -92,7 +92,7 @@ for c=1:C
     Frames=size(Raster,2);
     % TOTAL NETWORK #######################################################
     % As in Get_Gephi_Network***
-    AdjacencyMatrix=GetAdjacencyMatrix(Raster);
+    AdjacencyMatrix=GetAdjacencyMatrix(Raster)/Frames;
     MaxSynLinks=max(AdjacencyMatrix(:));
     fprintf('Maximum Time Neurons Connected: %3.2f seconds\n',Frames*MaxSynLinks/fs);
     fprintf('%3.2f %% percentage of the Experiment\n',100*MaxSynLinks);

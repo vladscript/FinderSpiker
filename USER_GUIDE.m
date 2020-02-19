@@ -36,11 +36,11 @@
 % * >>Select_Raster_PositiveCells;
 % * >>Select_Raster_NegativeCells
 % 
-% 2.1 CHECK RASTER's Selection DURATIONs: *********************************
+% 2.1 CHECK RASTER's Selection DURATIONs: 
 % 
 % * >>RasterDurations=get_raster_durations(Onsets,R_Condition,fs);
 % 
-% 2.2 TOTAL NETWORK (without Step 3) **************************************
+% 2.2 TOTAL NETWORK (without Step 3) 
 % 
 % Save Links Features Without neither Ensembling nor Thresholding
 % 
@@ -50,12 +50,13 @@
 % 
 % * >>Links_Features_Display
 % 
-% 2.3 RETRIEVE RASTER for ANALYSIS ****************************************
+% 2.3 RETRIEVE RASTER for ANALYSIS 
 % 
 % * >>R=RASTER_Selected_Clean'; % ALL CONDITIONS CONCATeNATED
 % * >>R_CONDITION1=R_Condition{1}; % Cells x Frames (dim)
 % ...
 % * >>R_CONDITIONi=R_Condition{i};
+% 
 % 2.4 Plot Sorted by Rate of Activiyt
 % 
 % * >>[IndexSorteActivity]=plot_activityrate(R_Condition,Names_Conditions,fs);
