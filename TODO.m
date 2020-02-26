@@ -11,13 +11,12 @@
 %           TypeCycles(3)->Open
 % Network Link Weight Threshold: Minimum RoA of Neuron to Belong any ensemble
 %% FIXED  READY TO GO @ GIT
+% slopes and minor fixes
 %%
 
 %% Bugs & New Functions NOW
 
 % MAKE Plot_Simm_Matrix.m from labeled_frames vector
-
-% Imprive & Change: pca_features.m to Neural_Data_PCA_SVM or cooler
 
 % Make Experimental Datasets Folder for 'Merge_Feature_Datasets'
 
@@ -32,7 +31,7 @@
 
 % INDEX of USEFUL FUNCTIONS
 
-% Update to MATLAB 2019a ! UNAM License[other versions can be downloaded]
+
 
 % Toy example for clustering: time correlaition vs coactivity:
 %  to seen syn fires is irrelevante

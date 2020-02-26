@@ -61,6 +61,9 @@
 % 
 % * >>[IndexSorteActivity]=plot_activityrate(R_Condition,Names_Conditions,fs);
 % 
+% 2.5 Plot slopes of CAG accumulaive sum
+% 
+% * >>[M,B]==slopes_from_raster(R_Condition,fs,Names_Conditions)
 %% 3. CLUSTERING NEURONAL ENSEMBLES
 % AUTOMATICAL & MANUAL MAGIC
 % 
@@ -96,6 +99,10 @@
 % % Check Raster plots:
 % 
 % * >>Plot_Merged_NotMerged
+% 
+% % Plot slopes of CAG accumulaive sum
+% 
+% * >>[M,B]==slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation)
 % 
 %% 5. RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION 
 % 5.1 Display Signals:
@@ -209,7 +216,9 @@
 % 
 %% 11 MACHINE LEARNING: choose a Dataset:
 % 
-% * >>Features_Datasets_NBC; % *UNDER CONSTRUCTION*
+% * >>Import_FinderSpiker;
+% 
+% * >>Classification_Regions; % *UNDER CONSTRUCTION*
 % 
 
 %% END ####################################################################

@@ -1,14 +1,14 @@
 %% Get Data ##############################################################
-% Read Table and Select
-% X=copy data from ALLDATA.xlsx or Feature Tables [in progress--]
+% Read Table and Select Features
+
+% X & Y From Feature Tables [in progress--]
 
 [Nobser,Nfeatures]=size(X);
-
+% Interface to merge conditions
 % Merge Same Condition/Different Experiments
 Y(Y=='DyskinesiaA')='Dyskinesia';
 Y(Y=='DyskinesiaC')='Dyskinesia';
 
-% maybe an interface to merge conditions ...
 
 Y = removecats(Y); % removes empty categories
 labelconditions=unique(Y);
