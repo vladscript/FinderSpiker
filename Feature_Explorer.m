@@ -9,8 +9,9 @@ CurrentPathOK=[Dirpwd(1:slashesindx(end))]; % Finder Spiker Main Folder
 % Load File 
 [FileName,PathName,MoreFiles] = uigetfile({'*.csv'},' Dataset file of ALL Features',...
     'MultiSelect', 'off',CurrentPathOK);
-% Setup :
+
 Xraw=readtable([PathName,FileName]);                % Table
+%% Setup :
 Y=categorical(table2array( Xraw(:,1)) );            % Labels
 EXPIDs=table2array( Xraw(:,2));                     % Cell of Strings
 X=table2array( Xraw(:,3:end) );                     % Dataset

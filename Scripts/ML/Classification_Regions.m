@@ -53,6 +53,7 @@ ylabel('2nd Principal Component')
 ThrehsolVariance=0.95; % *100=% of variance explained by PCA
 VarExplained=cumsum(latent)./sum(latent);
 Npcs=find(VarExplained>=ThrehsolVariance,1);
+if Npcs==1 Npcs=2; end
 % Only the first 95% of the cumulative distribution is displayed
 figure; 
 pareto(explained); hold on
@@ -65,10 +66,12 @@ Xpca=score(:,1:Npcs);
 %% Multiclass Classification #############################################
 % Test 3 function kernels: linear, parabolic and gaussian
 kernels2test={'linear';'gaussian';'polynomial'};
-ALLPCAs=[];
+Combo=combnk(1:Npcs,2);
+Ncombo=size(Combo,1);
+ALLPCAs=[Combo,zeros(Ncombo,3)];
 for k=1:numel(kernels2test)
     % generate SVM template
-    fprintf('>>Making SVM Template with kernel: %s ',kernels2test{k})
+    fprintf('\n>>Making SVM Template with kernel: %s ',kernels2test{k})
     if k<3
         template = templateSVM('KernelFunction',kernels2test{k}, 'PolynomialOrder', [],...
         'KernelScale', 'auto', 'BoxConstraint', 1, 'Standardize', 1,'Verbose',0);    
@@ -79,37 +82,33 @@ for k=1:numel(kernels2test)
     end
     fprintf('\n')
     % SVM Classificator using 2 PCAs: all combinations
-    aux=0; PCAandACC=[];
-    for i=1:Npcs-1
-        for j=i+1:Npcs
-            % SVM
-            Mdl = fitcecoc(Xpca(:,[i,j]),Y, 'Learners', template, 'Coding',...
-            'onevsone', 'PredictorNames', {['PCA_',num2str(i)],['PCA_',num2str(j)]}, ...
-            'ResponseName', 'Y','FitPosterior',1, ...
-            'ClassNames', labelconditions);
-            %[Yhat,~,~,pPosterior]=resubPredict(Mdl);
-            % Evlauate MODEL: Cross Validation Methods
-            % partitionedModel = crossval(Mdl, 'KFold', 5); % not good
-            % partitionedModel = crossval(Mdl,'leaveout','on'); % low number of observations
-            % validationAccuracy = 1 - kfoldLoss(partitionedModel, 'LossFun', 'ClassifError');
-            % BEST mean ROC curve
-            [Yhat,~,~,~]=resubPredict(Mdl);
-            validationAccuracy=sum(Y==Yhat)/numel(Y);
-            % Save results
-            PCAandACC=[PCAandACC;i,j,validationAccuracy];
-            fprintf(repmat('*',20,1));
-            fprintf('\n>>Model %i,kernel %s, PCA components: %i vs %i -> %3.2f\n',aux,kernels2test{k},i,j,validationAccuracy);
-            fprintf(repmat('*',20,1));
-            aux=aux+1;
-        end
+    for c=1:Ncombo
+        i=ALLPCAs(c,1); j=ALLPCAs(c,2);
+        % SVM
+        Mdl = fitcecoc(Xpca(:,[i,j]),Y, 'Learners', template, 'Coding',...
+        'binarycomplete', 'PredictorNames', {['PCA_',num2str(i)],['PCA_',num2str(j)]}, ...
+        'ResponseName', 'Y','FitPosterior',1, ...
+        'ClassNames', labelconditions);
+        %[Yhat,~,~,pPosterior]=resubPredict(Mdl);
+        % Evlauate MODEL: Cross Validation Methods
+        % partitionedModel = crossval(Mdl, 'KFold', 5); % not good
+        partitionedModel = crossval(Mdl,'leaveout','on'); % low number of observations
+        validationAccuracyOK = 1 - kfoldLoss(partitionedModel, 'LossFun', 'ClassifError');
+        ALLPCAs(c,2+k)=validationAccuracyOK;
+%         [Yhat,~,~,~]=resubPredict(Mdl);
+%         validationAccuracy=sum(Y==Yhat)/numel(Y);
+        % Save results
+        % PCAandACC=[PCAandACC;i,j,validationAccuracy];
+        fprintf(repmat('*',30,1));
+        fprintf('\n>>Model %i/%i,kernel %s, PCs: %i vs %i -> %3.2f\n',c,Ncombo,kernels2test{k},i,j,validationAccuracyOK);
+        fprintf(repmat('*',20,1)); fprintf('[classifying]');
     end
-    % Ssave Best accuracy for each kernel
-    nModelKernel(k)=max(PCAandACC(:,3));
-    ALLPCAs(:,:,k)=PCAandACC;
 end
+fprintf(repmat('*',10,1)); fprintf('[complete]\n');
 % GET BEST Kernel multiclassificator
-[AccuracySVM,kernelindx]=max(nModelKernel);
-PCAandACC=ALLPCAs(:,:,kernelindx);
+MaXeachKernel=max(ALLPCAs(:,3:end));
+[AccuracySVM,kernelindx]=max(MaXeachKernel);
+
 if kernelindx<3
     template = templateSVM('KernelFunction',kernels2test{kernelindx}, 'PolynomialOrder', [],...
     'KernelScale', 'auto', 'BoxConstraint', 1, 'Standardize', 1,'Verbose',1);    
@@ -118,18 +117,18 @@ else
     'KernelScale', 'auto', 'BoxConstraint', 1, 'Standardize', 1,'Verbose',1);
 end
 % BEST Model and PCAs
-[~,nModel]=max(PCAandACC(:,3));
-ONEpca=PCAandACC(nModel(1),1);
-TWOpca=PCAandACC(nModel(1),2);
+[~,nModel]=max(ALLPCAs(:,2+kernelindx));
+ONEpca=ALLPCAs(nModel(1),1);
+TWOpca=ALLPCAs(nModel(1),2);
 Mdl = fitcecoc(Xpca(:,[ONEpca,TWOpca]),Y, 'Learners', template, 'Coding',...
-        'onevsone', 'PredictorNames', {['PCA_',num2str(ONEpca)],['PCA_',num2str(TWOpca)]}, ...
+        'binarycomplete', 'PredictorNames', {['PCA_',num2str(ONEpca)],['PCA_',num2str(TWOpca)]}, ...
         'ResponseName', 'Y','FitPosterior',1, ...
         'ClassNames', labelconditions);
 % Estimation of the labels:    
 fprintf('>>Predicting: ')
 [Yhat,~,~,pPosterior]=resubPredict(Mdl);
 fprintf('done.\n')
-%% Plots ROC & Confision MAtrix ##########################################
+%% Plots ROC & Confusion Matrix ##########################################
 %Set binary targets
 Targetss=zeros(Nobser,numel(unique(Y)));
 Outputss=zeros(Nobser,numel(unique(Y)));
