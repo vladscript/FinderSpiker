@@ -11,7 +11,7 @@
 %           TypeCycles(3)->Open
 % Network Link Weight Threshold: Minimum RoA of Neuron to Belong any ensemble
 %% FIXED  READY TO GO @ GIT
-% slopes and minor fixes
+% bug @ variables for new versions in Undetected GUI
 %%
 
 %% Bugs & New Functions NOW

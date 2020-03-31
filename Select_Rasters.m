@@ -24,7 +24,8 @@ Slashes=find(ActualDir=='\');
 RasterFeatsDir=[ActualDir(1:Slashes(end)),'Raster Features'];
 fprintf('\n\n Move to a proper directory the CSV files of Raster features from:\n')
 fprintf('%s\n\n',RasterFeatsDir);
-
+clear;
+fprintf('>>For further analysis reload the .mat file.\n')
 
 
 

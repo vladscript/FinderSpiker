@@ -81,6 +81,20 @@ DRIVERs=cell(NV,NC);
 SIGNALSclean=cell(size(SIGNALS)); % Detected clean SIGNALS
 SNRlambda=cell(size(preLAMBDAS));    % Sparse Empirical SNRs
 RasterAlgorithm='Driver'; % 'OOPSI', 'Derivative'
+%% Get the Experiment ID:
+FolderNamePD='\Processed Data';
+slashes=find(PathName=='\');
+Experiment=PathName(slashes(end-1)+1:slashes(end)-1); % Experiment ID
+Experiment(Experiment==' ')='_'; % REPLACE SpaceS with '_'
+ExpIDDef{1}=Experiment;
+% Confirm ID of the Experiment
+ExpInput= inputdlg('Experiment ID: ','Confirm unique ID:/Press Canel to use default', [1 75],ExpIDDef);
+if ~isempty(ExpInput)
+    Experiment=ExpInput{1};
+    Experiment(Experiment==' ')='_'; % REPLACE SpaceS with '_'
+end
+fprintf('>>Experiment ID: %s\n',Experiment)    
+
 %% Load Data *********************************************************
 % For each CONDITION and VIDEO
 for i=1:NC
@@ -92,6 +106,21 @@ for i=1:NC
     end
     disp('***')
 end
+% Transform to radius cell of ROIs
+if iscell(r)
+    fprintf('>>Calculating radius of ROIs:')
+    RADroi=r;
+    RAD=zeros(numel(r),1);
+    for xi=1:numel(r)
+        PixelROIs=RADroi{xi};
+        Xradius=round((max(PixelROIs(:,1))-min(PixelROIs(:,1)))/2);
+        Yradius=round((max(PixelROIs(:,2))-min(PixelROIs(:,2)))/2);
+        MaxRadius=max([Xradius,Yradius]);
+        RAD(xi)=MaxRadius;
+    end
+    r=RAD;
+    fprintf('done.\n')
+end
 [H,W]=size(mov(1).cdata);   % Height & Width
 clear mov;                  % Clear Video Structure
 %% Save(1) RAW Data * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
@@ -99,12 +128,7 @@ clear mov;                  % Clear Video Structure
 FileDirSave=pwd;
 slashes=find(FileDirSave=='\');
 FileDirSave=FileDirSave(1:slashes(end));
-%% Save data
-% Get the Experiment ID:
-FolderNamePD='\Processed Data';
-slashes=find(PathName=='\');
-Experiment=PathName(slashes(end-1)+1:slashes(end)-1); % Experiment ID
-Experiment(Experiment==' ')='_'; % REPLACE SpaceS with '_'
+%% Save data SIGNALS
 if ~isdir([FileDirSave,FolderNamePD])
     disp('Folder [Processed Data] created')
     mkdir([FileDirSave,FolderNamePD]);

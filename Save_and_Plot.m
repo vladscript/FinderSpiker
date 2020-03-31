@@ -27,7 +27,7 @@ while checkname==1
     if exist(DefaultPath,'dir')==0
         DefaultPath=pwd; % Current Diretory of MATLAB
     end
-    [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
+    [FileName,PathName] = uigetfile('*.mat',[' SAVE CHANGES & pick the Analysis File ',Experiment],...
         'MultiSelect', 'off',DefaultPath);
     % dotindex=find(FileName=='.');
     if strcmp(FileName(1:end-4),Experiment)

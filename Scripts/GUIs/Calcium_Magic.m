@@ -182,7 +182,7 @@ detectedneurons=[];
                 'units','pixels','position',[0 50 400 50]);
             drawnow;
             % Calculate Paramters:
-            p=1; L=1; taus_0=[1,1,1];
+            p=1; L=1; taus_0=[1,1,1]; SpuriousTh=1;
             Load_Default_Values_SP;
             [FR(okReview,:),~,~]=AR_Estimation(XD(okReview,:),p,fs,L,taus_0);
             for k=1:length(isSIGNAL(okReview))
@@ -530,7 +530,8 @@ detectedneurons=[];
             if exist(DefaultPath,'dir')==0
                 DefaultPath=pwd; % Current Diretory of MATLAB
             end
-            [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
+            fprintf('\n\n [ To update changes, please select the .mat file ] \n\n')
+            [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File to SAVE CHANGES ',Experiment],...
                 'MultiSelect', 'off',DefaultPath);
             % dotindex=find(FileName=='.');
             if strcmp(FileName(1:end-4),Experiment)

@@ -6,8 +6,9 @@
 [Nobser,Nfeatures]=size(X);
 % Interface to merge conditions
 % Merge Same Condition/Different Experiments
-Y(Y=='DyskinesiaA')='Dyskinesia';
-Y(Y=='DyskinesiaC')='Dyskinesia';
+Y(Y=='DA depleted')='-DA';
+Y(Y=='Transplant')='+NDa';
+Y(Y=='Pramipexole')='+PXL';
 
 
 Y = removecats(Y); % removes empty categories

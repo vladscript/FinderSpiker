@@ -3,10 +3,10 @@
 % Input
 %   mov: video of grayscale pixels
 %   XY: Coordinates of active signals
-% If ImPatch ROI File
-%   r: cell array of coordinates in each ROI
+% If ImPatch/fSIENN ROI File
+%   r: vector array of circle's radius 
 % If ImageJ ROI File
-%   r: vector of radius of the coordinates
+%   r:  cell of pixels in ellyptical ROIs 
 % Output
 %   FluoSignals: Matrix of Fluorescence Signals
 function [FS]=Fluorescence_Load(mov,XY,r)

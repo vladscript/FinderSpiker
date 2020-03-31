@@ -187,7 +187,7 @@ while ~strcmp('Yes',okbutton)
         DefaultPath=pwd; % Current Diretory of FinderSpiker
         slashes=find(DefaultPath=='\');
         DefaultPath=[DefaultPath(1:slashes(end)),'\Processed Data'];        
-        [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
+        [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File to SAVE CHANGES',Experiment],...
             'MultiSelect', 'off',DefaultPath);
         % dotindex=find(FileName=='.');
         if strcmp(FileName(1:end-4),Experiment)

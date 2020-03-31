@@ -40,22 +40,7 @@ for c=1:Nc
         end
     end
 end
-%% Check if ROIs come from ImageJ or fSIENN
-[Nr,Nc]=size(RAD);
-if and(Nr*Nc==numel(SNRW) && Nc>1 ,Nr>1)
-    fprintf('>>Calculating radius of ROIs:')
-    RADroi=RAD;
-    RAD=zeros(Nr*Nc,1);
-    for xi=1:Nr*Nc
-        PixelROIs=RADroi{xi};
-        Xradius=round((max(PixelROIs(:,1))-min(PixelROIs(:,1)))/2);
-        Yradius=round((max(PixelROIs(:,2))-min(PixelROIs(:,2)))/2);
-        MaxRadius=max([Xradius,Yradius]);
-        RAD(xi)=MaxRadius;
-    end
-else
-    fprintf('>>ROIs: OK')
-end
+
     
 Tfeat=table(FLUOROPHORE,CONDNAME,COORD,RAD,SNRW,SNRL,SKEWDEN,LAMB,ODDS);
 Tfeat.Properties.VariableNames={'Dye','Condition','ROIcoordinates',...

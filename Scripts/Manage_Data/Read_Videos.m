@@ -64,7 +64,7 @@ switch XYName(end-2:end)
         fprintf('>>Reading Coordinates from ImageJ:')
         sROI=ReadImageJROI([XYPathName,XYFN]);
         [XY,r]=getpixelsatROI(sROI);
-        % r is a cell array
+        % r is a cell array of pixels elliptical ROIs:
     case 'csv'
         fprintf('>>Reading Coordinates from ImPatch: ')
         [x,y,r,~]=textread([XYPathName,XYFN],'%d %d %d %s','delimiter',',','headerlines',4);
