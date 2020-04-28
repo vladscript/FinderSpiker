@@ -1,6 +1,7 @@
 # FinderSpiker
 
 ## Calcium Imaging Signal Processing Toolbox
+![Logo](/figures/Logo_FinderSpiker.png)
 
 ### Experiment Profile:
 * For synthetic dyes or viral flurophores
