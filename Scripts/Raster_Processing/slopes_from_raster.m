@@ -34,8 +34,8 @@ if AreMerge
     figNeg=figure('NumberTitle','off','Name',['- ',CellKind,' Cells']);
 end
 %% MAIN LOOP
-SLOPE=zeros(NC,3); % size: Nconditions vs [ALL/+/-]
-Yinter=zeros(NC,3);
+SLOPE=zeros(3,NC); % size: [ALL/+/-] vs Nconditions  
+Yinter=zeros(3,NC);
 LineObjects={};
 for n=1:NC
     % ALL ***************************************************

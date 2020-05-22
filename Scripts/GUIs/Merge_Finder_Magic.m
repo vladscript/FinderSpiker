@@ -45,8 +45,7 @@ if exist(DefaultPath,'dir')==0
 end
 [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File ',Experiment],...
     'MultiSelect', 'off',DefaultPath);
-dotindex=find(FileName=='.');
-if strcmp(FileName(1:dotindex-1),Experiment)
+if strcmp(FileName(1:end-4),Experiment)
     checkname=0;
     % SAVE DATA
     save([PathName,FileName],'XY_merged',...

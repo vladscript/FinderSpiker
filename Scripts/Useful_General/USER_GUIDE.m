@@ -26,7 +26,7 @@
 % 
 % * >>Plot_Experiment
 % 
-%% 2. RASTER SELECTION
+%% 2. RASTER SELECTION & ACTIVITY FEATURES
 % ACTUAL MODE: @ Original Coordiantes Order
 % 
 % * >>Select_Rasters
@@ -63,7 +63,11 @@
 % 
 % 2.5 Plot slopes of CAG accumulaive sum
 % 
-% * >>[M,B]==slopes_from_raster(R_Condition,fs,Names_Conditions)
+% * >>[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions)
+% 
+% * If Colocalization Data:
+% 
+% * >>[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation)
 %% 3. CLUSTERING NEURONAL ENSEMBLES
 % AUTOMATICAL & MANUAL MAGIC
 % 
@@ -91,7 +95,7 @@
 % * >> ImageEnsembles(R_ConditionNamej_Analysis);     %without  
 % 
 %% 4. COLOCALIZATION OF MARKED CELLS 
-% % Previously LOAD MAT FILE (?)
+% % Requirements: Run 'Select_Rasters' & load .mat file
 % 
 % * >>Merge_Finder_Magic
 % 
@@ -133,10 +137,32 @@
 % 
 %   Choose One-by-One .mat Files-> Save .mat Files:
 % 
-% * >>Accumulate_Raster_Distances; % Save at CSV Files
-% * >>Accumulate_RoA_IEI_ED
+% * >>Accumulate_Raster_Distances;      
+% 
+%                      Hamming distance among active cells vectors
+%                      Save at CSV Files of Raster Features
+% 
+% * >>Accumulate_RoA_IEI_ED;
+% 
+%                      CDF of:
+%                      RoA: Rate of Activity
+%                      IEI: Inter (calcium) Event Interval
+%                      ED:  Event Duration
+%                      RoT: Rate of (calcium) Transients
+%                      Save CSV File Active Cells in Raster Features dir
+% 
 % * >>Accumulate_Ensembles_RoEn_IEnI_EnD
+% 
+%                      CDF of:
+%                      RoE: Rate of (neuronal) Ensemble
+%                      IEI: Inter Ensemble Interval
+%                      ED:  Ensemble Duration
+%                      Save CSV File Active Cells in Ensemble Features dir
+% 
 % * >>Accumulate_Simm_Matrix
+% 
+%                      Hamming distance among ensembles
+%                      Save at CSV Files of Ensemble Features
 % 
 %% 7. DATASETS MAKER 
 % 
