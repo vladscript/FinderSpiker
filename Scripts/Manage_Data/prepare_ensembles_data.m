@@ -1,3 +1,4 @@
+
 % PREPARE DATA TO PLOT NEURONAL ENSEMBLES
 Experiment=Experiment(Experiment~='\');     % NAMES PATCH
 %% Select Number of Analyzed Rasters ######

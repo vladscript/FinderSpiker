@@ -1,18 +1,19 @@
-Experiment=Experiment(Experiment~='\');     % NAMES PATCH
-%% Select Number of Analyzed Rasters ######
-% NC = inputdlg('Enter Number of Analyzed Conditions:',...
-%          'Conditions', [1 50]);
-% NC= str2double(NC{:}); 
-NC=numel(R_Condition);
-TxtCnd{1,1}=['Experimental Conditions of ',num2str(Experiment),':'];
-for n=1:NC
-    TxtCnd{n+1,1}=Names_Conditions{n};
+if ~exist('TxtCnd','var')
+    Experiment=Experiment(Experiment~='\');     % NAMES PATCH
+    %% Select Number of Analyzed Rasters ######
+    % NC = inputdlg('Enter Number of Analyzed Conditions:',...
+    %          'Conditions', [1 50]);
+    % NC= str2double(NC{:}); 
+    NC=numel(R_Condition);
+    TxtCnd{1,1}=['Experimental Conditions of ',num2str(Experiment),':'];
+    for n=1:NC
+        TxtCnd{n+1,1}=Names_Conditions{n};
+    end
+    InitialMSG=msgbox(TxtCnd,'Experimental Conditions:');
+    % InitialMSG.Position=[450,340,125,130];
+    uiwait(InitialMSG);
+    delete(InitialMSG);
 end
-InitialMSG=msgbox(TxtCnd,'Experimental Conditions:');
-% InitialMSG.Position=[450,340,125,130];
-uiwait(InitialMSG);
-delete(InitialMSG);
-
 %% Read Result from NeuralNetworks Clustering Results Structure
 WorkspaceVariables=who;     % Variable Names at Workspace
 Condition_Names={};         % Condition Names
