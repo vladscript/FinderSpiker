@@ -10,9 +10,13 @@
 %           TypeCycles(2)->Closed
 %           TypeCycles(3)->Open
 % Network Link Weight Threshold: Minimum RoA of Neuron to Belong any ensemble
-%% FIXED  READY TO GO @ GIT
-% bug @ variables for new versions in Undetected GUI
-%%
+% 
+%% READY TO GO:
+% Venn & Bar Diagrams of gradient-active cells and active cells
+% Subgroups by Change in Rate Activity
+%% TO DO:
+% For marked cells Venn Diagrams
+% For marked cells in raster
 
 %% Bugs & New Functions NOW
 
@@ -25,18 +29,12 @@
 % Dissapeared Ensembles by labeling Sequence: see 20190930-1 
 % R_DAdepleted_Analysis=get_ensembles(R_DAdepleted',10,3);
 
-% Statistics: automate
-
 % Recover Coordinates of Ensembles and Display as scatter plots
 
 % INDEX of USEFUL FUNCTIONS
 
-
-
 % Toy example for clustering: time correlaition vs coactivity:
 %  to seen syn fires is irrelevante
-% coactivity: measurebale (Published) features
-% correlation: to publish....
 
 % Make PCA of RASTER: 
 % denoise raster: get most variance PCs and rebuild raster
@@ -50,7 +48,6 @@
 % Update_Directory;
 
 %% FUTURE *****************************************************************
-%%% MAKE ALGORITHMIA: ALMOST DONE
 % Export Rasters @ CSV format
 % Adjust Contrast and Sliding Cells in Merge_Finder
 % Normalize Amplitude @ Detrended Signal

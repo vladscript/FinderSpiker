@@ -19,6 +19,17 @@ if exist('RASTER_Selected_Clean','var')
         plot_activityrate(R_Condition,Names_Conditions,fs);
         % *****************************************************************
     end
+    if numel(R_Condition)>1
+        % Aski if plots Rate of Activity (RoA)
+        okbutton = questdlg('Plot Subgroups of Neurons by Change of Activity?');
+        waitfor(okbutton); 
+        if strcmp('Yes',okbutton)
+            % Plot Delta RoA Subgroups *************************************
+            plot_activitychange(R_Condition,Names_Conditions,fs)
+            % **************************************************************
+        end
+    end
+    
 elseif exist('RASTER_CONCAT','var')
     disp('>>Plotting Clean Raster: ')
     Plot_Raster_Ensembles(RASTER_CONCAT,fs);

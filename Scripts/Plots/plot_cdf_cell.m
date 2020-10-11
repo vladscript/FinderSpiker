@@ -12,6 +12,7 @@ for c=1:NC
         if min(RoA_All{c})~=max(RoA_All{c})
             [f,xi]=ksdensity(RoA_All{c},linspace(min(RoA_All{c}),max(RoA_All{c}),100),...
                 'function','cdf');
+%             [f,xi]=ksdensity(RoA_All{c},'function','cdf','support',[-0.001,1]);
             plot(xi,f,'LineWidth',2,'Color',ColMap(c,:))
         else
             plot(0,0,'*');

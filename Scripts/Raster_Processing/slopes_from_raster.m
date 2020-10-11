@@ -33,6 +33,22 @@ if AreMerge
     figPos=figure('NumberTitle','off','Name',['+ ',CellKind,' Cells']);
     figNeg=figure('NumberTitle','off','Name',['- ',CellKind,' Cells']);
 end
+Rtotal=[];
+RposTotal=[];
+RnegTotal=[];
+for n=1:NC
+    % ALL ***************************************************
+    Rtotal=[Rtotal,R_Condition{n}];
+    if AreMerge
+        % POSITIVE ******************************************
+        RposTotal=[RposTotal,R_Condition{n}(PositiveCells,:)];
+        % NEGATIVE ******************************************
+        RnegTotal=[RnegTotal,R_Condition{n}(NegativeCells,:)];
+    end
+end
+TotalALL=sum(Rtotal(:));
+TotalPOS=sum(RposTotal(:));
+TotalNEG=sum(RnegTotal(:));
 %% MAIN LOOP
 SLOPE=zeros(3,NC); % size: [ALL/+/-] vs Nconditions  
 Yinter=zeros(3,NC);
@@ -40,10 +56,10 @@ LineObjects={};
 for n=1:NC
     % ALL ***************************************************
     R=R_Condition{n};
-    p=slopethatraster(R,fs);
+    [p,CumCAG]=slopethatraster(R,fs,TotalALL);
     % PLOT *************************************************    
     figure(figAll)
-    h=plot(1:size(R,2),cumsum(sum(R)),'LineWidth',3,...
+    h=plot(1:size(R,2),CumCAG,'LineWidth',3,...
     'color',CM(ColorIndx(n),:)); hold on
     plot(1:size(R,2),p(1)*[0:size(R,2)-1]/fs+p(2),'LineWidth',1,...
     'color','k'); hold on
@@ -52,20 +68,20 @@ for n=1:NC
     if AreMerge
         % POSITIVE ******************************************
         Rpos=R_Condition{n}(PositiveCells,:);
-        pp=slopethatraster(Rpos,fs);
+        [pp,pCumCAG]=slopethatraster(Rpos,fs,TotalPOS);
         % NEGATIVE ******************************************
         Rneg=R_Condition{n}(NegativeCells,:);
-        pn=slopethatraster(Rneg,fs);
+        [pn,nCumCAG]=slopethatraster(Rneg,fs,TotalNEG);
         % PLOTS *************************************************    
         figure(figPos)
-        hpos=plot(1:size(Rpos,2),cumsum(sum(Rpos)),'LineWidth',3,...
+        hpos=plot(1:size(Rpos,2),pCumCAG,'LineWidth',3,...
         'color',CM(ColorIndx(n),:)); hold on
         plot(1:size(Rpos,2),pp(1)*[0:size(Rpos,2)-1]/fs+pp(2),'LineWidth',1,...
         'color','k'); hold on
         axis tight; grid on;
         LineObjectsPos=[LineObjectsPos;hpos];
         figure(figNeg)
-        hneg=plot(1:size(Rneg,2),cumsum(sum(Rneg)),'LineWidth',3,...
+        hneg=plot(1:size(Rneg,2),nCumCAG,'LineWidth',3,...
         'color',CM(ColorIndx(n),:)); hold on
         plot(1:size(Rneg,2),pn(1)*[0:size(Rneg,2)-1]/fs+pn(2),'LineWidth',1,...
         'color','k'); hold on
@@ -103,7 +119,7 @@ B=mat2dataset(Yinter,...
     'VarNames',NamesOK)
 % NESTED functions
 function fixaxis(AxisCumSum,fs)
-    AxisCumSum.YLabel.String='Cummulative CAG sum [a.u.]';
+    AxisCumSum.YLabel.String='% act/s of the Experiment Cummulative CAG';
     AxisCumSum.XLabel.String='Minutes';
     Xlimit=AxisCumSum.XLim(end);
     NewXlTicks=[0:60*fs:Xlimit];

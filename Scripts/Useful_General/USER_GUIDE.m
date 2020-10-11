@@ -108,6 +108,14 @@
 % 
 % * >>[M,B]==slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation)
 % 
+% % Plot slopes of POSITVE selected cells:
+% 
+% * >>plot_activitychange(R_merged,Names_Conditions,fs)
+% 
+% % Update Seection of Raster:
+% 
+% * >>Update_Mergeing;
+% 
 %% 5. RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION 
 % 5.1 Display Signals:
 % 
@@ -136,6 +144,13 @@
 %% 6. ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS
 % 
 %   Choose One-by-One .mat Files-> Save .mat Files:
+% 
+% * >>Accumulate_Venn_Diagrams
+% 
+%                      Venn diagrams of:
+%                      > Active cells in each condition
+%                      > Unchanged,Activated Facilitated, Depressed,
+%                      Inhibited
 % 
 % * >>Accumulate_Raster_Distances;      
 % 
