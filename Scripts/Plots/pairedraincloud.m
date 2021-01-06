@@ -29,14 +29,14 @@
 function [bda_final,bdam_final]=pairedraincloud(MMeasures,ColorsN,bda_init,bdam_init,varargin)
 %% Setup
 Nc=numel(varargin);
-StepDodge=1.6;
-Step_bdam=0.75;
+StepDodge=0.8;
+Step_bdam=0.23;
 box_dodge_amount=bda_init+StepDodge;
 bdam=bdam_init+Step_bdam;
 %% Rainclouds
 for n=1:Nc
     raincloud_plot(varargin{n},'color',ColorsN(n,:),'box_on',1,...
-        'alphaval',5,'box_dodge',1,...
+        'alphaval',5,'box_dodge',5,...
         'box_dodge_amount',box_dodge_amount, 'dot_dodge_amount', box_dodge_amount,...
         'box_col_match',0,'box_dodge_amount',bdam, 'dot_dodge_amount', bdam,...
         'line_width',3,'lwr_bnd',2);

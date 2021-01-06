@@ -175,7 +175,8 @@ if ifplot
         plot(EnsembleInstancesTimes(i)/fs/60,EnsembleInstances(i),'o',...
             'MarkerEdgeColor','k',...
             'MarkerFaceColor',ColorState(EnsembleInstances(i),:),...
-            'MarkerSize',round(10*CellatEns(EnsembleInstances(i))+5));
+            'MarkerSize',10);
+%             'MarkerSize',round(10*CellatEns(EnsembleInstances(i))+5));
         drawnow;
     end
     hold off;

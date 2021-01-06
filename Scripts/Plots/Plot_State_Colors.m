@@ -1,14 +1,19 @@
 %% Plotting States Colors  *********************************************
-% Request
+% Requeriment:
 % Plot Raster
 % Input
-%   Experiment:    Raster Concatenated and Ensemble Sorted
-%   labels_frames: Ensemble Labels in each fram
+% 
+%   labels_frames: Ensemble Labels in each frame
 %   signif_frames: Significative Coactivity Frames
 %   ColorState:    Color of The Ensembles
-%   THR: Coactivity Threshold
+%   Experiment:    Raster Concatenated and Ensemble Sorted
+%   fs:            Sampling Frequency
+%   CoAc:          Coactivity signal
+%   indexes:       Sorting
+% 
 % Ouput
-% Plot on the Raster plot
+% 
+%   Plot on the Raster plot
 function Plot_State_Colors(labels_frames,signif_frames,ColorState,Experiment,fs,CoAc,indexes)
 %% Search of figure (maybe)
 TransientHight=0.75; % Same as Plot_Raster_Ensembles.m
@@ -32,54 +37,78 @@ for i=1:length(labels_frames)
 %     drawnow; (slows stuff)
     fprintf('\n')
 end
+
 %% CAG  *******************************************************
-disp('>>Coloring Ensembles at CAG')
-subplot(3,1,3); hold on; % ******************** Coactivity Threshold
-f=1;
-while f<=numel(signif_frames)
-    % Get Segment of the Same Color
-    if f<numel(signif_frames)
-        LengthColor=f+1;
-    else
-        LengthColor=f;
-    end
-    frameA=f;
-    frameB=frameA;
-    if or(LengthColor>numel(signif_frames),f>numel(signif_frames))
-        frameB=0;
-    else
-        aux1=0;
-        while labels_frames(f)==labels_frames(LengthColor) && ...
-                signif_frames(f)==signif_frames(LengthColor)-1 &&...
-                f<=numel(labels_frames) && LengthColor<=numel(labels_frames)
-            frameB=LengthColor-frameA;
-            f=f+1;
-            aux1=aux1+1;
-            fprintf('*')
-        end
-        if aux1==0
-            frameB=0;
-        end
-    end
-    
-    % Plot Segment
-    %Segment=[frameA,frameA+frameB];
-    if labels_frames(frameA)>0
-        if frameB>0
-            % LINE
-            plot(signif_frames(frameA:frameA+frameB)/fs/60,CoAc(signif_frames(frameA:frameA+frameB)),...
-            'Color',ColorState(labels_frames(frameA),:),...
-            'LineWidth',2);
-        else
-            % DOT
-            plot(signif_frames(frameA)/fs/60,CoAc(signif_frames(frameA)),...
-                'Marker','.','MarkerSize',3.5,...
-                'MarkerEdgeColor',ColorState(labels_frames(frameA),:),...   
-                'MarkerFaceColor',ColorState(labels_frames(frameA),:));
-        end
-    end
-    
-    f=f+1;
-    fprintf('\n')
-end
-disp('>>Colors at CAG.')
+% 
+% USELESS CODE: color intervals are plotted according to the smoothed
+% version of the CAG signal when Ensemble intervals are computed.
+% 
+% disp('>>Coloring Ensembles at CAG')
+% subplot(3,1,3); hold on; % ******************** Coactivity Plot
+% f=1; % additional consecutive label frames
+% while f<=numel(signif_frames)
+%     % Get Segment of the Same Color
+%     if f<numel(signif_frames)
+%         frameB=f+1;
+%     else
+%         frameB=f; % Limit
+%     end
+%     frameA=f;
+%     % Get consecutive frames of the same ensemble
+%     reachlimint=true;
+%     pref=f;
+%     auxinloop=1;
+%     while reachlimint;
+%         if labels_frames(frameA)==labels_frames(frameB) && ... % ensemble
+%             signif_frames(frameA)==signif_frames(frameB)-auxinloop     % consecutive frame
+%             f=f+1;
+%             auxinloop=auxinloop+1;
+%             fprintf('~')
+%         else
+%             reachlimint=false;
+%             if auxinloop>1
+%                 f=f-1;
+%             end
+%         end
+%         if frameB>numel(signif_frames)
+%             reachlimint=false;
+%         end
+%         frameB=f;
+%     end
+%     
+%     if pref==f
+%         frameB=frameA;
+%     end
+%     % Plot Segment
+%     if labels_frames(frameA)>0
+%         if frameB>frameA
+%             plot(signif_frames(frameA:frameB)/fs/60,CoAc(signif_frames(frameA:frameB)),...
+%             'Color',ColorState(labels_frames(frameA),:),...
+%             'LineWidth',1);
+%         elseif frameB==frameA
+%             DotA=signif_frames(frameA)-0.5;
+%             DotB=signif_frames(frameA)+0.5;
+%             if DotB>numel(signif_frames)
+%                 DotB=numel(signif_frames);
+%             end
+%             CAG_A=signif_frames(frameA)-1;
+%             CAG_B=signif_frames(frameA)+1;
+%             if CAG_A<1
+%                 CAG_A=1;
+%             end
+%             if CAG_B>numel(signif_frames)
+%                 CAG_B=numel(signif_frames);
+%             end
+%             plot([DotA/fs/60,DotB/fs/60],...
+%                 [mean([CoAc(CAG_A),CoAc(signif_frames(frameA))]),...
+%                 mean([CoAc(signif_frames(frameA)),CoAc(CAG_B)])],...
+%             'Color',ColorState(labels_frames(frameA),:),...
+%             'LineWidth',1);
+%         end
+%         % drawnow;
+%     end
+%     
+%     f=f+1;
+%     fprintf('\n')
+% end
+% disp('>>Colors at CAG.')

@@ -1,7 +1,7 @@
 % Script to accumulate Rate of Ensembles(RoE)
 % of each Ensmble For each Experiment of the same
 % experimental setup, i.e., same experimental conditions
-
+% 
 % Input
 %   Load experiment manually from different folder: one by one
 %   R_Condition:  Selected rasters of the Experiment
@@ -10,7 +10,7 @@
 %    RoE_ALL:       Rate of Ensembles
 %    IEnI:          Inter Ensembles Interval
 %    EnD:           Ensembles Duration
-%   Number of Ensembles per Cycle
+%    Number of Ensembles per Cycle
 %% Setup
 clear; clc;
 % Initial:

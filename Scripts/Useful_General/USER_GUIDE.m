@@ -230,6 +230,12 @@
 %                       Concatenate table of MULTIPLE Features in one
 %                       Create NetFEATS_Dataset.csv @FinderSpiker/DatabaseFolder
 % 
+% 8.2  Display Networks parameters per Experiment
+% 
+% * >>Display_NetworkPDFs;      
+%                       Read MyNetworkDataSet.mat Files from @../DatabaseFolder
+%                       Diplay p(k), Chosen Paramter p(f) & f(k)
+% 
 %% 9  STACK DIVERS DATASETS
 % 
 % % Make DATASET for Stack Several tables from Divers Experiments:
@@ -257,9 +263,8 @@
 % 
 %% 11 MACHINE LEARNING: choose a Dataset:
 % 
-% * >>Import_FinderSpiker;
+% * >>Classification_Regions; % Makes PCA and SVM classification from
+%                               tables of 'Merge_Feature_Datasets'
 % 
-% * >>Classification_Regions; % *UNDER CONSTRUCTION*
 % 
-
-%% END ####################################################################
+% 

@@ -27,19 +27,6 @@ Nfeat=numel(FeatureNames);                          % N features
 % Colors: #################################################################
 [CM,IndxColor]=Color_Selector(NamesCond);
 
-%% p-values: descriptive statistical tests
-
-% Set Statistical Tes
-if Nconditions<3
-    % Two Paired Groups: 
-    % Rank, Score, or Measurement (from Non- Gaussian Population)
-    Test2Do='Paired';
-else
-    % More than 2 Conditions
-    % Rank, Score, or Measurement (from Non- Gaussian Population)
-    Test2Do='Repeated';
-end
-
 %% FEATURE EXPLORER #######################################################
 % Save Results to Retrieve Them
 DataCell=cell(Nconditions,1);
@@ -68,21 +55,6 @@ for f=1:Nfeat % Feature Loop **********************************************
     title(char(FeatureNames(f)))
     fprintf('\n')
     
-    % Statistics Data
-    
-%     switch Test2Do
-%         case 'Paired'
-%             % 2 Conditions
-%             A=DataCell{1};
-%             B=DataCell{2};
-%             [p,h] = ranksum(A,B);
-%         case 'Repeated'
-%             % Make CODE!
-%             datastat=reshape(cell2mat(DataCell),[size(DataCell{1},1),size(DataCell,1)]);
-%             [p,tbl,stats] = friedman(datastat,size(DataCell,1));
-%             c=multcompare(stats);
-%     end
-%     fprintf('>>P-value: p=%f\n',p);
     pause;
 end
 %% For paired Experiments: Delta Features

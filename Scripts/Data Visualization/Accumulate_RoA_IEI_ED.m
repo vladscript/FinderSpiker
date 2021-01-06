@@ -96,11 +96,13 @@ while MoreFiles
             R_POS=R_merged{c};
             % Get Coordinates
             XY_merged=XY_selected(MetaDataColocaliation.PositiveCells,:);
+%             XY_merged=XY(MetaDataColocaliation.PositiveCells,:);
             % Indexes of the Original Denoised Signals and Vectors
             [CleanSignals_POS,~]=Retrieve_Selected_Signal(Onsets,R_merged,ESTSIGNALS,XY_merged,XY);
             % Raster of Positive Cells
             R_NEG=R_nomerged{c};
             XY_nomerged=XY_selected(MetaDataColocaliation.NegativeCells,:);
+%             XY_nomerged=XY(MetaDataColocaliation.NegativeCells,:);
             % Indexes of the Original Denoised Signals and Vectors
             [CleanSignals_NEG,~]=Retrieve_Selected_Signal(Onsets,R_nomerged,ESTSIGNALS,XY_nomerged,XY);
         end

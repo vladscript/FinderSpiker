@@ -6,7 +6,9 @@
 % ***   OUTPUT has to be named with the sufix: _Analysis *****
 % Neither need of tangled abstract stuff nor Monte Carlos Simulations
 % Input
-%   R:          Raster of Neural Activity (Matrix Cells x Frames)
+%   R:              Raster of Neural Activity (Matrix Cells x Frames)
+%   CAG threshold:  CAG Threshold
+%   Nensembles:     Number of groups
 % Output
 %   R_Analysis: Raster Structur with Fields:
 %       Data.Data=R;  % Frames x Cells (compatibility wit JP's NN)

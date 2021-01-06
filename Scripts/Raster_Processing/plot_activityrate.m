@@ -5,17 +5,26 @@
 %   R_Condition:     Cell of ACtivity Matrices
 %   Condition_Names: Cell of Condition Strings
 %   fs:              Sampling Frequency
+%   SortingIndex:    (Optional) Sorting cell index
 %   Condition to Compare: selected within
 % Output
 %   NewIndex:        Sorted by Activity Diffrence
-function NewIndex=plot_activityrate(R_Condition,Condition_Names,fs)
+function NewIndex=plot_activityrate(R_Condition,Condition_Names,fs,varargin)
+% Setup
 N=numel(R_Condition);
 R_Total=[];
+if ~isempty(varargin)
+    SortingIndex=varargin{1};
+else
+    SortingIndex=1:size(R_Condition{1},1);
+end
+
 for n=1:N
-    R=R_Condition{n};
+    R=R_Condition{n}(SortingIndex,:);
     R_Total=[R_Total,R];
     AR(:,n)=sum(R,2)/size(R,2);
 end
+
 Ncells=size(R,1);
 % Create Figure For the Experiment
 Plot_Raster_Ensembles(R_Total,fs);

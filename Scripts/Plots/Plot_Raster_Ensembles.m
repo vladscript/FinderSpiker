@@ -139,10 +139,10 @@ set(gca,'YTickLabel',yticks(1:stepy:C))
 set(gca,'TickLength',[0,0])
 
 ax2=subplot(3,1,3);
-plot(ts*(1:length(sum(R)))/60,sum(R),'k','LineWidth',1.1)
+plot(ts*(1:length(sum(R)))/60,sum(R),'k','LineWidth',1)
 if ~isempty(ColocateIndx)
     hold on;
-    plot(ts*(0:length(sum(R))-1)/60,sum(R(1:numel(Neurons_Colocalized),:)),'Color',ColColor,'LineWidth',1.1)
+    plot(ts*(0:length(sum(R))-1)/60,sum(R(1:numel(Neurons_Colocalized),:)),'Color',ColColor,'LineWidth',1)
 end
 hold off;
 if C>0

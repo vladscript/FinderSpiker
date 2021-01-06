@@ -1,4 +1,19 @@
 %% Setup
+% Plot EXPERIMENT_ID.mat file from FinderSpiker
+% It states the anlaysis status and make the following plot:
+%  - Raster of Raw Activity
+%  - Sorted Raster by Activity
+%  - Sorted Raster by Changed Groups between conditions
+%  - Neuronal Ensembles Raster 
+%  - Sorted Neuronal Ensembles Raster
+% 
+% Functions:
+% >> Plot_Raster_Ensembles()
+% >> plot_activityrate()
+% >> plot_activitychange()
+% >> Plot_Raster_Ensembles()
+% 
+%% Start
 Import_FinderSpiker;
 Experiment=Experiment(Experiment~='\');     % NAMES PATCH
 
@@ -53,7 +68,7 @@ end
 % In case there are Neural Ensemble Analysis
 if exist('Features_Condition','var')
     disp('>>Neural Ensembles Ready.')
-    okbutton = questdlg('Plot Neural Ensmebles & Hebbian Sequence?');
+    okbutton = questdlg('Plot Neuronal Ensembles & Hebbian Sequence?');
     waitfor(okbutton); 
     if strcmp('Yes',okbutton)
         % Plot Ensembles **************************************************

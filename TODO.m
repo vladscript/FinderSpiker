@@ -12,11 +12,21 @@
 % Network Link Weight Threshold: Minimum RoA of Neuron to Belong any ensemble
 % 
 %% READY TO GO:
-% Venn & Bar Diagrams of gradient-active cells and active cells
-% Subgroups by Change in Rate Activity
+% Network PDFs updates @ Display_NetworkPDFs
+% Classification_Regions: KernelScale:fixed and OVA balarcolor normalized
+% Included IndexSorting for Plot by activity rate
+% 
 %% TO DO:
-% For marked cells Venn Diagrams
-% For marked cells in raster
+% Intro interface @ Classification_Regions [PCA->SVM, MC & OVA stuff]
+% Load modesl and evaluate new Data for ML:
+%  It requires make new table of new data
+
+% Check Merge_Feature_Datasets-> maybe obsolete
+
+% Publish USER_GUIDE
+% Feature_Explorer with Statistics and cloud plots (?)
+
+% Plot_Experiment: Load .mat File if Wrokspace "Empty"
 
 %% Bugs & New Functions NOW
 
@@ -45,7 +55,7 @@
 % NN2Gephi.m; Raster2fNet.m; get_iti_pdf(?); interval_duration_events(?);
 % Plot_Calcium_Transients.m; get_ensembles_manual.m
 % Plot_Raster_Results; get_ensemble_intervals; Plot_Ensembles;
-% Update_Directory;
+% Update_Directory; Features_Datasets_NBC; Best_Subset_Feature
 
 %% FUTURE *****************************************************************
 % Export Rasters @ CSV format
