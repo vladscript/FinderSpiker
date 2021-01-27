@@ -17,6 +17,7 @@
 % Included IndexSorting for Plot by activity rate
 % 
 %% TO DO:
+% SVM paramters @ svmmulticlass
 % Intro interface @ Classification_Regions [PCA->SVM, MC & OVA stuff]
 % Load modesl and evaluate new Data for ML:
 %  It requires make new table of new data

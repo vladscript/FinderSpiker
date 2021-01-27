@@ -1,5 +1,10 @@
-%% PCA & SVM Classification ###############################################
-% 
+%% PCA & SVM Classification of
+% Feature Matrix:   X
+% Label vector:     Y
+% PCA: variance weighted
+% SVM:
+%   Multiclass:     fitcecoc
+%   One-Versus-All: fitcsvm
 % Read Table(s) and Select Features from Datasets:
 %  - Raster_Activity_Dataset_XXXX.csv
 %  - General_Ensembles_Dataset_YYYY.CSV
@@ -9,10 +14,13 @@
 % It assumes IDs are the same among tables (for sorting purposes)
 % 
 %% Setup:
-clc; clear; close all;
-Import_FinderSpiker;
-Nsim=10; % Repetitions for SVM
-
+clc; clear; % close all;
+% Import_FinderSpiker;
+Nsim=20; % Repetitions for SVM
+% Probaility colormap:
+CMprobs=cbrewer('seq','GnBu',20);
+CMprobs=CMprobs(10:-1:1,:);
+% 
 %% Select Load Data mode #################################################
 % Select kind of file:
 choiceFile=0;
@@ -42,17 +50,21 @@ switch choiceFile
         [X,Y,NamesFeatures,FolderName,FileMat]=makedatatable();
 end
 
-%% Color for Labels #######################################################
+%% Color for Labels 
 [Nobser,Nfeatures]=size(X);
-labelconditions=unique(Y);
+labelconditions=unique(Y,'legacy');
 
 for n=1:numel(labelconditions)
     condition_labels{n}=char(labelconditions(n));
 end
 
 [CM,ColorIndx]=Color_Selector(condition_labels);
-% 
-%% PCA ####################################################################
+%% Plot Regions (?)
+% It all starts with a choice ...
+choice = questdlg('Plot classification regions?', ...
+	'Probability of PC on SVM', ...
+	'Plot Regions','Do not plot','Cancel','Plot Regions');
+%% PCA 
 % Each principal component is a linear combination of the original variables.
 % All the principal components are orthogonal to each other, so there is no redundant information.
 % But it is commonplace for the sum of the variances of the first few principal components to exceed 80% of the total variance of the original data.
@@ -86,7 +98,8 @@ fprintf('done.\n')
 ThrehsolVariance=0.95; % *100=% of variance explained by PCA
 VarExplained=cumsum(latent)./sum(latent);
 Npcs=find(VarExplained>=ThrehsolVariance,1);
-if Npcs==1 Npcs=2; end
+addpc=false;
+if Npcs==1 Npcs=2; addpc=true; end
 % Only the first 95% of the cumulative distribution is displayed
 figure; 
 pareto(explained); hold on
@@ -96,11 +109,10 @@ ylabel('Variance Explained (%)')
 
 Xpca=score(:,1:Npcs);
 
-%% Multiclass Classification #############################################
+%% Principal Components & Kernel Selection ###############################
 % Features:     Xpca,   dims:   Nobservations x Npcs
 % Labels:       Y,      dims:   Nobservations x 1
-fprintf('\n>> For every kernel and pair of PCs, calculate: ')
-fprintf('\n>> LOOCV (leave-one-out cross validation) Accuracy:')
+fprintf('\n>> For every kernel and pair of PCs get best accuracy: ')
 % Test 3 function kernels: linear, parabolic and gaussian
 kernels2test={'linear';'gaussian';'polynomial'};
 Combo=combnk(1:Npcs,2);
@@ -132,7 +144,7 @@ for k=1:numel(kernels2test)
         % Make Cross Validation
         Xdata=Xpca(:,[i,j]);
         Yhatsvm=categorical;
-        fprintf('\n>>Model %i/%i,kernel %s, PCs: %i vs %i -> \n',c,Ncombo,kernels2test{k},i,j);
+        fprintf('>>Model %i/%i,kernel %s, PCs: %i vs %i -> \n',c,Ncombo,kernels2test{k},i,j);
         for ns=1:Nsim
             Mdl = fitcecoc(Xdata,Y, 'Learners', template, 'Coding',...
                     'binarycomplete', 'PredictorNames', {['PCA_',num2str(i)],['PCA_',num2str(j)]}, ...
@@ -145,7 +157,7 @@ for k=1:numel(kernels2test)
         fprintf('\n')
         LOOCVs{c,k}=validationAccuracyOK;
         ALLPCAs(c,2+k)=mean(validationAccuracyOK);
-        fprintf('\n>>Mean Accuracy: %3.2f\n',mean(validationAccuracyOK));        
+        fprintf('>>Mean Accuracy: %3.2f\n',mean(validationAccuracyOK));        
     end
 end
 % fprintf(repmat('*',10,1)); fprintf('[complete]\n');
@@ -155,137 +167,31 @@ if size(ALLPCAs(:,3:end),1)>1
 else
     MaXeachKernel=ALLPCAs(:,3:end);
 end
-[AccuracySVM,kernelindx]=max(MaXeachKernel);
-
+[~,kernelindx]=max(MaXeachKernel);
+BestKernel=kernels2test{kernelindx};
 if kernelindx<3
-    template = templateSVM('KernelFunction',kernels2test{kernelindx}, 'PolynomialOrder', [],...
+    template = templateSVM('KernelFunction',BestKernel, 'PolynomialOrder', [],...
     'KernelScale', 'auto', 'BoxConstraint', 1, 'Standardize', 1,'Verbose',0);    
 %     'KernelScale', 'auto', 'BoxConstraint', 1, 'Standardize', 1,'Verbose',1);    
 else
-    template = templateSVM('KernelFunction',kernels2test{kernelindx}, 'PolynomialOrder', 2,...
+    template = templateSVM('KernelFunction',BestKernel, 'PolynomialOrder', 2,...
     'KernelScale', 'auto', 'BoxConstraint', 1, 'Standardize', 1,'Verbose',0);    
 %     'KernelScale', 'auto', 'BoxConstraint', 1, 'Standardize', 1,'Verbose',1);
 end
 % BEST PCAs *************************
 [~,nModel]=max(ALLPCAs(:,2+kernelindx));
+% PCs Matrix Average
+matPCs=zeros(Npcs);
+for n=1:Ncombo
+    i=ALLPCAs(n,1);
+    j=ALLPCAs(n,2);
+    matPCs(i,j)=ALLPCAs(n,2+kernelindx);
+    matPCs(j,i)=matPCs(i,j);
+end
 columns2boxplot(LOOCVs{nModel,1}',LOOCVs{nModel,2}',LOOCVs{nModel,3}',{'Lineal','Gaussian','Polynomial'})
 ONEpca=ALLPCAs(nModel(1),1);
 TWOpca=ALLPCAs(nModel(1),2);
-% LOOCV *************************
-% clear Yhatsvm
-fprintf('Model| Leave-One-Out Cross Validations \n')
-for ns=1:Nsim
-    Ypre=categorical;
-    fprintf('%i/%i ',ns,Nsim)
-    for n=1:Nobser
-        Xtrain=Xpca(setdiff(1:Nobser,n),[ONEpca,TWOpca]);
-        Ytrain=Y(setdiff(1:Nobser,n),:);
-        Xtest=Xpca(n,[ONEpca,TWOpca]);
-        Ytest=Y(n,:);
-        Yhatsvm=categorical;
-        Mdl = fitcecoc(Xtrain,Ytrain, 'Learners', template, 'Coding',...
-            'binarycomplete', 'PredictorNames', {['PCA_',num2str(i)],['PCA_',num2str(j)]}, ...
-            'ResponseName', 'Y','FitPosterior',1, ...
-            'ClassNames', labelconditions);
-        Ypre(n) = predict(Mdl,Xtest);
-        fprintf('*')
-    end
-    fprintf('\n')
-    validationAccuracyOK(ns)=sum(Ypre'==Y)/numel(Y);
-end
-fprintf('\n')
-AccuracySVM=mean(validationAccuracyOK);
-% [mean(validationAccuracyOK),std(validationAccuracyOK)]
-% PARAMETERS ############################################################
-Mdl = fitcecoc(Xpca(:,[ONEpca,TWOpca]),Y, 'Learners', template, 'Coding',...
-        'binarycomplete', 'PredictorNames', {['PCA_',num2str(ONEpca)],['PCA_',num2str(TWOpca)]}, ...
-        'ResponseName', 'Y','FitPosterior',1, ...
-        'ClassNames', labelconditions);
-% Estimation of the labels:    
-fprintf('>>Predicting: ')
-[Yhat,~,~,pPosterior]=resubPredict(Mdl);
-fprintf('done.\n')
-%% Plots ROC & Confusion Matrix ##########################################
-%Set binary targets
-Targetss=zeros(Nobser,numel(unique(Y)));
-Outputss=zeros(Nobser,numel(unique(Y)));
-Yconditions=labelconditions;
-for i=1:Nobser
-    Targetss(i,Yconditions==Y(i))=1;
-    Outputss(i,Yconditions==Yhat(i))=1;
-end
-% PLOT ROC curve
-figure; plotroc(Targetss',Outputss');
-ROCaxis=gca;
-auxl=1;
-for l=1:numel(condition_labels)
-    ROCaxis.Children(auxl).Color=CM(ColorIndx(numel(condition_labels)-l+1),:);
-    ROCaxis.Children(auxl).DisplayName=condition_labels{numel(condition_labels)-l+1};
-    auxl=auxl+2;
-end
-% PLOT CONFUSION MATRIX
-figure; plotconfusion(Targetss',Outputss')
-CMaxis=gca;
-for l=1:numel(condition_labels)
-    CMaxis.YTickLabel{l}=condition_labels{l};
-    CMaxis.XTickLabel{l}=condition_labels{l};
-end
-fprintf('\n%s\n',repmat('*',40,1))
-disp(['LOOCV Acc SVM kernel ',kernels2test{kernelindx},...
-    ' pC=',num2str(round(1000*AccuracySVM)/10),...
-    '% +/-',num2str(num2str(round(1000*std(validationAccuracyOK))/10))]);
-fprintf('\n%s\n',repmat('*',40,1))
-%% POSTERIOR PROBABILITIES
-deltaPlus=0.15;
-MaxFactorPlus=ones(1,2);
-MinFactorPlus=MaxFactorPlus;
-maxSigns=sign(max(Xpca(:,[ONEpca,TWOpca])));
-minSigns=sign(min(Xpca(:,[ONEpca,TWOpca])));
-MaxFactorPlus(maxSigns>0)=1+deltaPlus;
-MaxFactorPlus(maxSigns<0)=1-deltaPlus;
-MinFactorPlus(minSigns>0)=1-deltaPlus;
-MinFactorPlus(minSigns<0)=1+deltaPlus;
-xMax = max(Xpca(:,[ONEpca,TWOpca])).*MaxFactorPlus;
-xMin = min(Xpca(:,[ONEpca,TWOpca])).*MinFactorPlus;
-
-x1Pts = linspace(xMin(1),xMax(1));
-x2Pts = linspace(xMin(2),xMax(2));
-[x1Grid,x2Grid] = meshgrid(x1Pts,x2Pts);
-fprintf('>>Predicting Regions: ... ')
-[~,~,~,PosteriorRegion] = predict(Mdl,[x1Grid(:),x2Grid(:)]);
-fprintf('done.\n')
-% Contour Probabilities
-fprintf('>>Plotting eegions: ... ')
-figure;
-contourf(x1Grid,x2Grid,...
-        reshape(max(PosteriorRegion,[],2),size(x1Grid,1),size(x1Grid,2)));
-% drawnow
-Contorno=gca;
-% COLORMAP of the PROBAILITIES
-% A=histcounts(PosteriorRegion);
-CMprobs=cbrewer('seq','GnBu',20);
-CMprobs=CMprobs(10:-1:1,:);
-colormap(Contorno,CMprobs);
-h = colorbar;
-h.YLabel.String = 'Maximum posterior';
-h.YLabel.FontSize = 8;
-hold on
-% SCATTER PLOT  WITH DATA POINTS
-gh = gscatter(Xpca(:,ONEpca),Xpca(:,TWOpca),Y,'krb','ooo',12);
-for n=1:numel(ColorIndx)
-    gh(n).MarkerEdgeColor=[0,0,0];
-    gh(n).MarkerFaceColor=CM(ColorIndx(n),:);
-    gh(n).LineWidth=1;
-end
-
-title(['SCV kernel ',kernels2test{kernelindx},' LOOCV ACC=',num2str(round(1000*AccuracySVM)/10),'% ']);
-xlabel([num2str(ONEpca),'th PCA component']);
-ylabel([num2str(TWOpca),'th PCA component']);
-axis([xMin(1),xMax(1),xMin(2),xMax(2)])
-legend(gh,'Location','NorthWest')
-hold off
-fprintf(' done.\n')
-%% FEATUREs CONTRIBUTION BIPLOT *******************************************
+%% Best Classifying PC Pair contribution BIPLOT 
 % A biplot allows you to visualize the magnitude and sign of each variable's
 % contribution to the first two or three principal components, and how each 
 % observation is represented in terms of those components.
@@ -315,89 +221,105 @@ title('Feature contribution to each copmponents')
 xlabel([num2str(ONEpca),' th PC']);
 ylabel([num2str(TWOpca),' th PC']);
 % axis([-.26 0.6 -.51 .51]);
-
-%%  One-versus-all (OVA) Models ################
-
-numClasses = numel(condition_labels);
-inds = cell(numClasses,1);      % Preallocation
-SVMModel = cell(numClasses,1);
-
-% rng(1); % For reproducibility
-fprintf('>>Making Binary Models: ')
-for j = 1:numClasses
-    Ybin= false(Nobser,1);
-    Ybin(Y==condition_labels{j})=true;  % OVA classification
-    SVMModel{j} = fitcsvm(Xpca(:,[ONEpca,TWOpca]),Ybin,'ClassNames',[false true],...
-        'Standardize',true,'KernelFunction',kernels2test{kernelindx},...
-        'KernelScale','auto');
-    %         'KernelScale','auto');
-    fprintf('%i,',j)
-end
-fprintf('\n')
-
-fprintf('>>Calssifying Model: ')
-for j = 1:numClasses
-    %SVMModel{j} = fitPosterior(SVMModel{j});
-    SVMModel{j} = fitSVMPosterior(SVMModel{j});
-    fprintf('%i,',j)
-end
-fprintf('\n')
-
-fprintf('>>Making Posterior Probability Regions: ')
-% Same as Multiclass case
-% d = 0.02;
-% [x1Grid,x2Grid] = meshgrid(1.1*min(Xpca(:,ONEpca)):d:1.1*max(Xpca(:,ONEpca)),...
-%     1.1*min(Xpca(:,TWOpca)):d:1.1*max(Xpca(:,TWOpca)));
-xGrid = [x1Grid(:),x2Grid(:)];
-
-posterior = cell(3,1); 
-for j = 1:numClasses
-    [~,posterior{j}] = predict(SVMModel{j},xGrid);
-    MinProbs(j)=min(posterior{j}(:,2));
-    MaxProbs(j)=max(posterior{j}(:,2));
-    fprintf('%i,',j)
-end
-RangeProbs=[min(MinProbs),max(MaxProbs)];
-fprintf('\n')
-
-%% Figure OVAs ************************************************************
-fprintf('>>Making Plot: ...\n')
-figure
-NcolsFig=nextpow2(numClasses+1);
-haxis = zeros(numClasses + 1,1); % Preallocation for graphics handles
-for j = 1:numClasses
-    fprintf('>>Surface of Model %i: ...',j)
-    Ax=subplot(2,NcolsFig,j);
-    contourf(x1Grid,x2Grid,reshape(posterior{j}(:,2),size(x1Grid,1),size(x1Grid,2)));
-    colormap(CMprobs);
-    caxis(RangeProbs);
-    hold on
-    % h(1:numClasses) = gscatter(Xpca(:,ONEpca),Xpca(:,TWOpca),Y,CM(ColorIndx,:),'ooo',10);
-    h = gscatter(Xpca(:,ONEpca),Xpca(:,TWOpca),Y,CM(ColorIndx,:),'ooo',8);
-    for n=1:numel(ColorIndx)
-        h(n).MarkerEdgeColor=[0,0,0];
-        h(n).MarkerFaceColor=CM(ColorIndx(n),:);
-        h(n).LineWidth=0.5;
+%% Leave-One-Out Cross Validation OF THE MODEL 
+% clear Yhatsvm
+fprintf('Model| Leave-One-Out Cross Validations \n')
+Ysvmall=categorical(zeros(Nobser,Nsim));
+for ns=1:Nsim
+    Ypre=categorical;
+    fprintf('%i/%i ',ns,Nsim)
+    for n=1:Nobser
+        Xtrain=Xpca(setdiff(1:Nobser,n),[ONEpca,TWOpca]);
+        Ytrain=Y(setdiff(1:Nobser,n),:);
+        Xtest=Xpca(n,[ONEpca,TWOpca]);
+        Ytest=Y(n,:);
+        Yhatsvm=categorical;
+        Mdl = fitcecoc(Xtrain,Ytrain, 'Learners', template, 'Coding',...
+            'binarycomplete', 'PredictorNames', {['PCA_',num2str(i)],['PCA_',num2str(j)]}, ...
+            'ResponseName', 'Y','FitPosterior',1, ...
+            'ClassNames', labelconditions);
+        Ypre(n) = predict(Mdl,Xtest);
+        fprintf('*')
     end
-    title(sprintf('Posteriors for %s Class',condition_labels{j}));
-    xlabel([num2str(ONEpca),' th PCA component']);
-    ylabel([num2str(TWOpca),' th PCA component']);
-    legend off
-    axis tight
-    hold off
-    fprintf('done.\n')
+    Ysvmall(:,ns)=Ypre';
+    fprintf('\n')
+    validationAccuracyOK(ns)=sum(Ypre'==Y)/numel(Y);
+end
+fprintf('\n')
+AccuracySVM=mean(validationAccuracyOK);
+[ROCloocv,METRICSloocv]=rockandconfusion(Ysvmall,Y);
+
+%% Plot Classificaion Regions #############################################
+switch choice
+    case 'Plot Regions'
+        %% Multiclass Regions binary complete
+        fprintf('\n>>Making PCs grid: ')
+        deltaPlus=0.15; % Resolution of grid/contour
+        [x1Grid,x2Grid]=makepcagrid(Xpca,ONEpca,TWOpca,deltaPlus);
+        % [x1Grid,x2Grid]=makepcagrid(Xpca,ONEpca,TWOpca,deltaPlus,200); %ALSO
+        fprintf('done.\n')
+        % MULTICLASS MODELS
+        [PosteriorRegion,Ymany]=svmmulticlass(Xpca,ONEpca,TWOpca,Y,template,labelconditions,Nsim,x1Grid,x2Grid);
+        % Get securely predicted
+        [Yclass,ClassRateMC]=getrightclass(Ymany,Y);
+        % PLOT Regions for Multiclass
+        plot_multiclass(x1Grid,x2Grid,PosteriorRegion,CMprobs,Xpca,ONEpca,...
+            TWOpca,Y,CM,ColorIndx,BestKernel,AccuracySVM,Yclass);
+        % ROCs & F1 Scores
+        [ROC,METRICS]=rockandconfusion(Ymany,Y);
+        % Get MissClassified
+        %% One-versus-all Regions
+        [posterior,Yallbin,RangeProbs,Ybestova]=svmoneversusall(Xpca,ONEpca,TWOpca,Y,BestKernel,Nsim,x1Grid,x2Grid);
+        % Get right classes:
+        [Yconfident,ClassRatebin]=getrighclassbinary(Y,Yallbin);
+        % PLOT Regions for OVA
+        plot_ova(x1Grid,x2Grid,posterior,CMprobs,Xpca,ONEpca,labelconditions,...
+            TWOpca,Y,CM,ColorIndx,RangeProbs,Yconfident);
+        % MAKE THEM CATEGORICAL EACH CLASS AND GET METRICS
+         for k=1:numel(labelconditions)
+             Currentlab=labelconditions(k);
+             % Predicted
+             PredBin=Yallbin{k};
+             YmanyOVA=categorical(false(Nobser,Nsim));
+             for n=1:Nsim
+                 YmanyOVA(PredBin(:,n)>0,:)=Currentlab;
+             end
+             % Gorund - truth: class-false
+             Yovabin=categorical(false(Nobser,1));
+             Yovabin(Y==labelconditions(k))=labelconditions(k); 
+             % ROCs & F1 Scores
+            [ROCova{k},METRICSova{k}]=rockandconfusion(YmanyOVA,Yovabin);
+         end
+
+    case 'Do not plot'
+        fprintf('\n>>End.\n')
+    case 'Cancel'
+        fprintf('\n>>End.\n')
 end
 
-% hcm=colorbar;
-% hcm.YLabel.String = 'Maximum posterior';
-% hcm.YLabel.FontSize = 8;
-haxis(numClasses + 1) = colorbar('Location','EastOutside',...
-    'Position',[[0.8,0.1,0.05,0.4]]);
 
-set(get(haxis(numClasses + 1),'YLabel'),'String','Posterior','FontSize',9);
-legend(h(1:numClasses),'Location',[0.6,0.2,0.1,0.1]);
-fprintf('\n\n>>[PCA->SVM to Neuronal Features]: Ready.\n\n')
-%% Save Results:
+%% Resume Data
+fprintf('****************************************\n');
+fprintf('PCA and SVM classification of:\n>> %i features, labels:\n', Nfeatures)
+tabulate(Y);
+fprintf('  PCs with >95%% of data variance: ');
+if addpc 
+    fprintf('%i\n',Npcs-1);
+else
+    fprintf('%i\n',Npcs);
+end
+fprintf('Best Accuracy with %s kernel and %i and %i PCs',...
+    BestKernel,ONEpca,TWOpca);
+fprintf('\nMean LOOCV Accuracy (SD): %3.2f%%(%3.2f)\n',100*mean(validationAccuracyOK),std(100*validationAccuracyOK))
+% Make table of mean  and standard deviation of all metrics in LOOCV
+% For Multiclass binary complete vs one versus all
+FinalTableMC=metrotable(METRICS,labelconditions);
+for c=1:numel(labelconditions)
+    METRICStrue{c}=METRICSova{c}{2};
+end
+FinalTableOVA=metrotable(METRICStrue,labelconditions);
+fprintf('****************************************');
+%% Save Results: #########################################################
 % Data:     X,Y [Previously done]
 % Models:
 %   SVMModel  OVA models
@@ -412,8 +334,10 @@ while checkname==1
     if strcmp(FileName,FileMat)
         checkname=0;
         % SAVE DATA
-        save([PathName,FileName],'SVMModel','Mdl','-append');
-        disp([FileMat,'   -> MODELS ADDED '])
+        save([PathName,FileName],'ALLPCAs','Xpca','Npcs','ONEpca',...
+            'BestKernel','TWOpca','METRICSloocv','METRICS','METRICSova',...
+            '-append');
+        disp([FileMat,'   -> METRICS SAVED '])
     elseif FileName==0
         checkname=0;
         disp('No model added')
@@ -422,4 +346,4 @@ while checkname==1
         disp('Try again!')
     end
 end  
-%% END OF THE WORLD *******************************************************
+%% END OF THE WORLD
