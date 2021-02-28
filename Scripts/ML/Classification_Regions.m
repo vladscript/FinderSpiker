@@ -282,7 +282,7 @@ switch choice
              PredBin=Yallbin{k};
              YmanyOVA=categorical(false(Nobser,Nsim));
              for n=1:Nsim
-                 YmanyOVA(PredBin(:,n)>0,:)=Currentlab;
+                 YmanyOVA(PredBin(:,n)>0,n)=Currentlab;
              end
              % Gorund - truth: class-false
              Yovabin=categorical(false(Nobser,1));
@@ -319,6 +319,18 @@ for c=1:numel(labelconditions)
 end
 FinalTableOVA=metrotable(METRICStrue,labelconditions);
 fprintf('****************************************');
+
+% %% Show Classification Metrics
+% Y=DataXY.Label;
+% labelconditions=unique(Y,'legacy');
+% 
+% FinalTableMC=metrotable(METRICS,labelconditions);
+% for c=1:numel(labelconditions)
+%     METRICStrue{c}=METRICSova{c}{2};
+% end
+% FinalTableOVA=metrotable(METRICStrue,labelconditions);
+% disp('OK');
+
 %% Save Results: #########################################################
 % Data:     X,Y [Previously done]
 % Models:

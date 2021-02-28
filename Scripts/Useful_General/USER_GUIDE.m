@@ -261,7 +261,7 @@
 % * >>Feature_Explorer         *UNDER CONSTRUCTION*
 % 
 % 
-%% 11 MACHINE LEARNING: choose a Dataset:
+%% 11 MACHINE LEARNING:
 % 
 % * >>Classification_Regions; % Makes PCA and SVM classification from
 %                               tables of 'Merge_Feature_Datasets'

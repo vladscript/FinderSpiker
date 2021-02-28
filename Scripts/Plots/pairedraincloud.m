@@ -4,7 +4,7 @@
 %   ColorsN:    Matrix Colors for N inputs,
 %   bda_init:   Plot parameter,
 %   bdam_init   Plot parameter,
-%   varargin:   N vector Inputs
+%   varargin:   N vector Inputs or Cell
 %  Output
 %   bda_final   Plot parameter for following boxes
 %   bdam_final  Plot parameter for following boxes
@@ -33,9 +33,20 @@ StepDodge=0.8;
 Step_bdam=0.23;
 box_dodge_amount=bda_init+StepDodge;
 bdam=bdam_init+Step_bdam;
+% Check if is Cell input
+fprintf('>Input data Type: ')
+if Nc==1 && iscell(varargin(1))
+    Data2plot=varargin{1};
+    Nc=numel(Data2plot);
+    fprintf('cell.\n')
+else    
+    Data2plot=varargin;
+    fprintf('vectors.\n')
+end
+    
 %% Rainclouds
 for n=1:Nc
-    raincloud_plot(varargin{n},'color',ColorsN(n,:),'box_on',1,...
+    raincloud_plot(Data2plot{n},'color',ColorsN(n,:),'box_on',1,...
         'alphaval',5,'box_dodge',5,...
         'box_dodge_amount',box_dodge_amount, 'dot_dodge_amount', box_dodge_amount,...
         'box_col_match',0,'box_dodge_amount',bdam, 'dot_dodge_amount', bdam,...
@@ -63,7 +74,7 @@ if strcmp(MMeasures,'paired')
         Ydata1=h1(n-1).YData;
         Xdata2=h1(n).XData;
         Ydata2=h1(n).YData;
-        for i=1:numel(varargin{n}(:,1))
+        for i=1:numel(Data2plot{n}(:,1))
             plot([Xdata1(i),Xdata2(i)],[Ydata1(i),Ydata2(i)],...
                 'LineStyle','-','Color','k','LineWidth',0.1)
         end

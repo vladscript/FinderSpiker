@@ -36,7 +36,7 @@ Ncolor(i)=8;
 i=2;
 Ncolor(i)=8;
 CM=cbrewer('qual','Dark2',Ncolor(i));
-ConditionColors{i}=CM; % OK colors
+ConditionColors{i}=CM(end:-1:1,:); % OK colors
 % Condition 3
 i=3;
 Ncolor(i)=8;

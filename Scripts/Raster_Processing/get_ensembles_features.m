@@ -209,7 +209,10 @@ for c=1:C
     %     TableCYcles:
     % Type      Sequence     ConditioinStart[s] ConditionEnd[s]:
     % 'simple'  1,2,3,1      10                     12    
-    
+    % Ensemble Time table
+    %     HebbSequence,EnsembleTimes,EnsembleIntervals
+    OnsetEnsemble{c}=EnsembleTimes;
+    IntervalEnsemble{c}=EnsembleIntervals;
     if c<C; disp('Next Condition'); end;
 end
 %% Cross Simmilar Neural Ensembles Are 
@@ -235,6 +238,8 @@ Features_Condition.Dunn=DunnIndex;
 Features_Condition.MIV=MIV;
 Features_Condition.ECV_Cond=ECV_Cond;
 % HEBBIAN SEQUENCE
+Features_Condition.HebbCenters=OnsetEnsemble;
+Features_Condition.HebbPositions=IntervalEnsemble;
 Features_Condition.HebbianSeq=Transitions;
 Features_Condition.HebbianDurations=allEDsExp; % *
 Features_Condition.HebbianInterval=allIEIsExp; % *
