@@ -1,0 +1,19 @@
+%% Initalization Data Output
+SIGNALS=cell(NV,NC);
+DETSIGNALS=cell(NV,NC);
+ESTSIGNALS=cell(NV,NC);
+SNRwavelet=cell(NV,NC);
+Responses=cell(NV,NC);
+preDRIVE=cell(NV,NC);
+preLAMBDAS=cell(NV,NC);
+TAUSall=cell(NV,NC);
+% SIGNALSclean=cell(NV,NC);
+RASTER=cell(NV,NC);
+isSIGNALS=cell(NV,NC);
+notSIGNALS=cell(NV,NC);
+LAMBDASSpro=cell(NV,NC);
+SNRs=cell(NV,NC);
+DRIVERs=cell(NV,NC);
+SIGNALSclean=cell(size(SIGNALS)); % Detected clean SIGNALS
+SNRlambda=cell(size(preLAMBDAS));    % Sparse Empirical SNRs
+RasterAlgorithm='Driver'; % 'OOPSI', 'Derivative'

@@ -29,8 +29,8 @@
 function [bda_final,bdam_final]=pairedraincloud(MMeasures,ColorsN,bda_init,bdam_init,varargin)
 %% Setup
 Nc=numel(varargin);
-StepDodge=0.8;
-Step_bdam=0.23;
+StepDodge=0.5;
+Step_bdam=0.75;
 box_dodge_amount=bda_init+StepDodge;
 bdam=bdam_init+Step_bdam;
 % Check if is Cell input

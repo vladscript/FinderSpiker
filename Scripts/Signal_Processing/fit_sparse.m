@@ -19,7 +19,7 @@ for c=1:numel(ActiveNeurons)
     xdenoised=Xest(signdx,:);
     xsparse=X_SPARSE(signdx,:);
     r=FR(signdx,:);
-    lamb=LAMBDASS(signdx);
+    lamb=LAMBDASS(signdx,1);
     pred=DRIVER(signdx,:);
     % plot(xdenoised); hold on;
     % plot(xsparse); hold off;
@@ -31,7 +31,7 @@ for c=1:numel(ActiveNeurons)
         xsk=sparse_convolution(d,r);
         % Update Data
         X_SPARSE(signdx,:)=xsk';
-        LAMBDASS(signdx)=oklambda;
+        LAMBDASS(signdx,1)=oklambda;
         % noisden=x-xdenoised;
         % noisparse=x-xsk';
         % std(noisparse)
@@ -43,7 +43,7 @@ for c=1:numel(ActiveNeurons)
         xsk=sparse_convolution(d,r);
         % Update Data
         X_SPARSE(signdx,:)=xsk';
-        LAMBDASS(signdx)=oklambda;
+        LAMBDASS(signdx,1)=oklambda;
         fprintf('\n>>Diminish Lambda: done For Signal %i.\n',signdx);
     else
         fprintf('\n>>Nice Lambda For Signal %i.\n',signdx);

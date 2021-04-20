@@ -8,16 +8,17 @@
 
 %% 0. SETTTINGS
 % 
+% * Import ALL functions        >>Import_FinderSpiker
+% * Experiments Directory:      >>edit Load_Default_Directories.m
 % * Deconvolution Parameters:   >>edit Load_Default_Values_SP
 % * Clustering Parameters:      >>edit Load_Default_Clustering
 % * Colors:                     >>edit SetColorMap.m
-% * Import ALL functions        >>Import_FinderSPiker
 % 
 %% 1. SIGNAL PROCESSING: Detect Calcium Transients Events
 % Getting Activation Matrix (raster) from Calium Imaging Data for each Cell
 % DATA:                 VIDEOS, Sampling Frequency & Set of Coordinates
 % 
-% * >>Finder_Spiker_Calcium
+% * >>FinderSpiker_Calcium
 % * >>Detected_Visual_Inspection
 % * >>Undetected_Visual_Inspection
 % * >>Save_and_Plot
@@ -68,6 +69,7 @@
 % * If Colocalization Data:
 % 
 % * >>[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation)
+% FinderSpiker_Calcium
 %% 3. CLUSTERING NEURONAL ENSEMBLES
 % AUTOMATICAL & MANUAL MAGIC
 % 
@@ -212,7 +214,7 @@
 % * >>Get_Gephi_Data;      % Make File MyNetworkDataSet.mat Dataset 
 %                          % from CSV Gephi Workspaces (per Experiment)
 % 
-%   READ CSV files one by one->use [cancel] button to set next condition
+%                        READ CSV files one by one->use [cancel] button to set next condition
 % 
 %                        Save .mat File @ FinderSpiker/DatabaseFolder
 % 
@@ -265,6 +267,6 @@
 % 
 % * >>Classification_Regions; % Makes PCA and SVM classification from
 %                               tables of 'Merge_Feature_Datasets'
-% 
+%                               Feauture selection and Model building
 % 
 % 

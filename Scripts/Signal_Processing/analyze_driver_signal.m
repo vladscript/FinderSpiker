@@ -38,9 +38,9 @@ fixindx=1;
 Features=[];
 for c=1:C
     % Get Single Signals ##########################################
-    r=FR(c,:);  % response function
+    rbiexp=FR(c,:);  % response function
     d=D(c,:);   % driver function
-    x_sparse=sparse_convolution(d,r); % Clean Signal
+    x_sparse=sparse_convolution(d,rbiexp); % Clean Signal
     % x_sparsePRE=x_sparse;
     disp(c);
     xd=XDupdate(c,:);
@@ -103,14 +103,15 @@ for c=1:C
                 xdecay=getlinearsegment(xe(1:nextframe),std(noisex),1)';
             end
             xd(1:nextframe)=xd(1:nextframe)-xdecay';
-            XDfix(c,:)=xd;
+            XDfix(c,:)=xd; % detrended
             disp('\___ Initial decay ~~>')
         end
         
 %         end
         [xe,noisex]=mini_denoise(xd); % update and fix
-        [d,lambdaD]=maxlambda_finder(xd,r);
-        x_sparse=sparse_convolution(d,r);
+        [d,lambdaD]=maxlambda_finder(xd,rbiexp); % +& - drive
+        %[d,lambdaD]=maxlambda_finder(xd,rbiexp,0); % only + drive
+        x_sparse=sparse_convolution(d,rbiexp);
         Xestfix(c,:)=xe;
         % Dfix(c,:)=d; % update and fix
         LambdasFix=[LambdasFix,lambdaD];
@@ -203,14 +204,15 @@ for c=1:C
     
     Dfix(c,:)=d; % update and fix
     %d(sign(dbuffer).*sign(dx_sparse)>0)=dbuffer(sign(dbuffer).*sign(dx_sparse)>0);
-    %     %% CHECK STUFF
+%     %% CHECK STUFF
 %     plot(xd,'b'); hold on;
-%     plot(xe,'m'); hold on;
+%     plot(xe,'m'); 
 %     plot(x_sparse,'g','LineWidth',2);
 %     plot([0,numel(x_sparse)],[std(noisex),std(noisex)],'-.r');
 %     bar(d); hold off;
-%     %pause
 %     disp(c) 
+%     pause
+    
 end
 
 end % END OF THE WORLD

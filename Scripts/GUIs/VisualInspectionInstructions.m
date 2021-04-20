@@ -1,0 +1,6 @@
+% Visual/Manual Proesssing Controler: (-+) & (--)
+mf=msgbox({'For Visual Inspection of Detected Ca++ Transients';'Type: ';...
+    '>>Detected_Visual_Inspection';' ';'And for Undetected Ca++ Transients';...
+    '>>Undetected_Visual_Inspection'});
+VisualInspector=[false,false];
+waitfor(mf); delete(mf);

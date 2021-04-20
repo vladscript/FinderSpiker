@@ -4,7 +4,7 @@
 ![Logo](/figures/Logo_FinderSpiker.png)
 
 ### Experiment Profile:
-* For synthetic dyes or viral flurophores
+* For synthetic dyes or genetically encoded indicators of calcium (neuronal) activity
 * Calcium Transients Offline Detector
   * Automatic mode and Visual Inspection Mode.
 * Multiple conditions (e.g. CTRL, +DRUG A, +DRUG B, etc).
@@ -13,7 +13,7 @@
 # See [**Quick User Guide**](http://htmlpreview.github.io/?https://github.com/vladscript/FinderSpiker/blob/master/html/USER_GUIDE.html)
 
 ### Brief Description
-Optimized for Acquired Data in [ImPatch](http://impatch.ifc.unam.mx/) and MATLAB R2015a
+Optimized for Acquired Data in [ImPatch](http://impatch.ifc.unam.mx/) and CSV exported data from [Igor WaveMetrics](https://www.wavemetrics.com/downloads)
 * **Input**
   - List of videos (e.g. CTRL01,.., CTRLN,DRUGA01,...,DRUGA0N,...)
   - List of ROIs Coordianates (CSV file from ImPatch)

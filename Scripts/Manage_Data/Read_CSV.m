@@ -18,12 +18,9 @@
 %       r: Radious of Coordinates  
 % If ImageJ ROI setlist
 %       r: Cell Array of Coordinates in ROI
-function [Names_Conditions,NumberofVideos,FN,PathName,XY,r]=Read_Videos(DefaultPath)
+function [Names_Conditions,NumberofVideos,FN,PathName,XY,r]=Read_CSV(DefaultPath)
 %% Ask how many conditions and how many videos *********************
-% 1st Input DIalogue
-NC = inputdlg('Number of Conditions: ',...
-             'VIDEOS', [1 75]);
-NC = str2num(NC{:}); 
+NC = 1; 
 Conditions_String='Condition_';
 n_conditions=[1:NC]';
 Conditions=[repmat(Conditions_String,NC,1),num2str(n_conditions)];
@@ -32,44 +29,44 @@ Cond_Names=cell(NC,1);
 for i=1:NC
     Cond_Names{i}=Conditions(i,:);
     Names_default{i}=['...'];
-    NVids_default{i}=['2'];
+    NVids_default{i}=['1'];
 end
 % 2nd Input Dialogue
-name='Names';
-numlines=[1 75];
+name='Condition Name';
+numlines=[1 85];
 Names_Conditions=inputdlg(Cond_Names,name,numlines,Names_default);
 % 3th Input Dialogue
-name=' Number of Videos for each Condition';
+name=' Split CSV data in N Segments:';
 % numlines=1;
 NumberofVideos=inputdlg(Names_Conditions,name,numlines,NVids_default);
 
 %% Read and get all Coordinates*********************************************
-CurrentPath=DefaultPath;
+% CurrentPath=DefaultPath;
 
-for i=1:NC
-    % Read Videos
-    [FileName,PathName] = uigetfile('*.avi',[NumberofVideos{i},' VIDEOS ',Names_Conditions{i}],...
-    'MultiSelect', 'on',CurrentPath);
-    FileName=char(FileName);
-    for j=1:str2double(NumberofVideos{i})
-        FN{j,i} = FileName(j,:); % Different Names of Videos
-    end
-    CurrentPath=PathName;
-end
-% Read coordinates
-[XY,r]=Read_ROI_Coordinates(CurrentPath);
+% Read Videos
+[FN{1},PathName] = uigetfile('*.csv','Select CSV file with Fluorescence Traces',...
+    'MultiSelect','off',DefaultPath);
+[XY,r]=Read_ROI_Coordinates(PathName);
+
+% % Read coordinates
 % [XYName,XYPathName] = uigetfile({'*.csv';'*.zip'},['All Coordinates (XY) ',Names_Conditions{i}],CurrentPath);
-% XYFN = char(XYName);
-% switch XYName(end-2:end)
-%     case 'zip'
-%         fprintf('>>Reading Coordinates from ImageJ:')
-%         sROI=ReadImageJROI([XYPathName,XYFN]);
-%         [XY,r]=getpixelsatROI(sROI);
-%         % r is a cell array of pixels elliptical ROIs:
-%     case 'csv'
-%         fprintf('>>Reading Coordinates from ImPatch: ')
-%         [x,y,r,~]=textread([XYPathName,XYFN],'%d %d %d %s','delimiter',',','headerlines',4);
-%         % r is a vector
-%         XY = [x,y];
+% if ~isnumeric(XYPathName)
+%     XYFN = char(XYName);
+%     switch XYName(end-2:end)
+%         case 'zip'
+%             fprintf('>>Reading Coordinates from ImageJ:')
+%             sROI=ReadImageJROI([XYPathName,XYFN]);
+%             [XY,r]=getpixelsatROI(sROI);
+%             % r is a cell array of pixels elliptical ROIs:
+%         case 'csv'
+%             fprintf('>>Reading Coordinates from ImPatch: ')
+%             [x,y,r,~]=textread([XYPathName,XYFN],'%d %d %d %s','delimiter',',','headerlines',4);
+%             % r is a vector
+%             XY = [x,y];
+%     end
+% else
+%     fprintf('No Coordinates Added.\n');
+%     XY=[];
+%     r=[];
 % end
 % fprintf('done.\n')

@@ -56,7 +56,7 @@ for ihat=1:NC
     end
 end
 Npairs=size(IndxPair,1);
-
+% Load_Default_Directories;
 %% Create Command Figure
 %  Main Figure: Initialize ++++++++++++++++++++++++++++++++++++++
 % 'menubar','none' display tools: zoom
@@ -105,6 +105,12 @@ ax5=subplot(3,2,6); % CAG Signal  - - - - - - - - - - - - - - -
 set(ax5,'NextPlot','replacechildren');
 linkaxes([ax1,ax2,ax3],'x');
 linkaxes([ax4,ax5],'x');
+% Help Button
+ButtonHelp=uicontrol('Parent',checksignals,'Style','pushbutton','String',...
+    '?','Units','normalized','Position',[0.95 0.95 0.05 0.05],...
+    'FontSize',10,'FontWeight','bold',...
+    'Visible','on','Callback',@HelpCalciumMagic);
+
 %% Initialize Plot **************************************************
 n=1;
 while isempty(indxSIGNALS{n})
@@ -122,7 +128,7 @@ isSIGNAL=indxSIGNALS{j,i};
 % FR=Responses{j,i}(isSIGNAL,:);
 % Here: Detect if signals are detected or Rejected      (!!!!)
 if ~isempty(find(preLAMBDAS{j,i}(isSIGNAL)==0))
-    RubricTitle='Unprocessed Ca++ Signals | Condition: ';
+    RubricTitle=' Ca++ Signals | Condition: ';
     % Initialize Outputs
     for nvid=1:Npairs
         iaux=IndxPair(nvid,2); % Conditions
@@ -131,7 +137,7 @@ if ~isempty(find(preLAMBDAS{j,i}(isSIGNAL)==0))
     end
     % undetectedindx=true;
 else
-    RubricTitle='Detected Ca++ Transients | Condition: ';
+    RubricTitle='Ca++ Fluorescence Signals | Condition: ';
     indxSIGNALSOK=indxSIGNALS;  % Detected INDEXES
     % undetectedindx=false;
 end
@@ -182,7 +188,8 @@ detectedneurons=[];
                 'units','pixels','position',[0 50 400 50]);
             drawnow;
             % Calculate Paramters:
-            p=1; L=1; taus_0=[1,1,1]; SpuriousTh=1;
+            % Arbitrary Initiate to static workspace:
+            p=1; L=1; taus_0=[1,1,1]; SpuriousTh=1; MaxLambdaMax=1;
             Load_Default_Values_SP;
             [FR(okReview,:),~,~]=AR_Estimation(XD(okReview,:),p,fs,L,taus_0);
             for k=1:length(isSIGNAL(okReview))
@@ -525,12 +532,12 @@ detectedneurons=[];
         while checkname==1
             % Get Directory
             DP=pwd;
-            Slashes=find(DP=='\');
-            DefaultPath=[DP(1:Slashes(end)),'Processed Data'];
-            if exist(DefaultPath,'dir')==0
-                DefaultPath=pwd; % Current Diretory of MATLAB
-            end
+            Slashes=find(DP==filesep);
             fprintf('\n\n [ To update changes, please select the .mat file ] \n\n')
+            DefaultPath=fullfile(DP(1:Slashes(end)),DirectorySelector(1));
+            if ~isdir(DefaultPath)
+                DefaultPath=pwd; % Current Diretory of FinderSpiker
+            end
             [FileName,PathName] = uigetfile('*.mat',[' Pick the Analysis File to SAVE CHANGES ',Experiment],...
                 'MultiSelect', 'off',DefaultPath);
             % dotindex=find(FileName=='.');
@@ -551,6 +558,9 @@ detectedneurons=[];
             end
         end    
         delete(checksignals);
+    end
+    function HelpCalciumMagic(~,~,~)
+        HelpGUI;
     end
 end
 %% END OF THE WORLD

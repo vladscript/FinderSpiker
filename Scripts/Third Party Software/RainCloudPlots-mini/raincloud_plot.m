@@ -116,7 +116,8 @@ yl = get(gca, 'YLim');
 set(gca, 'YLim', [-yl(2)*lwr_bnd yl(2)]);
 
 % width of boxplot
-wdth = yl(2) * 0.25;
+% wdth = yl(2) * 0.25;
+wdth = yl(2) * 0.95;
 
 % jitter for raindrops
 jit = (rand(size(X)) - 0.5) * wdth;

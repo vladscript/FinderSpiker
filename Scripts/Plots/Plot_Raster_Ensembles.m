@@ -139,14 +139,14 @@ set(gca,'YTickLabel',yticks(1:stepy:C))
 set(gca,'TickLength',[0,0])
 
 ax2=subplot(3,1,3);
-plot(ts*(1:length(sum(R)))/60,sum(R),'k','LineWidth',1)
+plot(ts*(1:length(sum(R,1)))/60,sum(R,1),'k','LineWidth',1)
 if ~isempty(ColocateIndx)
     hold on;
     plot(ts*(0:length(sum(R))-1)/60,sum(R(1:numel(Neurons_Colocalized),:)),'Color',ColColor,'LineWidth',1)
 end
 hold off;
 if C>0
-    axis([0,ts*(size(R,2)-1)/60,0,max(sum(R))+1])
+    axis([0,ts*(size(R,2)-1)/60,0,max(sum(R,1))+1])
 end
 % grid on
 ylabel('CAG')
@@ -160,9 +160,9 @@ end
 
 set(gca,'Box','off')
 
-lisp=linspace(round(max(sum(R))/2),max(sum(R)),2);
+lisp=linspace(round(max(sum(R,1))/2),max(sum(R,1)),2);
 if lisp(1)~=lisp(2)
-    set(gca,'YTick',floor(linspace(round(max(sum(R))/2),max(sum(R)),2)))
+    set(gca,'YTick',floor(linspace(round(max(sum(R,1))/2),max(sum(R,1)),2)))
 end
 linkaxes([ax1,ax2],'x')
 end

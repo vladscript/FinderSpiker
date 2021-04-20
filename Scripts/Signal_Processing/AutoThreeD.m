@@ -1,26 +1,9 @@
-% Main script to Load & Process Calcium Fluorescence Signals
-% It detects Calcium Transients from VIDEOS of a single slice (EXPERIMENT)
-% Sugggested Directorie's Strcuture:
-% NAME_EXPERIMENT/ {VIDEOS & Coordinates from fSIENN):
-% Input (same directory): 
-%   ALL (XY).csv        Coordinates from 4th row x,y,r
-%   Condition_A_00.avi
-%   Condition_A_01.avi
-%   ...
-%   Condition_B_00.avi
-%   ... 
-%   Condition_Z_##.avi
-% Output
-%   ExperimentID.mat @ cd ..\Processed Data: Useful Workspace Variables
-%   ExperimentID.csv @ cd ..\Features Tables:Processing Signal Features
-%   ExperimentID.csv @ cd ..\Resume Tables:  Experiment Resume Features
-%   Using GitHub                    19/01/2018
-%   Important Update:               09/07/2018
-%% Global Setup ***********************************************************
-clc
-clear;
-close all;
-%% Global Variables:
+% Automatic Denoise Detrend & Deconvolution 
+% Accepted Signals:
+% SNR>0 and Highly +Skewed Signals
+function [ESTSIGNALS,SNRwavelet,SNRindx,TAUSall,isSIGNALS,...
+    notSIGNALS]=AutoThreeD(NumberofVideos,L,p,taus_0,dyename,FolderNameRT)
+%% Call for global variables
 global SIGNALS;
 global DETSIGNALS;
 global preDRIVE;
@@ -33,120 +16,17 @@ global SIGNALSclean;
 global SNRlambda;
 global Experiment;
 global RasterAlgorithm;
-% global isSIGNALS;
-% global notSIGNALS;
-%% ADDING ALLSCRIPTS
-Import_FinderSpiker;
-
-%% Set Default Directory of Experiments
-DefaultPath='C:\Users\Vladimir\Documents\Doctorado\Experimentos\'; % Load from DEFAULT
-if exist(DefaultPath,'dir')==0
-    DefaultPath=pwd;
-end
-%% Read Sampling Frequency
-fs=NaN; % To read fs to get into the following loop:
-while isnan(fs) % Interface error user reading fs
-    fs = inputdlg('Sampling Frequency [Hz] : ',...
-                 'Frames per Second or', [1 75]);
-    fs = str2double(fs{:});
-end
-% Read Fluorophore DYe
-dyename = inputdlg('Fluorophore : ',...
-             'DYE', [1 75]);
-% fs = str2double(fs{:});
-
-%% Read Names, Path and Coordinates***********************************
-[Names_Conditions,NumberofVideos,FN,PathName,XY,r]=Read_Videos(DefaultPath);
-for v=1:length(NumberofVideos)
-    NVal(v)=round(str2double(NumberofVideos(v)));
-end
-NV=max(NVal);   % Max N of Videos
-[~,NC]=size(FN);                                % N Conditions
-%% Initalization Data Output
-SIGNALS=cell(NV,NC);
-DETSIGNALS=cell(NV,NC);
-ESTSIGNALS=cell(NV,NC);
-SNRwavelet=cell(NV,NC);
-Responses=cell(NV,NC);
-preDRIVE=cell(NV,NC);
-preLAMBDAS=cell(NV,NC);
-TAUSall=cell(NV,NC);
-% SIGNALSclean=cell(NV,NC);
-RASTER=cell(NV,NC);
-isSIGNALS=cell(NV,NC);
-notSIGNALS=cell(NV,NC);
-LAMBDASSpro=cell(NV,NC);
-SNRs=cell(NV,NC);
-DRIVERs=cell(NV,NC);
-SIGNALSclean=cell(size(SIGNALS)); % Detected clean SIGNALS
-SNRlambda=cell(size(preLAMBDAS));    % Sparse Empirical SNRs
-RasterAlgorithm='Driver'; % 'OOPSI', 'Derivative'
-%% Get the Experiment ID:
-FolderNamePD='\Processed Data';
-slashes=find(PathName=='\');
-Experiment=PathName(slashes(end-1)+1:slashes(end)-1); % Experiment ID
-Experiment(Experiment==' ')='_'; % REPLACE SpaceS with '_'
-ExpIDDef{1}=Experiment;
-% Confirm ID of the Experiment
-ExpInput= inputdlg('Experiment ID: ','Confirm unique ID:/Press Canel to use default', [1 75],ExpIDDef);
-if ~isempty(ExpInput)
-    Experiment=ExpInput{1};
-    Experiment(Experiment==' ')='_'; % REPLACE SpaceS with '_'
-end
-fprintf('>>Experiment ID: %s\n',Experiment)    
-
-%% Load Data *********************************************************
-% For each CONDITION and VIDEO
-for i=1:NC
-    for j=1:str2double(NumberofVideos{i})
-        FileName=FN{j,i};
-        [mov]=Video_Load(FileName,PathName);    % Load Video
-        [FS]=Fluorescence_Load(mov,XY,r);       % Load Fluorescence
-        SIGNALS{j,i}=FS;
-    end
-    disp('***')
-end
-% Transform to radius cell of ROIs
-if iscell(r)
-    fprintf('>>Calculating radius of ROIs:')
-    RADroi=r;
-    RAD=zeros(numel(r),1);
-    for xi=1:numel(r)
-        PixelROIs=RADroi{xi};
-        Xradius=round((max(PixelROIs(:,1))-min(PixelROIs(:,1)))/2);
-        Yradius=round((max(PixelROIs(:,2))-min(PixelROIs(:,2)))/2);
-        MaxRadius=max([Xradius,Yradius]);
-        RAD(xi)=MaxRadius;
-    end
-    r=RAD;
-    fprintf('done.\n')
-end
-[H,W]=size(mov(1).cdata);   % Height & Width
-clear mov;                  % Clear Video Structure
-%% Save(1) RAW Data * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
-% Direcotry to Save: Up from  this one (pwd)
-FileDirSave=pwd;
-slashes=find(FileDirSave=='\');
-FileDirSave=FileDirSave(1:slashes(end));
-%% Save data SIGNALS
-if ~isdir([FileDirSave,FolderNamePD])
-    disp('Folder [Processed Data] created')
-    mkdir([FileDirSave,FolderNamePD]);
-end
-save([FileDirSave,FolderNamePD,'\',Experiment,'.mat'],'Experiment','SIGNALS',...
-    'Names_Conditions','NumberofVideos','XY','fs','r');
-    disp('SAVED RAW DATA')
-%% SETUP PROCESSING PARAMTERS ******************************
-
-Load_Default_Values_SP;
-
-%% DETRENDING AND SPARSE DECONVOLVE [AUTOMATIC] DETECTION
-[NV,NC]=size(SIGNALS);
+% Init OutputVariables:
+ESTSIGNALS=cell(size(SIGNALS));
+SNRwavelet=ESTSIGNALS; TAUSall=ESTSIGNALS;
+isSIGNALS=ESTSIGNALS; notSIGNALS=ESTSIGNALS;
+%%
+NC=size(SIGNALS,2);
+% Processing Resume Table Columns:
 ColumnNames={'Fluo_Dye','f_s','DetectedCells','Frames',...
         'minSNR','minSkewness','TimeProcessing'};
 disp('**************** +++[Processing]+++ *************************')
 for i=1:NC
-    auxj=0;
     for j=1:str2double(NumberofVideos{i})
         % Initialize and Read Data
         X=SIGNALS{j,i};
@@ -157,9 +37,6 @@ for i=1:NC
         DRIVER=zeros(Ns,Frames);
         LAMBDASS=zeros(Ns,1);
         Dfix=zeros(Ns,Frames);
-        % XDfix=zeros(Ns,Frames);
-        Xestfix=zeros(Ns,Frames);
-        XDupdate=zeros(Ns,Frames);
         % Display Info **********************
         disp(['               [>> Condition: ',num2str(i),'/',num2str(NC),']']);
         disp(['               [>> Video    : ',num2str(j),'/',NumberofVideos{i},']']);
@@ -168,8 +45,6 @@ for i=1:NC
         % XD=only_detrending(X);
         % Denoising & Feature Extration ***********************************
         [Xest,SNRbyWT,SkewSignal,~,SkewNoise,XDupdate]=denoise_wavelet(X);
-        % Find Basal Slow Changing Signals
-        % BasalSwitch=basaldetector(X,XDupdate,Xest);
         %% DRIVER ANALYSIS
         IndexesFix=1;       % TO enter to the WhileLoop
         FixedSignals=[];    % 
@@ -190,17 +65,13 @@ for i=1:NC
             %%% Decision Features
             % SNR >0 *******************************************
             SNRindx=find(SNRbyWT>0);
+            SNRindx=makerowvector(SNRindx);
             % Skew PDFs ****************************************
             % [skew'noise PDF is VERY like RANDN(Ns;Frames)]
             Th_Skew=max(SkewNoise);
             indxSKEW=find(SkewSignal>Th_Skew);
             % indxSKEW=find(skewness(XDupdate')>Th_Skew);
             indxSkewness=makerowvector(indxSKEW);
-            % Peaks Ratio of the positive skew signals *********
-            % indxPeakRatio=find(ABratio>1); %!!!!!!!!! [ IGNORED ]
-            % Make Row Vectors [1xN]:-------------------------
-            SNRindx=makerowvector(SNRindx);
-            % indxPeakRatio=makerowvector(indxPeakRatio);
             % Get Non-repeated indexes:
             Accepted_index=unique([SNRindx,indxSkewness]);
             Rejected_index=setdiff(1:Ns,Accepted_index);
@@ -233,8 +104,7 @@ for i=1:NC
                 end
                 %%% Sparse Deconvolution *******************************************
                 [DRIVER(AcceptedINDX,:),LAMBDASS(AcceptedINDX)]=maxlambda_finder(XDupdate(AcceptedINDX,:),FR(AcceptedINDX,:));
-                % preDRI=DRIVER;
-                % KEEP SNR>0 and High+Skewed Signals
+                % KEEP SNR>0 and Highly +Skewed Signals
                 %% Check Driver - - - - - - - - - - - - - - - - - - - - 
                 [Dfix(AcceptedINDX,:),XDfix,Xestfix,LambdasFix,IndexesFix,Features]=...
                     analyze_driver_signal(DRIVER(AcceptedINDX,:),...
@@ -283,8 +153,6 @@ for i=1:NC
                 [LAMBDASS,X_SPARSE,DRIVER]=fit_sparse(X_SPARSE,Xest,XDupdate,LAMBDASS,FR,DRIVER,ActiveNeurons);
                 
             else
-                AcceptedINDX=[];
-                RejectedINDX=setdiff(1:Ns,AcceptedINDX);
                 disp('             *********************' )
                 disp('             *********************' )
                 disp('             ******PURE NOISE ****' )
@@ -336,69 +204,23 @@ for i=1:NC
             Th_SNR=max(SNRbyWT);
         end
         TimeProcessing=toc;             % Processing Latency [s]
+        % Processign Summaries:
         T=table( dyename,{num2str(fs)},{num2str(length(ActiveNeurons))},...
             {num2str(Frames)},{num2str(Th_SNR)},{num2str(Th_Skew)},...
             {num2str(TimeProcessing,2)} );
 
         T.Properties.VariableNames=ColumnNames;
         % Save Table in Resume Tables of the Algorithm Latency*********
-        if isdir([FileDirSave,'\Resume Tables'])
-            writetable(T,[FileDirSave,'\Resume Tables\',[Experiment,'-',Names_Conditions{i}],'.csv'],...
-                'Delimiter',',','QuoteStrings',true);
-            disp(['Saved Table Resume: ',Experiment,'-',Names_Conditions{i}])
-        else % Create Directory
-            disp('Directory >Resume Tables< created')
-            mkdir([FileDirSave,'\Resume Tables']);
-            writetable(T,[FileDirSave,'\Resume Tables\',[Experiment,'-',Names_Conditions{i}],'.csv'],...
-                'Delimiter',',','QuoteStrings',true);
-            disp('Resume Tables Direcotry Created');
-            disp(['Saved Table Resume: ',Experiment,'-',Names_Conditions{i}])
+        FileDirSave=getDir2Save();
+        if ~isdir([FileDirSave,FolderNameRT])
+            mkdir([FileDirSave,FolderNameRT]);
+            fprintf('Directory [%s] created',FolderNameRT)
         end
-        % ARcoeffcients{j,i}=ARc;                 % Autoregressive Coefficients
-        % SIGNALSclean{j,i}=X_SPARSE;             % Cleansignals
-        % LAMBDASpro{j,i}=LAMBDASproc;            % Sparse Parameter              * To Datasheet
-        % SNRs{j,i}=SNRbySD;                      % Signal to Noise Ratio [dB]    * To Datasheet lambdas<1
-        % DRIVERs{j,i}=DRIVERSpro;                % Driver Signals
-        % QoVid{j,i}=QoV;                         % QUality of Videos  
+        writetable(T,[FileDirSave,FolderNameRT,[Experiment,'-',Names_Conditions{i}],'.csv'],...
+                        'Delimiter',',','QuoteStrings',true);
+        disp(['Saved Table Resume: ',Experiment,'-',Names_Conditions{i}])
     end
     disp(' |0|||||||||||||||||||||0||||||||||||||||||||||||0||||||||||||||| ')
     disp(' |||||0||||||||||||||||0||||DATA PROCESSED|||||||||||||||||0||||| ')
     disp(' |||0||||||||||||0||||||||||||||||0|||||||||||||||||||||||||||||| ')
 end
-%% SAVING(2) Processed Data & Feature Extraction |  Resume Table 
-% Save Auto-Processed DATA * * * * * * * * * * * * * * * * * * * * * * * * 
-save([FileDirSave,'\Processed Data\',Experiment,'.mat'],'DETSIGNALS','ESTSIGNALS',...
-    'SNRwavelet','SIGNALSclean','SNRlambda','RasterAlgorithm',...
-    'preDRIVE','preLAMBDAS','TAUSall','RASTER','isSIGNALS','notSIGNALS',...
-    'Responses','dyename','-append');
-disp('Updated: {Feature-Extraction} DATA')
-%% Sort & Clean Rasters ***************************************************
-% make it nested function--->
-% Sort by Activation in each Condition:
-[New_Index,Raster_Condition,RASTER_WHOLE]=SortNeuronsCondition(RASTER);
-% Plot_Raster_V(RASTER_WHOLE(New_Index,:),fs);
-RASTER_WHOLE_Clean=RASTER_WHOLE(New_Index,:);
-XY_clean=XY(New_Index,:);
-% Clean Raster and Coordinates
-ActiveNeurons=find(sum(RASTER_WHOLE_Clean,2)>0);                % INDEX of Active NEURONS only
-RASTER_WHOLE_Clean=RASTER_WHOLE_Clean(ActiveNeurons,:);
-XY_clean=XY_clean(ActiveNeurons,:);                             % Clean Coordinates
-%% PLOT RESULTS
-Plot_Raster_Ensembles(RASTER_WHOLE_Clean,fs);                           % Clean Whole Raster
-CurrentFig=gcf;
-CurrentFig.Name = ['ID: ',Experiment,' automatically-processed'];
-CurrentFig.NumberTitle='off';
-Label_Condition_Raster(Names_Conditions,Raster_Condition,fs);   % Labels
-%% SAVE ReSULTS
-save([FileDirSave,'\Processed Data\',Experiment,'.mat'],'New_Index','Raster_Condition',...
-    'RASTER_WHOLE_Clean','XY_clean','-append');
-disp('Saved Sorted Raster Intel')
-
-%% Visual Inpspection & Manual Processing ********************************* GREAT!
-% Visual/Manual Proesssing Controler: (-+) & (--)
-mf=msgbox({'For Visual Inspection of Detected Ca++ Transients';'Type: ';...
-    '>>Detected_Visual_Inspection';' ';'And for Undetected Ca++ Transients';...
-    '>>Undetected_Visual_Inspection'});
-VisualInspector=[false,false];
-waitfor(mf); delete(mf);
-%% END OF THE WORLD**************************************************   

@@ -9,7 +9,7 @@ CurrentPathOK=[Dirpwd(1:slashesindx(end))];
 fullFileName = fullfile(PathName, FileName);
 load(fullFileName);
 % Plot P(x) and c(k) from Experiment Networks
-[Ne,Nc]=size(GEPHIDATA);
+[Ne,Nc]=size(GEPHIDATA); % Data are strings
 % Choose Colors
 [CM,ColorIndx]=Color_Selector(Names_Conditions);
 
@@ -29,6 +29,10 @@ NetParam=AllParams(Ncol);
 
 for e=1:Ne
     X=GEPHIDATA{e,:};
+    figure('Name',sprintf('CDFs Experiment: %s ',X.EXP_ID(1,:)),...
+        'NumberTitle','off','Position',[20 246 1336 420]);
+    ECDGaxis{e}=subplot(1,2,1);
+    sCDGaxis{e}=subplot(1,2,2);
     figure('Name',sprintf('Experiment: %s ',X.EXP_ID(1,:)),...
         'NumberTitle','off','Position',[20 246 1336 420]);
     MaxK=0;
@@ -37,6 +41,10 @@ for e=1:Ne
     PDF_param=cell(1,Nc);
     Nbins_k=zeros(1,Nc);
     Nbins_param=zeros(1,Nc);
+    % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    % Use Nodes with Degree>0 in C_i or peviously Degree>0 in C_i-1
+    % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    preActive=[]; 
     for c=1:Nc
         DataNet=GEPHIDATA{e,c};
         Ndata=numel(DataNet.degree);
@@ -44,16 +52,32 @@ for e=1:Ne
         netfeat=zeros(Ndata,1);
         % Degree ***************************************************
         for n=1:Ndata
-           var_k(n) = str2num( DataNet.degree{n});
-           netfeat(n) = str2num( DataNet{:,Ncol}{n} );
+            var_k(str2double( DataNet.id{n}),1) = str2double( DataNet.degree{n});
+            netfeat(str2double( DataNet.id{n}),1) = str2double( DataNet{:,Ncol}{n} );
         end
+        % Current or Previously Active NODES
+        preActive=unique([preActive;find(var_k>0)]);
+        var_k=var_k(preActive);
+        netfeat=netfeat(preActive);
+        % Range Values
         if max(var_k)>0
             k_range=1:max(var_k);
         else
             k_range=unique(var_k);
         end
+        % Var to make boxplots:
+        NetParametersExps{e,c}=netfeat;
+        
         MaxK=max([var_k;MaxK]);
         MaxParam=max([netfeat;MaxParam]);
+        
+        % CDFs: empmirical & smoothed
+        [ecdFun,epnet] = ecdf(netfeat);
+        [scdFun,spnet]=ksdensity(netfeat,linspace(min(netfeat),max(netfeat),numel(ecdFun)),'function','cdf');
+        plot(ECDGaxis{e},epnet,ecdFun,'LineWidth',2,'Color',CM(ColorIndx(c),:));
+        hold(ECDGaxis{e},'on')
+        plot(sCDGaxis{e},spnet,scdFun,'LineWidth',2,'Color',CM(ColorIndx(c),:));
+        hold(sCDGaxis{e},'on')
 % %         % KSDENSITY METHOD
 % %         % P(k)
 % %         [pk,kbin]=ksdensity(var_k,linspace(min(var_k),max(var_k),10),'function','pdf');
@@ -119,5 +143,38 @@ for e=1:Ne
         PDF_k{ChangeHists_k(c)}.BinEdges=PDF_k{BestbinK}.BinEdges;
         PDF_param{ChangeHists_param(c)}.BinEdges=PDF_param{BestbinParam}.BinEdges;
     end
+    for c=1:Nc
+        subplot(1,3,1); hold on;
+        pk=PDF_k{c}.Values;
+        edges=PDF_k{c}.BinEdges;
+        plot(edges(1:end-1)+diff(edges)/2,pk,'LineWidth',2,...
+            'Color',CM(ColorIndx(c),:),'Marker','o','MarkerSize',4,...
+            'MarkerEdgeColor',CM(ColorIndx(c),:),'MarkerFaceColor',CM(ColorIndx(c),:));
+        subplot(1,3,2); hold on;
+        pParam=PDF_param{c}.Values;
+        edgesParam=PDF_param{c}.BinEdges;
+        plot(edgesParam(1:end-1)+diff(edgesParam)/2,pParam,'LineWidth',2,...
+            'Color',CM(ColorIndx(c),:),'Marker','o','MarkerSize',4,...
+            'MarkerEdgeColor',CM(ColorIndx(c),:),'MarkerFaceColor',CM(ColorIndx(c),:));
+    end
 end
+disp('ok')
 
+%% BOXPLOTS
+for e=1:Ne
+    NetValues=cell(Nc,1);
+    for c=1:Nc
+        NetValues{c}=NetParametersExps{e,c};
+    end
+    figure; pairedraincloud('unpaired',CM(ColorIndx,:),0,0,NetValues);
+    title(sprintf('%s boxplots of %s',NetParam{1},GEPHIDATA{e,1}.EXP_ID(1,:)))
+end
+%% DRUG
+numberofExp=2;
+LIDDegree=NetParametersExps{numberofExp,1};
+DRUGDegree=NetParametersExps{numberofExp,2};
+[pMannWhit,h]=ranksum(LIDDegree,DRUGDegree);
+[h,pKolmorogov]=kstest2(LIDDegree,DRUGDegree);
+NetParam{1}
+GEPHIDATA{numberofExp,1}.EXP_ID(1,:)
+disp([pKolmorogov;pMannWhit])

@@ -25,6 +25,7 @@ end
 % Initialize Outputs:
 D=zeros(C,F);
 LAMBDASS=zeros(C,1);
+Load_Default_Values_SP;
 %% Main Loop
 for c=1:C
     x=XD(c,:); % Raw signal
@@ -34,7 +35,7 @@ for c=1:C
         r=r(1:end-length(r)/2);
     end
     
-    lambda_pow2 = 10;   % Initial very high 2-power lambda
+    lambda_pow2 = MaxLambdaMax;   % Initial very high 2-power lambda
     % It reduces lambda until it finds a driver signal 
     % Until it starts to fit negative samples
     %% First Case: Positive & Negative Driver Signal

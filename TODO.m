@@ -12,14 +12,23 @@
 % Network Link Weight Threshold: Minimum RoA of Neuron to Belong any ensemble
 % 
 %% READY TO GO:
+
+% Fucntionality MAIN updates:
+% HELP GUI for Calcium Magic
+% Segmentation of CSV Files
+% Display_NetworkPDFs Histograms with Lines instead of bars
 % Hebbian Times in Feature_Condition strcut
 % pairedraincloud UPDATED to read Cell arrays
 % Network PDFs updates @ Display_NetworkPDFs
 % Classification_Regions: KernelScale:fixed and OVA balarcolor normalized
 % Included IndexSorting for Plot by activity rate
+)
 % 
 %% TO DO:
+%  INITIAL MENU: ImPatch Data or CSV Data
+% READ AND ANALYSE CSV Data
 % SVM paramters @ svmmulticlass
+% Import Graphs in R (igraph->
 % Intro interface @ Classification_Regions [PCA->SVM, MC & OVA stuff]
 % Load modesl and evaluate new Data for ML:
 %  It requires make new table of new data
@@ -30,6 +39,7 @@
 % Feature_Explorer with Statistics and cloud plots (?)
 
 % Plot_Experiment: Load .mat File if Wrokspace "Empty"
+% Export Rasters to CSVs
 
 %% Bugs & New Functions NOW
 
@@ -54,11 +64,9 @@
 
 
 % BEFORE TO RELEASE *******************************************************
-% DELETE >Plot_Raster_V.m; gen_feat_table_merged.m; get_merged_coordinates;
-% NN2Gephi.m; Raster2fNet.m; get_iti_pdf(?); interval_duration_events(?);
-% Plot_Calcium_Transients.m; get_ensembles_manual.m
-% Plot_Raster_Results; get_ensemble_intervals; Plot_Ensembles;
-% Update_Directory; Features_Datasets_NBC; Best_Subset_Feature
+% DEPRECATE> ;
+% get_iti_pdf(?); interval_duration_events(?);
+% 
 
 %% FUTURE *****************************************************************
 % Export Rasters @ CSV format

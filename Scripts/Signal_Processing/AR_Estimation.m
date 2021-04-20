@@ -17,6 +17,7 @@ ARcoefficients=zeros(size(XD,1),p+1);
 TAUS=zeros(size(XD,1),3);
 FR=zeros(size(XD,1),samplesL);
 %% Main Loop
+fprintf('>>AR(%i) processes:',p)
 for c=1:size(XD,1)
     x=XD(c,:);
     % Estimate Coefficients
@@ -38,4 +39,6 @@ for c=1:size(XD,1)
     r_bi = taus(3)*(exp(-t_r/taus(2)) - exp(-t_r/taus(1)));
     r = r_bi; % use bi-exponential vector
     FR(c,:)=r';
+    fprintf('%i ',c)
 end
+fprintf('\n')
