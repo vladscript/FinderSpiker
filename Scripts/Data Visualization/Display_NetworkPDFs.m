@@ -25,6 +25,13 @@ AllParams=X.Properties.VariableNames;
 
 Ncol=index_var+5-1;
 NetParam=AllParams(Ncol);
+%% DATA
+% EDIT to load data from functions: Display_NetworkPDFs !!!!!!!!!!!!
+
+[TotalTable,DATAnet]=TableNetwork(ExsitFeature,GEPHIDATA,EXPLIST,Names_Conditions,ActualFeature);
+[ExsitFeature,EXPLIST]=emptycolnettables(GEPHIDATA,Names_Conditions,ActualFeature);
+
+
 %% Do Magic Plots
 
 for e=1:Ne

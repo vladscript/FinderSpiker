@@ -48,6 +48,12 @@ switch choiceFile
         fprintf('>>Make Data Table\n')
         % Run Interface to load tables and select Features
         [X,Y,NamesFeatures,FolderName,FileMat]=makedatatable();
+        NaNExps=find(isnan(sum(X,2)));
+        OkExps=find(~isnan(sum(X,2)));
+        X=X(OkExps,:);
+        Y=Y(OkExps);
+        NaNExps=find(isnan(sum(X,2)));
+        
 end
 
 %% Color for Labels 

@@ -39,6 +39,7 @@ while readOK
             IDpart=IDpart';
         end
         IDsList{ntable}=IDpart;
+        NIds(ntable)=numel(IDpart);
         FeatureList{ntable}=setdiff(ColumnLabels,ColumnLabels([index_var,index_var2]));
         TableDirsList{ntable}=[CurrentPathOK,FileName];
         ntable=ntable+1;
@@ -48,6 +49,7 @@ while readOK
         readOK=false;
     end
 end
+NIds=max(NIds);
 %% Select Features and Rread/merge tables *********************************
 
 for n=1:ntable-1
@@ -72,7 +74,7 @@ RightLabels=inputdlg(defnames,name,numlines,defnames);
 fprintf('>>Loading Data< ')
 for n=1:ntable-1
     Xraw=readtable(TableDirsList{n});
-    Xpart=table2array(Xraw(:,Features2read{n}));                % Features
+    Xpart=table2array(Xraw(:,Features2read{n}));           % Features
     Ypart=categorical(table2array( Xraw(:,LabelList(n))) );% Labels
     % Fix Labels
     Ycopy=Ypart;
@@ -83,6 +85,12 @@ for n=1:ntable-1
     end
     % Observations Sorting
     [UniqueIDs{n},Indexes]=unique([IDsList{n},Ycopy],'rows'); % ALREADY SORTED
+%     if n>1 && size(Xpart,1)~=NIds
+%         % Missing Analyzed Experiments
+%         fprintf('>Adding NaNs to missing data\n')
+%         Xpart=[Xpart;repmat(NaN,NIds-size(Xpart,1),size(Xpart,2))];
+%         strcmp(IDsList{1},IDsList{n})
+%     end
     % # DATA #
     X=[X,Xpart(Indexes,:)];
     Y=[Y,Ycopy(Indexes)];

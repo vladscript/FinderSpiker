@@ -10,6 +10,12 @@
 %           TypeCycles(2)->Closed
 %           TypeCycles(3)->Open
 % Network Link Weight Threshold: Minimum RoA of Neuron to Belong any ensemble
+% Use Nodes with Degree>0 in C_i or peviously Degree>0 in C_i-1
+% 
+%% URGENT
+% 
+% EDIT to load data from functions: Display_NetworkPDFs !!!!!!!!!!!!
+% Datos de neurodesarrollo UPDATE
 % 
 %% READY TO GO:
 
