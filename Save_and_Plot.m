@@ -27,6 +27,7 @@ while checkname==1
     if exist(DefaultPath,'dir')==0
         DefaultPath=pwd; % Current Diretory of MATLAB
     end
+    uiwait(msgbox('Open .mat file to overwrite & update changes'))
     [FileName,PathName] = uigetfile('*.mat',[' SAVE CHANGES & pick the Analysis File ',Experiment],...
         'MultiSelect', 'off',DefaultPath);
     % dotindex=find(FileName=='.');
