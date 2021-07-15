@@ -4,8 +4,7 @@
 % <https://github.com/vladscript/FinderSpiker.git>
 % 
 % |Steps Guide|
-
-
+% 
 %% 0. SETTTINGS
 % 
 % * Import ALL functions        >>Import_FinderSpiker
@@ -23,12 +22,12 @@
 % * >>Undetected_Visual_Inspection
 % * >>Save_and_Plot
 % 
-% REVIEW DATA:
+% *REVIEW DATA:*
 % 
 % * >>Plot_Experiment
 % 
 %% 2. RASTER SELECTION & ACTIVITY FEATURES
-% ACTUAL MODE: @ Original Coordiantes Order
+% At Original Coordiantes Order
 % 
 % * >>Select_Rasters
 % 
@@ -37,11 +36,11 @@
 % * >>Select_Raster_PositiveCells;
 % * >>Select_Raster_NegativeCells
 % 
-% 2.1 CHECK RASTER's Selection DURATIONs: 
+% *2.1* CHECK RASTER's Selection DURATIONs: 
 % 
 % * >>RasterDurations=get_raster_durations(Onsets,R_Condition,fs);
 % 
-% 2.2 TOTAL NETWORK (without Step 3) 
+% *2.2* TOTAL NETWORK (all cells) 
 % 
 % Save Links Features Without neither Ensembling nor Thresholding
 % 
@@ -51,18 +50,18 @@
 % 
 % * >>Links_Features_Display
 % 
-% 2.3 RETRIEVE RASTER for ANALYSIS 
+% *2.3* RETRIEVE RASTER for ANALYSIS 
 % 
 % * >>R=RASTER_Selected_Clean'; % ALL CONDITIONS CONCATeNATED
 % * >>R_CONDITION1=R_Condition{1}; % Cells x Frames (dim)
 % ...
 % * >>R_CONDITIONi=R_Condition{i};
 % 
-% 2.4 Plot Sorted by Rate of Activiyt
+% *2.4* Plot Sorted by Rate of Activiyt
 % 
 % * >>[IndexSorteActivity]=plot_activityrate(R_Condition,Names_Conditions,fs);
 % 
-% 2.5 Plot slopes of CAG accumulaive sum
+% *2.5* Plot slopes of CAG accumulaive sum
 % 
 % * >>[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions)
 % 
@@ -71,7 +70,7 @@
 % * >>[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation)
 % FinderSpiker_Calcium
 %% 3. CLUSTERING NEURONAL ENSEMBLES
-% AUTOMATICAL & MANUAL MAGIC
+% AUTOMATICAL & CUSTOM
 % 
 % * >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDTIONi);
 % 
@@ -81,45 +80,49 @@
 % 
 % * >>NeuralNetwork 
 % 
-% 3.1 DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI) ********
-% Neural ensemble and Functional Network Features Extraction
+% *3.1* DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI)
+% 
+% Neural ensembles and Functional Network Features Extraction
 % 
 % * >> Ensemble_Sorting
 % 
-% 3.2 DISPLAY STAIRS of the ENSEMBLES  ********
+% *3.2* DISPLAY STAIRS of the ENSEMBLES  ********
 % Sequnce of Ensembles of the Experiment
 % 
 % * >> Plot_Hebbian_Stairs
 % 
-% 3.2 PLOT ENSEMBLES FAST *************************************************
+% *3.2* PLOT ENSEMBLES FAST 
 % 
 % * >> ImageEnsembles(R_ConditionNamej_Analysis,1);   %with Hebbian Sequences
 % * >> ImageEnsembles(R_ConditionNamej_Analysis);     %without  
 % 
 %% 4. COLOCALIZATION OF MARKED CELLS 
-% % Requirements: Run 'Select_Rasters' & load .mat file
+% 
+% It requires to run '>>Select_Rasters' & load .mat file @ worksapce
 % 
 % * >>Merge_Finder_Magic
 % 
 %       It gets outputs: R_merged,R_nomerged,MetaDataColocaliation
-% % Check Raster plots:
+% Check Raster plots:
 % 
 % * >>Plot_Merged_NotMerged
 % 
-% % Plot slopes of CAG accumulaive sum
+% Plot slopes of CAG accumulaive sum
 % 
-% * >>[M,B]==slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation)
+% * >>[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation)
 % 
-% % Plot slopes of POSITVE selected cells:
+% * >>[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions)
+% 
+% Plot slopes of POSITVE selected cells:
 % 
 % * >>plot_activitychange(R_merged,Names_Conditions,fs)
 % 
-% % Update Seection of Raster:
+% Update Selection of Raster with merged cells:
 % 
 % * >>Update_Mergeing;
 % 
 %% 5. RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION 
-% 5.1 Display Signals:
+% *5.1* Display Signals:
 % 
 % 0) Get Merged Coordinates (IF SO)
 % 
@@ -137,11 +140,13 @@
 % * >>[XS,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,SIGNALSclean,XY_subset,XY);
 % * >>figure; plot(XS{c}(Ci,:))
 % 
-% 5.2 Clean Video Output:
+% *5.2* Clean Video Output:
 % 
-% * >>Video_Cleaner;    % Edit @ Script
+% It requires script edition:
 % 
-%% N-EXPERIMENTS RESULTS 
+% * >>Video_Cleaner;    
+% 
+%% N-EXPERIMENTS ANALYSIS 
 % 
 %% 6. ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS
 % 
@@ -149,10 +154,10 @@
 % 
 % * >>Accumulate_Venn_Diagrams
 % 
-%                      Venn diagrams of:
-%                      > Active cells in each condition
-%                      > Unchanged,Activated Facilitated, Depressed,
-%                      Inhibited
+%                      Venn diagrams of cells:
+%                      > Unchanged,
+%                      > Activated and/or Facilitated, 
+%                      > Depressed and/or Inhibited
 % 
 % * >>Accumulate_Raster_Distances;      
 % 
@@ -185,88 +190,92 @@
 % 
 % Make Tables for SINGLE EXPERIMENTS
 % 
-% 7.1 RASTER FEATURES
+% *7.1* RASTER FEATURES
 % 
-% * >>Raster_Features_Display                 % make CSV table
+% * >>Raster_Features_Display                 
 % 
-%                                           % Make Special Directories
-% 7.2 ENSEMBLES GENERAL FEATURES
+%           > Make CSV table @'Raster Features'
 % 
-% * >>Ensembles_Features_Display              % make CSV table
+% *7.2* ENSEMBLES GENERAL FEATURES
 % 
-%                                           % Make Special Directories
-% 7.3 ENSEMBLES DETAILED FEATURES 
+% * >>Ensembles_Features_Display   
 % 
-% * >>Ensembles_Features_Detailed_Display     % make CSV table
+%           > Make CSV table @'Ensemble Features'
 % 
-%                                           % Make Special Directories
-% 7.4 LINKS FEATURES
+% *7.3* ENSEMBLES DETAILED FEATURES 
 % 
-% * >>Links_Features_Display                  % ?
+% * >>Ensembles_Features_Detailed_Display     
+% 
+%           > Make CSV table @'Ensemble Features'
+% 
+% *7.4* LINKS FEATURES
+% 
+% * >>Links_Features_Display (building)
 % 
 %% 8 MAKE DATASETS FROM GEPHI NETWORK FEATURES
 % 
-% 7.9  Export 'FEATURES' from Gephi     Data could be in  '\NetWorks-CSV'
+% *7.9*  Export 'FEATURES' from Gephi     
+%                           >Data could be in  '\NetWorks-CSV'
+%                           >For Gephi 0.9.1
 % 
-%                                         Using Gephi 0.9.1
-% 8.1  Make Network Features Dataset
+% *8.1*  Make Network Features Dataset
 % 
-% * >>Get_Gephi_Data;      % Make File MyNetworkDataSet.mat Dataset 
-%                          % from CSV Gephi Workspaces (per Experiment)
+% * >>Get_Gephi_Data
 % 
-%                        READ CSV files one by one->use [cancel] button to set next condition
+%      >Make File MyNetworkDataSet.mat Dataset 
+%       from CSV Gephi Workspaces (per Experiment)
+%      >READ CSV files one by one->use [cancel] button to set next condition
+%       Save .mat File @ FinderSpiker/DatabaseFolder
 % 
-%                        Save .mat File @ FinderSpiker/DatabaseFolder
+% * >>Make_Statistics_Gephi_Features
 % 
-% * >>Make_Statistics_Gephi_Features; 
-% 
-%                        Read MyNetworkDataSet.mat Files from @../DatabaseFolder
-%                        Show RAINPLOT for each Feature 
-%                        & Create Network_FEATURE_Dataset in CSV files:
-%                        'Network_FEATURE_Dataset_YYYYMMDDHHMM.csv'
+%       Read MyNetworkDataSet.mat Files from @../DatabaseFolder
+%       Show RAINPLOT for each Feature 
+%       & Create Network_FEATURE_Dataset in CSV files:
+%       'Network_FEATURE_Dataset_YYYYMMDDHHMM.csv'
 % 
 % * >>Concatenate_NetFeats 
 % 
-%                       Read Multiple Network_FEATURE_Datasets (same
-%                       Experiment)
-%                       Concatenate table of MULTIPLE Features in one
-%                       Create NetFEATS_Dataset.csv @FinderSpiker/DatabaseFolder
+%       Read Multiple Network_FEATURE_Datasets (same Experiment)
+%       Concatenate table of MULTIPLE Features in one
+%       Create NetFEATS_Dataset.csv @FinderSpiker/DatabaseFolder
 % 
-% 8.2  Display Networks parameters per Experiment
+% *8.2*  Display Networks parameters per Experiment
 % 
 % * >>Display_NetworkPDFs;      
+% 
 %                       Read MyNetworkDataSet.mat Files from @../DatabaseFolder
 %                       Diplay p(k), Chosen Paramter p(f) & f(k)
 % 
 %% 9  STACK DIVERS DATASETS
 % 
-% % Make DATASET for Stack Several tables from Divers Experiments:
+% Make DATASET for Stack Several tables from Divers Experiments:
 % 
 % * >>Merge_Feature_Datasets          
 % 
-%   -Raster Activity:       Table
-%   -General Ensembles:     Tables 
-%   -Detailed Ensembles:    Tables 
-%   -Network Features:      NetFEATS 
+% E.G. read datasets of *different* Experiments,i.e, CTRL, PARKINSON, DYSKINESIA, ...
 % 
-% E.G. DIVERS set of Experiments,i.e, CTRL, PARKINSON, DYSKINESIA, ...
+%   -Raster Activity:       Read CSV Tables
+%   -General Ensembles:     Read CSV Tables
+%   -Detailed Ensembles:    Read CSV Tables
+%   -Network Features:      NetFEATS 
 % 
 %% 10 DATA FEATURE EXPLORER: Merging Feature Datasets 
 % 
-% 10.1  Get ALL Features Dataset: Raster,Ensembles,Networks
+% *10.1*  Get ALL Features Dataset: Raster,Ensembles,Networks
 % 
 % * >>Merge_Datasets           % Make DATASET of the 3 Kinds in 1 file
 %                               (not needed for Step 10.2)
 % 
-% 10.2  Dysplay All Features RAINPLOTS & Statistics
+% *10.2*  Dysplay All Features RAINPLOTS & Statistics
 % 
 % * >>Feature_Explorer         *UNDER CONSTRUCTION*
 % 
 % 
 %% 11 MACHINE LEARNING:
 % 
-% * >>Classification_Regions; % Makes PCA and SVM classification from
-%                               tables of 'Merge_Feature_Datasets'
-%                               Feauture selection and Model building
-% 
+% * >>Classification_Regions; 
+%       Makes PCA and SVM classification from
+%       tables of 'Merge_Feature_Datasets'
+%       Feauture selection and Model building
 % 

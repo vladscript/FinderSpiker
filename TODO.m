@@ -1,4 +1,5 @@
-%% PERMANENT NOTES # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+%% PERMANENT NOTES # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+% 
 % Manual Mode is divided in two parts->Automatic and Standard:
 % [ Necessary to know the statistical power of the Automatic Mode,
 % Getting insohgts about -+ and -- (false+ & false-)]
@@ -10,42 +11,29 @@
 %           TypeCycles(2)->Closed
 %           TypeCycles(3)->Open
 % Network Link Weight Threshold: Minimum RoA of Neuron to Belong any ensemble
-% Use Nodes with Degree>0 in C_i or peviously Degree>0 in C_i-1
+% Active Neurons with RoA>0 in Condition_i or active in Condition_i-1
+% Nodes with Degree>0 in Condition_i or peviously in Condition_i-1
 % 
-%% URGENT
+%% NOW !
 % 
 % EDIT to load data from functions: Display_NetworkPDFs !!!!!!!!!!!!
-% Datos de neurodesarrollo UPDATE
+% Feature_Explorer with Statistics and cloud plots using pairedraincloud
 % 
 %% READY TO GO:
-
-% Fucntionality MAIN updates:
-% HELP GUI for Calcium Magic
-% Segmentation of CSV Files
-% Display_NetworkPDFs Histograms with Lines instead of bars
-% Hebbian Times in Feature_Condition strcut
-% pairedraincloud UPDATED to read Cell arrays
-% Network PDFs updates @ Display_NetworkPDFs
-% Classification_Regions: KernelScale:fixed and OVA balarcolor normalized
-% Included IndexSorting for Plot by activity rate
-)
 % 
 %% TO DO:
-%  INITIAL MENU: ImPatch Data or CSV Data
-% READ AND ANALYSE CSV Data
+
 % SVM paramters @ svmmulticlass
-% Import Graphs in R (igraph->
+% Export Graphs to R (igraph->
+% Export Raster to CSV
+% Export Feauture Sets to CSV
 % Intro interface @ Classification_Regions [PCA->SVM, MC & OVA stuff]
 % Load modesl and evaluate new Data for ML:
 %  It requires make new table of new data
 
 % Check Merge_Feature_Datasets-> maybe obsolete
-
-% Publish USER_GUIDE
-% Feature_Explorer with Statistics and cloud plots (?)
-
-% Plot_Experiment: Load .mat File if Wrokspace "Empty"
-% Export Rasters to CSVs
+% 
+% Plot_Experiment: Load .mat File if Workspace "Empty"
 % 
 % USE: https://umap-learn.readthedocs.io/en/latest/basic_usage.html
 %% Bugs & New Functions NOW

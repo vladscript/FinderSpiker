@@ -146,7 +146,8 @@ checksignals.Name=[RubricTitle,' Exp ID: ',Experiment,' ',Names_Conditions{i},' 
 % Initialize Variables:
 X=[]; XD=[]; D=[]; lambdass=[];
 R=[]; X_SPARSE=[]; snrS=[];
-FR=[]; indxSIGNALSOK=[]; isSIGNALS=[];
+FR=[]; 
+% indxSIGNALSOK=[]; isSIGNALS=[];
 
 retrieve_global_data();                 % Get Data from the Global Variables
 indx_neuron=1;                          % Starting Index
@@ -520,6 +521,7 @@ detectedneurons=[];
 
     function close_and_update(~,~,~)
         update_global_data;
+        uiwait(msgbox('Open .mat file to overwrite & update changes'));
         % Save as NEW Cell of Checked Indexes 
         % isSIGNALS=indxSIGNALSOut; % To Save
         % Update NO DETECTDED SIGNALS
