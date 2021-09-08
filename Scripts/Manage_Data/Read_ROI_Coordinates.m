@@ -13,10 +13,9 @@ if ~isnumeric(XYPathName)
             [XY,r]=getpixelsatROI(sROI);
             % r is a cell array of pixels elliptical ROIs:
         case 'csv'
-            
             fileID = fopen([XYPathName,XYFN],'r');
             fprintf('\n> Reading coordinates from: ')
-            IsNumberRow2 = textscan(fileID, '%f%f',1, 'Delimiter',...
+            IsNumberRow2 = textscan(fileID, '%f%f',0, 'Delimiter',...
                 ',', 'HeaderLines', 1, 'ReturnOnError', true);
             if isempty(IsNumberRow2{1})
                 fprintf('ImPatch\n')
