@@ -9,20 +9,27 @@
 % Input
 %   R: Matrix of activity (cells x frames)
 %   fs: sampling frequency
-% 
+%   TotalSum (optional)
 % Output
 %   p(1)scalar slope of the line p(2): scalar y-intercept of the line
 function [p,CumCAG]=slopethatraster(R,fs,varargin)
+CumCAG=cumsum(sum(R));
 if isempty(varargin)
     TotalAct=1;
+    PercProportion=1/TotalAct;
+%     TotalAct=60*fs;
 else
     TotalAct=varargin{1};
+    PercProportion=CumCAG(end)/TotalAct;
+    CumCAG=PercProportion*100*CumCAG/CumCAG(end);
 end
+
+
 % Cummulative sum of coactivitygram
-CumCAG=cumsum(sum(R));
+
 % Normalize to 100% as the max of cumCAG:
-PercProportion=CumCAG(end)/TotalAct;
-CumCAG=PercProportion*100*CumCAG/CumCAG(end);
+% PercProportion=CumCAG(end)/TotalAct;
+% CumCAG=PercProportion*100*CumCAG/CumCAG(end);
 
 % WHY NOT normalize:
 % Supose CAG1/10=CAG2

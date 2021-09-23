@@ -3,7 +3,7 @@
 % indxSIGNAL: Cell of Indexed Signal as Detected Ca^2+ Transient
 % Global Inputs:
 %   SIGNALS             Raw Fluuorescence
-%   DETSIGNALS          Detrended FLuorescence
+%   DETSIGNALS          Detrended Fluorescence
 %   preDRIVE            Preliminar Drive
 %   preLAMBDAS          Preliminar Lambdas
 %   RASTER              Detected Raster ACtivity
@@ -64,9 +64,10 @@ checksignals=figure('numbertitle','off',...
             'position',[46 42 600 450],...
             'keypressfcn',@manual_processing_ctrl,...
             'CloseRequestFcn',@close_and_update);
-%% Video Switcher
+%% Video Switcher/SIGNAL NAVIGATOR
 VideoSwitcher=uicontextmenu(checksignals);
 checksignals.UIContextMenu=VideoSwitcher;
+NextVideo=uimenu(VideoSwitcher,'Label','Go to','Callback',@gotosignal);
 NextVideo=uimenu(VideoSwitcher,'Label','Next Video ->','Callback',@switchvideo);
 PrevVideo=uimenu(VideoSwitcher,'Label','<- Previous Video','Callback',@switchvideo);
 %% Define colormap for raster image: white/black:activity/orange:empty
@@ -378,7 +379,28 @@ detectedneurons=[];
             update_data;
         end
     end
-    
+
+
+    function gotosignal(~,~)
+        GoToN=inputdlg('ROI number');
+        if ~isempty(GoToN)
+            Ngosignal=round(str2double(GoToN));
+            if sum(ismember(isSIGNAL,Ngosignal))>0
+                fprintf('>Moving to %i ROI\n',Ngosignal);
+                indx_neuron=find(isSIGNAL==Ngosignal);
+            else
+                [~,indx_neuron]=min(abs(isSIGNAL-Ngosignal));
+                fprintf('>No signal for %i ROI, but %i is the closest\n',Ngosignal,isSIGNAL(indx_neuron));
+            end
+            Get_Data;
+            disp(neuron)
+            update_data;
+            Plot_Data_Now;
+        else
+            fprintf('>No ROI selected\n');
+        end
+    end
+
     function reprocess_data()
         [d,x_sparse,~]=magic_sparse_deconvolution(xd,r,lambda);
         % re-re-process if detrending issue: emtpy last input

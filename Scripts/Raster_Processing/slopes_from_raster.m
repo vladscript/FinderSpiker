@@ -56,7 +56,10 @@ LineObjects={};
 for n=1:NC
     % ALL ***************************************************
     R=R_Condition{n};
+    % NORMLIZED
     [p,CumCAG]=slopethatraster(R,fs,TotalALL);
+    % UNNORMLIZED
+%     [p,CumCAG]=slopethatraster(R,fs);
     % PLOT *************************************************    
     figure(figAll)
     h=plot(1:size(R,2),CumCAG,'LineWidth',3,...
