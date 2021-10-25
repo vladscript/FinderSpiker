@@ -96,7 +96,7 @@ I = c3'*c3
 fprintf('done.\n')
 % % Display 2 PCA components scatter plot:
 % figure
-% gscatter(score(:,1),score(:,2),Y,CM(ColorIndx,:),'dso',10);
+% gscatter(score(:,4),score(:,6),Y,CM(ColorIndx,:),'dso',10);
 % xlabel('1st Principal Component')
 % ylabel('2nd Principal Component')
 % % Rows of score correspond to observations, 

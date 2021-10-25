@@ -37,8 +37,16 @@ Optimized for Acquired Data in [ImPatch](http://impatch.ifc.unam.mx/) and CSV ex
     - Neural Ensembles Features
     - Functional Network Features (from Gephi)
   - Rebuild denoised video and Ca Transients Detection
+### Neronal ensmbles algorithm demo (toy example):
+Open FinderSpiker as Current Folder in MATLAB and run:
 
-* Third Party Software:
+>>Import_FinderSpiker
+>>cd Demo' Scripts'\
+>>NeuronalEnsemblesToyExample % see code
+%>>edit NeuronalEnsemblesToyExample;
+
+
+### Third Party Software:
   - [SpaRSA](https://www.lx.it.pt/~mtf/SpaRSA/)
   - [Rain Cloud Plots](https://github.com/RainCloudPlots/RainCloudPlots)
   - [ReadImageJROI](https://www.github.com/DylanMuir/ReadImageJROI)
