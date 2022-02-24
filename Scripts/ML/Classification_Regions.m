@@ -16,7 +16,7 @@
 %% Setup:
 clc; clear; % close all;
 % Import_FinderSpiker;
-Nsim=20; % Repetitions for SVM
+Nsim=20; % Repetitions for SVM grid search
 % Probaility colormap:
 CMprobs=cbrewer('seq','GnBu',20);
 CMprobs=CMprobs(10:-1:1,:);

@@ -7,15 +7,18 @@
 %   A: Adjacency Matrix dim: Cells x Cells where:
 %       a_ij: percentage of time that the i-th & j-rh fired together
 function AdjacencyMatrix=GetAdjacencyMatrix(Raster)
-[C,frames]=size(Raster);
-% It is supossed to have more frames than cells ALWAYS!
-if frames<C
-    Raster=Raster';     % Tranpose Raster
-    bC=C;               % backup variable
-    C=frames;           % Switch Values
-    frames=bC;          % Switch Values
-    disp('> Data Transposed');
-end
+% If built in FinderSpiler, Always R size: Cells x Frames, but
+% from NN (JP) it is transposed, so:
+% [C,frames]=size(Raster);
+[frames,C]=size(Raster);
+% It is supossed to have more frames than cells ALWAYS: NOPE (feb/22)!
+% % % if frames<C
+% % %     Raster=Raster';     % Tranpose Raster
+% % %     bC=C;               % backup variable
+% % %     C=frames;           % Switch Values
+% % %     frames=bC;          % Switch Values
+% % %     disp('> Data Transposed');
+% % % end
 % This counts how many frames a couple of Neurons Fire Together
 AdjacencyMatrix=zeros(C); 
 ActiveFrames=find(sum(Raster));

@@ -1,9 +1,9 @@
 % Function to Sort Neurons According to the combination of Ensamble
 % Participation
 % Input
-%   labels_frames: enambles for each frame
+%   labels_frames: ensamble ID in each frame
 %   signif_frames: significant frames (ensamble activation)
-%   Experiment: Raster
+%   Experiment: Raster: Frames x Cells [transposed!!!!!]
 %   NG: Number of ensembles
 % Output
 %   New_Order:      Sorted Indexes
@@ -26,6 +26,7 @@ for g=1:NG
     Current_State=EnsemblesList(g);
     Frames_State=signif_frames(labels_frames==Current_State);
     Neurons_State{g}=find(sum(Experiment(Frames_State,:),1)>0);
+    fprintf('\n>Finding %i neurons fo ensemble %i',numel(Neurons_State{g}),g);
 end
 % ActiveNeurons=unique(Neurons_State);
 %% Sorting by Ensemble Combinations

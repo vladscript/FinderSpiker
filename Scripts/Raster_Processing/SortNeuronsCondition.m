@@ -5,17 +5,22 @@
 % Output
 %   NewIndex:           Sorted Neurons by Condition
 %   Raster_Conditon:    Raster per condition only
-function [New_Index,Raster_Condition,RASTER_WHOLE]=SortNeuronsCondition(RASTER)
+function [New_Index,Raster_Condition,RASTER_WHOLE]=SortNeuronsCondition(RASTER,varargin)
 % Size of the Cell:
 [NV,NC]=size(RASTER);
-% RASTER dimensions: Cells x Frames
-[NCells,Nframes]=size(RASTER{1});
-if NCells>Nframes
-    %aux1=NCells;
-    NCells=Nframes;
-    %Nframes=aux1;
-    TrnpseInd=1;
+if isempty(varargin{1})
+    % RASTER dimensions: Cells x Frames
+    [NCells,Nframes]=size(RASTER{1});
+    if NCells>Nframes
+        %aux1=NCells;
+        NCells=Nframes;
+        %Nframes=aux1;
+        TrnpseInd=1;
+    else
+        TrnpseInd=0;
+    end
 else
+    NCells=varargin{1};
     TrnpseInd=0;
 end
 %% Total possible combinations of conditions - - - - - - - - - - - - - - - 

@@ -242,7 +242,7 @@
 % 
 % *8.2*  Display Networks parameters per Experiment
 % 
-% * >>Display_NetworkPDFs;      
+% * >>Display_NetworkPDFs; %building
 % 
 %                       Read MyNetworkDataSet.mat Files from @../DatabaseFolder
 %                       Diplay p(k), Chosen Paramter p(f) & f(k)
@@ -279,3 +279,9 @@
 %       tables of 'Merge_Feature_Datasets'
 %       Feauture selection and Model building
 % 
+%% 12 EXPORT DATA:
+% 
+% * >>Export_Raster;  *UNDER CONSTRUCTION*
+%       Makes CSV of activity matrix to analyze elsewhere(e.g. ClustVis)
+% * >>Export_Signals;  *UNDER CONSTRUCTION*
+%       Makes CSV of fluorescence signals 

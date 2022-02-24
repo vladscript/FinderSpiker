@@ -28,8 +28,8 @@ NetParam=AllParams(Ncol);
 %% DATA
 % EDIT to load data from functions: Display_NetworkPDFs !!!!!!!!!!!!
 
-[TotalTable,DATAnet]=TableNetwork(ExsitFeature,GEPHIDATA,EXPLIST,Names_Conditions,ActualFeature);
-[ExsitFeature,EXPLIST]=emptycolnettables(GEPHIDATA,Names_Conditions,ActualFeature);
+% [TotalTable,DATAnet]=TableNetwork(ExsitFeature,GEPHIDATA,EXPLIST,Names_Conditions,ActualFeature);
+% [ExsitFeature,EXPLIST]=emptycolnettables(GEPHIDATA,Names_Conditions,ActualFeature);
 
 
 %% Do Magic Plots
@@ -177,11 +177,13 @@ for e=1:Ne
     title(sprintf('%s boxplots of %s',NetParam{1},GEPHIDATA{e,1}.EXP_ID(1,:)))
 end
 %% DRUG
-numberofExp=2;
+numberofExp=6;
 LIDDegree=NetParametersExps{numberofExp,1};
 DRUGDegree=NetParametersExps{numberofExp,2};
-[pMannWhit,h]=ranksum(LIDDegree,DRUGDegree);
+[pMannWhit,h,stats]=ranksum(LIDDegree,DRUGDegree)
 [h,pKolmorogov]=kstest2(LIDDegree,DRUGDegree);
 NetParam{1}
 GEPHIDATA{numberofExp,1}.EXP_ID(1,:)
-disp([pKolmorogov;pMannWhit])
+[numel(LIDDegree),numel(DRUGDegree)]
+
+% disp([pKolmorogov;pMannWhit])

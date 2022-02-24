@@ -37,7 +37,14 @@ Optimized for Acquired Data in [ImPatch](http://impatch.ifc.unam.mx/) and CSV ex
     - Neural Ensembles Features
     - Functional Network Features (from Gephi)
   - Rebuild denoised video and Ca Transients Detection
-### Neronal ensmbles algorithm demo (toy example):
+
+### Algorithms Flow Charts
+  - Signal Processing
+  - Neuronal Ensembles
+  - Functional Network
+  - Machine Learning
+
+### Neuronal Ensembles Algorithm demo (toy example):
 Open FinderSpiker as Current Folder in MATLAB and run:
 
 ```
@@ -56,3 +63,4 @@ Open FinderSpiker as Current Folder in MATLAB and run:
   - [SpaRSA](https://www.lx.it.pt/~mtf/SpaRSA/)
   - [Rain Cloud Plots](https://github.com/RainCloudPlots/RainCloudPlots)
   - [ReadImageJROI](https://www.github.com/DylanMuir/ReadImageJROI)
+  - [Neuronal Ensembles] (https://github.com/PerezOrtegaJ/Neural_Ensemble_Analysis)

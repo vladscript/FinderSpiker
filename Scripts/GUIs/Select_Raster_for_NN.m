@@ -45,6 +45,7 @@ while ~strcmp('Yes',okbutton)
     Raster_Selecter={};
     Onsets=cell(NC,1);
     XDEN=cell(NC,1); % Denoised Signals per Condition
+    Ncells=size(ESTSIGNALS{1},1); % NUmber of Cells 
     for c=1:NC
         R=Raster_Condition{c};
         XdenoisedAll=[]; % Denoised Signals Buffer
@@ -84,7 +85,7 @@ while ~strcmp('Yes',okbutton)
     end
     %% Ignore NonActive Coordinates in the Selection and Sort per Condition
     % Sort Neurons by Activation in Each Condition:
-    [New_Index,Raster_Condition_Sel,RASTER_WHOLE]=SortNeuronsCondition(Raster_Selecter);
+    [New_Index,Raster_Condition_Sel,RASTER_WHOLE]=SortNeuronsCondition(Raster_Selecter,Ncells);
     % Plot Whole Sorted Raster:
     RASTER_Selected_Clean=RASTER_WHOLE(New_Index,:);
     XY_selected=XY(New_Index,:);
