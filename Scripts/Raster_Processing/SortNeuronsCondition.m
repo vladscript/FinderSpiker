@@ -8,7 +8,7 @@
 function [New_Index,Raster_Condition,RASTER_WHOLE]=SortNeuronsCondition(RASTER,varargin)
 % Size of the Cell:
 [NV,NC]=size(RASTER);
-if isempty(varargin{1})
+if isempty(varargin)
     % RASTER dimensions: Cells x Frames
     [NCells,Nframes]=size(RASTER{1});
     if NCells>Nframes

@@ -6,7 +6,7 @@ global fs;
 global Names_Conditions;
 % make it nested function--->
 % Sort by Activation in each Condition:
-[New_Index,Raster_Condition,RASTER_WHOLE]=SortNeuronsCondition(RASTER);
+[New_Index,Raster_Condition,RASTER_WHOLE]=SortNeuronsCondition(RASTER,numel(XY(:,1)));
 % Plot_Raster_V(RASTER_WHOLE(New_Index,:),fs);
 RASTER_WHOLE_Clean=RASTER_WHOLE(New_Index,:);
 XY_clean=XY(New_Index,:);
