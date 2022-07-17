@@ -16,13 +16,13 @@
 % 
 %% NOW !
 % 
+% Bug in Network (CtxThal)/ Feature_Explorer/Fix Width boxplots
 % EDIT to load data from functions: Display_NetworkPDFs !!!!!!!!!!!!
 % Feature_Explorer with Statistics and cloud plots using pairedraincloud
 % Include intercluscoeff/getcluslabs in Accumulative Functions!!!
 % 
 %% READY TO GO
 % 
-% ICC function/fixes@networkdisplay
 % 
 %% TO DO:
 
