@@ -16,7 +16,7 @@ LT=[];
 % Main Loop
 for c=1:NC
     % data
-    % disp(c)
+    disp(c)
     r=R(c,:);       % Activity Row
     xe=XEST(c,:);   % denoised Signal
     if max(xe)~=min(xe)

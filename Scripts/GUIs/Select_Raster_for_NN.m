@@ -87,17 +87,26 @@ while ~strcmp('Yes',okbutton)
     % Sort Neurons by Activation in Each Condition:
     [New_Index,Raster_Condition_Sel,RASTER_WHOLE]=SortNeuronsCondition(Raster_Selecter,Ncells);
     % Plot Whole Sorted Raster:
-    RASTER_Selected_Clean=RASTER_WHOLE(New_Index,:);
+    
     XY_selected=XY(New_Index,:);
+    % Check repeated coordinates
+    IndxRepeated=repxychekcker(XY_selected);
+    if ~isempty(IndxRepeated)
+        fprintf('\n>Discarding repeated coordinates: ')
+        New_Index=New_Index(setdiff(1:size(XY_selected,1),IndxRepeated(2:2:end)));
+    end
+    fprintf('ready\n')
+    XY_selected=XY(New_Index,:);
+    RASTER_Selected_Clean=RASTER_WHOLE(New_Index,:);
     % Clean Raster and Coordinates
     % INDEX of SORTED Active NEURONS during the WHOLE experiment
     ActiveNeurons=find(sum(RASTER_Selected_Clean,2)>0);                 
     New_Index(ActiveNeurons)
     RASTER_Selected_Clean=RASTER_Selected_Clean(ActiveNeurons,:);
-    XY_selected=XY_selected(ActiveNeurons,:);                           % Clean Coordinates
-    Plot_Raster_Ensembles(RASTER_Selected_Clean,fs);                            % Clean Whole Raster
+    XY_selected=XY_selected(ActiveNeurons,:);
+    Plot_Raster_Ensembles(RASTER_Selected_Clean,fs);
     set(gcf,'Name',['ID: ',Experiment,' selected '],'NumberTitle','off')
-    Label_Condition_Raster(Names_Conditions,Raster_Condition_Sel,fs);       % Labels
+    Label_Condition_Raster(Names_Conditions,Raster_Condition_Sel,fs);
     % To Save active and Sorted:
     R_Condition={};
 

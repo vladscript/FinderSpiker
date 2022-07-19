@@ -21,6 +21,7 @@ Load_Default_Directories;
 
 %% Read Name, Path and Coordinates (if are there)**************************
 [Names_Conditions,NumberofVideos,FN,PathName,XY,r]=Read_CSV(DefaultPath);
+IndxRepeated=repxychekcker(XY);
 NC=1;
 NV= str2double( NumberofVideos{1} );
 % Read Fluorophore DYe
@@ -43,6 +44,7 @@ else
         stopproc=true;
     end
 end
+%% Signal Processing
 if ~stopproc
     %% Save(1/3) RAW Data 
     save_rawdata(FolderNamePD,NumberofVideos,XY,r,PathName,RADroi,dyename,FN);

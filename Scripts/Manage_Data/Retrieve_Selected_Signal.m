@@ -12,6 +12,8 @@
 function [X_sel,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,X,XY_selected,XY)
 % Indexes of Original that were Selected
 [~,~,IndexSorted]=intersect(XY_selected,XY,'rows','stable');
+% Loook for repeated ones:
+IndxRepeated=repxychekcker(XY_selected);
 
 [NV,NC]=size(X);
 X_sel=cell(1,NC);
