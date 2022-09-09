@@ -238,7 +238,8 @@ for i=1:Ns
                             IndxLow=find(xdets(LowWaves(1:end-1))<MeanNegModes);
                             % Check Indexes:
                             if isempty(IndxLow)
-                                IndxLow=min(xdets(LowWaves(1:end-1)));
+                                % IndxLow=min(xdets(LowWaves(1:end-1)));
+                                [~,IndxLow]=min(xdets(LowWaves(1:end-1)));
                             end
                             if numel(IndxLow)==1 && IndxLow==1
                                 IndxLow=[IndxLow,2];
