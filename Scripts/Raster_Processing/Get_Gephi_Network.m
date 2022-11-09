@@ -24,7 +24,7 @@
 % CSV files 4 Gephi Software:
 %   EXPID_Condition_Nodes.csv  ID/Label/Coordinates/State's Colors
 %   EXPID_Condition_Links.csv Source/Target/Weight
-function fNet=Get_Gephi_Network(Raster,XY_selected,Neurons_State,Cluster_Indexing,ColorState,labels_frames,Experiment,varargin)
+function fNet=Get_Gephi_Network(Raster,Ncells,XY_selected,Neurons_State,Cluster_Indexing,ColorState,labels_frames,Experiment,varargin)
 %% Setup
 [~,NStates]=size(Neurons_State); % Total States
 ActiveNeurons=[];
@@ -36,6 +36,11 @@ ActiveNeurons=unique(ActiveNeurons);
 % XY_ensambles=XY_selected(ActiveNeurons,:);
 XY_ensambles=XY_selected;
 % Raster to build functional Network
+if size(Raster,2)~=Ncells
+    Raster=Raster';
+else
+    disp('ok');
+end
 Raster_ensambles=Raster(:,ActiveNeurons);
 Frames=size(Raster,1); % Total Frames of Experimental Condition
 [~,C]=size(Raster_ensambles); % N Active Cells 
@@ -167,7 +172,7 @@ end
 % Be Cell i-th and Cell j-th
 % AdjacencyMatrix(i,j)=Number of simultaneous firing frames;
 % By Simultaneuos % Time 
-AdjacencyMatrix=GetAdjacencyMatrix(Raster_ensambles);
+AdjacencyMatrix=GetAdjacencyMatrix(Raster_ensambles');
 % NORMALIZED by Experimental Condition Time
 AdjacencyMatrix=AdjacencyMatrix./Frames; 
 % By Correlation:

@@ -17,14 +17,14 @@
 % Getting Activation Matrix (raster) from Calium Imaging Data for each Cell
 % DATA:                 VIDEOS, Sampling Frequency & Set of Coordinates
 % 
-% * >>FinderSpiker_Calcium
-% * >>Detected_Visual_Inspection
-% * >>Undetected_Visual_Inspection
-% * >>Save_and_Plot
+% * >>FinderSpiker_Calcium          % automatic deconvolution
+% * >>Detected_Visual_Inspection    % GUI to reject False +
+% * >>Undetected_Visual_Inspection  % GUI to reject False -
+% * >>Save_and_Plot                 % Save activity matrix
 % 
 % *REVIEW DATA:*
 % 
-% * >>Plot_Experiment
+% * >>Plot_Experiment               % Plot current stage of analysis
 % 
 %% 2. RASTER SELECTION & ACTIVITY FEATURES
 % At Original Coordiantes Order
@@ -70,19 +70,30 @@
 % * >>[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation)
 % FinderSpiker_Calcium
 %% 3. CLUSTERING NEURONAL ENSEMBLES
-% AUTOMATICAL & CUSTOM
+% AUTOMATIC MODE:
 % 
-% * >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDTIONi);
+% The cell variable 'R_condition' contains the activity matrices of each
+% 
+% experimental condition, e.g. >>R_CTRL=R_Condition{1};
+% 
+% Retrieve the activity matrices in new varaiables: R_CONDITION
+% 
+% * >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDITIONi);
+% 
+%  CUSTOM MODE
+% 
+% Set the coactivity threshold: 'CAGthreshold': integer number
+% 
+% Set the number of ensembles: 'Nensambles': integer number
 % 
 % * >>R_CONDITIONi_Analysis=get_ensembles(R_CONDTIONi,CAGthreshold,Nensambles);
 % 
-% HANDCRAFTED GUI (by JP): 
 % 
-% * >>NeuralNetwork 
+% *3.1* DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE
 % 
-% *3.1* DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI)
+% Neural ensembles features and CSV Functional Network Exportation.
 % 
-% Neural ensembles and Functional Network Features Extraction
+% Run and follow instructions:
 % 
 % * >> Ensemble_Sorting
 % 

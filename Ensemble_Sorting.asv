@@ -67,7 +67,7 @@ else
     NameCond=Names_Conditions;
 end
 %% Exporting to GEPHI and Ensemble Data per Condition
-Ncells=size(R_Condition{1},1);
+Ncells=size
 % Select Sort of Color for Gephi Visualization
 answer = questdlg('Make Node Colors for Gephi Visualization?', ...
 	'Mix Color Ensembles', ...
@@ -113,11 +113,11 @@ for c=1:NCplot
         % Save Network to Gephi**********************************
         switch answer
             case 'MIX'
-                fNet=Get_Gephi_Network(R,Ncells,XY_selectedClean,Neurons_State_Cluster,OrderOneCondition,ColorState,labels,Experiment,1);
+                fNet=Get_Gephi_Network(R,XY_selectedClean,Neurons_State_Cluster,OrderOneCondition,ColorState,labels,Experiment,1);
             case 'EVEN'
-                fNet=Get_Gephi_Network(R,Ncells,XY_selectedClean,Neurons_State_Cluster,OrderOneCondition,ColorState,labels,Experiment);
+                fNet=Get_Gephi_Network(R,XY_selectedClean,Neurons_State_Cluster,OrderOneCondition,ColorState,labels,Experiment);
             otherwise
-                % fNet=Get_Gephi_Network(R,XY_selectedClean,Neurons_State_Cluster,OneCondition,ColorState,labels,Experiment);
+                fNet=Get_Gephi_Network(R,XY_selectedClean,Neurons_State_Cluster,OneCondition,ColorState,labels,Experiment);
         end
         %  Color Mode: Compensate:
         % fNet=Get_Gephi_Network(R,XY_selectedClean,Neurons_State_Cluster,OrderOneCondition,ColorState,labels,Experiment);
