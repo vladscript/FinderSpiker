@@ -3,8 +3,10 @@
 %   'General Ensembles':    Neural Ensembles Features
 %   'Detailed Ensembles':   Single Neural Ensembles Features
 %% Intro
-fprintf('\n\nGet CSV Tables from Analsysis Features.\n\n')
+fprintf('\n\nGet CSV Tables from Analsysis Features.\n')
+fprintf('Table_Raster_Features_\n Ensemble_Features_\n Detailed_Ensemble_Features_\n Node_StatsFeature_Dataset_\n')
 %% Select Kind Of Features to Merge
+Load_Default_Directories;
 KindFeatures={'Raster Activity';'General Ensembles';...
     'Detailed Ensembles';'Network Features'};
 [index_var,index_CHECK] = listdlg('PromptString','Select Sort of Features:',...
@@ -20,7 +22,7 @@ Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
 % Select Folder
 if index_var<2
-    FolderDefault='Raster Features';
+    FolderDefault=FolderNameRaster;
     HeadersFeatures={'Condition','EXP_ID','RateNeurons','ActivityTimeFraction',...
         'ActiveRatioCAG','EffectiveActivity',...
         'ISImean','ISImode','ISImedian','ISIvar','ISIskew','ISIkurt',...
@@ -29,7 +31,7 @@ if index_var<2
         'RoAmean','RoAmode','RoAmedian','RoAvar','RoAskew','RoAkurt',...
         'RoTmean','RoTmode','RoTmedian','RoTvar','RoTskew','RoTkurt'};
 else
-    FolderDefault='Ensemble Features';
+    FolderDefault=FolderNameEnsembles;
     if index_var<3
         HeadersFeatures={'Condition','EXP_ID','Nensembles','Threshold','Dunns','MaxIntraVec','ClassError',...
          'RateTrans','RateCycles','SimpleCycles','ClosedCycles','OpenedCycles',...
@@ -82,6 +84,14 @@ if strcmp('Yes',okbutton)
     TS=TS(TS~=' ');
     SelectedCatergory(SelectedCatergory==' ')='_';
     SaveFile=[SelectedCatergory,'_Dataset_',TS,'.csv'];
+    %
+    CurrentPathOK=[Dirpwd(1:slashesindx(end)),FolderNameDataset];
+    if exist(CurrentPathOK,'dir')==0
+        % create
+        fprintf('>Creating database folder:')
+        mkdir(CurrentPathOK);
+        fprintf('done\n')
+    end
     % Select Destiny
     PathSave=uigetdir(CurrentPathOK,['Set Directory to save Dataset of: ',SelectedCatergory]);
     disp('>>Making CSV table...')

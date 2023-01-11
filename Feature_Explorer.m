@@ -3,9 +3,11 @@
 % 
 %% Load Tabel **************************************
 Import_FinderSpiker;
+button = questdlg('Paired data?','Data');
+Load_Default_Directories;
 Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
-CurrentPathOK=[Dirpwd(1:slashesindx(end))]; % Finder Spiker Main Folder
+CurrentPathOK=[Dirpwd(1:slashesindx(end)),FolderNameDataset]; % Finder Spiker Main Folder
 % Load File 
 [FileName,PathName,MoreFiles] = uigetfile({'*.csv'},' Dataset file of ALL Features',...
     'MultiSelect', 'off',CurrentPathOK);
@@ -31,10 +33,10 @@ Nfeat=numel(FeatureNames);                          % N features
 % Save Results to Retrieve Them
 DataCell=cell(Nconditions,1);
 for f=1:Nfeat % Feature Loop **********************************************
-    figure;
-    labelsplot=[];
-    DodgeInit=0.3;
-    Dodge=DodgeInit;
+%     figure;
+%     labelsplot=[];
+%     DodgeInit=0.3;
+%     Dodge=DodgeInit;
     % Set Text, Retrieve & Plot Data
     data=X(:,f);
     fprintf('>> %s @ Conditions:\n',char(FeatureNames(f)));
@@ -45,16 +47,21 @@ for f=1:Nfeat % Feature Loop **********************************************
             fprintf('  %s',char(Labels(c)))
         end
         DataCell{c}=data(Y==Labels(c));
-        hplot{c}=raincloud_plot(DataCell{c},'color',CM(IndxColor(c),:),'box_on',1,'alphaval',1,'box_dodge', 1, 'box_dodge_amount',Dodge, 'dot_dodge_amount', Dodge, 'box_col_match',0);
-        labelsplot=[labelsplot,hplot{c}{1}];
-        Dodge=DodgeInit*(c+1);
+%         hplot{c}=raincloud_plot(DataCell{c},'color',CM(IndxColor(c),:),'box_on',1,'alphaval',1,'box_dodge', 1, 'box_dodge_amount',Dodge, 'dot_dodge_amount', Dodge, 'box_col_match',0);
+%         labelsplot=[labelsplot,hplot{c}{1}];
+%         Dodge=DodgeInit*(c+1);
         LabelName{c}=char(Labels(c));
     end
+    figure
+    if strcmp(button,'Yes')
+        pairedraincloud('paired',CM(IndxColor,:),0,0,DataCell)
+    elseif strcmp(button,'No')
+        pairedraincloud('unpaired',CM(IndxColor,:),0,0,DataCell);
+    end
     axis tight; grid on;
-    legend(labelsplot,LabelName);
+%     legend(labelsplot,LabelName);
     title(char(FeatureNames(f)))
     fprintf('\n')
-    
     pause;
 end
 %% For paired Experiments: Delta Features

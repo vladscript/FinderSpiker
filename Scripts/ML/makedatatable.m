@@ -7,7 +7,8 @@ Y=[]; % Labels
 readOK = true;
 Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
-CurrentPathOK=[Dirpwd(1:slashesindx(end))]; % Finder Spiker Main Folder
+Load_Default_Directories;
+CurrentPathOK=[Dirpwd(1:slashesindx(end)),FolderNameDataset]; % Finder Spiker Main Folder
 ntable=1;
 % Table Locations and Label Column Indexes ********************************
 while readOK

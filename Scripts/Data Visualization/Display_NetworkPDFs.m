@@ -1,9 +1,13 @@
 % Requires to load myNetworkDataSet_XXXX.mat FILE
 % Directory:
 clear; %close all;
+fprintf('\n>Read Exported Node Parameters from Gephi &')
+fprintf('display PDFs and CDFs of node parameter\n')
+fprintf('It considers Nodes with Degree>0 in C_i or peviously Degree>0 in C_i-1\n');
+Load_Default_Directories;
 Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
-CurrentPathOK=[Dirpwd(1:slashesindx(end))];
+CurrentPathOK=[Dirpwd(1:slashesindx(end)),FolderNameNetwork];
 [FileName,PathName] = uigetfile('.mat','Load DATASET of GEPHI Features',...
     CurrentPathOK);
 fullFileName = fullfile(PathName, FileName);
@@ -177,13 +181,15 @@ for e=1:Ne
     title(sprintf('%s boxplots of %s',NetParam{1},GEPHIDATA{e,1}.EXP_ID(1,:)))
 end
 %% DRUG
-numberofExp=6;
-LIDDegree=NetParametersExps{numberofExp,1};
-DRUGDegree=NetParametersExps{numberofExp,2};
-[pMannWhit,h,stats]=ranksum(LIDDegree,DRUGDegree)
-[h,pKolmorogov]=kstest2(LIDDegree,DRUGDegree);
-NetParam{1}
-GEPHIDATA{numberofExp,1}.EXP_ID(1,:)
-[numel(LIDDegree),numel(DRUGDegree)]
-
+fprintf('\n>Read ParameterA=NetParametersExps{#Experiment,#Condition} to:\n')
+fprintf('[p,h,stats]=ranksum(ParameterA,ParameterB)\n')
+fprintf('[h,p]=kstest2(ParameterA,ParameterB)\n')
+% numberofExp=1;
+% LIDDegree=NetParametersExps{numberofExp,1};
+% DRUGDegree=NetParametersExps{numberofExp,2};
+% [pMannWhit,h,stats]=ranksum(LIDDegree,DRUGDegree)
+% [h,pKolmorogov]=kstest2(LIDDegree,DRUGDegree);
+% NetParam{1}
+% GEPHIDATA{numberofExp,1}.EXP_ID(1,:)
+% [numel(LIDDegree),numel(DRUGDegree)]
 % disp([pKolmorogov;pMannWhit])

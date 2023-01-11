@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title></title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-07-15"><meta name="DC.source" content="USER_GUIDE.m"><style type="text/css">
+      --><title></title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-01-10"><meta name="DC.source" content="USER_GUIDE.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,8 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1><img src="USER_GUIDE_eq07574479680956528413.png" alt="$\bf{FinderSpiker}$"></h1><!--introduction--><p><b>SOURCE</b> : <a href="https://github.com/vladscript/FinderSpiker.git">https://github.com/vladscript/FinderSpiker.git</a></p><p><tt>Steps Guide</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">0. SETTTINGS</a></li><li><a href="#2">1. SIGNAL PROCESSING: Detect Calcium Transients Events</a></li><li><a href="#3">2. RASTER SELECTION &amp; ACTIVITY FEATURES</a></li><li><a href="#4">3. CLUSTERING NEURONAL ENSEMBLES</a></li><li><a href="#5">4. COLOCALIZATION OF MARKED CELLS</a></li><li><a href="#6">5. RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION</a></li><li><a href="#7">N-EXPERIMENTS ANALYSIS</a></li><li><a href="#8">6. ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS</a></li><li><a href="#9">7. DATASETS MAKER</a></li><li><a href="#10">8 MAKE DATASETS FROM GEPHI NETWORK FEATURES</a></li><li><a href="#11">9  STACK DIVERS DATASETS</a></li><li><a href="#12">10 DATA FEATURE EXPLORER: Merging Feature Datasets</a></li><li><a href="#13">11 MACHINE LEARNING:</a></li></ul></div><h2>0. SETTTINGS<a name="1"></a></h2><div><ul><li>Import ALL functions        &gt;&gt;Import_FinderSpiker</li><li>Experiments Directory:      &gt;&gt;edit Load_Default_Directories.m</li><li>Deconvolution Parameters:   &gt;&gt;edit Load_Default_Values_SP</li><li>Clustering Parameters:      &gt;&gt;edit Load_Default_Clustering</li><li>Colors:                     &gt;&gt;edit SetColorMap.m</li></ul></div><h2>1. SIGNAL PROCESSING: Detect Calcium Transients Events<a name="2"></a></h2><p>Getting Activation Matrix (raster) from Calium Imaging Data for each Cell DATA:                 VIDEOS, Sampling Frequency &amp; Set of Coordinates</p><div><ul><li>&gt;&gt;FinderSpiker_Calcium</li><li>&gt;&gt;Detected_Visual_Inspection</li><li>&gt;&gt;Undetected_Visual_Inspection</li><li>&gt;&gt;Save_and_Plot</li></ul></div><p><b>REVIEW DATA:</b></p><div><ul><li>&gt;&gt;Plot_Experiment</li></ul></div><h2>2. RASTER SELECTION &amp; ACTIVITY FEATURES<a name="3"></a></h2><p>At Original Coordiantes Order</p><div><ul><li>&gt;&gt;Select_Rasters</li></ul></div><p>Save CSV Raster-Features of Merged &amp; NO-Merged Cells (Step 4):</p><div><ul><li>&gt;&gt;Select_Raster_PositiveCells;</li><li>&gt;&gt;Select_Raster_NegativeCells</li></ul></div><p><b>2.1</b> CHECK RASTER's Selection DURATIONs:</p><div><ul><li>&gt;&gt;RasterDurations=get_raster_durations(Onsets,R_Condition,fs);</li></ul></div><p><b>2.2</b> TOTAL NETWORK (all cells)</p><p>Save Links Features Without neither Ensembling nor Thresholding</p><div><ul><li>&gt;&gt;Get_Total_Network</li></ul></div><p>Show Boxplots and Make Table of Features: ONLY TOTAL or POSITIVE(!)</p><div><ul><li>&gt;&gt;Links_Features_Display</li></ul></div><p><b>2.3</b> RETRIEVE RASTER for ANALYSIS</p><div><ul><li>&gt;&gt;R=RASTER_Selected_Clean'; % ALL CONDITIONS CONCATeNATED</li><li>&gt;&gt;R_CONDITION1=R_Condition{1}; % Cells x Frames (dim) ...</li><li>&gt;&gt;R_CONDITIONi=R_Condition{i};</li></ul></div><p><b>2.4</b> Plot Sorted by Rate of Activiyt</p><div><ul><li>&gt;&gt;[IndexSorteActivity]=plot_activityrate(R_Condition,Names_Conditions,fs);</li></ul></div><p><b>2.5</b> Plot slopes of CAG accumulaive sum</p><div><ul><li>&gt;&gt;[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions)</li></ul></div><div><ul><li>If Colocalization Data:</li></ul></div><div><ul><li>&gt;&gt;[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation) FinderSpiker_Calcium</li></ul></div><h2>3. CLUSTERING NEURONAL ENSEMBLES<a name="4"></a></h2><p>AUTOMATICAL &amp; CUSTOM</p><div><ul><li>&gt;&gt;R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDTIONi);</li></ul></div><div><ul><li>&gt;&gt;R_CONDITIONi_Analysis=get_ensembles(R_CONDTIONi,CAGthreshold,Nensambles);</li></ul></div><p>HANDCRAFTED GUI (by JP):</p><div><ul><li>&gt;&gt;NeuralNetwork</li></ul></div><p><b>3.1</b> DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI)</p><p>Neural ensembles and Functional Network Features Extraction</p><div><ul><li>&gt;&gt; Ensemble_Sorting</li></ul></div><p><b>3.2</b> DISPLAY STAIRS of the ENSEMBLES  ****** Sequnce of Ensembles of the Experiment</p><div><ul><li>&gt;&gt; Plot_Hebbian_Stairs</li></ul></div><p><b>3.2</b> PLOT ENSEMBLES FAST</p><div><ul><li>&gt;&gt; ImageEnsembles(R_ConditionNamej_Analysis,1);   %with Hebbian Sequences</li><li>&gt;&gt; ImageEnsembles(R_ConditionNamej_Analysis);     %without</li></ul></div><h2>4. COLOCALIZATION OF MARKED CELLS<a name="5"></a></h2><p>It requires to run '&gt;&gt;Select_Rasters' &amp; load .mat file @ worksapce</p><div><ul><li>&gt;&gt;Merge_Finder_Magic</li></ul></div><pre>     It gets outputs: R_merged,R_nomerged,MetaDataColocaliation
-Check Raster plots:</pre><div><ul><li>&gt;&gt;Plot_Merged_NotMerged</li></ul></div><p>Plot slopes of CAG accumulaive sum</p><div><ul><li>&gt;&gt;[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation)</li></ul></div><div><ul><li>&gt;&gt;[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions)</li></ul></div><p>Plot slopes of POSITVE selected cells:</p><div><ul><li>&gt;&gt;plot_activitychange(R_merged,Names_Conditions,fs)</li></ul></div><p>Update Selection of Raster with merged cells:</p><div><ul><li>&gt;&gt;Update_Mergeing;</li></ul></div><h2>5. RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION<a name="6"></a></h2><p><b>5.1</b> Display Signals:</p><p>0) Get Merged Coordinates (IF SO)</p><div><ul><li>&gt;&gt; XY_merged=XY_selected(MetaDataColocaliation.PositiveCells,:);</li></ul></div><p>1) Plot Raster (<b>without sorting</b>) from:</p><div><ul><li>&gt;&gt;[Rsel,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,RASTER,XY_subset,XY);</li><li>&gt;&gt;Rjunto=[Rsel{1},Rsel{...},Rsel{NConditions}];</li><li>&gt;&gt;Plot_Raster_Ensembles(Rjunto,fs)</li><li>&gt;&gt;Label_Condition_Raster(Names_Conditions,R_Condition,fs);</li></ul></div><p>2) Find Cell Signal of Interest: Ci</p><div><ul><li>&gt;&gt;[XS,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,SIGNALSclean,XY_subset,XY);</li><li>&gt;&gt;figure; plot(XS{c}(Ci,:))</li></ul></div><p><b>5.2</b> Clean Video Output:</p><p>It requires script edition:</p><div><ul><li>&gt;&gt;Video_Cleaner;</li></ul></div><h2>N-EXPERIMENTS ANALYSIS<a name="7"></a></h2><h2>6. ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS<a name="8"></a></h2><pre class="language-matlab">Choose <span class="string">One-by-One</span> <span class="string">.mat</span> <span class="string">Files-&gt;</span> <span class="string">Save</span> <span class="string">.mat</span> <span class="string">Files:</span>
+  </style></head><body><div class="content"><h1><img src="USER_GUIDE_eq07574479680956528413.png" alt="$\bf{FinderSpiker}$"></h1><!--introduction--><p><b>SOURCE</b> : <a href="https://github.com/vladscript/FinderSpiker.git">https://github.com/vladscript/FinderSpiker.git</a></p><p><tt>Steps Guide</tt></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">0. SETTTINGS</a></li><li><a href="#2">1. SIGNAL PROCESSING: Detect Calcium Transients Events</a></li><li><a href="#3">2. RASTER SELECTION &amp; ACTIVITY FEATURES</a></li><li><a href="#4">3. CLUSTERING NEURONAL ENSEMBLES</a></li><li><a href="#5">4. COLOCALIZATION OF MARKED CELLS</a></li><li><a href="#6">5. RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION</a></li><li><a href="#7">N-EXPERIMENTS ANALYSIS</a></li><li><a href="#8">6. ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS</a></li><li><a href="#9">7. DATASETS MAKER</a></li><li><a href="#10">8 MAKE DATASETS FROM GEPHI NETWORK FEATURES</a></li><li><a href="#11">9  STACK DIVERS DATASETS</a></li><li><a href="#12">10 DATA FEATURE EXPLORER</a></li><li><a href="#13">11 MACHINE LEARNING:</a></li><li><a href="#14">12 EXPORT DATA:</a></li></ul></div><h2>0. SETTTINGS<a name="1"></a></h2><div><ul><li>Import ALL functions        &gt;&gt;Import_FinderSpiker</li><li>Experiments Directory:      &gt;&gt;edit Load_Default_Directories.m</li><li>Deconvolution Parameters:   &gt;&gt;edit Load_Default_Values_SP</li><li>Clustering Parameters:      &gt;&gt;edit Load_Default_Clustering</li><li>Colors:                     &gt;&gt;edit SetColorMap.m</li></ul></div><h2>1. SIGNAL PROCESSING: Detect Calcium Transients Events<a name="2"></a></h2><p>Getting Activation Matrix (raster) from Calium Imaging Data for each Cell DATA:                 VIDEOS, Sampling Frequency &amp; Set of Coordinates</p><div><ul><li>&gt;&gt;FinderSpiker_Calcium          % automatic deconvolution</li><li>&gt;&gt;Detected_Visual_Inspection    % GUI to reject False +</li><li>&gt;&gt;Undetected_Visual_Inspection  % GUI to reject False -</li><li>&gt;&gt;Save_and_Plot                 % Save activity matrix</li></ul></div><p><b>REVIEW DATA:</b></p><div><ul><li>&gt;&gt;Plot_Experiment               % Plot current stage of analysis</li></ul></div><h2>2. RASTER SELECTION &amp; ACTIVITY FEATURES<a name="3"></a></h2><p>At Original Coordiantes Order</p><div><ul><li>&gt;&gt;Select_Rasters</li></ul></div><p>Save CSV Raster-Features of Merged &amp; NO-Merged Cells (Step 4):</p><div><ul><li>&gt;&gt;Select_Raster_PositiveCells;</li><li>&gt;&gt;Select_Raster_NegativeCells</li></ul></div><p><b>2.1</b> CHECK RASTER's Selection DURATIONs:</p><div><ul><li>&gt;&gt;RasterDurations=get_raster_durations(Onsets,R_Condition,fs);</li></ul></div><p><b>2.2</b> TOTAL NETWORK (all cells)</p><p>Save Links Features <b>Without</b> neither Ensembling nor Thresholding</p><div><ul><li>&gt;&gt;Get_Total_Network <b>UNDER CONSTRUCTION</b></li></ul></div><p>Show Boxplots and Make Table of Features: ONLY TOTAL or POSITIVE(!)</p><div><ul><li>&gt;&gt;Links_Features_Display</li></ul></div><p><b>2.3</b> RETRIEVE RASTER for ANALYSIS</p><div><ul><li>&gt;&gt;R=RASTER_Selected_Clean'; % ALL CONDITIONS CONCATeNATED</li><li>&gt;&gt;R_CONDITION1=R_Condition{1}; % Cells x Frames (dim) ...</li><li>&gt;&gt;R_CONDITIONi=R_Condition{i};</li></ul></div><p><b>2.4</b> Plot Sorted by Rate of Activity</p><div><ul><li>&gt;&gt;[IndexSorteActivity]=plot_activityrate(R_Condition,Names_Conditions,fs);</li></ul></div><p><b>2.5</b> Plot slopes of CAG accumulaive sum</p><div><ul><li>&gt;&gt;[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions)</li></ul></div><div><ul><li>If Colocalization Data:</li></ul></div><div><ul><li>&gt;&gt;[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation) FinderSpiker_Calcium</li></ul></div><h2>3. CLUSTERING NEURONAL ENSEMBLES<a name="4"></a></h2><pre>AUTOMATIC MODE:</pre><p>The cell variable 'R_condition' contains the activity matrices of each</p><p>experimental condition, e.g. &gt;&gt;R_CTRL=R_Condition{1};</p><p>Retrieve the activity matrices in new varaiables: R_CONDITION</p><div><ul><li>&gt;&gt;R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDITIONi);</li></ul></div><pre>CUSTOM MODE:</pre><p>Set the coactivity threshold: 'CAGthreshold': integer number</p><p>Set the number of ensembles: 'Nensambles': integer number</p><div><ul><li>&gt;&gt;R_CONDITIONi_Analysis=get_ensembles(R_CONDTIONi,CAGthreshold,Nensambles);</li></ul></div><p><b>3.1</b> DISPLAY, SAVE &amp; EXPORT FEATURES ENSEMBLES ANALYSIS</p><p>Run and follow instructions:</p><div><ul><li>&gt;&gt; Ensemble_Sorting</li></ul></div><p>Outputs: CSV features @'Ensemble Features' &amp; CSV gephi @'NetWorks-CSV'.</p><p><b>3.1.1</b> Gephi Instructions (out of MATLAB):</p><div><ul><li>Create a New Project</li></ul></div><div><ul><li>For each condition Create a Space Work</li></ul></div><div><ul><li>Load NODES and EDGES in Space Work area</li></ul></div><div><ul><li>Compute parameters: Clustering coeff., degree, weighted degree, etc.</li></ul></div><div><ul><li>Save  gephi project and</li></ul></div><div><ul><li>Export Nodes Tables</li></ul></div><p><b>3.2</b> DISPLAY ENSEMBLES SEQUENCE</p><p>Load a .mat file with saved ensemble analysis</p><div><ul><li>&gt;&gt;Plot_Hebbian_Stairs</li></ul></div><p><b>3.2</b> FAST PLOT OF NEURONAL ENSEMBLES</p><p>Load a .mat file with saved ensemble analysis</p><div><ul><li>&gt;&gt; ImageEnsembles(R_ConditionNamej_Analysis,1);   %with Hebbian Sequences</li><li>&gt;&gt; ImageEnsembles(R_ConditionNamej_Analysis);     %without</li></ul></div><h2>4. COLOCALIZATION OF MARKED CELLS<a name="5"></a></h2><p>It requires to have run '&gt;&gt;Select_Rasters' &amp; load .mat file @ worksapce</p><div><ul><li>&gt;&gt;Merge_Finder_Magic</li></ul></div><p>Output variables: R_merged,R_nomerged,MetaDataColocaliation</p><p>Check Raster plots:</p><div><ul><li>&gt;&gt;Plot_Merged_NotMerged</li></ul></div><p>Plot slopes of CAG accumulaive sum</p><div><ul><li>&gt;&gt;[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation)</li></ul></div><div><ul><li>&gt;&gt;[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions)</li></ul></div><p>Plot slopes of POSITVE selected cells:</p><div><ul><li>&gt;&gt;plot_activitychange(R_merged,Names_Conditions,fs)</li></ul></div><p>Update Selection of Raster with merged cells:</p><div><ul><li>&gt;&gt;Update_Mergeing;</li></ul></div><h2>5. RETRIEVE ORIGINAL SIGNALS from RASTER SELECTION<a name="6"></a></h2><p><b>5.1</b> Display Signals:</p><p>0) Get Merged Coordinates (IF SO)</p><div><ul><li>&gt;&gt; XY_merged=XY_selected(MetaDataColocaliation.PositiveCells,:);</li></ul></div><p>1) Plot Raster (<b>without sorting</b>) from:</p><div><ul><li>&gt;&gt;[Rsel,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,RASTER,XY_subset,XY);</li><li>&gt;&gt;Rjunto=[Rsel{1},Rsel{...},Rsel{NConditions}];</li><li>&gt;&gt;Plot_Raster_Ensembles(Rjunto,fs)</li><li>&gt;&gt;Label_Condition_Raster(Names_Conditions,R_Condition,fs);</li></ul></div><p>2) Find Cell Signal of Interest: Ci</p><div><ul><li>&gt;&gt;[XS,IndexSorted]=Retrieve_Selected_Signal(Onsets,R_Condition,SIGNALSclean,XY_subset,XY);</li><li>&gt;&gt;figure; plot(XS{c}(Ci,:))</li></ul></div><p><b>5.2</b> Clean Video Output:</p><p>It requires script edition:</p><div><ul><li>&gt;&gt;Video_Cleaner;</li></ul></div><h2>N-EXPERIMENTS ANALYSIS<a name="7"></a></h2><h2>6. ACCUMULATE FEATURES FROM SEVERAL EXPERIMENTS<a name="8"></a></h2><pre class="language-matlab">Choose <span class="string">One-by-One</span> <span class="string">.mat</span> <span class="string">Files-&gt;</span> <span class="string">Save</span> <span class="string">.mat</span> <span class="string">Files:</span>
 </pre><div><ul><li>&gt;&gt;Accumulate_Venn_Diagrams</li></ul></div><pre>                    Venn diagrams of cells:
                     &gt; Unchanged,
                     &gt; Activated and/or Facilitated,
@@ -82,20 +81,24 @@ Check Raster plots:</pre><div><ul><li>&gt;&gt;Plot_Merged_NotMerged</li></ul></d
                     IEI: Inter Ensemble Interval
                     ED:  Ensemble Duration
                     Save CSV File Active Cells in Ensemble Features dir</pre><div><ul><li>&gt;&gt;Accumulate_Simm_Matrix</li></ul></div><pre>                    Hamming distance among ensembles
-                    Save at CSV Files of Ensemble Features</pre><h2>7. DATASETS MAKER<a name="9"></a></h2><p>Make Tables for SINGLE EXPERIMENTS</p><p><b>7.1</b> RASTER FEATURES</p><div><ul><li>&gt;&gt;Raster_Features_Display</li></ul></div><pre>         &gt; Make CSV table @'Raster Features'</pre><p><b>7.2</b> ENSEMBLES GENERAL FEATURES</p><div><ul><li>&gt;&gt;Ensembles_Features_Display</li></ul></div><pre>         &gt; Make CSV table @'Ensemble Features'</pre><p><b>7.3</b> ENSEMBLES DETAILED FEATURES</p><div><ul><li>&gt;&gt;Ensembles_Features_Detailed_Display</li></ul></div><pre>         &gt; Make CSV table @'Ensemble Features'</pre><p><b>7.4</b> LINKS FEATURES</p><div><ul><li>&gt;&gt;Links_Features_Display (building)</li></ul></div><h2>8 MAKE DATASETS FROM GEPHI NETWORK FEATURES<a name="10"></a></h2><p><b>7.9</b>  Export 'FEATURES' from Gephi                           &gt;Data could be in  '\NetWorks-CSV'                           &gt;For Gephi 0.9.1</p><p><b>8.1</b>  Make Network Features Dataset</p><div><ul><li>&gt;&gt;Get_Gephi_Data</li></ul></div><pre>    &gt;Make File MyNetworkDataSet.mat Dataset
-     from CSV Gephi Workspaces (per Experiment)
-    &gt;READ CSV files one by one-&gt;use [cancel] button to set next condition
-     Save .mat File @ FinderSpiker/DatabaseFolder</pre><div><ul><li>&gt;&gt;Make_Statistics_Gephi_Features</li></ul></div><pre>     Read MyNetworkDataSet.mat Files from @../DatabaseFolder
-     Show RAINPLOT for each Feature
-     &amp; Create Network_FEATURE_Dataset in CSV files:
-     'Network_FEATURE_Dataset_YYYYMMDDHHMM.csv'</pre><div><ul><li>&gt;&gt;Concatenate_NetFeats</li></ul></div><pre>     Read Multiple Network_FEATURE_Datasets (same Experiment)
-     Concatenate table of MULTIPLE Features in one
-     Create NetFEATS_Dataset.csv @FinderSpiker/DatabaseFolder</pre><p><b>8.2</b>  Display Networks parameters per Experiment</p><div><ul><li>&gt;&gt;Display_NetworkPDFs;</li></ul></div><pre>                     Read MyNetworkDataSet.mat Files from @../DatabaseFolder
-                     Diplay p(k), Chosen Paramter p(f) &amp; f(k)</pre><h2>9  STACK DIVERS DATASETS<a name="11"></a></h2><p>Make DATASET for Stack Several tables from Divers Experiments:</p><div><ul><li>&gt;&gt;Merge_Feature_Datasets</li></ul></div><p>E.G. read datasets of <b>different</b> Experiments,i.e, CTRL, PARKINSON, DYSKINESIA, ...</p><pre class="language-matlab">-Raster Activity:       Read CSV <span class="string">Tables</span>
--General Ensembles:     Read CSV <span class="string">Tables</span>
--Detailed Ensembles:    Read CSV <span class="string">Tables</span>
--Network Features:      NetFEATS
-</pre><h2>10 DATA FEATURE EXPLORER: Merging Feature Datasets<a name="12"></a></h2><p><b>10.1</b>  Get ALL Features Dataset: Raster,Ensembles,Networks</p><div><ul><li>&gt;&gt;Merge_Datasets           % Make DATASET of the 3 Kinds in 1 file                               (not needed for Step 10.2)</li></ul></div><p><b>10.2</b>  Dysplay All Features RAINPLOTS &amp; Statistics</p><div><ul><li>&gt;&gt;Feature_Explorer         <b>UNDER CONSTRUCTION</b></li></ul></div><h2>11 MACHINE LEARNING:<a name="13"></a></h2><div><ul><li>&gt;&gt;Classification_Regions;       Makes PCA and SVM classification from       tables of 'Merge_Feature_Datasets'       Feauture selection and Model building</li></ul></div><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+                    Save at CSV Files of Ensemble Features</pre><h2>7. DATASETS MAKER<a name="9"></a></h2><p>Make Tables for SINGLE EXPERIMENTS</p><p><b>7.1</b> RASTER FEATURES</p><div><ul><li>&gt;&gt;Raster_Features_Display</li></ul></div><pre>         &gt; Make CSV table @'Raster Features'</pre><p><b>7.2</b> ENSEMBLES GENERAL FEATURES</p><div><ul><li>&gt;&gt;Ensembles_Features_Display</li></ul></div><pre>         &gt; Make CSV table @'Ensemble Features'</pre><p><b>7.3</b> ENSEMBLES DETAILED FEATURES</p><div><ul><li>&gt;&gt;Ensembles_Features_Detailed_Display</li></ul></div><pre>         &gt; Make CSV table @'Ensemble Features'</pre><p><b>7.4</b> LINKS FEATURES</p><div><ul><li>&gt;&gt;Links_Features_Display (building)</li></ul></div><h2>8 MAKE DATASETS FROM GEPHI NETWORK FEATURES<a name="10"></a></h2><p><b>7.9</b>  Export 'FEATURES' from Gephi  (see 3.1.1)</p><pre>                         &gt;Data could be in  '\NetWorks-CSV'
+                         &gt;For *Gephi* *0.9.1*</pre><p><b>8.1</b>  Run the following in order:</p><div><ul><li>&gt;&gt;Get_Gephi_Data</li></ul></div><pre>    &gt;INPUT: CSV files one by one-&gt;use [cancel] button to set next condition
+     Save .mat File @ FinderSpiker/DatabaseFolder
+    &gt;OUTPUT: File MyNetworkDataSet.mat Dataset
+     from CSV Gephi Workspaces (per Experiment)</pre><div><ul><li>&gt;&gt;Make_Statistics_Gephi_Features</li></ul></div><pre>     &gt;INPUT: MyNetworkDataSet.mat Files from @../DatabaseFolder
+     &amp; Choose %FEATURE%: clustering, degree, moudularity, etc
+     &gt;OUTPUT:  Network_%FEATURE%_Dataset in CSV files:
+     'Network_%FEATURE%_Dataset_YYYYMMDDHHMM.csv'
+     It saves a CSV for each %FEATURE% of statistics (mean, variance, etc)</pre><div><ul><li>&gt;&gt;Concatenate_NetFeats</li></ul></div><pre>     &gt;INPUT: CSVs Network_%FEATURE%_Datasets of statistics
+     &gt;OUTPUT: Node_StatsFeature_Dataset_YYYYMMDDHHMM.csv
+     Choose destination folder, e.g.: @FinderSpiker/DatabaseFolder</pre><p><b>8.2</b>  Display node parameters per Experiment</p><div><ul><li>&gt;&gt;Display_NetworkPDFs;</li></ul></div><pre>      &gt;INPUT: MyNetworkDataSet.mat files
+      &gt;OUTPUT: PDFs &amp; CDFs plots</pre><h2>9  STACK DIVERS DATASETS<a name="11"></a></h2><p>Make DATASET by stacking several tables from divers experiments:</p><div><ul><li>&gt;&gt;Merge_Feature_Datasets</li></ul></div><p>E.G. read datasets of <b>different</b> Experiments,i.e, CTRL, PARKINSON, DYSKINESIA, ...</p><p>Choose the kind of dataset:</p><pre>                         [INPUT]                         [OUTPUT]
+ -Raster Activity:       Table_Raster_Features_          Raster_Activity_Dataset_
+ -General Ensembles:     Ensemble_Features_              General_Ensembles_Dataset_
+ -Detailed Ensembles:    Detailed_Ensemble_Features_     Detailed_Ensembles_Dataset_
+ -Network Features:      Node_StatsFeature_Dataset_      Network_Features_Dataset</pre><p>Makes directory 'FinderSpiker/Experimental Databases'</p><h2>10 DATA FEATURE EXPLORER<a name="12"></a></h2><p><b>10.1</b>  Display All Features RAINPLOTS &amp; Statistics</p><div><ul><li>&gt;&gt;Feature_Explorer         <b>UNDER CONSTRUCTION</b></li></ul></div><h2>11 MACHINE LEARNING:<a name="13"></a></h2><div><ul><li>&gt;&gt;Classification_Regions</li></ul></div><pre>     Makes PCA and SVM classification from
+     tables of 'Merge_Feature_Datasets'
+     Feauture selection and Model building</pre><h2>12 EXPORT DATA:<a name="14"></a></h2><div><ul><li>&gt;&gt;Export_Raster;  <b>UNDER CONSTRUCTION</b></li></ul></div><pre>     Makes CSV of activity matrix to analyze elsewhere(e.g. ClustVis)</pre><div><ul><li>&gt;&gt;Export_Signals;  <b>UNDER CONSTRUCTION</b></li></ul></div><pre>     Makes CSV of fluorescence signals</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% $\bf{FinderSpiker}$
 % 
@@ -116,14 +119,14 @@ Check Raster plots:</pre><div><ul><li>&gt;&gt;Plot_Merged_NotMerged</li></ul></d
 % Getting Activation Matrix (raster) from Calium Imaging Data for each Cell
 % DATA:                 VIDEOS, Sampling Frequency & Set of Coordinates
 % 
-% * >>FinderSpiker_Calcium
-% * >>Detected_Visual_Inspection
-% * >>Undetected_Visual_Inspection
-% * >>Save_and_Plot
+% * >>FinderSpiker_Calcium          % automatic deconvolution
+% * >>Detected_Visual_Inspection    % GUI to reject False +
+% * >>Undetected_Visual_Inspection  % GUI to reject False -
+% * >>Save_and_Plot                 % Save activity matrix
 % 
 % *REVIEW DATA:*
 % 
-% * >>Plot_Experiment
+% * >>Plot_Experiment               % Plot current stage of analysis
 % 
 %% 2. RASTER SELECTION & ACTIVITY FEATURES
 % At Original Coordiantes Order
@@ -141,9 +144,9 @@ Check Raster plots:</pre><div><ul><li>&gt;&gt;Plot_Merged_NotMerged</li></ul></d
 % 
 % *2.2* TOTAL NETWORK (all cells) 
 % 
-% Save Links Features Without neither Ensembling nor Thresholding
+% Save Links Features *Without* neither Ensembling nor Thresholding
 % 
-% * >>Get_Total_Network
+% * >>Get_Total_Network *UNDER CONSTRUCTION*
 % 
 % Show Boxplots and Make Table of Features: ONLY TOTAL or POSITIVE(!)
 % 
@@ -156,7 +159,7 @@ Check Raster plots:</pre><div><ul><li>&gt;&gt;Plot_Merged_NotMerged</li></ul></d
 % ...
 % * >>R_CONDITIONi=R_Condition{i};
 % 
-% *2.4* Plot Sorted by Rate of Activiyt
+% *2.4* Plot Sorted by Rate of Activity
 % 
 % * >>[IndexSorteActivity]=plot_activityrate(R_Condition,Names_Conditions,fs);
 % 
@@ -169,39 +172,68 @@ Check Raster plots:</pre><div><ul><li>&gt;&gt;Plot_Merged_NotMerged</li></ul></d
 % * >>[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation)
 % FinderSpiker_Calcium
 %% 3. CLUSTERING NEURONAL ENSEMBLES
-% AUTOMATICAL & CUSTOM
 % 
-% * >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDTIONi);
+%  AUTOMATIC MODE:
+% 
+% The cell variable 'R_condition' contains the activity matrices of each
+% 
+% experimental condition, e.g. >>R_CTRL=R_Condition{1};
+% 
+% Retrieve the activity matrices in new varaiables: R_CONDITION
+% 
+% * >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDITIONi);
+% 
+%  CUSTOM MODE:
+% 
+% Set the coactivity threshold: 'CAGthreshold': integer number
+% 
+% Set the number of ensembles: 'Nensambles': integer number
 % 
 % * >>R_CONDITIONi_Analysis=get_ensembles(R_CONDTIONi,CAGthreshold,Nensambles);
 % 
-% HANDCRAFTED GUI (by JP): 
+% *3.1* DISPLAY, SAVE & EXPORT FEATURES ENSEMBLES ANALYSIS
 % 
-% * >>NeuralNetwork 
-% 
-% *3.1* DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE (GUI)
-% 
-% Neural ensembles and Functional Network Features Extraction
+% Run and follow instructions:
 % 
 % * >> Ensemble_Sorting
 % 
-% *3.2* DISPLAY STAIRS of the ENSEMBLES  ********
-% Sequnce of Ensembles of the Experiment
+% Outputs: CSV features @'Ensemble Features' & CSV gephi @'NetWorks-CSV'.
 % 
-% * >> Plot_Hebbian_Stairs
+% *3.1.1* Gephi Instructions (out of MATLAB):
 % 
-% *3.2* PLOT ENSEMBLES FAST 
+% * Create a New Project
+% 
+% * For each condition Create a Space Work
+% 
+% * Load NODES and EDGES in Space Work area
+% 
+% * Compute parameters: Clustering coeff., degree, weighted degree, etc.
+% 
+% * Save  gephi project and 
+% 
+% * Export Nodes Tables
+% 
+% *3.2* DISPLAY ENSEMBLES SEQUENCE
+% 
+% Load a .mat file with saved ensemble analysis
+% 
+% * >>Plot_Hebbian_Stairs
+% 
+% *3.2* FAST PLOT OF NEURONAL ENSEMBLES
+% 
+% Load a .mat file with saved ensemble analysis
 % 
 % * >> ImageEnsembles(R_ConditionNamej_Analysis,1);   %with Hebbian Sequences
 % * >> ImageEnsembles(R_ConditionNamej_Analysis);     %without  
 % 
 %% 4. COLOCALIZATION OF MARKED CELLS 
 % 
-% It requires to run '>>Select_Rasters' & load .mat file @ worksapce
+% It requires to have run '>>Select_Rasters' & load .mat file @ worksapce
 % 
 % * >>Merge_Finder_Magic
 % 
-%       It gets outputs: R_merged,R_nomerged,MetaDataColocaliation
+% Output variables: R_merged,R_nomerged,MetaDataColocaliation
+% 
 % Check Raster plots:
 % 
 % * >>Plot_Merged_NotMerged
@@ -313,70 +345,82 @@ Check Raster plots:</pre><div><ul><li>&gt;&gt;Plot_Merged_NotMerged</li></ul></d
 % 
 %% 8 MAKE DATASETS FROM GEPHI NETWORK FEATURES
 % 
-% *7.9*  Export 'FEATURES' from Gephi     
-%                           >Data could be in  '\NetWorks-CSV'
-%                           >For Gephi 0.9.1
+% *7.9*  Export 'FEATURES' from Gephi  (see 3.1.1)
 % 
-% *8.1*  Make Network Features Dataset
+%                           >Data could be in  '\NetWorks-CSV'
+%                           >For *Gephi* *0.9.1*
+% 
+% *8.1*  Run the following in order:
 % 
 % * >>Get_Gephi_Data
 % 
-%      >Make File MyNetworkDataSet.mat Dataset 
-%       from CSV Gephi Workspaces (per Experiment)
-%      >READ CSV files one by one->use [cancel] button to set next condition
+%      >INPUT: CSV files one by one->use [cancel] button to set next condition
 %       Save .mat File @ FinderSpiker/DatabaseFolder
+%      >OUTPUT: File MyNetworkDataSet.mat Dataset 
+%       from CSV Gephi Workspaces (per Experiment)
 % 
 % * >>Make_Statistics_Gephi_Features
 % 
-%       Read MyNetworkDataSet.mat Files from @../DatabaseFolder
-%       Show RAINPLOT for each Feature 
-%       & Create Network_FEATURE_Dataset in CSV files:
-%       'Network_FEATURE_Dataset_YYYYMMDDHHMM.csv'
+%       >INPUT: MyNetworkDataSet.mat Files from @../DatabaseFolder
+%       & Choose %FEATURE%: clustering, degree, moudularity, etc 
+%       >OUTPUT:  Network_%FEATURE%_Dataset in CSV files:
+%       'Network_%FEATURE%_Dataset_YYYYMMDDHHMM.csv'
+%       It saves a CSV for each %FEATURE% of statistics (mean, variance, etc)
 % 
 % * >>Concatenate_NetFeats 
 % 
-%       Read Multiple Network_FEATURE_Datasets (same Experiment)
-%       Concatenate table of MULTIPLE Features in one
-%       Create NetFEATS_Dataset.csv @FinderSpiker/DatabaseFolder
+%       >INPUT: CSVs Network_%FEATURE%_Datasets of statistics
+%       >OUTPUT: Node_StatsFeature_Dataset_YYYYMMDDHHMM.csv 
+%       Choose destination folder, e.g.: @FinderSpiker/DatabaseFolder
 % 
-% *8.2*  Display Networks parameters per Experiment
+% *8.2*  Display node parameters per Experiment
 % 
-% * >>Display_NetworkPDFs;      
+% * >>Display_NetworkPDFs;
 % 
-%                       Read MyNetworkDataSet.mat Files from @../DatabaseFolder
-%                       Diplay p(k), Chosen Paramter p(f) & f(k)
+%        >INPUT: MyNetworkDataSet.mat files 
+%        >OUTPUT: PDFs & CDFs plots
 % 
 %% 9  STACK DIVERS DATASETS
 % 
-% Make DATASET for Stack Several tables from Divers Experiments:
+% Make DATASET by stacking several tables from divers experiments:
 % 
 % * >>Merge_Feature_Datasets          
 % 
 % E.G. read datasets of *different* Experiments,i.e, CTRL, PARKINSON, DYSKINESIA, ...
 % 
-%   -Raster Activity:       Read CSV Tables
-%   -General Ensembles:     Read CSV Tables
-%   -Detailed Ensembles:    Read CSV Tables
-%   -Network Features:      NetFEATS 
+% Choose the kind of dataset:
 % 
-%% 10 DATA FEATURE EXPLORER: Merging Feature Datasets 
+%                           [INPUT]                         [OUTPUT]
+%   -Raster Activity:       Table_Raster_Features_          Raster_Activity_Dataset_
+%   -General Ensembles:     Ensemble_Features_              General_Ensembles_Dataset_
+%   -Detailed Ensembles:    Detailed_Ensemble_Features_     Detailed_Ensembles_Dataset_
+%   -Network Features:      Node_StatsFeature_Dataset_      Network_Features_Dataset
 % 
-% *10.1*  Get ALL Features Dataset: Raster,Ensembles,Networks
+% Makes directory 'FinderSpiker/Experimental Databases'
 % 
-% * >>Merge_Datasets           % Make DATASET of the 3 Kinds in 1 file
-%                               (not needed for Step 10.2)
+%% 10 DATA FEATURE EXPLORER
 % 
-% *10.2*  Dysplay All Features RAINPLOTS & Statistics
+% *10.1*  Display All Features RAINPLOTS & Statistics
 % 
 % * >>Feature_Explorer         *UNDER CONSTRUCTION*
 % 
 % 
 %% 11 MACHINE LEARNING:
 % 
-% * >>Classification_Regions; 
+% * >>Classification_Regions
+% 
 %       Makes PCA and SVM classification from
 %       tables of 'Merge_Feature_Datasets'
 %       Feauture selection and Model building
 % 
+%% 12 EXPORT DATA:
+% 
+% * >>Export_Raster;  *UNDER CONSTRUCTION*
+% 
+%       Makes CSV of activity matrix to analyze elsewhere(e.g. ClustVis)
+% 
+% * >>Export_Signals;  *UNDER CONSTRUCTION*
+% 
+%       Makes CSV of fluorescence signals 
 ##### SOURCE END #####
 --></body></html>

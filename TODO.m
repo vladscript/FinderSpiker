@@ -17,12 +17,13 @@
 %% NOW !
 % 
 % Bug in Network (CtxThal)/ Feature_Explorer/Fix Width boxplots
-% EDIT to load data from functions: Display_NetworkPDFs !!!!!!!!!!!!
-% Feature_Explorer with Statistics and cloud plots using pairedraincloud
+% Feature_Explorer with Statistics
 % Include intercluscoeff/getcluslabs in Accumulative Functions!!!
+% COrrelation/Simmilarity Metrics in Get_Total_Network.m
+% Deprecate Merge_Datasets
 % 
 %% READY TO GO
-% 
+% Update in Gephi management and table making
 % 
 %% TO DO:
 

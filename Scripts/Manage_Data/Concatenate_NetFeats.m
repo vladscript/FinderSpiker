@@ -3,13 +3,15 @@
 %% Setup
 % Initial:
 clear; close all; clc;
+Load_Default_Directories;
+fprintf('>It merges tables created in Make_Statistics_Gephi_Features in one single table\n')
 runs=1;             % Runs Counter
 FEATS={};            % List Of Features
 
 % Directory:
 Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
-CurrentPathOK=[Dirpwd(1:slashesindx(end)),'NetWorks-CSV'];
+CurrentPathOK=[Dirpwd(1:slashesindx(end)),FolderNameNetwork];
 % Load File 
 [FileName,PathName,MoreFiles] = uigetfile('*.csv',' Network Feature Dataset .csv file',...
     'MultiSelect', 'off',CurrentPathOK);
@@ -55,8 +57,8 @@ if strcmp('Yes',okbutton)
     timesave=clock;
     TS=num2str([timesave(1:5),round(timesave(6))]);
     TS=TS(TS~=' ');
-    SaveFile=['\NetFEATS_Dataset_',TS,'.csv'];
-    CurrentPathOK=[Dirpwd(1:slashesindx(end))];
+    SaveFile=['\Node_StatsFeature_Dataset_',TS,'.csv'];
+    % CurrentPathOK=[Dirpwd(1:slashesindx(end)),];
     % Select Destiny
     PathSave=uigetdir(CurrentPathOK);
     writetable(Ytotal,[PathSave,SaveFile],...

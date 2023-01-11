@@ -42,9 +42,9 @@
 % 
 % *2.2* TOTAL NETWORK (all cells) 
 % 
-% Save Links Features Without neither Ensembling nor Thresholding
+% Save Links Features *Without* neither Ensembling nor Thresholding
 % 
-% * >>Get_Total_Network
+% * >>Get_Total_Network *UNDER CONSTRUCTION*
 % 
 % Show Boxplots and Make Table of Features: ONLY TOTAL or POSITIVE(!)
 % 
@@ -57,7 +57,7 @@
 % ...
 % * >>R_CONDITIONi=R_Condition{i};
 % 
-% *2.4* Plot Sorted by Rate of Activiyt
+% *2.4* Plot Sorted by Rate of Activity
 % 
 % * >>[IndexSorteActivity]=plot_activityrate(R_Condition,Names_Conditions,fs);
 % 
@@ -70,7 +70,8 @@
 % * >>[M,B]=slopes_from_raster(R_Condition,fs,Names_Conditions,MetaDataColocaliation)
 % FinderSpiker_Calcium
 %% 3. CLUSTERING NEURONAL ENSEMBLES
-% AUTOMATIC MODE:
+% 
+%  AUTOMATIC MODE:
 % 
 % The cell variable 'R_condition' contains the activity matrices of each
 % 
@@ -80,7 +81,7 @@
 % 
 % * >>R_CONDITIONi_Analysis=get_bayes_ensembles(R_CONDITIONi);
 % 
-%  CUSTOM MODE
+%  CUSTOM MODE:
 % 
 % Set the coactivity threshold: 'CAGthreshold': integer number
 % 
@@ -88,32 +89,49 @@
 % 
 % * >>R_CONDITIONi_Analysis=get_ensembles(R_CONDTIONi,CAGthreshold,Nensambles);
 % 
-% 
-% *3.1* DISPLAY AND SAVE RESULTS OF ENSEMBLES DISPLAY AND SAVE
-% 
-% Neural ensembles features and CSV Functional Network Exportation.
+% *3.1* DISPLAY, SAVE & EXPORT FEATURES ENSEMBLES ANALYSIS
 % 
 % Run and follow instructions:
 % 
 % * >> Ensemble_Sorting
 % 
-% *3.2* DISPLAY STAIRS of the ENSEMBLES  ********
-% Sequnce of Ensembles of the Experiment
+% Outputs: CSV features @'Ensemble Features' & CSV gephi @'NetWorks-CSV'.
 % 
-% * >> Plot_Hebbian_Stairs
+% *3.1.1* Gephi Instructions (out of MATLAB):
 % 
-% *3.2* PLOT ENSEMBLES FAST 
+% * Create a New Project
+% 
+% * For each condition Create a Space Work
+% 
+% * Load NODES and EDGES in Space Work area
+% 
+% * Compute parameters: Clustering coeff., degree, weighted degree, etc.
+% 
+% * Save  gephi project and 
+% 
+% * Export Nodes Tables
+% 
+% *3.2* DISPLAY ENSEMBLES SEQUENCE
+% 
+% Load a .mat file with saved ensemble analysis
+% 
+% * >>Plot_Hebbian_Stairs
+% 
+% *3.2* FAST PLOT OF NEURONAL ENSEMBLES
+% 
+% Load a .mat file with saved ensemble analysis
 % 
 % * >> ImageEnsembles(R_ConditionNamej_Analysis,1);   %with Hebbian Sequences
 % * >> ImageEnsembles(R_ConditionNamej_Analysis);     %without  
 % 
 %% 4. COLOCALIZATION OF MARKED CELLS 
 % 
-% It requires to run '>>Select_Rasters' & load .mat file @ worksapce
+% It requires to have run '>>Select_Rasters' & load .mat file @ worksapce
 % 
 % * >>Merge_Finder_Magic
 % 
-%       It gets outputs: R_merged,R_nomerged,MetaDataColocaliation
+% Output variables: R_merged,R_nomerged,MetaDataColocaliation
+% 
 % Check Raster plots:
 % 
 % * >>Plot_Merged_NotMerged
@@ -225,67 +243,70 @@
 % 
 %% 8 MAKE DATASETS FROM GEPHI NETWORK FEATURES
 % 
-% *7.9*  Export 'FEATURES' from Gephi     
-%                           >Data could be in  '\NetWorks-CSV'
-%                           >For Gephi 0.9.1
+% *7.9*  Export 'FEATURES' from Gephi  (see 3.1.1)
 % 
-% *8.1*  Make Network Features Dataset
+%                           >Data could be in  '\NetWorks-CSV'
+%                           >For *Gephi* *0.9.1*
+% 
+% *8.1*  Run the following in order:
 % 
 % * >>Get_Gephi_Data
 % 
-%      >Make File MyNetworkDataSet.mat Dataset 
-%       from CSV Gephi Workspaces (per Experiment)
-%      >READ CSV files one by one->use [cancel] button to set next condition
+%      >INPUT: CSV files one by one->use [cancel] button to set next condition
 %       Save .mat File @ FinderSpiker/DatabaseFolder
+%      >OUTPUT: File MyNetworkDataSet.mat Dataset 
+%       from CSV Gephi Workspaces (per Experiment)
 % 
 % * >>Make_Statistics_Gephi_Features
 % 
-%       Read MyNetworkDataSet.mat Files from @../DatabaseFolder
-%       Show RAINPLOT for each Feature 
-%       & Create Network_FEATURE_Dataset in CSV files:
-%       'Network_FEATURE_Dataset_YYYYMMDDHHMM.csv'
+%       >INPUT: MyNetworkDataSet.mat Files from @../DatabaseFolder
+%       & Choose %FEATURE%: clustering, degree, moudularity, etc 
+%       >OUTPUT:  Network_%FEATURE%_Dataset in CSV files:
+%       'Network_%FEATURE%_Dataset_YYYYMMDDHHMM.csv'
+%       It saves a CSV for each %FEATURE% of statistics (mean, variance, etc)
 % 
 % * >>Concatenate_NetFeats 
 % 
-%       Read Multiple Network_FEATURE_Datasets (same Experiment)
-%       Concatenate table of MULTIPLE Features in one
-%       Create NetFEATS_Dataset.csv @FinderSpiker/DatabaseFolder
+%       >INPUT: CSVs Network_%FEATURE%_Datasets of statistics
+%       >OUTPUT: Node_StatsFeature_Dataset_YYYYMMDDHHMM.csv 
+%       Choose destination folder, e.g.: @FinderSpiker/DatabaseFolder
 % 
-% *8.2*  Display Networks parameters per Experiment
+% *8.2*  Display node parameters per Experiment
 % 
-% * >>Display_NetworkPDFs; %building
+% * >>Display_NetworkPDFs;
 % 
-%                       Read MyNetworkDataSet.mat Files from @../DatabaseFolder
-%                       Diplay p(k), Chosen Paramter p(f) & f(k)
+%        >INPUT: MyNetworkDataSet.mat files 
+%        >OUTPUT: PDFs & CDFs plots
 % 
 %% 9  STACK DIVERS DATASETS
 % 
-% Make DATASET for Stack Several tables from Divers Experiments:
+% Make DATASET by stacking several tables from divers experiments:
 % 
 % * >>Merge_Feature_Datasets          
 % 
 % E.G. read datasets of *different* Experiments,i.e, CTRL, PARKINSON, DYSKINESIA, ...
 % 
-%   -Raster Activity:       Read CSV Tables
-%   -General Ensembles:     Read CSV Tables
-%   -Detailed Ensembles:    Read CSV Tables
-%   -Network Features:      NetFEATS 
+% Choose the kind of dataset:
 % 
-%% 10 DATA FEATURE EXPLORER: Merging Feature Datasets 
+%                           [INPUT]                         [OUTPUT]
+%   -Raster Activity:       Table_Raster_Features_          Raster_Activity_Dataset_
+%   -General Ensembles:     Ensemble_Features_              General_Ensembles_Dataset_
+%   -Detailed Ensembles:    Detailed_Ensemble_Features_     Detailed_Ensembles_Dataset_
+%   -Network Features:      Node_StatsFeature_Dataset_      Network_Features_Dataset
 % 
-% *10.1*  Get ALL Features Dataset: Raster,Ensembles,Networks
+% Makes directory 'FinderSpiker/Experimental Databases'
 % 
-% * >>Merge_Datasets           % Make DATASET of the 3 Kinds in 1 file
-%                               (not needed for Step 10.2)
+%% 10 DATA FEATURE EXPLORER
 % 
-% *10.2*  Dysplay All Features RAINPLOTS & Statistics
+% *10.1*  Display All Features RAINPLOTS & Statistics
 % 
 % * >>Feature_Explorer         *UNDER CONSTRUCTION*
 % 
 % 
 %% 11 MACHINE LEARNING:
 % 
-% * >>Classification_Regions; 
+% * >>Classification_Regions
+% 
 %       Makes PCA and SVM classification from
 %       tables of 'Merge_Feature_Datasets'
 %       Feauture selection and Model building
@@ -293,6 +314,9 @@
 %% 12 EXPORT DATA:
 % 
 % * >>Export_Raster;  *UNDER CONSTRUCTION*
+% 
 %       Makes CSV of activity matrix to analyze elsewhere(e.g. ClustVis)
+% 
 % * >>Export_Signals;  *UNDER CONSTRUCTION*
+% 
 %       Makes CSV of fluorescence signals 

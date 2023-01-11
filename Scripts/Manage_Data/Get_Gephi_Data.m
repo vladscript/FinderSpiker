@@ -10,12 +10,13 @@
 %% Setup
 % Initial:
 clear; close all; clc;
+Load_Default_Directories;
 runs=1;             % Runs Counter
 EXPS={};            % List Of Experiments
-
+fprintf('\n>Read exported tables from Gephi 0.9.1\n')
 % N Conditions:
 NC = inputdlg('Number of Conditions: ',...
-             'Network Gephi Features', [1 75]);
+             'EXPORTED Gephi Node Features', [1 75]);
 NC = str2double(NC{:});    
 
 % Name Conditions
@@ -36,7 +37,7 @@ Names_Conditions=inputdlg(Cond_Names,name,numlines,Names_default);
 % Directory:
 Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
-CurrentPathOK=[Dirpwd(1:slashesindx(end)),'NetWorks-CSV'];
+CurrentPathOK=[Dirpwd(1:slashesindx(end)),FolderNameNetwork];
 % Load File 
 c=1; % naive initialization
 [FileName,PathName,MoreFiles] = uigetfile('*.csv',['Condition: ',num2str(c),' Network ___ Dataset.csv file'],...
@@ -45,7 +46,7 @@ c=1; % naive initialization
 GEPHIDATA={}; % Data set of Network Features of ALl Experiments
 deliminter=',';
 for c=1:NC
-    fprintf('>>Loading Data from Ccndition %i of %i:\n',c,NC);
+    fprintf('>>Loading Data from Condition %i of %i:\n',c,NC);
     auxc=1;
     while MoreFiles
         % Get N Columns in the File:
@@ -58,7 +59,8 @@ for c=1:NC
         X=readtable([PathName,FileName],'Format',FormatSpec);
         % Table Intel:
         [Nnodes,NFeatures]=size(X);
-        SpaceIndx=find(FileName==' ',1);
+        % SpaceIndx=find(FileName==' ',1);
+        SpaceIndx=strfind(FileName,'.csv');
         EXPID=FileName(1:SpaceIndx-1);
         Y=[table(repmat(Names_Conditions{c},Nnodes,1),'VariableNames',{'Condition'}),...
             table(repmat(EXPID,Nnodes,1),'VariableNames',{'EXP_ID'})...
@@ -84,11 +86,12 @@ end
 disp('>>Loading Gephi Data :Done.')
 disp('>>Saving Gephi Data ...')
 %% Save  Data
-
 % Input dialogue
-CurrentPathOK=[Dirpwd(1:slashesindx(end))];
 
-[file,path] = uiputfile('myNetworkDataSet.mat','Save DATASET file >>');
+CurrentPathOK=[Dirpwd(1:slashesindx(end)),FolderNameNetwork];
+path = uigetdir(CurrentPathOK);
+file='myNetworkDataSet.mat';
+% [file,path] = uiputfile('myNetworkDataSet.mat','Save DATASET file >>');
 if file ~=0
     fullFileName = fullfile(path, file);
     save(fullFileName,'GEPHIDATA','Names_Conditions');
@@ -97,4 +100,5 @@ else
     disp('>>CANCEL')
 end
 %% FINISH
-clear; close all; clc; disp('>>DONE')
+clear; close all; clc; 
+fprintf('\n>Next, run: \n>Make_Statistics_Gephi_Features\n')

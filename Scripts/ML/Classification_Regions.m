@@ -16,6 +16,7 @@
 %% Setup:
 clc; clear; % close all;
 % Import_FinderSpiker;
+Load_Default_Directories;
 Nsim=20; % Repetitions for SVM grid search
 % Probaility colormap:
 CMprobs=cbrewer('seq','GnBu',20);
@@ -38,7 +39,7 @@ switch choiceFile
         % Load .mat File
         Dirpwd=pwd;
         slashesindx=find(Dirpwd=='\');
-        CurrentPathOK=[Dirpwd(1:slashesindx(end))];
+        CurrentPathOK=[Dirpwd(1:slashesindx(end)),FolderNameDataset];
         [FileMat,FolderName]=uigetfile(CurrentPathOK);
         load([FolderName,FileMat])
         X=DataXY.Features;

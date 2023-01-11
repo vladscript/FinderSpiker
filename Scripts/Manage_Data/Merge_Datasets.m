@@ -2,7 +2,8 @@
 
 Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
-CurrentPathOK=[Dirpwd(1:slashesindx(end))]; % FinderSpiker Root Folder
+Load_Default_Directories;
+CurrentPathOK=[Dirpwd(1:slashesindx(end)),FolderNameDataset]; % FinderSpiker Root Folder
 
 %% Raster Activity Minimal Constraint:
 [FileName,PathName] = uigetfile('*.csv','Raster Activity Dataset',...
@@ -16,7 +17,7 @@ FeaturesRaster=Xraster.Properties.VariableNames;    % Feature Names
 %% Ensembles General Minimal Constraint:
 [FileName,PathName] = uigetfile('*.csv','General Ensembles Dataset',...
     'MultiSelect', 'off',CurrentPathOK);
-if FileName==PathName
+if strcmp(FileName,PathName)==0
     Xensemble=table;        % empty table
     FeaturesEnsemble={};    % empty cell
     EXPIDensemble={};       % empty cell
