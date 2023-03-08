@@ -108,8 +108,14 @@ h{1} = area(Xi, f); hold on
 set(h{1}, 'FaceColor', color);
 set(h{1}, 'EdgeColor', cloud_edge_col);
 set(h{1}, 'LineWidth', line_width);
-% set(h{1}, 'FaceAlpha', alphaval);
-alpha(alphaval)
+MLv=version('-release');
+C=regexp(MLv,'[0-9]','match');
+matver=str2num( cell2mat(C) );
+if matver>2020
+    set(h{1}, 'FaceAlpha', 1);
+else
+    alpha(alphaval)
+end
 
 % make some space under the density plot for the boxplot and raindrops
 yl = get(gca, 'YLim');
