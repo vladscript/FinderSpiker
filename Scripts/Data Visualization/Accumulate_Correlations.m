@@ -27,7 +27,7 @@ Dirpwd=pwd;
 slashesindx=find(Dirpwd=='\');
 CurrentPathOK=[Dirpwd(1:slashesindx(end)),'Processed Data'];
 % Load File 
-[FileName,PathName,MoreFiles] = uigetfile('*.mat',['Select .mat file, ONE by ONE'],...
+[FileName,PathNameExps,MoreFiles] = uigetfile('*.mat',['Select .mat file, ONE by ONE'],...
     'MultiSelect', 'off',CurrentPathOK);
 % Table Active Cells: TOTAL/ACTIVE/POSITIVE/NEGATIVE
 Trow=zeros(1,4);
@@ -35,7 +35,7 @@ TableActive=[];
 %% Loop to keep loading files
 Nconditions=[];
 while MoreFiles
-    load([PathName,FileName]);
+    load([PathNameExps,FileName]);
     if exist('MetaDataColocaliation','var')
         aremerged=true;         % Are there already colocated cells
     else
@@ -83,9 +83,9 @@ while MoreFiles
     end
     % Disp Experiments Selected:
     EXPS{runs,1}=Experiment
-    CurrentPathOK=PathName;
+    CurrentPathOK=PathNameExps;
     runs=runs+1;
-    [FileName,PathName,MoreFiles] = uigetfile('*.mat',['Select .mat file, ONE by ONE'],...
+    [FileName,PathNameExps,MoreFiles] = uigetfile('*.mat',['Select .mat file, ONE by ONE'],...
     'MultiSelect', 'off',CurrentPathOK);
 end
 disp('>>end.')
