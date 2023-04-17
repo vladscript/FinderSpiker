@@ -113,7 +113,11 @@ if ~isempty(ensemble_index)
                         % Check Valley in Between Actual and Next Peak
                         valleyB=intersect(valleysFrames,peaksFrames(p):peaksFrames(p+1));
                         LimitsB=EnsembleIntervalsWhole(EnsembleIntervalsWhole(:,2)<=valleyB,2);
-                        limitB=LimitsB(end);
+                        if isempty(LimitsB)
+                            limitB=EnsembleIntervalsWhole(end);
+                        else
+                            limitB=LimitsB(end);
+                        end
                     else
                         valleyB=intersect(valleysFrames,peaksFrames(p):Bframe);
                         if ~isempty(valleyB)
@@ -136,8 +140,12 @@ if ~isempty(ensemble_index)
                         end
                         fprintf('*')
                         limitsA=EnsembleIntervalsWhole(EnsembleIntervalsWhole(:,1)>limitB,1);
-                        if p<Npeaks
-                            limitA=limitsA(1);
+                        if isempty(limitsA)
+                            limitA=EnsembleIntervalsWhole(1,1);
+                        else
+                            if p<Npeaks
+                                limitA=limitsA(1);
+                            end
                         end
                     end
                 end
