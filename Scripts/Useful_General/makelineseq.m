@@ -13,7 +13,8 @@ if ~isempty(varargin)
     Onsets=[min(IntervalsX(:,1));Onsets;max(IntervalsX(:,2))];
     yvalues=[yvalues(1);yvalues;yvalues(end)];
 end
-xseq=Onsets(1):Onsets(end);
+% xseq=Onsets(1):Onsets(end);
+xseq=min(Onsets):max(Onsets);
 yseq=zeros(size(xseq));
 % yseq=[];
 % MAIN LOOP: where magic happens:
