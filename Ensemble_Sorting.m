@@ -175,7 +175,7 @@ save_features_ensembles(Experiment,Condition_Names,Features_Ensemble,Features_Co
             disp('>>Updating .mat with Neural Ensemble Analysis...')
             save([PathName,FileName],'XY_cluster','New_Order_Clustering',...
                                     'Features_Ensemble','Features_Condition',...
-                                    'ColorState','-append');
+                                    'ColorState','XY_selectedClean','-append');
             disp('>>Done.')
             disp('>>Saving Analysis...')
             % Save Selected Analysis Variables

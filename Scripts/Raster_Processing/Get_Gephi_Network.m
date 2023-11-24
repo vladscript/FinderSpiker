@@ -130,7 +130,7 @@ for i=1:Ncells
             case 'mixer'
                 % OPTION B) Sum of Ensemble Colors: MIXER
                 colorbuff=uint8(zeros(1,3));
-                for q=1:numel(CurretnEnsembles);
+                for q=1:numel(CurretnEnsembles)
                     colorbuff=imadd(colorbuff,uint8(255*ColorState(CurretnEnsembles(q),:)),'uint8');
                 end
                 % Make it Purple if it becomes WHITE (walker)
