@@ -192,7 +192,8 @@ if strcmp('Yes',okbutton)
     TableFeatures=maketableraster(ENSEMBLE_NAMES,ENSEMBLE_FEATURES,Names_Conditions);
     writetable(TableFeatures,[PathSave,SaveFile],...
                     'Delimiter',',','QuoteStrings',true);
-    fprintf('>> Data saved @: %s\n',[PathSave,SaveFile])
+    % fprintf('>> Data saved @: %s\n',[PathSave,SaveFile])
+    fprintf('<a href="matlab:dos(''explorer.exe /e, %s, &'')">> Data saved Here</a>\n',PathSave);
 else
     fprintf('>>Unsaved data.\n')
 end

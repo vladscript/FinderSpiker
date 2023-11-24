@@ -68,6 +68,7 @@ else
 end
 %% Exporting to GEPHI and Ensemble Data per Condition
 Ncells=size(R_Condition{1},1);
+% Ncells=sum(sum(R_Condition{1},2)>1);
 % Select Sort of Color for Gephi Visualization
 answer = questdlg('Make Node Colors for Gephi Visualization?', ...
 	'Mix Color Ensembles', ...
@@ -87,8 +88,9 @@ for c=1:NCplot
     % Satitstics of Weights Connections (Synaptic Strength)
     Network{c}.SynStrengthStats=[0,0,0,0];
     % Get raw data **************************************************
-    R=Rasters{c}(:,IndexesActive);  % frames x cells
-    ActNeu=find(sum(R,1)>0);        % Active Neurons in each Raster: ENS & NON ENS
+    % R=Rasters{c}(:,IndexesActive);      % frames x cells
+    R=Rasters{c};      % frames x cells
+    ActNeu=find(sum(R,1)>0);         % Active Neurons in each Raster: ENS & NON ENS
     % CAG=sum(R,2);                   % CAG in each Condition
     % Get labels 
     if UniRMutiE         % IF ALL EXPERIMETN in ONE Analysis

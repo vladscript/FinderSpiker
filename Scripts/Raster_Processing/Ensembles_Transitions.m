@@ -158,8 +158,16 @@ if ifplot
                 yCAG(EnsembleIntervals(i,1):EnsembleIntervals(i,2)),...
                 'Color',ColorState(EnsembleInstances(i),:),'LineWidth',1);
             else
-                plot(Axis_details,xtime(EnsembleIntervals(i,1)-1:EnsembleIntervals(i,2)+1),...
-                yCAG(EnsembleIntervals(i,1)-1:EnsembleIntervals(i,2)+1),...
+                alim=EnsembleIntervals(i,1)-1;
+                if alim<1
+                    alim=1;
+                end
+                blim=EnsembleIntervals(i,2)+1;
+                if blim>numel(xtime)
+                    blim=numel(xtime);
+                end
+                plot(Axis_details,xtime(alim:blim),...
+                yCAG(alim:blim),...
                 'Color',ColorState(EnsembleInstances(i),:),'LineWidth',1);
             end
         % Plot LINE Intervals @ HEBBIAN SEQUENCE

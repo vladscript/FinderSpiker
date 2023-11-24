@@ -13,15 +13,18 @@
 % Network Link Weight Threshold: Minimum RoA of Neuron to Belong any ensemble
 % Active Neurons with RoA>0 in Condition_i or active in Condition_i-1
 % Nodes with Degree>0 in Condition_i or peviously in Condition_i-1
-% 
 %% NOW !
 % 
+% 
+%  FROM PCA, get most witghtable variables=>
+% Make Hyperlinks in Output Folders: fprintf('<a href="matlab:dos(''explorer.exe /e, %s, &'')">Cropped Videos Here</a>\n',VidDir)
 % Make Correlations Statistics and PDFs of Conditions->CSVs
 % Bug in Network (CtxThal)/ Feature_Explorer/Fix Width boxplots
 % Feature_Explorer with Statistics
 % Include intercluscoeff/getcluslabs in Accumulative Functions!!!
-% COrrelation/Simmilarity Metrics in Get_Total_Network.m
-% Deprecate Merge_Datasets
+% Correlation/Simmilarity Metrics in Get_Total_Network.m
+% 
+% Deprecate Merge_Datasets (?)
 % 
 %% READY TO GO
 % Update in Gephi management and table making

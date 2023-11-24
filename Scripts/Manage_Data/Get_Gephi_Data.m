@@ -95,10 +95,10 @@ file='myNetworkDataSet.mat';
 if file ~=0
     fullFileName = fullfile(path, file);
     save(fullFileName,'GEPHIDATA','Names_Conditions');
-    disp('>>Network Dataset: Saved.')
+    fprintf('<a href="matlab:dos(''explorer.exe /e, %s, &'')">See %s file Here</a>\n',path,file);
 else
     disp('>>CANCEL')
 end
 %% FINISH
-clear; close all; clc; 
+clear;
 fprintf('\n>Next, run: \n>Make_Statistics_Gephi_Features\n')

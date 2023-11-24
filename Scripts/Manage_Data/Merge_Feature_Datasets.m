@@ -97,7 +97,8 @@ if strcmp('Yes',okbutton)
     disp('>>Making CSV table...')
     writetable(FeaturesSingle,[PathSave,'\',SaveFile],...
                     'Delimiter',',','QuoteStrings',true);
-    fprintf('>> Data saved @: %s\n',[PathSave,SaveFile])
+    % fprintf('>> Data saved @: %s\n',[PathSave,SaveFile])
+    fprintf('<a href="matlab:dos(''explorer.exe /e, %s, &'')">> Data saved Here</a>\n',PathSave);
 else
     fprintf('>>Unsaved data.\n')
 end

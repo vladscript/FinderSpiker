@@ -166,6 +166,7 @@ for i=1:Ncells
     ColorNeuronStr=[ColorNeuronStr,ColorNeuronString( CharacIndx(end) )];
     ColorNeuronCell{i}=ColorNeuronStr;
 end
+
 %% Adjacency Matrix:
 % AS in Get_Total_Network
 % This counts how many frames a Pair of Neurons Fired Together
@@ -209,6 +210,7 @@ EmptyNodesColors={};
 for i=1:numel(InactiveIndx)
     EmptyNodesStates{i,1}='0';
     EmptyNodesColors{i,1}=['0,0,0'];
+    EmptyNodesRGB(i,:)=[0,0,0];
 end
 %% NETWORK OUTPUTS ******************************************************
 % N Cells that participate in all Ensembles
@@ -223,7 +225,7 @@ fNet.MaxSynLinks=MaxSynLinks;
 % Max Coupled Neurons
 [~,IndexMaxW]=max(WEIGHT);
 fNet.MaxCoupledPair=[SOURCE(IndexMaxW),TARGET(IndexMaxW)];
-
+fNet.Colors=[ColorNeuronRGB;EmptyNodesRGB];
 
 %% Nodes & Links Table *******************************************************
 % Input Dialogues
@@ -281,6 +283,7 @@ if ~isempty(FileNameExp)
     Tlinks=table(SOURCE,TARGET,WEIGHT,TypeNetwork,...
         'VariableNames',HeadersLinks);
     writetable(Tlinks,[DirSave(1:poslash(end)),SaveasName],'Delimiter',',','QuoteStrings',true);
+    fprintf('<a href="matlab:dos(''explorer.exe /e, %s, &'')">Gephi CSV files HERE</a>\n',[DirSave(1:poslash(end)),CarpetName(2:end)]);
     disp('      *****************');
     disp('      * Saved Network *');
     disp('      *****************');

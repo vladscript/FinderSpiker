@@ -115,7 +115,8 @@ if strcmp('Yes',okbutton)
     disp('>>saving data...')
     save([PathSave,SaveFile],'EXPS','Names_Conditions','RoE_ALL',...
         'IEnIs_ALL','EnD_ALL','NensCyc_ALL','LatencyCyc_ALL');
-    fprintf('>> Data saved @: %s\n',[PathSave,SaveFile])
+    %fprintf('>> Data saved @: %s\n',[PathSave,SaveFile])
+    fprintf('<a href="matlab:dos(''explorer.exe /e, %s, &'')">> Data saved here</a>\n',PathSave);
 else
     fprintf('>>Unsaved data.\n')
 end

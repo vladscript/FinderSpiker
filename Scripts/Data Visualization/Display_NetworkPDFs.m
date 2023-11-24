@@ -63,8 +63,10 @@ for e=1:Ne
         netfeat=zeros(Ndata,1);
         % Degree ***************************************************
         for n=1:Ndata
-            var_k(str2double( DataNet.id{n}),1) = str2double( DataNet.degree{n});
-            netfeat(str2double( DataNet.id{n}),1) = str2double( DataNet{:,Ncol}{n} );
+            if  str2num(DataNet.id{n})>0
+                var_k(str2double( DataNet.id{n}),1) = str2double( DataNet.degree{n});
+                netfeat(str2double( DataNet.id{n}),1) = str2double( DataNet{:,Ncol}{n} );
+            end
         end
         % Current or Previously Active NODES
         preActive=unique([preActive;find(var_k>0)]);

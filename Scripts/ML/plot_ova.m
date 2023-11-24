@@ -32,7 +32,7 @@ for j = 1:numClasses
         else
             % False Classes
             h(n).MarkerFaceColor=[0.8,0.8,0.8];
-        end;
+        end
         h(n).LineWidth=0.5;
     end
     title(sprintf('%s vs all',char(labelconditions(j))));

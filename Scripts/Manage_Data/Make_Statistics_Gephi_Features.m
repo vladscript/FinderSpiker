@@ -66,7 +66,8 @@ while MoreFeats
         disp('>>Making CSV table...')
         writetable(TotalTable,[PathSave,SaveFile],...
                         'Delimiter',',','QuoteStrings',true);
-        fprintf('>> Dataset saved @: %s\n',[PathSave,SaveFile])
+        % fprintf('>> Dataset saved @: %s\n',[PathSave,SaveFile])
+        fprintf('<a href="matlab:dos(''explorer.exe /e, %s, &'')">See network parameters here</a>\n',PathSave);
     else
         fprintf('>>Unsaved dataset.\n')
     end

@@ -1,6 +1,6 @@
 %% Read Data ##############################################################
 % X & Y From Multiple Feature Tables
-function [X,Y,NamesFeatures,folder_name,MatFileName]=makedatatable()
+function [X,Y,NamesFeatures,folder_name,MatFileName,EXPIDs]=makedatatable()
 X=[]; % Features: Observations x Features
 Yall=[]; % Labels
 Y=[]; % Labels
@@ -134,6 +134,7 @@ for n=1:ntable-1
     NamesFeatures=[NamesFeatures,Features2read{n}];
 end
 DataXY.Properties.VariableNames={'EXPIDs','Label','Features'};
+EXPIDs=DataXY.EXPIDs;
 % Save .mat File
 
 prompt = {'Enter file name to save:'};

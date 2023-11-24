@@ -44,11 +44,12 @@ switch choiceFile
         load([FolderName,FileMat])
         X=DataXY.Features;
         Y=DataXY.Label;
+        EXPIDs=DataXY.EXPIDs;
         clear DataXY;
     case 2
         fprintf('>>Make Data Table\n')
         % Run Interface to load tables and select Features
-        [X,Y,NamesFeatures,FolderName,FileMat]=makedatatable();
+        [X,Y,NamesFeatures,FolderName,FileMat,EXPIDs]=makedatatable();
         NaNExps=find(isnan(sum(X,2)));
         OkExps=find(~isnan(sum(X,2)));
         X=X(OkExps,:);
@@ -198,13 +199,15 @@ end
 columns2boxplot(LOOCVs{nModel,1}',LOOCVs{nModel,2}',LOOCVs{nModel,3}',{'Lineal','Gaussian','Polynomial'})
 ONEpca=ALLPCAs(nModel(1),1);
 TWOpca=ALLPCAs(nModel(1),2);
+
 %% Best Classifying PC Pair contribution BIPLOT 
 % A biplot allows you to visualize the magnitude and sign of each variable's
 % contribution to the first two or three principal components, and how each 
 % observation is represented in terms of those components.
 figure;
 hbi=biplot(coefforth(:,[ONEpca,TWOpca]),'scores',score(:,[ONEpca,TWOpca]),...
-    'varlabels',NamesFeatures,'Marker','o','MarkerEdgeColor','k','MarkerSize',7);
+    'varlabels',NamesFeatures,'Marker','o','MarkerEdgeColor','k','MarkerSize',7, ...
+    'ObsLabels',cellstr(EXPIDs(OkExps)));
 % Vector Lines
 for i=1:size(X,2)
     hbi(i).LineWidth=2;
@@ -224,10 +227,25 @@ for i=3*size(X,2)+1:numel(hbi)-1
     hbi(i).MarkerSize=10;
 end   
 
-title('Feature contribution to each copmponents')
+title('Feature contribution to each component')
 xlabel([num2str(ONEpca),' th PC']);
 ylabel([num2str(TWOpca),' th PC']);
 % axis([-.26 0.6 -.51 .51]);
+%% PCA REPORT
+
+disp('PCA report')
+% Feature Contributions
+% BestPCs: ONEpca,TWOpca;
+PCAWs=coefforth(:,[ONEpca,TWOpca]);
+Tpca=table(NamesFeatures',PCAWs(:,1),PCAWs(:,2));
+Tpca.Properties.VariableNames={'Features',['W_PC_',num2str(ONEpca)],['W_PC_',num2str(TWOpca)]};
+fprintf('\n>Saving PCA resume: ')
+writetable(Tpca,[FolderName,FileMat(1:end-4),'.csv'])
+fprintf('complete.\n')
+% % Experimetns (Observations) Dots
+% Dick=score(:,[ONEpca,TWOpca]);
+
+
 %% Leave-One-Out Cross Validation OF THE MODEL 
 % clear Yhatsvm
 fprintf('Model| Leave-One-Out Cross Validations \n')
@@ -353,7 +371,7 @@ while checkname==1
     if strcmp(FileName,FileMat)
         checkname=0;
         % SAVE DATA
-        save([PathName,FileName],'ALLPCAs','Xpca','Npcs','ONEpca',...
+        save([PathName,FileName],'ALLPCAs','Xpca','Npcs','ONEpca','OkExps',...
             'BestKernel','TWOpca','METRICSloocv','METRICS','METRICSova',...
             '-append');
         disp([FileMat,'   -> METRICS SAVED '])
@@ -364,5 +382,13 @@ while checkname==1
         disp('Not the same File!')
         disp('Try again!')
     end
-end  
+end
+
+fprintf('\n>Saving SVM Metrics:')
+writetable(FinalTableOVA,[FolderName,FileMat(1:end-4),'_OVA.csv'],'WriteRowNames',true)
+writetable(FinalTableMC,[FolderName,FileMat(1:end-4),'_MC.csv'],'WriteRowNames',true)
+fprintf(' complete.\n')
+
+fprintf('<a href="matlab:dos(''explorer.exe /e, %s, &'')">See PCA resume & SVM metrics Here</a>\n',FolderName);
+
 %% END OF THE WORLD

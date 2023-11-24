@@ -63,7 +63,8 @@ if strcmp('Yes',okbutton)
     PathSave=uigetdir(CurrentPathOK);
     writetable(Ytotal,[PathSave,SaveFile],...
                     'Delimiter',',','QuoteStrings',true);
-    fprintf('>> Dataset saved @: %s\n',[PathSave,SaveFile])
+    % fprintf('>> Dataset saved @: %s\n',[PathSave,SaveFile])
+    fprintf('<a href="matlab:dos(''explorer.exe /e, %s, &'')">See dataset files here</a>\n',PathSave);
 else
     fprintf('>>Unsaved dataset.\n')
 end
