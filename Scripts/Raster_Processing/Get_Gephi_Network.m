@@ -207,6 +207,7 @@ end
 InactiveIndx=setdiff(1:numel(XY_selected(:,1)),ActiveNeurons);
 EmptyNodesStates={};
 EmptyNodesColors={};
+EmptyNodesRGB=[];
 for i=1:numel(InactiveIndx)
     EmptyNodesStates{i,1}='0';
     EmptyNodesColors{i,1}=['0,0,0'];
